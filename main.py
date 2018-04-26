@@ -3,20 +3,30 @@ import torchvision
 from torchvision.transforms import *
 import torch
 import torch.nn as nn
-from train import train
+from run_model import train, test
 import numpy as np
 
 from argparse import ArgumentParser
 
-def _load_dataset(name):
+def _load_dataset(name, train=True):
     '''Retrieve a dataset and determine the number of classes. This estimate is
-    obtained from the number of different values in the training labels'''
+    obtained from the number of different values in the training labels.
+
+    Parameters
+    ----------
+    name    :   str
+                Dataset name in :py:mod:`torchvision.datasets`
+    train   :   bool
+                If `False` load test data instead of training data.
+    '''
     try:
         dataset_cls = getattr(torchvision.datasets, name)
         dataset = dataset_cls('/home/share/data',
                               download=True,
-                              transform=ToTensor()
+                              train=train,
+                              transform=transforms.Compose([ToTensor()])
                               )
+        __import__('ipdb').set_trace()
     except AttributeError:
         raise NameError(f'Dataset {name} unknown.')
 
@@ -36,10 +46,25 @@ def _initialize_model(module, bias_val=0.01):
     '''Perform weight initialization on `module`. This is somewhat hacky since
     it assumes the presence of `weight` and/or `bias` fields on the module. Will
     skip if not present.'''
-    if hasattr(module, 'weight'):
-        nn.init.xavier_uniform_(module.weight)
-    if hasattr(module, 'bias'):
-        module.bias.data.fill_(bias_val)
+    if isinstance(module, models.AlexNetMini):
+        for m in module.modules():
+            if hasattr(module, 'weight'):
+                nn.init.xavier_uniform_(module.weight)
+            if hasattr(module, 'bias'):
+                module.bias.data.fill_(bias_val)
+    elif isinstance(module, models.DenseNet):
+        # Official init from torch repo.
+        for m in module.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal(m.weight.data)
+            elif isinstance(m, nn.BatchNorm2d):
+                m.weight.data.fill_(1)
+                m.bias.data.zero_()
+            elif isinstance(m, nn.Linear):
+                m.bias.data.zero_()
+    else:
+        raise ValueError(f'Don\'t know how to initialize {module.__class__.__name__}')
+
 
 
 def main():
@@ -53,10 +78,10 @@ def main():
     print(f'Number of classes: {num_classes}')
     print(f'Data shape: {(H, W, C)}')
     model = getattr(models, args.model)((H, W, C), num_classes=num_classes)
-    model.apply(_initialize_model)
+    _initialize_model(model)
     model.cuda()
 
-    train(model, dataset, batch_size=100, epochs=10)
+    train(model, dataset, batch_size=256, epochs=10)
 
 if __name__ == '__main__':
     main()

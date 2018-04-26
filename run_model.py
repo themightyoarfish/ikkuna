@@ -13,9 +13,12 @@ def _available_optimizers():
     -------
     list(str)
     '''
+    # get all module properties which aren't magic
     available_optimizers = set(getattr(torch.optim, name) for name in dir(torch.optim) if
             not name.startswith('__'))
+    # remove everything which is a module and not a class (looking at you, lr_scheduler o_o)
     available_optimizers = filter(lambda o: type(o) == type, available_optimizers)
+    # map them to their class name (w/o module)
     available_optimizers = map(lambda o: o.__name__, available_optimizers)
     return list(available_optimizers)
 
@@ -62,7 +65,12 @@ def train(model: nn.Module, dataset: Dataset, **kwargs):
     optimizer   :   torch.optim.Optimizer
                     Defaults to Adam with 1e-4 learning rate
     '''
+    # to be safe, enable batch-norm, dropout, and the like
     model.train()
+
+    ###############################################################################################
+    #                                     Acquire parameters                                      #
+    ###############################################################################################
     batch_size    = kwargs.pop('batch_size', 1)
     epochs        = kwargs.pop('epochs', 1)
     loss_function = kwargs.pop('loss', nn.CrossEntropyLoss())
@@ -70,6 +78,9 @@ def train(model: nn.Module, dataset: Dataset, **kwargs):
     optimizer     = kwargs.pop('optimizer', _create_optimizer(model, 'Adam', **kwargs))
     print(f'Using {optimizer.__class__.__name__} optimizer')
 
+    ###############################################################################################
+    #                                          Training                                           #
+    ###############################################################################################
     for e in range(epochs):
         for idx, (X, Y) in enumerate(dataloader):
             print(f'\rIteration {idx:10d} of {len(dataloader):10d}', end='')
@@ -80,3 +91,6 @@ def train(model: nn.Module, dataset: Dataset, **kwargs):
             loss.backward()
             optimizer.step()
         print(f'\nEpoch {e} loss: {loss.item()}')
+
+def test(model, dataset):
+    pass
