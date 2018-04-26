@@ -49,7 +49,7 @@ def _create_optimizer(model, name, **kwargs):
     return getattr(torch.optim, name)(params, **kwargs)
 
 
-def train(model: nn.Module, dataset: Dataset, **kwargs):
+def train(model: nn.Module, dataset: Dataset, post_epoch_hook=None, **kwargs):
     '''Train a model on a dataset (only images). The model must be compatible with the image size.
 
     Parameters
@@ -65,9 +65,6 @@ def train(model: nn.Module, dataset: Dataset, **kwargs):
     optimizer   :   torch.optim.Optimizer
                     Defaults to Adam with 1e-4 learning rate
     '''
-    # to be safe, enable batch-norm, dropout, and the like
-    model.train()
-
     ###############################################################################################
     #                                     Acquire parameters                                      #
     ###############################################################################################
@@ -82,6 +79,10 @@ def train(model: nn.Module, dataset: Dataset, **kwargs):
     #                                          Training                                           #
     ###############################################################################################
     for e in range(epochs):
+        # to be safe, enable batch-norm, dropout, and the like. Hook could change model so we redo
+        # this before each epoch
+        model.train(True)
+
         for idx, (X, Y) in enumerate(dataloader):
             print(f'\rIteration {idx:10d} of {len(dataloader):10d}', end='')
             data, labels = X.cuda(), Y.cuda()
@@ -90,7 +91,19 @@ def train(model: nn.Module, dataset: Dataset, **kwargs):
             loss = loss_function(output, labels)
             loss.backward()
             optimizer.step()
-        print(f'\nEpoch {e} loss: {loss.item()}')
+        print('')
+        if post_epoch_hook:
+            post_epoch_hook(model)
 
-def test(model, dataset):
-    pass
+def test(model: nn.Module, dataset: Dataset, **kwargs):
+    dataloader = DataLoader(dataset, batch_size=100)    # be safe, don't do it all at once
+    model.train(False)
+    loss_function = kwargs.pop('loss', nn.CrossEntropyLoss())
+
+    cum_loss = 0
+    n = len(dataloader)
+    for X, Y in dataloader:
+        predictions = model(X.cuda())
+        cum_loss += loss_function(predictions, Y.cuda())
+
+    print(f'Average loss on test set: {cum_loss/n}')

@@ -26,19 +26,22 @@ def _load_dataset(name, train=True):
                               train=train,
                               transform=transforms.Compose([ToTensor()])
                               )
-        __import__('ipdb').set_trace()
     except AttributeError:
         raise NameError(f'Dataset {name} unknown.')
 
+    if train:
+        data, labels = dataset.train_data, dataset.train_labels
+    else:
+        data, labels = dataset.test_data, dataset.test_labels
+
     # turn labels into numpy array
-    labels = dataset.train_labels
     if isinstance(labels, torch.Tensor):
         labels = labels.numpy()
     num_classes = len(np.unique(np.array(labels)))
 
     # if only three dimensions, assume [N, H, W], else [N, H, W, C]
-    H, W = dataset.train_data.shape[1:3]
-    C = dataset.train_data.shape[-1] if len(dataset.train_data.shape) == 4 else 1
+    H, W = data.shape[1:3]
+    C = data.shape[-1] if len(data.shape) == 4 else 1
 
     return dataset, num_classes, H, W, C
 
@@ -81,7 +84,8 @@ def main():
     _initialize_model(model)
     model.cuda()
 
-    train(model, dataset, batch_size=256, epochs=10)
+    hook = lambda model: test(model, _load_dataset(args.dataset, train=False)[0])
+    train(model, dataset, post_epoch_hook=hook, batch_size=512, epochs=4)
 
 if __name__ == '__main__':
     main()
