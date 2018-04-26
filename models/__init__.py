@@ -1,2 +1,2 @@
-from densenet import *
-from alexnet import *
+from .densenet import *
+from .alexnet import *
