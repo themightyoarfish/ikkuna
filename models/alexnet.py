@@ -6,7 +6,7 @@ import torch.utils.model_zoo as model_zoo
 
 class AlexNetMini(nn.Module):
     '''Reduced AlexNet (basically just a few conv layers with relu and
-    max-poolgin) which adapts to arbitrary input sizes.
+    max-pooling) which adapts to arbitrary input sizes.
 
     Atributes
     ---------
@@ -22,6 +22,8 @@ class AlexNetMini(nn.Module):
 
     def __init__(self, input_shape, num_classes=1000):
         super(AlexNetMini, self).__init__()
+
+        # if batch dim not present, add 1
         if len(input_shape) == 2:
             input_shape.append(1)
         H, W, C = input_shape

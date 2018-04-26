@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 from torch.autograd import Variable
 
@@ -5,19 +6,33 @@ from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 from torch.optim import Adam
 
+def _create_optimizer(model, name, **kwargs):
+    '''Create an optimizer for `model`s parameters.'''
+    available_optimizers = set(getattr(torch.optim, name) for name in dir(torch.optim) if
+            not name.startswith('__'))
+    available_optimizers = filter(lambda o: type(o) == type, available_optimizers)
+    available_optimizers = map(lambda o: o.__name__, available_optimizers)
+
+    if name not in available_optimizers:
+        raise ValueError(f'Unknown optimizer {name}')
+
+    params = [p for p in model.parameters() if p.requires_grad]
+    return getattr(torch.optim, name)(params, **kwargs)
+
+
 def _get_optimizer(model, **kwargs):
-    learning_rate = kwargs.get('learning_rate', 1e-4)
-    optimizer = kwargs.get('optimizer', Adam([p for p in model.parameters() if p.requires_grad],
-                                             lr=learning_rate))
+    optimizer = kwargs.get('optimizer', _create_optimizer(model, 'Adam',
+        **kwargs))
     return optimizer
 
 def train(model: nn.Module, dataset: Dataset, **kwargs):
     model.train()
-    batch_size = kwargs.get('batch_size', 1)
-    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
-    loss_function = kwargs.get('loss', nn.CrossEntropyLoss())
-    optimizer = _get_optimizer(model, **kwargs)
-    epochs = kwargs.get('epochs', 1)
+    batch_size     =  kwargs.pop('batch_size', 1)
+    epochs         =  kwargs.pop('epochs', 1)
+    loss_function  =  kwargs.pop('loss', nn.CrossEntropyLoss())
+    dataloader     =  DataLoader(dataset, batch_size=batch_size, shuffle=True)
+    optimizer      =  _get_optimizer(model, **kwargs)
+    print(f'Using {optimizer.__class__.__name__} optimizer')
 
     for e in range(epochs):
         for idx, (X, Y) in enumerate(dataloader):
