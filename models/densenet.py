@@ -46,14 +46,20 @@ class _Transition(nn.Sequential):
 
 
 class DenseNet(nn.Module):
-    def __init__(self, growth_rate=32, block_config=(6, 12, 24, 16),
-                 num_init_features=64, bn_size=4, drop_rate=0, num_classes=1000):
+    def __init__(self, input_shape, growth_rate=32, block_config=(6, 12),
+                 num_init_features=32, bn_size=4, drop_rate=0, num_classes=1000):
 
         super(DenseNet, self).__init__()
 
+        # if batch dim not present, add 1
+        if len(input_shape) == 2:
+            input_shape.append(1)
+        H, W, C = input_shape
+
+
         # First convolution
         self.features = nn.Sequential(OrderedDict([
-            ('conv0', nn.Conv2d(3, num_init_features, kernel_size=7, stride=2, padding=3, bias=False)),
+            ('conv0', nn.Conv2d(C, num_init_features, kernel_size=7, stride=1, padding=3, bias=False)),
             ('norm0', nn.BatchNorm2d(num_init_features)),
             ('relu0', nn.ReLU(inplace=True)),
             ('pool0', nn.MaxPool2d(kernel_size=3, stride=2, padding=1)),
@@ -76,16 +82,6 @@ class DenseNet(nn.Module):
 
         # Linear layer
         self.classifier = nn.Linear(num_features, num_classes)
-
-        # Official init from torch repo.
-        for m in self.modules():
-            if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal(m.weight.data)
-            elif isinstance(m, nn.BatchNorm2d):
-                m.weight.data.fill_(1)
-                m.bias.data.zero_()
-            elif isinstance(m, nn.Linear):
-                m.bias.data.zero_()
 
     def forward(self, x):
         features = self.features(x)
