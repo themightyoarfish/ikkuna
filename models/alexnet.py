@@ -1,8 +1,13 @@
-"""Adapted from torchvision.models.alexnet"""
+'''
+.. module:: alexnet
+.. moduleauthor Rasmus Diederichsen
+
+This module defines :py:class:`AlexNetMini`, a reduced version of AlexNet. Adapted from
+torchvision.models.alexnet.
+'''
 
 import torch.nn as nn
 import torch.utils.model_zoo as model_zoo
-
 
 class AlexNetMini(nn.Module):
     '''Reduced AlexNet (basically just a few conv layers with relu and
