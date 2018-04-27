@@ -85,7 +85,7 @@ def main():
     model.cuda()
 
     hook = lambda model: test(model, _load_dataset(args.dataset, train=False)[0])
-    train(model, dataset, post_epoch_hook=hook, batch_size=512, epochs=4)
+    train(model, dataset, post_epoch_hook=hook, batch_size=512, epochs=10)
 
 if __name__ == '__main__':
     main()
