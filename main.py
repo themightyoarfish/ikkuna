@@ -80,12 +80,20 @@ def main():
     dataset, num_classes, H, W, C = _load_dataset(args.dataset)
     print(f'Number of classes: {num_classes}')
     print(f'Data shape: {(H, W, C)}')
-    model = getattr(models, args.model)((H, W, C), num_classes=num_classes)
+
+    from supervise import capture_modules
+    supervisor = capture_modules(nn.ReLU, nn.MaxPool2d, nn.Linear)
+    Model = getattr(models, args.model)
+    model = Model((H, W, C), num_classes=num_classes, supervisor=supervisor)
     _initialize_model(model)
     model.cuda()
 
-    hook = lambda model: test(model, _load_dataset(args.dataset, train=False)[0])
-    train(model, dataset, post_epoch_hook=hook, batch_size=512, epochs=10)
+    def evaluate_epoch(model):
+        test(model, _load_dataset(args.dataset, train=False)[0])
+        __import__('ipdb').set_trace()
+
+
+    train(model, dataset, post_epoch_hook=evaluate_epoch, batch_size=512, epochs=10)
 
 if __name__ == '__main__':
     main()
