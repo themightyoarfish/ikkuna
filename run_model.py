@@ -84,7 +84,8 @@ def train(model: nn.Module, dataset: Dataset, post_epoch_hook=None, **kwargs):
         model.train(True)
 
         for idx, (X, Y) in enumerate(dataloader):
-            print(f'\rIteration {idx+1:10d} of {len(dataloader):10d}', end='')
+            if idx % 10 == 0:
+                print(f'\rIteration {idx+1:10d} of {len(dataloader):10d}', end='')
             data, labels = X.cuda(), Y.cuda()
             optimizer.zero_grad()
             output = model(data)
