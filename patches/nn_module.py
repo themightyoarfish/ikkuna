@@ -19,6 +19,8 @@ def _unwrap_init(cls):
 
 def _wrap_init(cls):
     global _patch_history
+    if cls in _patch_history:
+        raise RuntimeError('Nested wrappings are not supported.')
     _patch_history[cls] = cls.__init__
     old_init = _patch_history[cls]
     def init(self, *args, **kwargs):
