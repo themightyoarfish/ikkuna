@@ -37,7 +37,6 @@ class AlexNetMini(nn.Module):
             input_shape.append(1)
         H, W, C = input_shape
 
-
         with self._supervisor:
             self.features = nn.Sequential(
                 nn.Conv2d(C, 64, kernel_size=5, stride=2, padding=1),
