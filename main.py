@@ -3,7 +3,7 @@ import torchvision
 from torchvision.transforms import *
 import torch
 import torch.nn as nn
-from run_model import train, test
+from run_model import train
 import numpy as np
 
 from argparse import ArgumentParser
@@ -69,6 +69,37 @@ def _initialize_model(module, bias_val=0.01):
         raise ValueError(f'Don\'t know how to initialize {module.__class__.__name__}')
 
 
+def _main(dataset_str, model_str):
+    dataset, num_classes, H, W, C = _load_dataset(dataset_str)
+    dataset_test, *_rest = _load_dataset(dataset_str, train=False)
+    print(f'Number of classes: {num_classes}')
+    print(f'Data shape: {(H, W, C)}')
+
+    from supervise import capture_modules, MeanActivationHandler, EpochLossHandler
+    supervisor = capture_modules(nn.ReLU, nn.MaxPool2d, nn.Linear)
+    Model = getattr(models, model_str)
+    model = Model((H, W, C), num_classes=num_classes, supervisor=supervisor)
+    _initialize_model(model)
+    model.cuda()
+
+    activation_handler = MeanActivationHandler()
+    loss_handler = EpochLossHandler(model, dataset_test,
+                                    nn.CrossEntropyLoss())
+    supervisor.register_activation_observer(activation_handler)
+    supervisor.register_output_observer(loss_handler)
+
+    def evaluate_epoch(model):
+        activation_handler.on_epoch_finished()
+
+        from torch.utils.data import DataLoader
+        dataloader = DataLoader(dataset_test, batch_size=100)    # be safe, don't do it all at once
+        model.train(False)
+        for X, _ in dataloader:
+            model(X.cuda())
+        loss_handler.on_epoch_finished()
+        model.train(True)
+
+    train(model, dataset, post_epoch_hook=evaluate_epoch, batch_size=1000, epochs=400)
 
 def main():
     parser = ArgumentParser()
@@ -77,23 +108,7 @@ def main():
     parser.add_argument('-d', '--dataset', type=str, choices=data_choices, required=True)
 
     args = parser.parse_args()
-    dataset, num_classes, H, W, C = _load_dataset(args.dataset)
-    print(f'Number of classes: {num_classes}')
-    print(f'Data shape: {(H, W, C)}')
-
-    from supervise import capture_modules
-    supervisor = capture_modules(nn.ReLU, nn.MaxPool2d, nn.Linear)
-    Model = getattr(models, args.model)
-    model = Model((H, W, C), num_classes=num_classes, supervisor=supervisor)
-    _initialize_model(model)
-    model.cuda()
-
-    def evaluate_epoch(model):
-        test(model, _load_dataset(args.dataset, train=False)[0])
-        __import__('ipdb').set_trace()
-
-
-    train(model, dataset, post_epoch_hook=evaluate_epoch, batch_size=512, epochs=10)
+    _main(args.dataset, args.model)
 
 if __name__ == '__main__':
     main()
