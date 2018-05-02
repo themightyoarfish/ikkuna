@@ -96,15 +96,4 @@ def train(model: nn.Module, dataset: Dataset, post_epoch_hook=None, **kwargs):
         if post_epoch_hook:
             post_epoch_hook(model)
 
-def test(model: nn.Module, dataset: Dataset, **kwargs):
-    dataloader = DataLoader(dataset, batch_size=100)    # be safe, don't do it all at once
-    model.train(False)
-    loss_function = kwargs.pop('loss', nn.CrossEntropyLoss())
 
-    cum_loss = 0
-    n = len(dataloader)
-    for X, Y in dataloader:
-        predictions = model(X.cuda())
-        cum_loss += loss_function(predictions, Y.cuda())
-
-    print(f'Average loss on test set: {cum_loss/n}')
