@@ -327,8 +327,11 @@ class EpochLossHandler(Handler):
 
     Attributes
     ----------
-    _dataloader    :    torch.utils.data.DataLoaderj
-                        The loaded dataset (test) instance to load from.
+    _dataset    :   torch.utils.data.Dataset
+                    The dataset (test) instance to load from.
+    _test_batch_size    :   int
+                            Batch size to expect for forward passes. Necessary so the appropriate
+                            number of labels are retrieved from the dataset.
     _loss_function  :   torch.nn._Loss
                         Loss function to use
     _fig    :   plt.Figure
@@ -348,10 +351,11 @@ class EpochLossHandler(Handler):
                         Accumulator for the network accuracy
     '''
 
-    def __init__(self, test_loader, loss_function):
+    def __init__(self, dataset_test, loss_function, batch_size=100):
         super().__init__()
-        self._dataloader      = test_loader
-        self._loss_function   = loss_function
+        self._dataset      = dataset_test
+        self._loss_function = loss_function
+        self._test_batch_size = batch_size
 
         ###########################################################################################
         #                                       Plot setup                                        #
@@ -378,7 +382,7 @@ class EpochLossHandler(Handler):
         # loader yields data, labels; we only need labels
         def second(t):
             return t[1]
-        data_label_iter       = iter(self._dataloader)
+        data_label_iter = iter(DataLoader(self._dataset, batch_size=self._test_batch_size))
         self._label_iter      = map(second, data_label_iter)
         self._forward_counter = 0
         self._cum_loss        = 0
@@ -396,7 +400,7 @@ class EpochLossHandler(Handler):
 
             # accuracy
             correct_predictions    = torch.eq(labels.cuda(), torch.argmax(out_, dim=1))
-            n_predictions          = 100 * self._dataloader.batch_size
+            n_predictions          = 100 * self._test_batch_size
             self._cum_accuracy    += correct_predictions.sum().to(torch.float) / n_predictions
 
 
