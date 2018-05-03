@@ -5,10 +5,12 @@ import torch
 import torch.nn as nn
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
+from itertools import chain
 
 from supervise import EpochLossHandler, ActivationHandler, MeanActivationHandler
 
-from run_model import train_epoch, _create_optimizer
+import util
+from util import _create_optimizer
 import numpy as np
 from collections import defaultdict
 
@@ -74,7 +76,7 @@ def _initialize_model(module, bias_val=0.01):
     else:
         raise ValueError(f'Don\'t know how to initialize {module.__class__.__name__}')
 
-class Training:
+class Trainer:
     def __init__(self, dataset_str, **kwargs):
         '''Train a model on a dataset (only images). The model must be compatible with the image size.
 
@@ -100,22 +102,19 @@ class Training:
     def supervise(self, *modules):
         from supervise import capture_modules
         self._supervisor = capture_modules(*modules)
-        return self
 
-    def optimizer(self, **kwargs):
+    def optimize(self, **kwargs):
         name = kwargs.pop('name', 'Adam')
         self._optimizer = _create_optimizer(self._model, name, **kwargs)
         print(f'Using {self._optimizer.__class__.__name__} optimizer')
-        return self
 
-    def model(self, model_str):
+    def add_model(self, model_str):
         Model = getattr(models, model_str)
         self._model = Model(self._shape, num_classes=self._num_classes, supervisor=self._supervisor)
         _initialize_model(self._model)
         self._model.cuda()
-        return self
 
-    def display(self, *handlers):
+    def add_handlers(self, *handlers):
         for handler in handlers:
             if isinstance(handler, ActivationHandler):
                 self._handlers['activation'].append(handler)
@@ -123,25 +122,28 @@ class Training:
             else:
                 self._handlers['output'].append(handler)
                 self._supervisor.register_output_observer(handler)
-        return self
 
-    def train(self):
+    def train_epoch(self):
         # to be safe, enable batch-norm, dropout, and the like. Could be changed externally, so
         # do this before each epoch
         self._model.train(True)
-        for h in self._handlers['activation'] + self._handlers['gradient']:
+        # friendly reminder that python iterators are exhausted after one pass. you cannot iterate
+        # them again ...
+        all_handlers = list(chain.from_iterable(self._handlers.values()))
+        for h in all_handlers:
             h.on_epoch_started()
-        train_epoch(self._model, self._dataloader, self._optimizer, self._loss_function)
-        for h in self._handlers['activation'] + self._handlers['gradient']:
+        util.train_epoch(self._model, self._dataloader, self._optimizer, self._loss_function)
+        for h in all_handlers:  # ... not here, for instance.
             h.on_epoch_finished()
 
     def test(self, dataloader):
-        for h in self._handlers['output']:
+        all_handlers = list(chain.from_iterable(self._handlers.values()))
+        for h in all_handlers:
             h.on_epoch_started()
         self._model.train(False)
-        for X, _ in dataloader:
+        for X, _labels in dataloader:
             self._model(X.cuda())
-        for h in self._handlers['output']:
+        for h in all_handlers:
             h.on_epoch_finished()
 
 
@@ -153,13 +155,16 @@ def _main(dataset_str, model_str):
     activation_handler = MeanActivationHandler()
     loss_handler = EpochLossHandler(test_loader, nn.CrossEntropyLoss())
 
-    trainer = Training(dataset_str, batch_size=512).supervise(nn.ReLU, nn.Linear)
-    trainer.model(model_str).display(activation_handler, loss_handler).optimizer(name='Adam')
+    trainer = Trainer(dataset_str, batch_size=512)
+    trainer.supervise(nn.ReLU, nn.Linear)
+    trainer.add_model(model_str)
+    trainer.add_handlers(activation_handler, loss_handler)
+    trainer.optimize(name='Adam')
 
     epochs = 1000
     for e in range(epochs):
         print(f'Starting epoch {e+1:5d} of {epochs:5d}')
-        trainer.train()
+        trainer.train_epoch()
         trainer.test(test_loader)
 
 def main():
