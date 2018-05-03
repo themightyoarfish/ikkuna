@@ -223,6 +223,20 @@ class ActivationHandler(ABC):
         '''
         raise NotImplementedError
 
+class GradientHandler(ABC):
+
+    @abstractmethod
+    def process_gradients(self, module, gradients):
+        '''Callback for accessing a module's activations during the forward pass.
+
+        Parameters
+        ----------
+        module  :   nn.Module
+        gradients :   tuple or torch.Tensor
+        '''
+        raise NotImplementedError
+
+
 
 import numpy as np
 from matplotlib.ticker import MaxNLocator
@@ -272,6 +286,7 @@ class MeanActivationHandler(ActivationHandler):
         self._counter = 0
         self._ax.xaxis.set_major_locator(MaxNLocator(integer=True))
         self._monitor_testing = monitor_testing
+        self._epoch_running = False
 
     def process_activations(self, module, activations):
         if module.training or self._monitor_testing:
@@ -281,9 +296,15 @@ class MeanActivationHandler(ActivationHandler):
             pass
 
     def on_epoch_started(self):
-        pass
+        self._epoch_running = True
 
     def on_epoch_finished(self):
+
+        if self._counter == 0:
+            # in testing mode, apparently
+            print(f'Warning [{self.__class__.__name__}]: Received epoch_finished '
+                  'but nothing recorded. Assuming test run.')
+            return
 
         iterations = self._counter / len(self._accumulator.keys())
         for module, mean_activation in self._accumulator.items():
@@ -402,6 +423,11 @@ class EpochLossHandler(Handler):
 
     def on_epoch_finished(self):
         '''Update plot data on each epoch.'''
+        if self._forward_counter == 0:
+            # in training mode, apparently
+            print(f'Warning [{self.__class__.__name__}]: Received epoch_finished '
+                  'but nothing recorded. Assuming train run.')
+            return
         x = self._plot_acc.get_xdata()
         # append the current epoch number to x data
         x = np.append(x, x[-1]+1 if x.size > 0 else 1)
