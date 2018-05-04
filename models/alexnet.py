@@ -12,7 +12,8 @@ from supervise import Supervisor
 
 class AlexNetMini(nn.Module):
     '''Reduced AlexNet (basically just a few conv layers with relu and
-    max-pooling) which adapts to arbitrary input sizes.
+    max-pooling) which attempts to adapt to arbitrary input sizes, provided they are large enough to
+    survive the strides and conv cutoffs.
 
     Atributes
     ---------
