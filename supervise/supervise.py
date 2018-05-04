@@ -191,7 +191,7 @@ from collections import defaultdict
 from abc import ABC, abstractmethod
 
 class Handler(ABC):
-    '''Abstrac base class for all visualisers.'''
+    '''Abstract base class for all visualisers.'''
 
     @abstractmethod
     def on_epoch_started(self):
@@ -209,7 +209,7 @@ class Handler(ABC):
         multiple runs of the experiment with different weight initializations and the like.'''
         raise NotImplementedError
 
-class ActivationHandler(ABC):
+class ActivationHandler(Handler):
     '''Base class for activation handlers.'''
 
     @abstractmethod
@@ -223,7 +223,7 @@ class ActivationHandler(ABC):
         '''
         raise NotImplementedError
 
-class GradientHandler(ABC):
+class GradientHandler(Handler):
 
     @abstractmethod
     def process_gradients(self, module, gradients):
@@ -236,6 +236,18 @@ class GradientHandler(ABC):
         '''
         raise NotImplementedError
 
+class OutputHandler(Handler):
+
+    @abstractmethod
+    def process_outputs(self, module, outputs):
+        '''Callback for accessing the last supervised module's activations during the forward pass.
+
+        Parameters
+        ----------
+        module  :   nn.Module
+        outputs :   tuple or torch.Tensor
+        '''
+        raise NotImplementedError
 
 
 import numpy as np
@@ -282,7 +294,6 @@ class MeanActivationHandler(ActivationHandler):
         self._fig.suptitle('Mean layer activations per epoch')
         self._ax.set_xlabel('Epoch')
         self._ax.set_ylabel('Mean activation')
-        self._ax.set_yscale('symlog')
         self._counter = 0
         self._ax.xaxis.set_major_locator(MaxNLocator(integer=True))
         self._monitor_testing = monitor_testing
@@ -342,7 +353,7 @@ class MeanActivationHandler(ActivationHandler):
 import torch
 from torch.utils.data import DataLoader
 
-class EpochLossHandler(Handler):
+class EpochLossHandler(OutputHandler):
 
     '''Handler for plotting the test loss after each epoch.
 
