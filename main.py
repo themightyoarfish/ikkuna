@@ -77,14 +77,46 @@ def _initialize_model(module, bias_val=0.01):
         raise ValueError(f'Don\'t know how to initialize {module.__class__.__name__}')
 
 class Trainer:
+    '''Class to bundle all logic and parameters that go into training and testing a model on some
+    dataset.
+
+    Attributes
+    ----------
+    _dataset :  Dataset
+                The dataset used for training (can differ from the test set)
+    _num_classes    :   int
+                        Number of target categories (inferred)
+    _shape  :   list
+                Shape of the input data (H, W, C)
+    _batch_size :   int
+                    Training batch size
+    _loss_function  :   nn._Loss
+                        Loss function instance for training
+    _dataloader :   torch.utils.data.DataLoader
+                    loader for the training dataset
+    _handlers   :   defaultdict(list)
+                    Dict of handlers for `activation`, `gradient`, `output`
+    _supervisor :   Supervisor
+                    Supervisor to use in the model
+    _model  :   nn.Module
+    _optimizer  : torch.optim.Optimizer
+    '''
     def __init__(self, dataset_str, **kwargs):
-        '''Train a model on a dataset (only images). The model must be compatible with the image size.
+        '''Create a new Trainer. Handlers, model and optimizer are left uninitialised and must be set with
+        :meth:`supervise()`, :meth:`add_model` and :meth:`optimize` before calling :meth: `train`.
+        .. warning::
+            The order of calls must be exactly the one above, as the model must be initialised with
+            the supervisor and the optimizer requires the model.
+
+        Relevant keyword args are:
 
         Parameters
         ----------
+        dataset_str :   str
+                        Name of the dataset (mus exist in torchvision.datasets)
         batch_size  :   int
-        loss   :   function
-                            Defaults to nn.CrossEntropyLoss
+        loss   :    function
+                    Defaults to nn.CrossEntropyLoss
         '''
         ############################################################################################
         #                                  Acquire parameters                                      #
@@ -100,30 +132,76 @@ class Trainer:
         self._supervisor = self._model = self._optimizer = None
 
     def supervise(self, *modules):
+        '''Set the supervisor.
+
+        Parameters
+        ----------
+        modules :   list(type)
+                    Arbitrary number of :class:`nn.Module` types to supervise.
+        '''
         from supervise import capture_modules
         self._supervisor = capture_modules(*modules)
 
     def optimize(self, **kwargs):
+        '''Set the optimizer.
+
+        Parameters
+        ----------
+        name    :   str
+                    Name of the optimizer (must exist in :mod:`torch.optim`)
+
+        All other kwargs are forwarded to the optimizer constructor
+        '''
         name = kwargs.pop('name', 'Adam')
         self._optimizer = _create_optimizer(self._model, name, **kwargs)
         print(f'Using {self._optimizer.__class__.__name__} optimizer')
 
     def add_model(self, model_str):
+        '''Set the model to train/test.
+        .. warning::
+            Currently, the function automatically calls :meth:`nn.Modue.cuda()` and hence a GPU is
+            necessary.
+
+        Parameters
+        ----------
+        model_str   :   str
+                        Name of the model (must exist in :mod:`models`)
+        '''
         Model = getattr(models, model_str)
         self._model = Model(self._shape, num_classes=self._num_classes, supervisor=self._supervisor)
         _initialize_model(self._model)
         self._model.cuda()
 
     def add_handlers(self, *handlers):
+        '''Add handlers for processing activation, gradient, or output information. They will
+        automatically be registered according to their type.
+
+        Parameters
+        ----------
+        handlers    :   list(supervise.Handler)
+
+        Raises
+        ------
+        ValueError
+            In case there's a handler whose type is not :class:`ActivationHandler`,
+            :class:`GradientHandler` or :class:`OutputHandler`.
+        '''
         for handler in handlers:
             if isinstance(handler, ActivationHandler):
                 self._handlers['activation'].append(handler)
                 self._supervisor.register_activation_observer(handler)
-            else:
+            elif isinstance(handler, GradientHandler):
+                self._handlers['gradient'].append(handler)
+                self._supervisor.register_output_observer(handler)
+            elif isinstance(handler, OutputHandler):
                 self._handlers['output'].append(handler)
                 self._supervisor.register_output_observer(handler)
+            else:
+                raise ValueError(f'Don\'t know what to do with {handler}')
 
     def train_epoch(self):
+        '''Run through the training set once.'''
+
         # to be safe, enable batch-norm, dropout, and the like. Could be changed externally, so
         # do this before each epoch
         self._model.train(True)
@@ -137,6 +215,18 @@ class Trainer:
             h.on_epoch_finished()
 
     def test(self, dataloader):
+        '''Run through the test set once.
+
+        Parameters
+        ----------
+        dataloader  :   torch.utils.DataLoader
+                        Loader for the test data.
+
+        .. warning::
+            It only makes sense for ``dataloader`` to be the same loader which was passed to any
+            :class:`OutputHandler` which makes use of test labels (such as the
+            :class:`EpochLossHandler`).
+        '''
         all_handlers = list(chain.from_iterable(self._handlers.values()))
         for h in all_handlers:
             h.on_epoch_started()
