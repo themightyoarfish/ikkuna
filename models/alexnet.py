@@ -15,7 +15,7 @@ class AlexNetMini(nn.Module):
     max-pooling) which attempts to adapt to arbitrary input sizes, provided they are large enough to
     survive the strides and conv cutoffs.
 
-    Atributes
+    Attributes
     ---------
     features    :   nn.Module
                     Convolutional module, extracting features from the input

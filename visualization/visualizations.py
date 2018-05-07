@@ -47,7 +47,7 @@ class Handler(ABC):
 
     @abstractmethod
     def update_display(self):
-        '''Should be invoked each time a new epoch _has finished_.'''
+        '''Should be invoked each time a new epoch has finished.'''
         raise NotImplementedError
 
     @abstractmethod

@@ -135,6 +135,7 @@ class Trainer:
         '''Create a new Trainer. Handlers, model and optimizer are left uninitialised and must be
         set with :meth:`supervise()`, :meth:`add_model` and :meth:`optimize` before calling :meth:
         `train`.
+
         .. warning::
             The order of calls must be exactly the one above, as the model must be initialised with
             the supervisor and the optimizer requires the model.
@@ -191,8 +192,9 @@ class Trainer:
 
     def add_model(self, model_str):
         '''Set the model to train/test.
+
         .. warning::
-            Currently, the function automatically calls :meth:`nn.Modue.cuda()` and hence a GPU is
+            Currently, the function automatically calls :meth:`nn.Module.cuda()` and hence a GPU is
             necessary.
 
         Parameters

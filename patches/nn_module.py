@@ -7,8 +7,8 @@ checks whether a supervisor is registered and add itself to its list of supervis
 will allow the supervisor to monitor the variables inside.
 
 .. warning::
-    This module is not threadsafe. Since :mod:`torch.nn.Module`s `__init__` method is patched,
-    creation of objects anywhere will be affected.
+    This module is not threadsafe. Since :meth:`torch.nn.Module.__init__()`
+    method is patched, creation of objects anywhere will be affected.
 '''
 import torch.nn as nn
 _patch_history = {}
