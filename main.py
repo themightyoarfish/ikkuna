@@ -159,6 +159,7 @@ class Trainer:
         print(f'Data shape: {self._shape}')
         self._handlers = defaultdict(list)
         self._supervisor = self._model = self._optimizer = None
+        self._train_counter = 0
 
     def supervise(self, *modules):
         '''Set the supervisor.
@@ -225,9 +226,19 @@ class Trainer:
             else:
                 raise ValueError(f'Don\'t know what to do with {handler}')
 
+    def _epoch_finished(self):
+        for handler in itertools.chain.from_iterable(self._handlers.values()):
+            handler.on_epoch_finished()
+
+    def _epoch_started(self):
+        for handler in itertools.chain.from_iterable(self._handlers.values()):
+            handler.on_epoch_started()
+
     def train(self):
         '''Run through 1 batch in the training set. The iterator will wrap around and
         restart at the beginning.'''
+        if self._train_counter == 0:
+            self._epoch_started()
 
         # to be safe, enable batch-norm, dropout, and the like. Could be changed externally, so
         # do this before each epoch
@@ -235,14 +246,19 @@ class Trainer:
         try:
             X, Y = next(self._data_iter)
         except StopIteration:
-            self._data_iter = iter(self._dataloader)
-            X, Y = next(self._data_iter)
+            self._train_counter = 0
+            self._epoch_finished()
+            self._epoch_started()
+            self._data_iter     = iter(self._dataloader)
+            X, Y                = next(self._data_iter)
+
         data, labels = X.cuda(), Y.cuda()
         self._optimizer.zero_grad()
         output = self._model(data)
         loss = self._loss_function(output, labels)
         loss.backward()
         self._optimizer.step()
+        self._train_counter += 1
 
     def test(self, dataloader):
         '''Run through the test set once.
@@ -269,6 +285,8 @@ def _main(dataset_str, model_str, batch_size=512):
     activation_handler          = MeanActivationHandler(
                                         int(N_train * 0.05)   # step every 5%
                                   )
+    print(f'Data size: {N_train}')
+    print(f'Batches per epoch: {batches_per_epoch}')
 
     trainer = Trainer(dataset_train, batch_size=batch_size)
     trainer.supervise(nn.ReLU, nn.Linear)
@@ -281,8 +299,6 @@ def _main(dataset_str, model_str, batch_size=512):
         print(f'Starting epoch {e+1:5d} of {epochs:5d}')
         for batch_idx in range(batches_per_epoch):
             trainer.train()
-            if batch_idx % 10 == 0:
-                trainer.test(test_loader)
 
 
 def main():
