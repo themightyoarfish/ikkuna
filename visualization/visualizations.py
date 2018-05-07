@@ -7,16 +7,22 @@ class Handler(ABC):
 
     def __init__(self, step):
         self._step = step
-        self._epoch_counter = 0
+        self._current_epoch = 0
+        self._modules = []
+
+    def add_module(self, module):
+        if module not in self._modules:
+            self._modules.append(module)
 
     @abstractmethod
     def on_epoch_started(self):
         '''Should be invoked each time _before_ a new epoch begins.'''
-        raise NotImplementedError
+        self._current_epoch += 1
 
+    @abstractmethod
     def on_epoch_finished(self):
         '''Should be invoked each time _before_ a new epoch begins.'''
-        self._epoch_counter += 1
+        raise NotImplementedError
 
     @abstractmethod
     def update_display(self):
@@ -27,7 +33,7 @@ class Handler(ABC):
     def on_training_started(self):
         '''Should be invoked _before_ starting a training session. This serves to distinguish e.g.
         multiple runs of the experiment with different weight initializations and the like.'''
-        self._epoch_counter = 0
+        self._current_epoch = 0
         raise NotImplementedError
 
 
@@ -101,31 +107,44 @@ class MeanActivationHandler(ActivationHandler):
         self._fig, self._ax   = plt.subplots()
         self._plots           = {}
         self._monitor_testing = monitor_testing
+        self._first_module    = None
         self._datapoints_seen = 0
 
         self._ax.set_autoscaley_on(True)
         self._fig.suptitle(f'Mean activations over every {self._step} data points')
-        self._ax.set_xlabel(f'# foward passes / {self._step}')
+        self._ax.set_xlabel(f'Epoch (end)')
         self._ax.set_ylabel('Mean activation')
         self._ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+        self._ax.set_xticks([], [])
 
     def process_activations(self, module, activations):
-        if module.training or self._monitor_testing:
-            self._accumulator[module] += activations.sum().item()
-            self._datapoints_seen += activations.shape[0]
-        else:
-            pass
-        if self._datapoints_seen != 0 and self._datapoints_seen % self._step == 0:
-            self.update_display()
 
-    def on_epoch_started(self):
-        super().on_epoch_started()
-        __import__('ipdb').set_trace()
+        # record the first module so we always know when a batch is finished. This assumes all
+        # modules get activated during each batch, and in the same order.
+        if not self._first_module:
+            self._first_module = module
+
+        # we are beginning a new set of activations. Whenever we are at the first module, we check
+        # if we need to make another step. If yes, update the plot, reset data counter. Else just
+        # increment the data counter.
+        if module == self._first_module:
+            if self._datapoints_seen >= self._step:
+                self.update_display()
+                self._datapoints_seen = 0
+
+            self._datapoints_seen += activations.shape[0]
+
+        if module.training or self._monitor_testing:
+            # TODO: Make float tensor
+            self._accumulator[module] += activations.sum().item()
+        else:
+            # do nothing
+            pass
 
     def update_display(self):
 
         for module, cum_activation in self._accumulator.items():
-            # reset epoch accumulator
+            # reset step accumulator
             self._accumulator[module] = 0
             self._means[module].append(cum_activation / self._datapoints_seen)
 
@@ -136,10 +155,8 @@ class MeanActivationHandler(ActivationHandler):
                                                     label=f'{module.__class__.__name__}-{idx}')[0]
 
             # set the extended data for the plots
-            epoch = len(self._means[module])
-            x = np.arange(1, epoch + 1)
-            self._plots[module].set_xdata(x)
             self._plots[module].set_ydata(mean_activations)
+            self._plots[module].set_xdata(np.arange(len(mean_activations)))
 
         # set the axes view to accomodate new data
         self._ax.legend(ncol=2)
@@ -151,7 +168,27 @@ class MeanActivationHandler(ActivationHandler):
         self._fig.canvas.flush_events()
         self._fig.show()
 
-        self._datapoints_seen = 0
-
     def on_training_started(self):
         pass
+
+    def on_epoch_started(self):
+        super().on_epoch_started()
+
+    def on_epoch_finished(self):
+        plots = list(self._plots.values())
+        plot = plots[0]
+        xdata = plot.get_xdata()
+
+        current_xticks = self._ax.get_xticks().tolist()
+        current_xticks.append(xdata[-1])
+        current_xticklabels = list(self._ax.get_xticklabels())
+        current_xticklabels.append(self._current_epoch)
+        # new_xtick_labels = [str(idx) for idx in range(len(current_xticks))]
+        self._ax.set_xticks(current_xticks)
+        self._ax.set_xticklabels(current_xticklabels)
+
+        # self._ax.set_xticks([xdata[-1]])
+        # ticks = self._ax.get_xticks().tolist()
+        # __import__('ipdb').set_trace()
+        # xticks = self._ax.get_xticks()
+        # last_step = xdata[-1] if len(xdata) > 0 else 0
