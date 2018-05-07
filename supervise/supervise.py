@@ -28,6 +28,7 @@ _supervisor_stack = []
 
 import torch.nn as nn
 import numpy as np
+from patches import nn_module
 
 def supervisors():
     '''Get the stack of all supervisors'''
@@ -104,6 +105,8 @@ class Supervisor():
         ----------
         observer    :   object
         '''
+        for module in self._modules:
+            observer.add_module(module)
         self._activation_observers.add(observer)
 
     def register_gradient_observer(self, observer):
@@ -113,6 +116,8 @@ class Supervisor():
         ----------
         observer    :   object
         '''
+        for module in self._modules:
+            observer.add_module(module)
         self._gradient_observers.add(observer)
 
     def _process_activations(self, module, in_, out_):
@@ -152,6 +157,9 @@ class Supervisor():
             self._modules.append(module)
             module.register_forward_hook(self._process_activations)
             module.register_backward_hook(self._process_gradients)
+            import itertools
+            for handler in itertools.chain(self._gradient_observers, self._activation_observers):
+                handler.add_module(module)
 
     def __enter__(self):
         global _supervisor_stack
