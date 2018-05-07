@@ -1,11 +1,10 @@
 """Adapted from torchvision.models.densenet"""
 
-import re
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torch.utils.model_zoo as model_zoo
 from collections import OrderedDict
+
 
 class _DenseLayer(nn.Sequential):
     def __init__(self, num_input_features, growth_rate, bn_size, drop_rate):
@@ -31,7 +30,8 @@ class _DenseBlock(nn.Sequential):
     def __init__(self, num_layers, num_input_features, bn_size, growth_rate, drop_rate):
         super(_DenseBlock, self).__init__()
         for i in range(num_layers):
-            layer = _DenseLayer(num_input_features + i * growth_rate, growth_rate, bn_size, drop_rate)
+            layer = _DenseLayer(num_input_features + i * growth_rate, growth_rate, bn_size,
+                                drop_rate)
             self.add_module('denselayer%d' % (i + 1), layer)
 
 
@@ -56,10 +56,10 @@ class DenseNet(nn.Module):
             input_shape.append(1)
         H, W, C = input_shape
 
-
         # First convolution
         self.features = nn.Sequential(OrderedDict([
-            ('conv0', nn.Conv2d(C, num_init_features, kernel_size=7, stride=1, padding=3, bias=False)),
+            ('conv0', nn.Conv2d(C, num_init_features, kernel_size=7, stride=1, padding=3,
+                                bias=False)),
             ('norm0', nn.BatchNorm2d(num_init_features)),
             ('relu0', nn.ReLU(inplace=True)),
             ('pool0', nn.MaxPool2d(kernel_size=3, stride=2, padding=1)),
@@ -73,7 +73,8 @@ class DenseNet(nn.Module):
             self.features.add_module('denseblock%d' % (i + 1), block)
             num_features = num_features + num_layers * growth_rate
             if i != len(block_config) - 1:
-                trans = _Transition(num_input_features=num_features, num_output_features=num_features // 2)
+                trans = _Transition(num_input_features=num_features,
+                                    num_output_features=num_features // 2)
                 self.features.add_module('transition%d' % (i + 1), trans)
                 num_features = num_features // 2
 

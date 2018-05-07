@@ -1,5 +1,8 @@
 from collections import defaultdict
 from abc import ABC, abstractmethod
+import numpy as np
+from matplotlib.ticker import MaxNLocator
+from matplotlib import pyplot as plt
 
 
 class Handler(ABC):
@@ -66,11 +69,6 @@ class GradientHandler(Handler):
         raise NotImplementedError
 
 
-import numpy as np
-from matplotlib.ticker import MaxNLocator
-from matplotlib import pyplot as plt
-
-
 class MeanActivationHandler(ActivationHandler):
     '''A handler which computes and plots average activations per layer for each epoch.
 
@@ -87,7 +85,8 @@ class MeanActivationHandler(ActivationHandler):
     _plots  :   dict
                 Per-module `Lines2D` object representing the module's plot.
     _datapoints_seen    :   int
-                            Total umber of activations seen since last call to :meth:`update_display`
+                            Total umber of activations seen since last call to
+                            :meth:`update_display`
     _monitor_testing    :   bool
     '''
 

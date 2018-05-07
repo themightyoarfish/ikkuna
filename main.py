@@ -7,7 +7,6 @@ import itertools
 
 from visualization import ActivationHandler, MeanActivationHandler, GradientHandler
 
-import util
 from util import _create_optimizer
 import numpy as np
 from collections import defaultdict, namedtuple
@@ -278,10 +277,7 @@ def _main(dataset_str, model_str, batch_size=512):
     # pep8: ignore=E221
     dataset_train, dataset_test = _load_dataset(dataset_str)
     N_train                     = len(dataset_train.dataset)
-    N_test                      = len(dataset_test.dataset)
     batches_per_epoch           = int(N_train / batch_size + 0.5)
-    test_batch_size             = 100
-    test_loader                 = DataLoader(dataset_test.dataset, batch_size=test_batch_size)
     activation_handler          = MeanActivationHandler(
                                         int(N_train * 0.05)   # step every 5%
                                   )

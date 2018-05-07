@@ -26,19 +26,21 @@ reason).
 '''
 _supervisor_stack = []
 
-import torch.nn as nn
-import numpy as np
-from patches import nn_module
+import torch.nn as nn   # noqa
+from patches import nn_module   # noqa
+
 
 def supervisors():
     '''Get the stack of all supervisors'''
     global _supervisor_stack
     return _supervisor_stack
 
+
 def current_supervisor():
     '''Get topmost supervisor.'''
     global _supervisor_stack
     return None if not _supervisor_stack else _supervisor_stack[-1]
+
 
 def capture_modules(*modules, allow_subclass=False):
     '''Create a new supervisor for capturing modules.
@@ -49,6 +51,7 @@ def capture_modules(*modules, allow_subclass=False):
                 Arbitrary types to register on creation
     '''
     return Supervisor(modules, allow_subclass=allow_subclass)
+
 
 class Supervisor():
     '''A context manager for tracking the creation of nn modules.
@@ -95,7 +98,7 @@ class Supervisor():
         ValueError
             If ``module`` is not currently supervised.
         '''
-        if not module in self._modules:
+        if module not in self._modules:
             raise ValueError(f'Module {module} not registered with this Supervisor')
 
     def register_activation_observer(self, observer):
@@ -169,4 +172,3 @@ class Supervisor():
         global _supervisor_stack
         assert self == _supervisor_stack[-1]    # sanity check
         _supervisor_stack.pop()
-

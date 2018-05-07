@@ -1,9 +1,4 @@
 import torch
-import torch.nn as nn
-
-from torch.utils.data import Dataset
-from torch.utils.data import DataLoader
-from torch.optim import Adam
 
 
 def _available_optimizers():

@@ -7,8 +7,8 @@ torchvision.models.alexnet.
 '''
 
 import torch.nn as nn
-import torch.utils.model_zoo as model_zoo
 from supervise import Supervisor
+
 
 class AlexNetMini(nn.Module):
     '''Reduced AlexNet (basically just a few conv layers with relu and

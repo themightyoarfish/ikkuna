@@ -13,9 +13,11 @@ will allow the supervisor to monitor the variables inside.
 import torch.nn as nn
 _patch_history = {}
 
+
 def _unwrap_init(cls):
     global _patch_history
     cls.__init__ = _patch_history.pop(cls)
+
 
 def _wrap_init(cls):
     global _patch_history
@@ -23,6 +25,7 @@ def _wrap_init(cls):
         raise RuntimeError('Nested wrappings are not supported.')
     _patch_history[cls] = cls.__init__
     old_init = _patch_history[cls]
+
     def init(self, *args, **kwargs):
         # this needs to be in the innermost scope, otherwise we'll get a circular import with
         # supervise/supervise.py
@@ -32,5 +35,6 @@ def _wrap_init(cls):
         if sup:
             sup.add_module(self)
     cls.__init__ = init
+
 
 _wrap_init(nn.Module)
