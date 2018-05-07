@@ -6,25 +6,43 @@ from matplotlib import pyplot as plt
 
 
 class Handler(ABC):
-    '''Abstract base class for all visualisers.'''
+    '''Abstract base class for all visualisers.
+
+    Attributes
+    ----------
+    _step   :   int
+                Step size, i.e. the number of samples (*not batches*) to observer before each plot
+                update
+    _current_epoch  :   int
+                        Incremented in :meth:`on_epoch_started()` and is thus 1-based
+    _modules    :   list(torch.nn.Module)
+                    List of modules seen in order to know which modules are being supervised and
+                    when a batch is finished.
+    '''
 
     def __init__(self, step):
-        self._step = step
+        self._step          = step
         self._current_epoch = 0
-        self._modules = []
+        self._modules       = []
 
     def add_module(self, module):
+        '''Add a module. Noop if already in the list of modules.
+
+        Parameters
+        ----------
+        module  :   torch.nn.Module
+        '''
         if module not in self._modules:
             self._modules.append(module)
 
     @abstractmethod
     def on_epoch_started(self):
-        '''Should be invoked each time _before_ a new epoch begins.'''
+        '''Should be invoked each time *before* a new epoch begins.'''
         self._current_epoch += 1
 
     @abstractmethod
     def on_epoch_finished(self):
-        '''Should be invoked each time _before_ a new epoch begins.'''
+        '''Should be invoked each time *after* a new epoch begins.'''
         raise NotImplementedError
 
     @abstractmethod
@@ -56,6 +74,7 @@ class ActivationHandler(Handler):
 
 
 class GradientHandler(Handler):
+    '''Base class for gradient handlers.'''
 
     @abstractmethod
     def process_gradients(self, module, gradients):
@@ -71,6 +90,10 @@ class GradientHandler(Handler):
 
 class MeanActivationHandler(ActivationHandler):
     '''A handler which computes and plots average activations per layer for each epoch.
+
+    .. note::
+        This is mostly useless and just a proof of concept. Don't try to deduce anything from these
+        plots.
 
     Attributes
     ----------
@@ -94,6 +117,7 @@ class MeanActivationHandler(ActivationHandler):
         '''
         Parameters
         ----------
+        step    :   int
         monitor_testing :   bool
                             Whether or not test rungs (where the module's `training` property is
                             `False`) should also be plotted. If `True`, no distinctino is being made
@@ -109,17 +133,29 @@ class MeanActivationHandler(ActivationHandler):
         self._first_module    = None
         self._datapoints_seen = 0
 
+        ###########################################################################################
+        #                                    Set up the figure                                    #
+        ###########################################################################################
         self._ax.set_autoscaley_on(True)
         self._fig.suptitle(f'Mean activations over every {self._step} data points')
         self._ax.set_xlabel(f'Epoch (end)')
         self._ax.set_ylabel('Mean activation')
         self._ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+        # disable ticks as we handle them manually in on_epoch_finished()
         self._ax.set_xticks([], [])
 
     def process_activations(self, module, activations):
+        '''Receive activations for module. We keep a reference to the first module seen, so we know
+        when a batch is finished, since we should get one call for each layer for each batch. When
+        we see the first module again, we can check if the step size mandates a plot update and
+        increment the counter of samples seen
 
-        # record the first module so we always know when a batch is finished. This assumes all
-        # modules get activated during each batch, and in the same order.
+        .. warning::
+            This assumes all modules get activated during each batch, and in the same order.
+
+        '''
+
+        # record the first module so we always know when a batch is finished.
         if not self._first_module:
             self._first_module = module
 
@@ -141,6 +177,8 @@ class MeanActivationHandler(ActivationHandler):
             pass
 
     def update_display(self):
+        '''Update the plot by appending the mean activation over the most recent ``_step``
+        activations to the records and relimiting the graphs.'''
 
         for module, cum_activation in self._accumulator.items():
             # reset step accumulator
@@ -174,6 +212,8 @@ class MeanActivationHandler(ActivationHandler):
         super().on_epoch_started()
 
     def on_epoch_finished(self):
+        '''Here happens the tick magic. When an epoch finishes, we need to append a new tick with
+        out ``_current_epoch`` as a label, but the value will be something entirely different.'''
         plots = list(self._plots.values())
         plot = plots[0]
         xdata = plot.get_xdata()
@@ -185,9 +225,3 @@ class MeanActivationHandler(ActivationHandler):
         # new_xtick_labels = [str(idx) for idx in range(len(current_xticks))]
         self._ax.set_xticks(current_xticks)
         self._ax.set_xticklabels(current_xticklabels)
-
-        # self._ax.set_xticks([xdata[-1]])
-        # ticks = self._ax.get_xticks().tolist()
-        # __import__('ipdb').set_trace()
-        # xticks = self._ax.get_xticks()
-        # last_step = xdata[-1] if len(xdata) > 0 else 0

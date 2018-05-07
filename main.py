@@ -1,17 +1,17 @@
-import models
-import torchvision
-from torchvision.transforms import ToTensor, Compose
+import numpy as np
+from collections import defaultdict, namedtuple
+from argparse import ArgumentParser
+
+import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
+import torchvision
+from torchvision.transforms import ToTensor, Compose
 import itertools
 
 from visualization import ActivationHandler, MeanActivationHandler, GradientHandler
-
+import models
 from util import _create_optimizer
-import numpy as np
-from collections import defaultdict, namedtuple
-
-from argparse import ArgumentParser
 
 DatasetMeta = namedtuple('DatasetMeta', ['dataset', 'num_classes', 'shape'])
 
@@ -55,8 +55,12 @@ def _load_dataset(name):
         # infer number of classes from labels. will fail if not all classes occur in labels
         if isinstance(labels, np.ndarray):
             return np.unique(labels).size()
-        else:
+        elif isinstance(labels, list):
+            return len(set(labels))
+        elif isinstance(labels, torch.Tensor):
             return labels.unique().numel()
+        else:
+            raise ValueError(f'Unexpected label storage {labels.__class__.__name__}')
 
     def shape(dataset):
         if dataset.train:
@@ -274,12 +278,11 @@ class Trainer:
 
 def _main(dataset_str, model_str, batch_size=512):
 
-    # pep8: ignore=E221
     dataset_train, dataset_test = _load_dataset(dataset_str)
     N_train                     = len(dataset_train.dataset)
     batches_per_epoch           = int(N_train / batch_size + 0.5)
     activation_handler          = MeanActivationHandler(
-                                        int(N_train * 0.05)   # step every 5%
+                                        int(N_train * 0.33)   # step every 33%
                                   )
     print(f'Data size: {N_train}')
     print(f'Batches per epoch: {batches_per_epoch}')
