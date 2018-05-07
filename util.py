@@ -5,6 +5,7 @@ from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 from torch.optim import Adam
 
+
 def _available_optimizers():
     '''List names of all available torch optimizers form :py:mod:`torch.optim`.
 
@@ -14,12 +15,13 @@ def _available_optimizers():
     '''
     # get all module properties which aren't magic
     available_optimizers = set(getattr(torch.optim, name) for name in dir(torch.optim) if
-            not name.startswith('__'))
+                               not name.startswith('__'))
     # remove everything which is a module and not a class (looking at you, lr_scheduler o_o)
-    available_optimizers = filter(lambda o: type(o) == type, available_optimizers)
+    available_optimizers = filter(lambda o: isinstance(o, type), available_optimizers)
     # map them to their class name (w/o module)
     available_optimizers = map(lambda o: o.__name__, available_optimizers)
     return list(available_optimizers)
+
 
 def _create_optimizer(model, name, **kwargs):
     '''Create an optimizer for `model`s parameters. Will disregard all params
@@ -46,13 +48,3 @@ def _create_optimizer(model, name, **kwargs):
 
     params = [p for p in model.parameters() if p.requires_grad]
     return getattr(torch.optim, name)(params, **kwargs)
-
-
-def train_epoch(model, dataloader, optimizer, loss_function):
-    for idx, (X, Y) in enumerate(dataloader):
-        data, labels = X.cuda(), Y.cuda()
-        optimizer.zero_grad()
-        output = model(data)
-        loss = loss_function(output, labels)
-        loss.backward()
-        optimizer.step()
