@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 from matplotlib.ticker import MaxNLocator
 from matplotlib import pyplot as plt
+import torch
 
 
 class Handler(ABC):
@@ -125,7 +126,11 @@ class MeanActivationHandler(ActivationHandler):
                             Default is `False`.
         '''
         super().__init__(step)
-        self._accumulator     = defaultdict(float)
+
+        def default_tensor():
+            return torch.tensor(0, dtype=torch.float32).cuda()
+
+        self._accumulator     = defaultdict(default_tensor)
         self._means           = defaultdict(list)
         self._fig, self._ax   = plt.subplots()
         self._plots           = {}
@@ -137,7 +142,8 @@ class MeanActivationHandler(ActivationHandler):
         #                                    Set up the figure                                    #
         ###########################################################################################
         self._ax.set_autoscaley_on(True)
-        self._fig.suptitle(f'Mean activations over every {self._step} data points')
+        self._fig.suptitle(f'Mean activations over every {self._step} '
+                           'data points (rounded to batch size)')
         self._ax.set_xlabel(f'Epoch (end)')
         self._ax.set_ylabel('Mean activation')
         self._ax.xaxis.set_major_locator(MaxNLocator(integer=True))
@@ -170,8 +176,7 @@ class MeanActivationHandler(ActivationHandler):
             self._datapoints_seen += activations.shape[0]
 
         if module.training or self._monitor_testing:
-            # TODO: Make float tensor
-            self._accumulator[module] += activations.sum().item()
+            self._accumulator[module] += activations.sum()
         else:
             # do nothing
             pass
@@ -183,7 +188,7 @@ class MeanActivationHandler(ActivationHandler):
         for module, cum_activation in self._accumulator.items():
             # reset step accumulator
             self._accumulator[module] = 0
-            self._means[module].append(cum_activation / self._datapoints_seen)
+            self._means[module].append(cum_activation.item() / self._datapoints_seen)
 
         for idx, (module, mean_activations) in enumerate(self._means.items()):
 
