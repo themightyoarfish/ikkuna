@@ -1,5 +1,5 @@
 import numpy as np
-from collections import defaultdict, namedtuple
+from collections import namedtuple
 from argparse import ArgumentParser
 
 import torch
@@ -7,9 +7,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 import torchvision
 from torchvision.transforms import ToTensor, Compose
-import itertools
 
-from visualization import ActivationHandler, MeanActivationHandler, GradientHandler
 import models
 from util import _create_optimizer
 
@@ -161,20 +159,7 @@ class Trainer:
 
         print(f'Number of classes: {self._num_classes}')
         print(f'Data shape: {self._shape}')
-        self._handlers = defaultdict(list)
-        self._supervisor = self._model = self._optimizer = None
         self._train_counter = 0
-
-    def supervise(self, *modules):
-        '''Set the supervisor.
-
-        Parameters
-        ----------
-        modules :   list(type)
-                    Arbitrary number of :class:`nn.Module` types to supervise.
-        '''
-        from supervise import capture_modules
-        self._supervisor = capture_modules(*modules)
 
     def optimize(self, **kwargs):
         '''Set the optimizer.
@@ -203,47 +188,13 @@ class Trainer:
                         Name of the model (must exist in :mod:`models`)
         '''
         Model = getattr(models, model_str)
-        self._model = Model(self._shape, num_classes=self._num_classes, supervisor=self._supervisor)
+        self._model = Model(self._shape, num_classes=self._num_classes)
         _initialize_model(self._model)
         self._model.cuda()
-
-    def add_handlers(self, *handlers):
-        '''Add handlers for processing activation, gradient, or output information. They will
-        automatically be registered according to their type.
-
-        Parameters
-        ----------
-        handlers    :   list(supervise.Handler)
-
-        Raises
-        ------
-        ValueError
-            In case there's a handler whose type is not :class:`ActivationHandler`,
-            :class:`GradientHandler`.
-        '''
-        for handler in handlers:
-            if isinstance(handler, ActivationHandler):
-                self._handlers['activation'].append(handler)
-                self._supervisor.register_activation_observer(handler)
-            elif isinstance(handler, GradientHandler):
-                self._handlers['gradient'].append(handler)
-                self._supervisor.register_output_observer(handler)
-            else:
-                raise ValueError(f'Don\'t know what to do with {handler}')
-
-    def _epoch_finished(self):
-        for handler in itertools.chain.from_iterable(self._handlers.values()):
-            handler.on_epoch_finished()
-
-    def _epoch_started(self):
-        for handler in itertools.chain.from_iterable(self._handlers.values()):
-            handler.on_epoch_started()
 
     def train(self):
         '''Run through 1 batch in the training set. The iterator will wrap around and
         restart at the beginning.'''
-        if self._train_counter == 0:
-            self._epoch_started()
 
         # to be safe, enable batch-norm, dropout, and the like. Could be changed externally, so
         # do this before each epoch
@@ -252,8 +203,6 @@ class Trainer:
             X, Y = next(self._data_iter)
         except StopIteration:
             self._train_counter = 0
-            self._epoch_finished()
-            self._epoch_started()
             self._data_iter     = iter(self._dataloader)
             X, Y                = next(self._data_iter)
 
@@ -283,16 +232,11 @@ def _main(dataset_str, model_str, batch_size=512):
     dataset_train, dataset_test = _load_dataset(dataset_str)
     N_train                     = len(dataset_train.dataset)
     batches_per_epoch           = int(N_train / batch_size + 0.5)
-    activation_handler          = MeanActivationHandler(
-                                        int(N_train * 0.33)   # step every 33%
-                                  )
     print(f'Data size: {N_train}')
     print(f'Batches per epoch: {batches_per_epoch}')
 
     trainer = Trainer(dataset_train, batch_size=batch_size)
-    trainer.supervise(nn.ReLU, nn.Linear)
     trainer.add_model(model_str)
-    trainer.add_handlers(activation_handler)
     trainer.optimize(name='Adam')
 
     epochs = 1000
