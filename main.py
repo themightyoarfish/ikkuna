@@ -214,20 +214,26 @@ class Trainer:
         self._optimizer.step()
         self._train_counter += 1
 
-    def test(self, dataloader):
+    def test(self, dataset):
         '''Run through the test set once.
 
         Parameters
         ----------
-        dataloader  :   torch.utils.DataLoader
-                        Loader for the test data.
+        dataset  :   DatasetMeta
         '''
         self._model.train(False)
-        for X, _labels in dataloader:
-            self._model(X.cuda())
+        test_loader = DataLoader(dataset.dataset, batch_size=self._batch_size, shuffle=True)
+
+        num_correct = 0
+        n = 0
+        for X, _labels in test_loader:
+            n += X.shape[0]
+            predictions = self._model(X.cuda()).argmax(1)
+            num_correct += (predictions.cpu() == _labels).sum()
+        return num_correct.item() / n
 
 
-def _main(dataset_str, model_str, batch_size=512):
+def _main(dataset_str, model_str, batch_size, epochs, optimizer):
 
     dataset_train, dataset_test = _load_dataset(dataset_str)
     N_train                     = len(dataset_train.dataset)
@@ -237,13 +243,14 @@ def _main(dataset_str, model_str, batch_size=512):
 
     trainer = Trainer(dataset_train, batch_size=batch_size)
     trainer.add_model(model_str)
-    trainer.optimize(name='Adam')
+    trainer.optimize(name=optimizer)
 
-    epochs = 1000
     for e in range(epochs):
         print(f'Starting epoch {e+1:5d} of {epochs:5d}')
         for batch_idx in range(batches_per_epoch):
             trainer.train()
+        accuracy = trainer.test(dataset_test)
+        print(f'Test accuracy: {accuracy}')
 
 
 def main():
@@ -258,9 +265,12 @@ def main():
         required=True)
     data_choices = ['MNIST', 'FashionMNIST', 'CIFAR10', 'CIFAR100']
     parser.add_argument('-d', '--dataset', type=str, choices=data_choices, required=True)
+    parser.add_argument('-b', '--batch-size', type=int, default=128)
+    parser.add_argument('-e', '--epochs', type=int, default=10)
+    parser.add_argument('-o', '--optimizer', type=str, default='Adam')
 
     args = parser.parse_args()
-    _main(args.dataset, args.model)
+    _main(args.dataset, args.model, args.batch_size, args.epochs, args.optimizer)
 
 
 if __name__ == '__main__':
