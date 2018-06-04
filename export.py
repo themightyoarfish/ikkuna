@@ -142,8 +142,21 @@ class Exporter(object):
         self._layer_names = []
         self._weight_cache = {}     # expensive :(
         self._bias_cache = {}
+        self._subscribers = defaultdict(list)
+        self._activation_counter = defaultdict(int)
+        self._gradient_counter = defaultdict(int)
 
-    def get_label(self, module):
+    def subscribe(self, kind, fn):
+        '''Add a subscriber function for a certain event. The signature should be
+
+        .. py:function:: callback(step: int, label: str, tensor: torch.Tensor)
+        '''
+        kinds = ['gradients', 'activations', 'weight_updates', 'bias_updates' 'weights', 'biases']
+        if kind not in kinds:
+            raise ValueError(f'Cannot subscribe to "{kind}"')
+        self._subscribers[kind].append(fn)
+
+    def get_or_make_label(self, module):
         '''Create or retrieve the label for a module. If the module is already tracked, its label
         is returned, else a new one is created.
 
@@ -178,10 +191,10 @@ class Exporter(object):
         module  :   torch.nn.Module
                     In a future version, a list of modules should be supported.
         '''
-        if isinstance(module, tuple):
+        if isinstance(module, tuple):   # name already given -> use that
             layer_name, module = module
         else:
-            layer_name = self.get_label(module)
+            layer_name = self.get_or_make_label(module)
             self._layer_counter[module.__class__] += 1
         if module not in self._modules:
             self._layer_names.append(layer_name)
@@ -197,25 +210,61 @@ class Exporter(object):
         elif len(args) == 1 and isinstance(args[0], torch.optim.Optimizer):
             return self.add_optimizer(args[0])
 
+    def publish(self, module, step, kind, data):
+        '''Publish an update to all registered subscribers.
+
+        Paramters
+        ---------
+        module  :   torch.nn.Module
+                    The module in question
+        step    :   int
+                    Step number (depends on the frequency configured)
+        kind    :   str
+                    Kind of subscriber to notify
+        data    :   torch.Tensor
+                    Payload
+        '''
+        for sub in self._subscribers[kind]:
+            sub(step, self.get_or_make_label(module), data)
+
     def export_activations(self, module, activations):
-        print(f'New activations for {self.get_label(module)}')
+        if not self._subscribers['activations']:
+            pass
+        else:
+            print(f'New activations for {self.get_or_make_label(module)}')
 
     def export_gradients(self, module, gradients):
-        print(f'New gradients for {self.get_label(module)}')
+        if not self._subscribers['gradients']:
+            pass
+        else:
+            print(f'New gradients for {self.get_or_make_label(module)}')
 
     def export_weights(self, module, weights):
-        print(f'New weights for {self.get_label(module)}')
+        if not self._subscribers['weights']:
+            pass
+        else:
+            print(f'New weights for {self.get_or_make_label(module)}')
 
     def export_biases(self, module, biases):
-        print(f'New biases for {self.get_label(module)}')
+        if not self._subscribers['biases']:
+            pass
+        else:
+            print(f'New biases for {self.get_or_make_label(module)}')
 
     def export_weight_updates(self, module, old, new):
-        print(f'New weight updates for {self.get_label(module)}')
+        if not self._subscribers['weight_updates']:
+            pass
+        else:
+            print(f'New weight updates for {self.get_or_make_label(module)}')
 
     def export_bias_updates(self, module, old, new):
-        print(f'New bias updates for {self.get_label(module)}')
+        if not self._subscribers['bias_updates']:
+            pass
+        else:
+            print(f'New bias updates for {self.get_or_make_label(module)}')
 
     def new_activations(self, module, in_, out_):
+        self._activation_counter[module] += 1
         if hasattr(module, 'weight'):
             if module in self._weight_cache:
                 self.export_weight_updates(module, self._weight_cache[module], module.weight)
@@ -229,4 +278,5 @@ class Exporter(object):
         self.export_activations(module, out_)
 
     def new_gradients(self, module, in_, out_):
+        self._gradient_counter[module] += 1
         self.export_gradients(module, out_)
