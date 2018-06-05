@@ -19,22 +19,21 @@ def available_optimizers():
 
 
 def create_optimizer(model, name, **kwargs):
-    '''Create an optimizer for `model`s parameters. Will disregard all params
-    witwith `requires_grad == False`.
+    '''Create an optimizer for ``model``s parameters. Will disregard all params
+    with ``requires_grad == False``.
 
     Parameters
     ----------
     model   :   nn.Module
     name    :   str
                 Name of the optimizer
-
-    **kwargs    :   dict
-                    All arguments which should be passed to the optimizer.
+    kwargs  :   dict
+                All arguments which should be passed to the optimizer.
 
     Raises
     ------
     ValueError
-        If superflous `kwargs` are passed.
+        If superflous ``kwargs`` are passed.
 
     '''
 
