@@ -15,15 +15,14 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../../'))
-sys.path.insert(0, os.path.abspath('../../models/'))
-sys.path.insert(0, os.path.abspath('../../patches'))
-sys.path.insert(0, os.path.abspath('../../supervise'))
-sys.path.insert(0, os.path.abspath('../../visualization'))
+sys.path.insert(0, os.path.abspath('../../ikkuna/models/'))
+sys.path.insert(0, os.path.abspath('../../ikkuna/export'))
+sys.path.insert(0, os.path.abspath('../../ikkuna/utils'))
 
 
 # -- Project information -----------------------------------------------------
 
-project = 'insikt'
+project = 'ikkuna'
 copyright = '2018, Rasmus Diederichsen'
 author = 'Rasmus Diederichsen'
 
@@ -50,6 +49,7 @@ extensions = [
     'sphinx.ext.githubpages',
     # 'sphinx_autodoc_typehints',   # currently unpippable May 07, 2018
     'sphinx.ext.napoleon',
+    'sphinxarg.ext'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -112,7 +112,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'insiktdoc'
+htmlhelp_basename = 'ikkunadoc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -139,7 +139,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'insikt.tex', 'insikt Documentation',
+    (master_doc, 'ikkuna.tex', 'ikkuna Documentation',
      'Rasmus Diederichsen', 'manual'),
 ]
 
@@ -149,7 +149,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'insikt', 'insikt Documentation',
+    (master_doc, 'ikkuna', 'ikkuna Documentation',
      [author], 1)
 ]
 
@@ -160,8 +160,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'insikt', 'insikt Documentation',
-     author, 'insikt', 'One line description of project.',
+    (master_doc, 'ikkuna', 'ikkuna Documentation',
+     author, 'ikkuna', 'A tool for monitoring neural network training',
      'Miscellaneous'),
 ]
 

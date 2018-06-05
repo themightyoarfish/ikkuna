@@ -100,13 +100,12 @@ NetworkData = namedtuple('NetworkData', ['step', 'epoch', 'kind', 'module', 'pay
 class Exporter(object):
     '''Class for managing publishing of data from model code.
 
-    Usage
-    --------
     An :class:`Exporter` is used in the model code by either explicitly registering modules for
     tracking with :meth:`Exporter.add_modules()` or by calling it with newly constructed modules
     which will then be returned as-is, but be registered in the process.
 
-    .. code-block::
+    .. code-block:: python
+
         e = Exporter(...)
         features = nn.Sequential([
             nn.Linear(...),
@@ -167,8 +166,8 @@ class Exporter(object):
         '''Create or retrieve the label for a module. If the module is already tracked, its label
         is returned, else a new one is created.
 
-        Paramters
-        ---------
+        Parameters
+        ----------
         module  :   torch.nn.Module
 
         Returns
@@ -220,8 +219,8 @@ class Exporter(object):
     def publish(self, module, kind, data):
         '''Publish an update to all registered subscribers.
 
-        Paramters
-        ---------
+        Parameters
+        ----------
         module  :   torch.nn.Module
                     The module in question
         kind    :   str

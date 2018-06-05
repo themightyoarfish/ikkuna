@@ -1,4 +1,4 @@
-"""Adapted from torchvision.models.densenet"""
+'''Adapted from torchvision.models.densenet'''
 
 import torch
 import torch.nn as nn

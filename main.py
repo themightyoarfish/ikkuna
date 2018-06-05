@@ -1,3 +1,16 @@
+'''
+.. moduleauthor:: Rasmus Diederichsen <rasmus@peltarion.com>
+
+.. module:: main
+
+This module contains functions and classes for simplifying the training of ANN classifiers. It
+accepts the following arguments:
+
+.. argparse::
+   :filename: ../main.py
+   :func: get_parser
+   :prog: main.py
+'''
 import numpy as np
 from collections import namedtuple
 from argparse import ArgumentParser
@@ -27,7 +40,7 @@ def _load_dataset(name):
     Returns
     -------
     tuple
-        2 :class:`DataLoader`s are returned, obe for train and test set
+        2 :class:`DataLoader`s are returned, one for train and one test set
     '''
     transforms = Compose([ToTensor()])
     try:
@@ -83,7 +96,21 @@ def _load_dataset(name):
 def _initialize_model(module, bias_val=0.01):
     '''Perform weight initialization on `module`. This is somewhat hacky since
     it assumes the presence of `weight` and/or `bias` fields on the module. Will
-    skip if not present.'''
+    skip if not present.
+
+    Parameters
+    ----------
+    module  :   torch.nn.Module
+                The model
+    bias_val    :   float
+                    Constant for biases (should be small and positive)
+
+    Raises
+    ------
+    ValueError
+        If ``module`` is not one of the known models (currently :class:`ikkuna.models.AlexNetMini`
+        and :class:`ikkuna.models.DenseNet`)
+    '''
     if isinstance(module, models.AlexNetMini):
         for m in module.modules():
             if hasattr(module, 'weight'):
@@ -124,6 +151,9 @@ class Trainer:
                     loader for the training dataset
     _model  :   nn.Module
     _optimizer  : torch.optim.Optimizer
+    _train_counter  :   int
+                        Counter for forward propagations
+    _exporter   :   Exporter
     '''
 
     def __init__(self, dataset_meta: DatasetMeta, **kwargs):
@@ -236,6 +266,19 @@ class Trainer:
 
 
 def _main(dataset_str, model_str, batch_size, epochs, optimizer):
+    '''Run the training procedure.
+
+    Parameters
+    ----------
+    dataset_str :   str
+                    Name of the dataset to use
+    model_str   :   str
+                    Unqualified name of the model class to use
+    batch_size  :   int
+    epochs      :   int
+    optimizer   :   str
+                    Name of the optimizer to use
+    '''
 
     dataset_train, dataset_test = _load_dataset(dataset_str)
     N_train                     = len(dataset_train.dataset)
@@ -255,7 +298,14 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer):
         print(f'Test accuracy: {accuracy}')
 
 
-def main():
+def get_parser():
+    '''Obtain a configured argument parser. This function is necessary for the sphinx argparse
+    extension.
+
+    Returns
+    -------
+    argparse.ArgumentParser
+    '''
     parser = ArgumentParser()
     parser.add_argument(
         '-m',
@@ -270,8 +320,12 @@ def main():
     parser.add_argument('-b', '--batch-size', type=int, default=128)
     parser.add_argument('-e', '--epochs', type=int, default=10)
     parser.add_argument('-o', '--optimizer', type=str, default='Adam')
+    return parser
 
-    args = parser.parse_args()
+
+def main():
+
+    args = get_parser().parse_args()
     _main(args.dataset, args.model, args.batch_size, args.epochs, args.optimizer)
 
 

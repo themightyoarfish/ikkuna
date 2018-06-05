@@ -1,12 +1,8 @@
-ai_training_monitor
-===================
+ai_ikkuna
+=========
 
 .. toctree::
    :maxdepth: 4
 
+   ikkuna
    main
-   models
-   patches
-   supervise
-   util
-   visualization
