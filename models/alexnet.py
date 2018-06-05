@@ -26,9 +26,10 @@ class AlexNetMini(nn.Module):
                 Output width of the classifier
     '''
 
-    def __init__(self, input_shape, num_classes=1000):
+    def __init__(self, input_shape, num_classes=1000, exporter=None):
         super(AlexNetMini, self).__init__()
-        self._exporter = e = Exporter()
+        self._exporter = e = exporter or Exporter()
+        e.set_model(self)
 
         # if batch dim not present, add 1
         if len(input_shape) == 2:
