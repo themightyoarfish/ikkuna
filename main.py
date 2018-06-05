@@ -10,6 +10,7 @@ from torchvision.transforms import ToTensor, Compose
 
 import models
 from util import _create_optimizer
+from export import Exporter
 
 DatasetMeta = namedtuple('DatasetMeta', ['dataset', 'num_classes', 'shape'])
 
@@ -121,10 +122,6 @@ class Trainer:
                         Loss function instance for training
     _dataloader :   torch.utils.data.DataLoader
                     loader for the training dataset
-    _handlers   :   defaultdict(list)
-                    Dict of handlers for `activation`, `gradient`, `output`
-    _supervisor :   Supervisor
-                    Supervisor to use in the model
     _model  :   nn.Module
     _optimizer  : torch.optim.Optimizer
     '''
@@ -154,12 +151,14 @@ class Trainer:
         self._dataset, self._num_classes, self._shape = dataset_meta
         self._batch_size = kwargs.pop('batch_size', 1)
         self._loss_function = kwargs.pop('loss', nn.CrossEntropyLoss())
-        self._dataloader = DataLoader(self._dataset, batch_size=self._batch_size, shuffle=True)
+        sampler = torch.utils.data.sampler.RandomSampler(self._dataset)
+        self._dataloader = DataLoader(self._dataset, batch_size=self._batch_size, sampler=sampler)
         self._data_iter = iter(self._dataloader)
 
         print(f'Number of classes: {self._num_classes}')
         print(f'Data shape: {self._shape}')
         self._train_counter = 0
+        self._exporter = Exporter()
 
     def optimize(self, **kwargs):
         '''Set the optimizer.
@@ -188,7 +187,7 @@ class Trainer:
                         Name of the model (must exist in :mod:`models`)
         '''
         Model = getattr(models, model_str)
-        self._model = Model(self._shape, num_classes=self._num_classes)
+        self._model = Model(self._shape, num_classes=self._num_classes, exporter=self._exporter)
         _initialize_model(self._model)
         self._model.cuda()
 
@@ -199,9 +198,11 @@ class Trainer:
         # to be safe, enable batch-norm, dropout, and the like. Could be changed externally, so
         # do this before each epoch
         self._model.train(True)
+
         try:
             X, Y = next(self._data_iter)
         except StopIteration:
+            self._exporter.epoch_finished()
             self._train_counter = 0
             self._data_iter     = iter(self._dataloader)
             X, Y                = next(self._data_iter)
@@ -213,6 +214,7 @@ class Trainer:
         loss.backward()
         self._optimizer.step()
         self._train_counter += 1
+        self._exporter.step()
 
     def test(self, dataset):
         '''Run through the test set once.
@@ -246,7 +248,7 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer):
     trainer.optimize(name=optimizer)
 
     for e in range(epochs):
-        print(f'Starting epoch {e+1:5d} of {epochs:5d}')
+        print(f'Starting epoch {e:5d} of {epochs:5d}')
         for batch_idx in range(batches_per_epoch):
             trainer.train()
         accuracy = trainer.test(dataset_test)
