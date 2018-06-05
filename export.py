@@ -1,6 +1,7 @@
 import torch
 from collections import defaultdict
 from types import MethodType
+from collections import namedtuple
 
 
 def record(tensor, label, method_name, *method_args):
@@ -93,6 +94,9 @@ class WatchedParameter(torch.nn.Parameter):
             return torch.nn.Parameter.__getattribute__(self, name)
 
 
+NetworkData = namedtuple('NetworkData', ['step', 'epoch', 'kind', 'module', 'payload'])
+
+
 class Exporter(object):
     '''Class for managing publishing of data from model code.
 
@@ -145,11 +149,14 @@ class Exporter(object):
         self._subscribers = defaultdict(list)
         self._activation_counter = defaultdict(int)
         self._gradient_counter = defaultdict(int)
+        self._model = None
+        self._global_step = 0
+        self._epoch = 0
 
     def subscribe(self, kind, fn):
-        '''Add a subscriber function for a certain event. The signature should be
+        '''Add a subscriber function or a callable for a certain event. The signature should be
 
-        .. py:function:: callback(step: int, label: str, tensor: torch.Tensor)
+        .. py:function:: callback(data: NetworkData)
         '''
         kinds = ['gradients', 'activations', 'weight_updates', 'bias_updates' 'weights', 'biases']
         if kind not in kinds:
@@ -210,73 +217,88 @@ class Exporter(object):
         elif len(args) == 1 and isinstance(args[0], torch.optim.Optimizer):
             return self.add_optimizer(args[0])
 
-    def publish(self, module, step, kind, data):
+    def publish(self, module, kind, data):
         '''Publish an update to all registered subscribers.
 
         Paramters
         ---------
         module  :   torch.nn.Module
                     The module in question
-        step    :   int
-                    Step number (depends on the frequency configured)
         kind    :   str
                     Kind of subscriber to notify
         data    :   torch.Tensor
                     Payload
         '''
         for sub in self._subscribers[kind]:
-            sub(step, self.get_or_make_label(module), data)
+            msg = NetworkData(kind=kind, module=self.get_or_make_label(module),
+                              step=self._global_step, epoch=self._epoch, payload=data)
+            sub(msg)
 
     def export_activations(self, module, activations):
         if not self._subscribers['activations']:
             pass
         else:
-            print(f'New activations for {self.get_or_make_label(module)}')
+            self.publish(module, 'activations', activations)
 
     def export_gradients(self, module, gradients):
         if not self._subscribers['gradients']:
             pass
         else:
-            print(f'New gradients for {self.get_or_make_label(module)}')
+            self.publish(module, 'gradients', gradients)
 
     def export_weights(self, module, weights):
         if not self._subscribers['weights']:
             pass
         else:
-            print(f'New weights for {self.get_or_make_label(module)}')
+            self.publish(module, 'weights', weights)
 
     def export_biases(self, module, biases):
         if not self._subscribers['biases']:
             pass
         else:
-            print(f'New biases for {self.get_or_make_label(module)}')
+            self.publish(module, 'biases', biases)
 
-    def export_weight_updates(self, module, old, new):
+    def export_weight_updates(self, module, weight_updates):
         if not self._subscribers['weight_updates']:
             pass
         else:
-            print(f'New weight updates for {self.get_or_make_label(module)}')
+            self.publish(module, 'weight_updates', weight_updates)
 
-    def export_bias_updates(self, module, old, new):
+    def export_bias_updates(self, module, bias_updates):
         if not self._subscribers['bias_updates']:
             pass
         else:
-            print(f'New bias updates for {self.get_or_make_label(module)}')
+            self.publish(module, 'bias_updates', bias_updates)
 
     def new_activations(self, module, in_, out_):
         self._activation_counter[module] += 1
         if hasattr(module, 'weight'):
             if module in self._weight_cache:
-                self.export_weight_updates(module, self._weight_cache[module], module.weight)
+                self.export_weight_updates(module, module.weight - self._weight_cache[module])
             self.export_weights(module, module.weight)
             self._weight_cache[module] = torch.tensor(module.weight)
         if hasattr(module, 'bias'):
             if module in self._bias_cache:
-                self.export_bias_updates(module, self._bias_cache[module], module.weight)
+                self.export_bias_updates(module, module.bias - self._bias_cache[module])
             self.export_biases(module, module.bias)
             self._bias_cache[module] = torch.tensor(module.bias)
         self.export_activations(module, out_)
 
     def new_gradients(self, module, in_, out_):
         self._gradient_counter[module] += 1
+        if isinstance(out_, tuple):
+            if len(out_) > 1:
+                raise RuntimeError(f'Not sure what to do with tuple gradients.')
+            else:
+                out_, = out_
         self.export_gradients(module, out_)
+
+    def set_model(self, model):
+        self._model = model
+
+    def step(self):
+        self._global_step += 1
+
+    def epoch_finished(self):
+        self._epoch += 1
+        self._global_step = 0
