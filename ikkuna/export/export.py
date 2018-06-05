@@ -156,6 +156,19 @@ class Exporter(object):
         '''Add a subscriber function or a callable for a certain event. The signature should be
 
         .. py:function:: callback(data: NetworkData)
+
+        Parameters
+        ----------
+        kind    :   str
+                    Kind of update to receive. Valid choices are ``gradients``, ``activations``,
+                    ``weight_updates``, ``bias_updates`` ``weights``, ``biases``
+        fn  :   function
+                Callable to register
+
+        Raises
+        ------
+        ValueError
+            If ``kind`` is invalid
         '''
         kinds = ['gradients', 'activations', 'weight_updates', 'bias_updates' 'weights', 'biases']
         if kind not in kinds:
@@ -233,71 +246,81 @@ class Exporter(object):
                               step=self._global_step, epoch=self._epoch, payload=data)
             sub(msg)
 
-    def export_activations(self, module, activations):
-        if not self._subscribers['activations']:
-            pass
-        else:
-            self.publish(module, 'activations', activations)
+    def export(self, kind, module, data):
+        '''Publish new data to any subscribers.
 
-    def export_gradients(self, module, gradients):
-        if not self._subscribers['gradients']:
+        Parameters
+        ----------
+        kind    :   str
+                    Kind of subscription
+        module  :   torch.nn.Module
+        data    :   torch.Tensor
+                    Payload to publish
+        '''
+        if not self._subscribers[kind]:
             pass
         else:
-            self.publish(module, 'gradients', gradients)
-
-    def export_weights(self, module, weights):
-        if not self._subscribers['weights']:
-            pass
-        else:
-            self.publish(module, 'weights', weights)
-
-    def export_biases(self, module, biases):
-        if not self._subscribers['biases']:
-            pass
-        else:
-            self.publish(module, 'biases', biases)
-
-    def export_weight_updates(self, module, weight_updates):
-        if not self._subscribers['weight_updates']:
-            pass
-        else:
-            self.publish(module, 'weight_updates', weight_updates)
-
-    def export_bias_updates(self, module, bias_updates):
-        if not self._subscribers['bias_updates']:
-            pass
-        else:
-            self.publish(module, 'bias_updates', bias_updates)
+            self.publish(module, kind, data)
 
     def new_activations(self, module, in_, out_):
+        '''Callback for newly arriving activations. Registered as a hook to the tracked modules.
+        Will trigger exportation of all new activation and weight/bias data.
+
+        Parameters
+        ----------
+        module  :   torch.nn.Module
+        in_ :   torch.Tensor
+                Dunno what this is
+        out_    :   torch.Tensor
+                    The new activations
+        '''
         self._activation_counter[module] += 1
         if hasattr(module, 'weight'):
             if module in self._weight_cache:
-                self.export_weight_updates(module, module.weight - self._weight_cache[module])
-            self.export_weights(module, module.weight)
+                self.export('weight_updates', module, module.weight - self._weight_cache[module])
+            self.export('weights', module, module.weight)
             self._weight_cache[module] = torch.tensor(module.weight)
         if hasattr(module, 'bias'):
             if module in self._bias_cache:
-                self.export_bias_updates(module, module.bias - self._bias_cache[module])
-            self.export_biases(module, module.bias)
+                self.export('bias_updates', module, module.bias - self._bias_cache[module])
+            self.export('biases', module, module.bias)
             self._bias_cache[module] = torch.tensor(module.bias)
-        self.export_activations(module, out_)
+        self.export('activations', module, out_)
 
     def new_gradients(self, module, in_, out_):
+        '''Callback for newly arriving gradients. Registered as a hook to the tracked modules.
+        Will trigger exportation of all new gradient data.
+
+        Parameters
+        ----------
+        module  :   torch.nn.Module
+        in_ :   torch.Tensor
+                Dunno what this is
+        out_    :   torch.Tensor
+                    The new activations
+        '''
         self._gradient_counter[module] += 1
         if isinstance(out_, tuple):
             if len(out_) > 1:
                 raise RuntimeError(f'Not sure what to do with tuple gradients.')
             else:
                 out_, = out_
-        self.export_gradients(module, out_)
+        self.export('gradients', module, out_)
 
     def set_model(self, model):
+        '''Set the model for direct access for some metrics.
+
+        Parameters
+        ----------
+        model   :   torch.nn.Module
+        '''
         self._model = model
 
     def step(self):
+        '''Increase batch counter.'''
         self._global_step += 1
 
     def epoch_finished(self):
+        '''Increase the epoch counter.'''
         self._epoch += 1
         self._global_step = 0
