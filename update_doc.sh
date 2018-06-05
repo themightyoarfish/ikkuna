@@ -8,5 +8,4 @@ cd $cwd
 if [ ! -d "docs" ]; then
     mkdir docs
 fi
-cp doc/build/html/*.{html,js} docs
-find doc/build/html ! -name html -type d -exec cp -r {} docs \;
+cp -r doc/build/html/. docs
