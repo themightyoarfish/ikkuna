@@ -1,0 +1,385 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ikkuna.export package &#8212; ikkuna 0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ikkuna.models package" href="ikkuna.models.html" />
+    <link rel="prev" title="ikkuna package" href="ikkuna.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="ikkuna-export-package">
+<h1>ikkuna.export package<a class="headerlink" href="#ikkuna-export-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-ikkuna.export.export">
+<span id="ikkuna-export-export-module"></span><h2>ikkuna.export.export module<a class="headerlink" href="#module-ikkuna.export.export" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ikkuna.export.export.Exporter">
+<em class="property">class </em><code class="descclassname">ikkuna.export.export.</code><code class="descname">Exporter</code><span class="sig-paren">(</span><em>frequency=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class for managing publishing of data from model code.</p>
+<p>An <a class="reference internal" href="#ikkuna.export.export.Exporter" title="ikkuna.export.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> is used in the model code by either explicitly registering modules for
+tracking with <a class="reference internal" href="#ikkuna.export.export.Exporter.add_modules" title="ikkuna.export.export.Exporter.add_modules"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Exporter.add_modules()</span></code></a> or by calling it with newly constructed modules
+which will then be returned as-is, but be registered in the process.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">e</span> <span class="o">=</span> <span class="n">Exporter</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">features</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="o">...</span><span class="p">),</span>
+    <span class="n">e</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="o">...</span><span class="p">)),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">()</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+<p>No further changes to the model code are necessary, but for certain visualizations, the
+exporter requires access to the model in its entirety, so <code class="xref py py-meth docutils literal notranslate"><span class="pre">Exporter.add_model()</span></code> should be
+used.</p>
+<dl class="attribute">
+<dt id="ikkuna.export.export.Exporter._modules">
+<code class="descname">_modules</code><a class="headerlink" href="#ikkuna.export.export.Exporter._modules" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> – All tracked modules</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.export.Exporter._layer_counter">
+<code class="descname">_layer_counter</code><a class="headerlink" href="#ikkuna.export.export.Exporter._layer_counter" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>defaultdict</em> – Dictionary tracking number and kind of added modules for
+generating a name for each.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.export.Exporter._layer_names">
+<code class="descname">_layer_names</code><a class="headerlink" href="#ikkuna.export.export.Exporter._layer_names" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> – List which parallels _modules and contains the label for each</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.export.Exporter._weight_cache">
+<code class="descname">_weight_cache</code><a class="headerlink" href="#ikkuna.export.export.Exporter._weight_cache" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em> – Cache for keeping the previous weights for computing differences</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.export.Exporter._bias_cache">
+<code class="descname">_bias_cache</code><a class="headerlink" href="#ikkuna.export.export.Exporter._bias_cache" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.export.Exporter.add_modules">
+<code class="descname">add_modules</code><span class="sig-paren">(</span><em>module</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.add_modules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.add_modules" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add modules to supervise. Currently, only activations and gradients are tracked. If the
+module has <code class="docutils literal notranslate"><span class="pre">weight</span></code> and/or <code class="docutils literal notranslate"><span class="pre">bias</span></code> members, updates to those will be tracked.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In the future, this method should automagically discover which parts of a compound
+module or list of modules need to be tracked and return a fused module so it still works
+in <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Sequential</span></code> and the like.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>module</strong> (<em>torch.nn.Module</em>) – In a future version, a list of modules should be supported.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.export.Exporter.epoch_finished">
+<code class="descname">epoch_finished</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.epoch_finished"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.epoch_finished" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.export.Exporter.export_activations">
+<code class="descname">export_activations</code><span class="sig-paren">(</span><em>module</em>, <em>activations</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.export_activations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.export_activations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.export.Exporter.export_bias_updates">
+<code class="descname">export_bias_updates</code><span class="sig-paren">(</span><em>module</em>, <em>bias_updates</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.export_bias_updates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.export_bias_updates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.export.Exporter.export_biases">
+<code class="descname">export_biases</code><span class="sig-paren">(</span><em>module</em>, <em>biases</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.export_biases"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.export_biases" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.export.Exporter.export_gradients">
+<code class="descname">export_gradients</code><span class="sig-paren">(</span><em>module</em>, <em>gradients</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.export_gradients"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.export_gradients" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.export.Exporter.export_weight_updates">
+<code class="descname">export_weight_updates</code><span class="sig-paren">(</span><em>module</em>, <em>weight_updates</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.export_weight_updates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.export_weight_updates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.export.Exporter.export_weights">
+<code class="descname">export_weights</code><span class="sig-paren">(</span><em>module</em>, <em>weights</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.export_weights"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.export_weights" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.export.Exporter.get_or_make_label">
+<code class="descname">get_or_make_label</code><span class="sig-paren">(</span><em>module</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.get_or_make_label"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.get_or_make_label" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create or retrieve the label for a module. If the module is already tracked, its label
+is returned, else a new one is created.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>module</strong> (<em>torch.nn.Module</em>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.export.Exporter.new_activations">
+<code class="descname">new_activations</code><span class="sig-paren">(</span><em>module</em>, <em>in_</em>, <em>out_</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.new_activations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.new_activations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.export.Exporter.new_gradients">
+<code class="descname">new_gradients</code><span class="sig-paren">(</span><em>module</em>, <em>in_</em>, <em>out_</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.new_gradients"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.new_gradients" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.export.Exporter.publish">
+<code class="descname">publish</code><span class="sig-paren">(</span><em>module</em>, <em>kind</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.publish"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.publish" title="Permalink to this definition">¶</a></dt>
+<dd><p>Publish an update to all registered subscribers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>module</strong> (<em>torch.nn.Module</em>) – The module in question</li>
+<li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – Kind of subscriber to notify</li>
+<li><strong>data</strong> (<em>torch.Tensor</em>) – Payload</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.export.Exporter.set_model">
+<code class="descname">set_model</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.set_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.set_model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.export.Exporter.step">
+<code class="descname">step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.export.Exporter.subscribe">
+<code class="descname">subscribe</code><span class="sig-paren">(</span><em>kind</em>, <em>fn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.subscribe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.subscribe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a subscriber function or a callable for a certain event. The signature should be</p>
+<dl class="function">
+<dt id="ikkuna.export.export.Exporter.callback">
+<code class="descname">callback</code><span class="sig-paren">(</span><em>data: NetworkData</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.callback" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ikkuna.export.export.NetworkData">
+<em class="property">class </em><code class="descclassname">ikkuna.export.export.</code><code class="descname">NetworkData</code><span class="sig-paren">(</span><em>step</em>, <em>epoch</em>, <em>kind</em>, <em>module</em>, <em>payload</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.NetworkData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
+<dl class="attribute">
+<dt id="ikkuna.export.export.NetworkData.epoch">
+<code class="descname">epoch</code><a class="headerlink" href="#ikkuna.export.export.NetworkData.epoch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.export.NetworkData.kind">
+<code class="descname">kind</code><a class="headerlink" href="#ikkuna.export.export.NetworkData.kind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.export.NetworkData.module">
+<code class="descname">module</code><a class="headerlink" href="#ikkuna.export.export.NetworkData.module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.export.NetworkData.payload">
+<code class="descname">payload</code><a class="headerlink" href="#ikkuna.export.export.NetworkData.payload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.export.NetworkData.step">
+<code class="descname">step</code><a class="headerlink" href="#ikkuna.export.export.NetworkData.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ikkuna.export.export.WatchedParameter">
+<em class="property">class </em><code class="descclassname">ikkuna.export.export.</code><code class="descname">WatchedParameter</code><span class="sig-paren">(</span><em>baseObject</em>, <em>name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#WatchedParameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.WatchedParameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.parameter.Parameter</span></code></p>
+<dl class="docutils">
+<dt>Wrapper class in order to trap mutations to a tensor inside a parameter. This is necesssary</dt>
+<dd>to retrieve updates to weights as applied by the optimizer, not just the raw gradients.</dd>
+</dl>
+<p>We cannot simply set the <code class="docutils literal notranslate"><span class="pre">param.data</span></code> field directly since whenever it is accessed, torch
+creates a new python object referencing the data, which is then returned, meaning our wrapper
+will not actually get notified when stuff happens since the updates are being done on a new
+object with a reference to the binary data. Thus we need to start one level above, at the
+Parameter.</p>
+<dl class="attribute">
+<dt id="ikkuna.export.export.WatchedParameter._name">
+<code class="descname">_name</code><a class="headerlink" href="#ikkuna.export.export.WatchedParameter._name" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – Name for the parameter, usually the layer identifier</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="ikkuna.export.export.patch_mutator">
+<code class="descclassname">ikkuna.export.export.</code><code class="descname">patch_mutator</code><span class="sig-paren">(</span><em>method</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#patch_mutator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.patch_mutator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Patch mutating <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code> methods used by builtin optimizers so that the changes
+made to the tensor can be recorded. Permissible methods must be bound (retrieved via Tensor
+object, not class) and are <code class="docutils literal notranslate"><span class="pre">add_</span></code>, <code class="docutils literal notranslate"><span class="pre">addcdiv_</span></code>, and <code class="docutils literal notranslate"><span class="pre">mul_</span></code> at this time. The
+<code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Parameter</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code> object to which the method is bound must
+posses a <code class="docutils literal notranslate"><span class="pre">_label</span></code> attribute (must be patched externally) in order to identify the layer which
+the weights belong to.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">I tried subclassing <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Parameter</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code> in order to simply
+trap calls to the mutating methods, and replace the values in the <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Module`s</span>
+<span class="pre">containing</span> <span class="pre">them,</span> <span class="pre">but</span> <span class="pre">this</span> <span class="pre">fails</span> <span class="pre">either</span> <span class="pre">because</span> <span class="pre">a</span> <span class="pre">new</span> <span class="pre">:class:`torch.Tensor</span></code> object is created
+on each access or because there’s weird error hinting at device mismatch between my wrapper
+class and the update tensors. Forwarding each and every property access to the wrapped
+tensor was not sufficient.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>method</strong> (<em>MethodType</em>) – Bound method to wrap</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.6)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If method is unbound or bound to object without a <code class="docutils literal notranslate"><span class="pre">_label</span></code> attribute.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ikkuna.export.export.record">
+<code class="descclassname">ikkuna.export.export.</code><code class="descname">record</code><span class="sig-paren">(</span><em>tensor</em>, <em>label</em>, <em>method_name</em>, <em>*method_args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#record"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.record" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record changes to a tensor.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ikkuna.export">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ikkuna.export" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">ikkuna.export package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-ikkuna.export.export">ikkuna.export.export module</a></li>
+<li><a class="reference internal" href="#module-ikkuna.export">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">ai_ikkuna</a><ul>
+  <li><a href="ikkuna.html">ikkuna package</a><ul>
+      <li>Previous: <a href="ikkuna.html" title="previous chapter">ikkuna package</a></li>
+      <li>Next: <a href="ikkuna.models.html" title="next chapter">ikkuna.models package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/ikkuna.export.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Rasmus Diederichsen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/ikkuna.export.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
