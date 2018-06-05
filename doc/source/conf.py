@@ -45,7 +45,6 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
     'sphinx.ext.mathjax',
-    'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     # 'sphinx_autodoc_typehints',   # currently unpippable May 07, 2018
     'sphinx.ext.napoleon',
