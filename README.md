@@ -28,3 +28,6 @@ used
 
 With a few lines, the full power of deep learning interpretations is at your
 disposal.
+
+## Documentation
+The sphinx-generated html documentation is hosted [here](https://peltarion.github.io/ai_ikkuna/).
