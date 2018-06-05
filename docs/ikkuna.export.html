@@ -298,63 +298,6 @@ Will trigger exportation of all new gradient data.</p>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="ikkuna.export.export.WatchedParameter">
-<em class="property">class </em><code class="descclassname">ikkuna.export.export.</code><code class="descname">WatchedParameter</code><span class="sig-paren">(</span><em>baseObject</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.WatchedParameter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.parameter.Parameter</span></code></p>
-<dl class="docutils">
-<dt>Wrapper class in order to trap mutations to a tensor inside a parameter. This is necesssary</dt>
-<dd>to retrieve updates to weights as applied by the optimizer, not just the raw gradients.</dd>
-</dl>
-<p>We cannot simply set the <code class="docutils literal notranslate"><span class="pre">param.data</span></code> field directly since whenever it is accessed, torch
-creates a new python object referencing the data, which is then returned, meaning our wrapper
-will not actually get notified when stuff happens since the updates are being done on a new
-object with a reference to the binary data. Thus we need to start one level above, at the
-Parameter.</p>
-<dl class="attribute">
-<dt id="ikkuna.export.export.WatchedParameter._name">
-<code class="descname">_name</code><a class="headerlink" href="#ikkuna.export.export.WatchedParameter._name" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – Name for the parameter, usually the layer identifier</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="ikkuna.export.export.patch_mutator">
-<code class="descclassname">ikkuna.export.export.</code><code class="descname">patch_mutator</code><span class="sig-paren">(</span><em>method</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.patch_mutator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Patch mutating <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code> methods used by builtin optimizers so that the changes
-made to the tensor can be recorded. Permissible methods must be bound (retrieved via Tensor
-object, not class) and are <code class="docutils literal notranslate"><span class="pre">add_</span></code>, <code class="docutils literal notranslate"><span class="pre">addcdiv_</span></code>, and <code class="docutils literal notranslate"><span class="pre">mul_</span></code> at this time. The
-<code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Parameter</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code> object to which the method is bound must
-posses a <code class="docutils literal notranslate"><span class="pre">_label</span></code> attribute (must be patched externally) in order to identify the layer which
-the weights belong to.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">I tried subclassing <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Parameter</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code> in order to simply
-trap calls to the mutating methods, and replace the values in the <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Module`s</span>
-<span class="pre">containing</span> <span class="pre">them,</span> <span class="pre">but</span> <span class="pre">this</span> <span class="pre">fails</span> <span class="pre">either</span> <span class="pre">because</span> <span class="pre">a</span> <span class="pre">new</span> <span class="pre">:class:`torch.Tensor</span></code> object is created
-on each access or because there’s weird error hinting at device mismatch between my wrapper
-class and the update tensors. Forwarding each and every property access to the wrapped
-tensor was not sufficient.</p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>method</strong> (<em>MethodType</em>) – Bound method to wrap</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.6)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If method is unbound or bound to object without a <code class="docutils literal notranslate"><span class="pre">_label</span></code> attribute.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="ikkuna.export.export.record">
-<code class="descclassname">ikkuna.export.export.</code><code class="descname">record</code><span class="sig-paren">(</span><em>tensor</em>, <em>label</em>, <em>method_name</em>, <em>*method_args</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.record" title="Permalink to this definition">¶</a></dt>
-<dd><p>Record changes to a tensor.</p>
-</dd></dl>
-
 </div>
 <div class="section" id="module-ikkuna.export">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ikkuna.export" title="Permalink to this headline">¶</a></h2>

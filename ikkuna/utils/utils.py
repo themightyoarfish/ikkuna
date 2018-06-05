@@ -7,6 +7,7 @@ def available_optimizers():
     Returns
     -------
     list(str)
+        A list of all optimizer names.
     '''
     # get all module properties which aren't magic
     available_optimizers = set(getattr(torch.optim, name) for name in dir(torch.optim) if
@@ -19,7 +20,7 @@ def available_optimizers():
 
 
 def create_optimizer(model, name, **kwargs):
-    '''Create an optimizer for ``model``s parameters. Will disregard all params
+    '''Create an optimizer for ``model`` s parameters. Will disregard all params
     with ``requires_grad == False``.
 
     Parameters
