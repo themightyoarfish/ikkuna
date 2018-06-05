@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -x
+
 cwd=$(pwd)
 cd doc && make html
 cd $cwd
