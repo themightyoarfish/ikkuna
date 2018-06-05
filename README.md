@@ -1,5 +1,5 @@
 <p align="center">
-<img src="./ikkuna.png" alt="logo" width="100"/>
+<img src="./logo.png" alt="logo" width="100"/>
 </p>
 
 # Ikkuna
