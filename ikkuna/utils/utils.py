@@ -1,7 +1,7 @@
 import torch
 
 
-def _available_optimizers():
+def available_optimizers():
     '''List names of all available torch optimizers form :py:mod:`torch.optim`.
 
     Returns
@@ -18,7 +18,7 @@ def _available_optimizers():
     return list(available_optimizers)
 
 
-def _create_optimizer(model, name, **kwargs):
+def create_optimizer(model, name, **kwargs):
     '''Create an optimizer for `model`s parameters. Will disregard all params
     witwith `requires_grad == False`.
 
@@ -38,7 +38,7 @@ def _create_optimizer(model, name, **kwargs):
 
     '''
 
-    if name not in _available_optimizers():
+    if name not in available_optimizers():
         raise ValueError(f'Unknown optimizer {name}')
 
     params = [p for p in model.parameters() if p.requires_grad]

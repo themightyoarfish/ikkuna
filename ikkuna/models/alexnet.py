@@ -5,7 +5,7 @@
 This module defines :py:class:`AlexNetMini`, a reduced version of AlexNet. Adapted from
 torchvision.models.alexnet.
 '''
-from export import Exporter
+from ikkuna.export import Exporter
 import torch.nn as nn
 
 

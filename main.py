@@ -8,9 +8,9 @@ from torch.utils.data import DataLoader
 import torchvision
 from torchvision.transforms import ToTensor, Compose
 
-import models
-from util import _create_optimizer
-from export import Exporter
+from ikkuna import models
+from ikkuna.utils import create_optimizer
+from ikkuna.export import Exporter
 
 DatasetMeta = namedtuple('DatasetMeta', ['dataset', 'num_classes', 'shape'])
 
@@ -171,7 +171,7 @@ class Trainer:
         All other kwargs are forwarded to the optimizer constructor
         '''
         name = kwargs.pop('name', 'Adam')
-        self._optimizer = _create_optimizer(self._model, name, **kwargs)
+        self._optimizer = create_optimizer(self._model, name, **kwargs)
         print(f'Using {self._optimizer.__class__.__name__} optimizer')
 
     def add_model(self, model_str):
