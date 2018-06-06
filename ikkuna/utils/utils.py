@@ -43,3 +43,43 @@ def create_optimizer(model, name, **kwargs):
 
     params = [p for p in model.parameters() if p.requires_grad]
     return getattr(torch.optim, name)(params, **kwargs)
+
+
+def initialize_model(module, bias_val=0.01):
+    '''Perform weight initialization on `module`. This is somewhat hacky since
+    it assumes the presence of `weight` and/or `bias` fields on the module. Will
+    skip if not present.
+
+    Parameters
+    ----------
+    module  :   torch.nn.Module
+                The model
+    bias_val    :   float
+                    Constant for biases (should be small and positive)
+
+    Raises
+    ------
+    ValueError
+        If ``module`` is not one of the known models (currently :class:`ikkuna.models.AlexNetMini`
+        and :class:`ikkuna.models.DenseNet`)
+    '''
+    from ikkuna import models
+    import torch.nn as nn
+    if isinstance(module, models.AlexNetMini):
+        for m in module.modules():
+            if hasattr(module, 'weight'):
+                nn.init.xavier_uniform_(module.weight)
+            if hasattr(module, 'bias'):
+                module.bias.data.fill_(bias_val)
+    elif isinstance(module, models.DenseNet):
+        # Official init from torch repo.
+        for m in module.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal(m.weight.data)
+            elif isinstance(m, nn.BatchNorm2d):
+                m.weight.data.fill_(1)
+                m.bias.data.zero_()
+            elif isinstance(m, nn.Linear):
+                m.bias.data.zero_()
+    else:
+        raise ValueError(f'Don\'t know how to initialize {module.__class__.__name__}')
