@@ -1,9 +1,6 @@
 import torch
 from collections import defaultdict
-from collections import namedtuple
-
-
-NetworkData = namedtuple('NetworkData', ['step', 'epoch', 'kind', 'module', 'payload'])
+from ikkuna.export.messages import NetworkData
 
 
 class Exporter(object):
@@ -48,18 +45,18 @@ class Exporter(object):
         frequency   :   int
                         Number of training steps to pass by before publishing a new update.
         '''
-        self._modules = []
-        self._frequency = frequency
-        self._layer_counter = defaultdict(int)
-        self._layer_names = []
-        self._weight_cache = {}     # expensive :(
-        self._bias_cache = {}
-        self._subscribers = defaultdict(list)
+        self._modules            = []
+        self._frequency          = frequency
+        self._layer_counter      = defaultdict(int)
+        self._layer_names        = []
+        self._weight_cache       = {}     # expensive :(
+        self._bias_cache         = {}
+        self._subscribers        = defaultdict(list)
         self._activation_counter = defaultdict(int)
-        self._gradient_counter = defaultdict(int)
-        self._model = None
-        self._global_step = 0
-        self._epoch = 0
+        self._gradient_counter   = defaultdict(int)
+        self._model              = None
+        self._global_step        = 0
+        self._epoch              = 0
 
     def subscribe(self, kind, fn):
         '''Add a subscriber function or a callable for a certain event. The signature should be
@@ -98,10 +95,10 @@ class Exporter(object):
         '''
         if module not in self._modules:
             layer_kind = module.__class__.__name__
-            number = self._layer_counter[layer_kind]
+            number     = self._layer_counter[layer_kind]
             layer_name = f'{layer_kind}-{number}'
         else:
-            index = self._modules.index(module)
+            index      = self._modules.index(module)
             layer_name = self._layer_names[index]
         return layer_name
 
@@ -231,5 +228,5 @@ class Exporter(object):
 
     def epoch_finished(self):
         '''Increase the epoch counter.'''
-        self._epoch += 1
+        self._epoch      += 1
         self._global_step = 0
