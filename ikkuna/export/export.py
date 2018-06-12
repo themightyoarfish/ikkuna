@@ -55,10 +55,11 @@ class Exporter(object):
         self._activation_counter = defaultdict(int)
         self._gradient_counter   = defaultdict(int)
         self._model              = None
-        self._global_step        = 0
+        self._train_step         = 0
         self._epoch              = 0
+        self._global_step        = 0
 
-    def subscribe(self, kind, fn):
+    def subscribe(self, kind, subscriber):
         '''Add a subscriber function or a callable for a certain event. The signature should be
 
         .. py:function:: callback(data: NetworkData)
@@ -68,8 +69,8 @@ class Exporter(object):
         kind    :   str
                     Kind of update to receive. Valid choices are ``gradients``, ``activations``,
                     ``weight_updates``, ``bias_updates`` ``weights``, ``biases``
-        fn  :   function
-                Callable to register
+        subscriber  :   ikkuna.export.subscriber.Subscriber
+                        Subscriber to register
 
         Raises
         ------
@@ -79,7 +80,7 @@ class Exporter(object):
         kinds = ['gradients', 'activations', 'weight_updates', 'bias_updates' 'weights', 'biases']
         if kind not in kinds:
             raise ValueError(f'Cannot subscribe to "{kind}"')
-        self._subscribers[kind].append(fn)
+        self._subscribers[kind].append(subscriber)
 
     def get_or_make_label(self, module):
         '''Create or retrieve the label for a module. If the module is already tracked, its label
@@ -147,9 +148,11 @@ class Exporter(object):
         data    :   torch.Tensor
                     Payload
         '''
+        self._global_step += 1
         for sub in self._subscribers[kind]:
-            msg = NetworkData(kind=kind, module=self.get_or_make_label(module),
-                              step=self._global_step, epoch=self._epoch, payload=data)
+            msg = NetworkData(seq=self._global_step, tag=None, kind=kind,
+                              module=self.get_or_make_label(module), step=self._train_step,
+                              epoch=self._epoch, payload=data)
             sub(msg)
 
     def export(self, kind, module, data):
@@ -224,9 +227,10 @@ class Exporter(object):
 
     def step(self):
         '''Increase batch counter.'''
+        self._train_step  += 1
         self._global_step += 1
 
     def epoch_finished(self):
         '''Increase the epoch counter.'''
         self._epoch      += 1
-        self._global_step = 0
+        self._train_step = 0
