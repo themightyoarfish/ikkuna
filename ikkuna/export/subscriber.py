@@ -60,6 +60,15 @@ class ModuleData(object):
         else:
             return self.__getattribute__(name)
 
+    def __str__(self):
+        mod   = self._module
+        step  = self._step
+        kinds = list(self._data.keys())
+        return f'<ModuleData: module={mod}, kinds={kinds}, step={step}>'
+
+    def __repr__(self):
+        return str(self)
+
 
 class Subscription(object):
 
@@ -95,7 +104,7 @@ class Subscription(object):
         '''
         data = ModuleData(network_data.module, network_data.kind)
         data.add_message(network_data)
-        self._subscriber(data)
+        self._subscriber([data])
 
     def __call__(self, network_data):
         '''Callback for receiving an incoming message.
@@ -145,7 +154,6 @@ class SynchronizedSubscription(Subscription):
     def _new_message(self, network_data):
         '''Start a new round if a new sequence number is seen. If the buffer is full, all is
         published.'''
-        print(f'New messge {network_data.seq}, {network_data.module}, {network_data.kind}')
 
         # if we get a new sequence number, a new train step must have begun
         if self._current_seq is None or self._current_seq != network_data.seq:
@@ -163,7 +171,7 @@ class SynchronizedSubscription(Subscription):
         # would be to have a list of modules to expect and not publish before all have been
         # completed.
         if all(map(lambda d: d.complete(), self._modules.values())):
-            self._subscriber(self._modules.values())
+            self._subscriber(list(self._modules.values()))
 
 
 class Subscriber(abc.ABC):
@@ -204,6 +212,7 @@ class HistogramSubscriber(Subscriber):
 
     def __call__(self, module_data):
         super().__call__(module_data)
+        __import__('ipdb').set_trace()
 
     def epoch_finished(self, epoch):
         super().epoch_finished(epoch)

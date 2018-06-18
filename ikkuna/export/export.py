@@ -222,6 +222,27 @@ class Exporter(object):
         model   :   torch.nn.Module
         '''
         self._model = model
+        from types import MethodType
+        #############################################
+        #  Patch the train function to notify self  #
+        #############################################
+        train_fn = model.train
+
+        def new_train_fn(this, mode=True):
+            train_fn(mode=mode)
+            self._is_training = mode
+        model.train = MethodType(new_train_fn, model)
+
+        #########################################################
+        #  Patch forward function to step() self automatically  #
+        #########################################################
+        forward_fn = model.forward
+
+        def new_forward_fn(this, *args):
+            self.step()     # we need to step first, else act and grads get different steps
+            ret = forward_fn(*args)
+            return ret
+        model.forward = MethodType(new_forward_fn, model)
 
     def step(self):
         '''Increase batch counter (per epoch) and the global step counter.'''

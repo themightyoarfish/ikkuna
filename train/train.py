@@ -110,8 +110,6 @@ class Trainer:
         # do this before each epoch
         self._model.train(True)
 
-        self._exporter.train()
-
         try:
             X, Y = next(self._data_iter)
         except StopIteration:
@@ -125,7 +123,6 @@ class Trainer:
         loss   = self._loss_function(output, labels)
         loss.backward()
         self._optimizer.step()
-        self._exporter.step()
 
     def test(self, dataset):
         '''Run through the test set once.
@@ -135,7 +132,6 @@ class Trainer:
         dataset  :   DatasetMeta
         '''
         self._model.train(False)
-        self._exporter.train(False)
         test_loader = DataLoader(dataset.dataset, batch_size=self._batch_size, shuffle=True)
 
         num_correct = 0
