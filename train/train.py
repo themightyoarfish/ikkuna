@@ -59,12 +59,17 @@ class Trainer:
         self._batch_size    = kwargs.pop('batch_size', 1)
         self._loss_function = kwargs.pop('loss', nn.CrossEntropyLoss())
         sampler             = torch.utils.data.sampler.RandomSampler(self._dataset)
-        self._dataloader    = DataLoader(self._dataset, batch_size=self._batch_size, sampler=sampler)
+        self._dataloader    = DataLoader(self._dataset, batch_size=self._batch_size,
+                                         sampler=sampler)
         self._data_iter     = iter(self._dataloader)
 
         print(f'Number of classes: {self._num_classes}')
         print(f'Data shape: {self._shape}')
         self._exporter      = Exporter()
+        from ikkuna.export.subscriber import HistogramSubscriber, SynchronizedSubscription
+        subscriber = HistogramSubscriber(-10, 10, 1)
+        subscription = SynchronizedSubscription(subscriber, ['activations', 'gradients'])
+        self._exporter.subscribe(subscription)
 
     def optimize(self, **kwargs):
         '''Set the optimizer.
@@ -105,6 +110,8 @@ class Trainer:
         # do this before each epoch
         self._model.train(True)
 
+        self._exporter.train()
+
         try:
             X, Y = next(self._data_iter)
         except StopIteration:
@@ -128,6 +135,7 @@ class Trainer:
         dataset  :   DatasetMeta
         '''
         self._model.train(False)
+        self._exporter.train(False)
         test_loader = DataLoader(dataset.dataset, batch_size=self._batch_size, shuffle=True)
 
         num_correct = 0
