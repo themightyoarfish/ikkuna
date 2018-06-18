@@ -51,7 +51,7 @@ class Exporter(object):
         self._layer_names        = []
         self._weight_cache       = {}     # expensive :(
         self._bias_cache         = {}
-        self._subscribers        = defaultdict(list)
+        self._subscriptions      = set()
         self._activation_counter = defaultdict(int)
         self._gradient_counter   = defaultdict(int)
         self._model              = None
@@ -59,28 +59,17 @@ class Exporter(object):
         self._epoch              = 0
         self._global_step        = 0
 
-    def subscribe(self, kind, subscriber):
+    def subscribe(self, subscription):
         '''Add a subscriber function or a callable for a certain event. The signature should be
 
         .. py:function:: callback(data: NetworkData)
 
         Parameters
         ----------
-        kind    :   str
-                    Kind of update to receive. Valid choices are ``gradients``, ``activations``,
-                    ``weight_updates``, ``bias_updates`` ``weights``, ``biases``
-        subscriber  :   ikkuna.export.subscriber.Subscriber
-                        Subscriber to register
-
-        Raises
-        ------
-        ValueError
-            If ``kind`` is invalid
+        subscription    :   ikkuna.export.subscriber.Subscription
+                            Subscription to register
         '''
-        kinds = ['gradients', 'activations', 'weight_updates', 'bias_updates' 'weights', 'biases']
-        if kind not in kinds:
-            raise ValueError(f'Cannot subscribe to "{kind}"')
-        self._subscribers[kind].append(subscriber)
+        self._subscriptions.add(subscription)
 
     def get_or_make_label(self, module):
         '''Create or retrieve the label for a module. If the module is already tracked, its label
@@ -121,7 +110,7 @@ class Exporter(object):
             layer_name, module = module
         else:
             layer_name = self.get_or_make_label(module)
-            self._layer_counter[module.__class__] += 1
+            self._layer_counter[module.__class__.__name__] += 1
         if module not in self._modules:
             self._layer_names.append(layer_name)
             self._modules.append(module)
@@ -148,12 +137,17 @@ class Exporter(object):
         data    :   torch.Tensor
                     Payload
         '''
-        self._global_step += 1
-        for sub in self._subscribers[kind]:
+        for sub in self._subscriptions:
             msg = NetworkData(seq=self._global_step, tag=None, kind=kind,
                               module=self.get_or_make_label(module), step=self._train_step,
                               epoch=self._epoch, payload=data)
             sub(msg)
+
+    def train(self, train=True):
+        self._is_training = train
+
+    def test(self, test=True):
+        self.train(not test)
 
     def export(self, kind, module, data):
         '''Publish new data to any subscribers.
@@ -166,7 +160,7 @@ class Exporter(object):
         data    :   torch.Tensor
                     Payload to publish
         '''
-        if not self._subscribers[kind]:
+        if len(self._subscriptions) == 0:
             pass
         else:
             self.publish(module, kind, data)
@@ -183,6 +177,8 @@ class Exporter(object):
         out_    :   torch.Tensor
                     The new activations
         '''
+        if not self._is_training:
+            return
         self._activation_counter[module] += 1
         if hasattr(module, 'weight'):
             if module in self._weight_cache:
@@ -208,6 +204,8 @@ class Exporter(object):
         out_    :   torch.Tensor
                     The new activations
         '''
+        if not self._is_training:
+            return
         self._gradient_counter[module] += 1
         if isinstance(out_, tuple):
             if len(out_) > 1:
@@ -226,11 +224,13 @@ class Exporter(object):
         self._model = model
 
     def step(self):
-        '''Increase batch counter.'''
+        '''Increase batch counter (per epoch) and the global step counter.'''
         self._train_step  += 1
         self._global_step += 1
 
     def epoch_finished(self):
-        '''Increase the epoch counter.'''
+        '''Increase the epoch counter and reset the batch counter.'''
+        for sub in self._subscriptions:
+            sub.epoch_finished(self._epoch)
         self._epoch      += 1
         self._train_step = 0
