@@ -73,6 +73,17 @@ survive the strides and conv cutoffs.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="ikkuna.models.alexnet.AlexNetMini.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>input_shape</em>, <em>num_classes=1000</em>, <em>exporter=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.models.alexnet.AlexNetMini.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.models.alexnet.AlexNetMini.__module__">
+<code class="descname">__module__</code><em class="property"> = 'ikkuna.models.alexnet'</em><a class="headerlink" href="#ikkuna.models.alexnet.AlexNetMini.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="ikkuna.models.alexnet.AlexNetMini.forward">
 <code class="descname">forward</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.models.alexnet.AlexNetMini.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines the computation performed at every call.</p>
@@ -97,6 +108,17 @@ registered hooks while the latter silently ignores them.</p>
 <em class="property">class </em><code class="descclassname">ikkuna.models.densenet.</code><code class="descname">DenseNet</code><span class="sig-paren">(</span><em>input_shape</em>, <em>growth_rate=32</em>, <em>block_config=(6</em>, <em>12)</em>, <em>num_init_features=32</em>, <em>bn_size=4</em>, <em>drop_rate=0</em>, <em>num_classes=1000</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.models.densenet.DenseNet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <dl class="method">
+<dt id="ikkuna.models.densenet.DenseNet.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>input_shape</em>, <em>growth_rate=32</em>, <em>block_config=(6</em>, <em>12)</em>, <em>num_init_features=32</em>, <em>bn_size=4</em>, <em>drop_rate=0</em>, <em>num_classes=1000</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.models.densenet.DenseNet.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.models.densenet.DenseNet.__module__">
+<code class="descname">__module__</code><em class="property"> = 'ikkuna.models.densenet'</em><a class="headerlink" href="#ikkuna.models.densenet.DenseNet.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="ikkuna.models.densenet.DenseNet.forward">
 <code class="descname">forward</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.models.densenet.DenseNet.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines the computation performed at every call.</p>
@@ -109,6 +131,71 @@ instead of this since the former takes care of running the
 registered hooks while the latter silently ignores them.</p>
 </div>
 </dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ikkuna.models.densenet._DenseBlock">
+<em class="property">class </em><code class="descclassname">ikkuna.models.densenet.</code><code class="descname">_DenseBlock</code><span class="sig-paren">(</span><em>num_layers</em>, <em>num_input_features</em>, <em>bn_size</em>, <em>growth_rate</em>, <em>drop_rate</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.models.densenet._DenseBlock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.container.Sequential</span></code></p>
+<dl class="method">
+<dt id="ikkuna.models.densenet._DenseBlock.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>num_layers</em>, <em>num_input_features</em>, <em>bn_size</em>, <em>growth_rate</em>, <em>drop_rate</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.models.densenet._DenseBlock.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.models.densenet._DenseBlock.__module__">
+<code class="descname">__module__</code><em class="property"> = 'ikkuna.models.densenet'</em><a class="headerlink" href="#ikkuna.models.densenet._DenseBlock.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ikkuna.models.densenet._DenseLayer">
+<em class="property">class </em><code class="descclassname">ikkuna.models.densenet.</code><code class="descname">_DenseLayer</code><span class="sig-paren">(</span><em>num_input_features</em>, <em>growth_rate</em>, <em>bn_size</em>, <em>drop_rate</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.models.densenet._DenseLayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.container.Sequential</span></code></p>
+<dl class="method">
+<dt id="ikkuna.models.densenet._DenseLayer.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>num_input_features</em>, <em>growth_rate</em>, <em>bn_size</em>, <em>drop_rate</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.models.densenet._DenseLayer.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.models.densenet._DenseLayer.__module__">
+<code class="descname">__module__</code><em class="property"> = 'ikkuna.models.densenet'</em><a class="headerlink" href="#ikkuna.models.densenet._DenseLayer.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.models.densenet._DenseLayer.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.models.densenet._DenseLayer.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ikkuna.models.densenet._Transition">
+<em class="property">class </em><code class="descclassname">ikkuna.models.densenet.</code><code class="descname">_Transition</code><span class="sig-paren">(</span><em>num_input_features</em>, <em>num_output_features</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.models.densenet._Transition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.container.Sequential</span></code></p>
+<dl class="method">
+<dt id="ikkuna.models.densenet._Transition.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>num_input_features</em>, <em>num_output_features</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.models.densenet._Transition.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.models.densenet._Transition.__module__">
+<code class="descname">__module__</code><em class="property"> = 'ikkuna.models.densenet'</em><a class="headerlink" href="#ikkuna.models.densenet._Transition.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 

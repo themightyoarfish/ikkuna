@@ -21,7 +21,7 @@ def patch_mutator(method):
 
     .. note::
         I tried subclassing :class:`torch.nn.Parameter` and :class:`torch.Tensor` in order to simply
-        trap calls to the mutating methods, and replace the values in the :class:`torch.nn.Module`s
+        trap calls to the mutating methods, and replace the values in the :class:`torch.nn.Module` s
         containing them, but this fails either because a new :class:`torch.Tensor` object is created
         on each access or because there's weird error hinting at device mismatch between my wrapper
         class and the update tensors. Forwarding each and every property access to the wrapped
@@ -58,17 +58,17 @@ class WatchedParameter(torch.nn.Parameter):
     '''Wrapper class in order to trap mutations to a tensor inside a parameter. This is necesssary
     to retrieve updates to weights as applied by the optimizer, not just the raw gradients.
 
-   We cannot simply set the ``param.data`` field directly since whenever it is accessed, torch
-   creates a new python object referencing the data, which is then returned, meaning our wrapper
-   will not actually get notified when stuff happens since the updates are being done on a new
-   object with a reference to the binary data. Thus we need to start one level above, at the
-   Parameter.
+    We cannot simply set the ``param.data`` field directly since whenever it is accessed, torch
+    creates a new python object referencing the data, which is then returned, meaning our wrapper
+    will not actually get notified when stuff happens since the updates are being done on a new
+    object with a reference to the binary data. Thus we need to start one level above, at the
+    Parameter.
 
-   Attributes
-   ----------
-   _name    :   str
-                Name for the parameter, usually the layer identifier
-   '''
+    Attributes
+    ----------
+    _name    :   str
+                 Name for the parameter, usually the layer identifier
+    '''
 
     def __new__(cls, *args, name=None):
         return super().__new__(cls, *args)
