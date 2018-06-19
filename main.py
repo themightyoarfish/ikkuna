@@ -28,12 +28,12 @@ def _load_dataset(name):
     Parameters
     ----------
     name    :   str
-                Dataset name in :py:mod:`torchvision.datasets`
+                Dataset name in :mod:`torchvision.datasets`
 
     Returns
     -------
     tuple
-        2 :class:`DataLoader`s are returned, one for train and one test set
+        2 :class:`DataLoader` s are returned, one for train and one test set
     '''
     transforms = Compose([ToTensor()])
     try:
