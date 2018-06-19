@@ -63,11 +63,15 @@ class Trainer:
                                          sampler=sampler)
         self._data_iter     = iter(self._dataloader)
 
+        # we use these to peek one step ahead in the data iterator to know an epoch has ended
+        # already in the epoch's final iteration, not at the beginning of the next one
+        self._next_X, self._next_Y = next(self._data_iter)
+
         print(f'Number of classes: {self._num_classes}')
         print(f'Data shape: {self._shape}')
         self._exporter      = Exporter()
         from ikkuna.export.subscriber import HistogramSubscriber, SynchronizedSubscription
-        subscriber = HistogramSubscriber(-10, 10, 1)
+        subscriber = HistogramSubscriber(-2e-6, 2e-6, 1e-7)
         subscription = SynchronizedSubscription(subscriber, ['activations', 'gradients'])
         self._exporter.subscribe(subscription)
 
@@ -110,12 +114,7 @@ class Trainer:
         # do this before each epoch
         self._model.train(True)
 
-        try:
-            X, Y = next(self._data_iter)
-        except StopIteration:
-            self._exporter.epoch_finished()
-            self._data_iter     = iter(self._dataloader)
-            X, Y                = next(self._data_iter)
+        X, Y = self._next_X, self._next_Y
 
         data, labels = X.cuda(), Y.cuda()
         self._optimizer.zero_grad()
@@ -123,6 +122,13 @@ class Trainer:
         loss   = self._loss_function(output, labels)
         loss.backward()
         self._optimizer.step()
+
+        try:
+            self._next_X, self._next_Y = next(self._data_iter)
+        except StopIteration:
+            self._exporter.epoch_finished()
+            self._data_iter            = iter(self._dataloader)
+            self._next_X, self._next_Y = next(self._data_iter)
 
     def test(self, dataset):
         '''Run through the test set once.
