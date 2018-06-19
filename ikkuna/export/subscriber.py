@@ -15,6 +15,29 @@ from matplotlib import pyplot as plt
 
 class ModuleData(object):
 
+    '''Data object for holding a set of artifacts for a module at one point during training.
+    This data type can be used to buffer different kinds and check whether all expected kinds have
+    been received for a module.
+
+    Attributes
+    ----------
+    _module :   str
+                Name of the layer
+    _expected_kinds :   list(str)
+                        The expected kinds of messages per iteration
+    _data   :   dict(str, torch.Tensor)
+                The tensors received for each kind
+    _seq    :   int
+                Sequence number of this object (incremented whenever a :class:`ModuleData` is
+                created)
+    _step   :   int
+                Sequence number of the received messages (should match across all msgs in one
+                iteration)
+    _epoch  :   int
+                Epoch of the received messages (should match across all msgs in one
+                iteration)
+    '''
+
     step = 0
 
     def __init__(self, module, kinds):
@@ -28,9 +51,29 @@ class ModuleData(object):
         self._epoch = None
 
     def complete(self):
+        '''Check i all expected messages have been received. This means the message can be released
+        to subscribers.
+
+        Returns
+        -------
+        bool
+        '''
+        # check if any _data entry is still None
         return all(map(lambda val: val is not None, self._data.values()))
 
     def _check_step(self, step):
+        '''Check step consistency or set current step, if not set.
+
+        Parameters
+        ----------
+        step    :   int
+                    Step number to check
+
+        Raises
+        ------
+        ValueError
+            If ``step`` does not match the current step.
+        '''
         if not self._step:
             self._step = step
 
@@ -39,6 +82,18 @@ class ModuleData(object):
                              'initial step {self._step}')
 
     def _check_epoch(self, epoch):
+        '''Check epoch consistency or set current epoch, if not set.
+
+        Parameters
+        ----------
+        epoch    :   int
+                    Step number to check
+
+        Raises
+        ------
+        ValueError
+            If ``epoch`` does not match the current epoch.
+        '''
         if not self._epoch:
             self._epoch = epoch
 
@@ -47,16 +102,33 @@ class ModuleData(object):
                              'initial epoch {self._epoch}')
 
     def add_message(self, message):
-        # print(f'{message.seq}, {message.module}, {message.kind}')
+        '''Add a new message to this object. Will fail if the new messsage does not have the same
+        sequence number and epoch.
+
+        Parameters
+        ----------
+        message :   ikkuna.export.messages.NetworkData
+
+        Raises
+        ------
+        ValueError
+            If the message is for a different module (layer) or a message of this kind was already
+            received.
+        '''
         self._check_step(message.step)
         self._check_epoch(message.epoch)
+
         if self._module != message.module:
             raise ValueError(f'Unexpected module "{message.module}" (expected "{self._module}")')
+
         if self._data[message.kind] is not None:
             raise ValueError(f'Got duplicate value for kind "{message.kind}".')
+
         self._data[message.kind] = message.payload
 
     def getattr(self, name):
+        '''Override to mimick a property for each kind of message in this data (e.g.
+        ``activations``)'''
         if name in self._expected_kinds:
             return self._data[name]
         else:
@@ -130,8 +202,8 @@ class SynchronizedSubscription(Subscription):
     def __init__(self, subscriber, kinds, tag=None):
         super().__init__(subscriber, kinds, tag)
         self._current_seq = None
-        self._modules = {}
-        self._step = None
+        self._modules     = {}
+        self._step        = None
 
     def _new_round(self, seq):
         '''Start a new round of buffering, clearing the previous cache and resetting the record for
@@ -284,10 +356,10 @@ class HistogramSubscriber(Subscriber):
     def update_histograms(self):
         '''Update the histograms from the current buffer.'''
         for module_data in self._buffer:
-            module = module_data._module
-            data = module_data._data['gradients'].cpu()
-            hist = data.histc(self._nbins, self._clip_min, self._clip_max)
-            self._gradient_hist[module] += hist.numpy().astype(np.int64)
+            module                        = module_data._module
+            data                          = module_data._data['gradients'].cpu()
+            hist                          = data.histc(self._nbins, self._clip_min, self._clip_max)
+            self._gradient_hist[module]  += hist.numpy().astype(np.int64)
 
     def __call__(self, module_datas):
         '''Every tenth call will be buffered and every tenth buffering will lead to updating
@@ -305,10 +377,10 @@ class HistogramSubscriber(Subscriber):
 
     def epoch_finished(self, epoch):
         super().epoch_finished(epoch)
-        modules = list(self._gradient_hist.keys())
+        modules    = list(self._gradient_hist.keys())
         histograms = list(self._gradient_hist.values())
-        n_modules = len(modules)
-        h, w = (int(np.floor(np.sqrt(n_modules))), int(np.ceil(np.sqrt(n_modules))))
+        n_modules  = len(modules)
+        h, w       = (int(np.floor(np.sqrt(n_modules))), int(np.ceil(np.sqrt(n_modules))))
 
         figure, axarr = plt.subplots(h, w)
         figure.suptitle(f'Gradient Histograms for epoch {epoch}')
