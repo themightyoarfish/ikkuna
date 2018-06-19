@@ -78,6 +78,30 @@ with <code class="docutils literal notranslate"><span class="pre">requires_grad<
 </table>
 </dd></dl>
 
+<dl class="function">
+<dt id="ikkuna.utils.utils.initialize_model">
+<code class="descclassname">ikkuna.utils.utils.</code><code class="descname">initialize_model</code><span class="sig-paren">(</span><em>module</em>, <em>bias_val=0.01</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.utils.initialize_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform weight initialization on <cite>module</cite>. This is somewhat hacky since
+it assumes the presence of <cite>weight</cite> and/or <cite>bias</cite> fields on the module. Will
+skip if not present.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>module</strong> (<em>torch.nn.Module</em>) – The model</li>
+<li><strong>bias_val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Constant for biases (should be small and positive)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.6)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If <code class="docutils literal notranslate"><span class="pre">module</span></code> is not one of the known models (currently <code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.models.AlexNetMini</span></code>
+and <code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.models.DenseNet</span></code>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 <div class="section" id="module-ikkuna.utils">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ikkuna.utils" title="Permalink to this headline">¶</a></h2>

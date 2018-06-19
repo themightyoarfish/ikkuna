@@ -113,7 +113,7 @@ in <code class="xref py py-class docutils literal notranslate"><span class="pre"
 <dl class="method">
 <dt id="ikkuna.export.export.Exporter.epoch_finished">
 <code class="descname">epoch_finished</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.epoch_finished" title="Permalink to this definition">¶</a></dt>
-<dd><p>Increase the epoch counter.</p>
+<dd><p>Increase the epoch counter and reset the batch counter.</p>
 </dd></dl>
 
 <dl class="method">
@@ -230,12 +230,12 @@ Will trigger exportation of all new gradient data.</p>
 <dl class="method">
 <dt id="ikkuna.export.export.Exporter.step">
 <code class="descname">step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Increase batch counter.</p>
+<dd><p>Increase batch counter (per epoch) and the global step counter.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="ikkuna.export.export.Exporter.subscribe">
-<code class="descname">subscribe</code><span class="sig-paren">(</span><em>kind</em>, <em>fn</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.subscribe" title="Permalink to this definition">¶</a></dt>
+<code class="descname">subscribe</code><span class="sig-paren">(</span><em>subscription</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.subscribe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a subscriber function or a callable for a certain event. The signature should be</p>
 <dl class="function">
 <dt id="ikkuna.export.export.Exporter.callback">
@@ -246,15 +246,330 @@ Will trigger exportation of all new gradient data.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – Kind of update to receive. Valid choices are <code class="docutils literal notranslate"><span class="pre">gradients</span></code>, <code class="docutils literal notranslate"><span class="pre">activations</span></code>,
-<code class="docutils literal notranslate"><span class="pre">weight_updates</span></code>, <code class="docutils literal notranslate"><span class="pre">bias_updates</span></code> <code class="docutils literal notranslate"><span class="pre">weights</span></code>, <code class="docutils literal notranslate"><span class="pre">biases</span></code></li>
-<li><strong>fn</strong> (<em>function</em>) – Callable to register</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>subscription</strong> (<a class="reference internal" href="#ikkuna.export.subscriber.Subscription" title="ikkuna.export.subscriber.Subscription"><em>ikkuna.export.subscriber.Subscription</em></a>) – Subscription to register</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.6)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If <code class="docutils literal notranslate"><span class="pre">kind</span></code> is invalid</p>
-</td>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.export.Exporter.test">
+<code class="descname">test</code><span class="sig-paren">(</span><em>test=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.test" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.export.Exporter.train">
+<code class="descname">train</code><span class="sig-paren">(</span><em>train=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.train" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ikkuna.export.magic">
+<span id="ikkuna-export-magic-module"></span><h2>ikkuna.export.magic module<a class="headerlink" href="#module-ikkuna.export.magic" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ikkuna.export.magic.WatchedParameter">
+<em class="property">class </em><code class="descclassname">ikkuna.export.magic.</code><code class="descname">WatchedParameter</code><span class="sig-paren">(</span><em>baseObject</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.magic.WatchedParameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.parameter.Parameter</span></code></p>
+<dl class="docutils">
+<dt>Wrapper class in order to trap mutations to a tensor inside a parameter. This is necesssary</dt>
+<dd>to retrieve updates to weights as applied by the optimizer, not just the raw gradients.</dd>
+</dl>
+<p>We cannot simply set the <code class="docutils literal notranslate"><span class="pre">param.data</span></code> field directly since whenever it is accessed, torch
+creates a new python object referencing the data, which is then returned, meaning our wrapper
+will not actually get notified when stuff happens since the updates are being done on a new
+object with a reference to the binary data. Thus we need to start one level above, at the
+Parameter.</p>
+<dl class="attribute">
+<dt id="ikkuna.export.magic.WatchedParameter._name">
+<code class="descname">_name</code><a class="headerlink" href="#ikkuna.export.magic.WatchedParameter._name" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – Name for the parameter, usually the layer identifier</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="ikkuna.export.magic.patch_mutator">
+<code class="descclassname">ikkuna.export.magic.</code><code class="descname">patch_mutator</code><span class="sig-paren">(</span><em>method</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.magic.patch_mutator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Patch mutating <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code> methods used by builtin optimizers so that the changes
+made to the tensor can be recorded. Permissible methods must be bound (retrieved via Tensor
+object, not class) and are <code class="docutils literal notranslate"><span class="pre">add_</span></code>, <code class="docutils literal notranslate"><span class="pre">addcdiv_</span></code>, and <code class="docutils literal notranslate"><span class="pre">mul_</span></code> at this time. The
+<code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Parameter</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code> object to which the method is bound must
+posses a <code class="docutils literal notranslate"><span class="pre">_label</span></code> attribute (must be patched externally) in order to identify the layer which
+the weights belong to.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">I tried subclassing <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Parameter</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code> in order to simply
+trap calls to the mutating methods, and replace the values in the <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Module`s</span>
+<span class="pre">containing</span> <span class="pre">them,</span> <span class="pre">but</span> <span class="pre">this</span> <span class="pre">fails</span> <span class="pre">either</span> <span class="pre">because</span> <span class="pre">a</span> <span class="pre">new</span> <span class="pre">:class:`torch.Tensor</span></code> object is created
+on each access or because there’s weird error hinting at device mismatch between my wrapper
+class and the update tensors. Forwarding each and every property access to the wrapped
+tensor was not sufficient.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>method</strong> (<em>MethodType</em>) – Bound method to wrap</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.6)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If method is unbound or bound to object without a <code class="docutils literal notranslate"><span class="pre">_label</span></code> attribute.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ikkuna.export.magic.record">
+<code class="descclassname">ikkuna.export.magic.</code><code class="descname">record</code><span class="sig-paren">(</span><em>tensor</em>, <em>label</em>, <em>method_name</em>, <em>*method_args</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.magic.record" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record changes to a tensor.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ikkuna.export.messages">
+<span id="ikkuna-export-messages-module"></span><h2>ikkuna.export.messages module<a class="headerlink" href="#module-ikkuna.export.messages" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ikkuna.export.messages.NetworkData">
+<em class="property">class </em><code class="descclassname">ikkuna.export.messages.</code><code class="descname">NetworkData</code><span class="sig-paren">(</span><em>tag</em>, <em>seq</em>, <em>step</em>, <em>epoch</em>, <em>kind</em>, <em>module</em>, <em>payload</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.NetworkData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
+<dl class="attribute">
+<dt id="ikkuna.export.messages.NetworkData.epoch">
+<code class="descname">epoch</code><a class="headerlink" href="#ikkuna.export.messages.NetworkData.epoch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.NetworkData.kind">
+<code class="descname">kind</code><a class="headerlink" href="#ikkuna.export.messages.NetworkData.kind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.NetworkData.module">
+<code class="descname">module</code><a class="headerlink" href="#ikkuna.export.messages.NetworkData.module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 5</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.NetworkData.payload">
+<code class="descname">payload</code><a class="headerlink" href="#ikkuna.export.messages.NetworkData.payload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 6</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.NetworkData.seq">
+<code class="descname">seq</code><a class="headerlink" href="#ikkuna.export.messages.NetworkData.seq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.NetworkData.step">
+<code class="descname">step</code><a class="headerlink" href="#ikkuna.export.messages.NetworkData.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.NetworkData.tag">
+<code class="descname">tag</code><a class="headerlink" href="#ikkuna.export.messages.NetworkData.tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ikkuna.export.subscriber">
+<span id="ikkuna-export-subscriber-module"></span><h2>ikkuna.export.subscriber module<a class="headerlink" href="#module-ikkuna.export.subscriber" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-subscriber"></span><p>This module contains the base definition for subscriber functionality. The <code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code> class
+should be subclassed for adding new metrics.</p>
+<dl class="class">
+<dt id="ikkuna.export.subscriber.HistogramSubscriber">
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">HistogramSubscriber</code><span class="sig-paren">(</span><em>clip_min</em>, <em>clip_max</em>, <em>step</em>, <em>buffer_size=10</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscriber</span></code></a></p>
+<p>A <a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a> which subsamples training artifacts and computes histograms per epoch.
+Histograms are non-normalized.</p>
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.HistogramSubscriber._clip_max">
+<code class="descname">_clip_max</code><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber._clip_max" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> – Maximum bin edge in the histogram</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.HistogramSubscriber._clip_min">
+<code class="descname">_clip_min</code><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber._clip_min" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> – Minimum bin edge in the histogram</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.HistogramSubscriber._bin_edges">
+<code class="descname">_bin_edges</code><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber._bin_edges" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>np.ndarray</em> – Edges of the histogram bins computed from <cite>_clip_max</cite>, <cite>_clip_min</cite>, and the step
+size</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.HistogramSubscriber._buffer_size">
+<code class="descname">_buffer_size</code><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber._buffer_size" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – number of artifacts to buffer before computing a histogram. This makes sense
+only in the context <a class="reference internal" href="#ikkuna.export.subscriber.SynchronizedSubscription" title="ikkuna.export.subscriber.SynchronizedSubscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">SynchronizedSubscription</span></code></a> (i think)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.HistogramSubscriber._buffer">
+<code class="descname">_buffer</code><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber._buffer" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> – List for keeping indirect references to gpu tensors</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.HistogramSubscriber._update_counter">
+<code class="descname">_update_counter</code><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber._update_counter" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Counter for subsampling the calls made to this <a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.HistogramSubscriber._gradient_hist">
+<code class="descname">_gradient_hist</code><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber._gradient_hist" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em> – Per-module cumulative histogram</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.HistogramSubscriber.epoch_finished">
+<code class="descname">epoch_finished</code><span class="sig-paren">(</span><em>epoch</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber.epoch_finished" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called automatically by the <code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.Exporter</span></code> object when an epoch has just
+finished.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>epoch</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – 0-based epoch index</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.HistogramSubscriber.update_histograms">
+<code class="descname">update_histograms</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber.update_histograms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the histograms from the current buffer.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ikkuna.export.subscriber.ModuleData">
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">ModuleData</code><span class="sig-paren">(</span><em>module</em>, <em>kinds</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.ModuleData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Data object for holding a set of artifacts for a module at one point during training.
+This data type can be used to buffer different kinds and check whether all expected kinds have
+been received for a module.</p>
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.ModuleData._module">
+<code class="descname">_module</code><a class="headerlink" href="#ikkuna.export.subscriber.ModuleData._module" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – Name of the layer</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.ModuleData._expected_kinds">
+<code class="descname">_expected_kinds</code><a class="headerlink" href="#ikkuna.export.subscriber.ModuleData._expected_kinds" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list(str)</em> – The expected kinds of messages per iteration</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.ModuleData._data">
+<code class="descname">_data</code><a class="headerlink" href="#ikkuna.export.subscriber.ModuleData._data" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict(str, torch.Tensor)</em> – The tensors received for each kind</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.ModuleData._seq">
+<code class="descname">_seq</code><a class="headerlink" href="#ikkuna.export.subscriber.ModuleData._seq" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Sequence number of this object (incremented whenever a <a class="reference internal" href="#ikkuna.export.subscriber.ModuleData" title="ikkuna.export.subscriber.ModuleData"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleData</span></code></a> is
+created)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.ModuleData._step">
+<code class="descname">_step</code><a class="headerlink" href="#ikkuna.export.subscriber.ModuleData._step" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Sequence number of the received messages (should match across all msgs in one
+iteration)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.ModuleData._epoch">
+<code class="descname">_epoch</code><a class="headerlink" href="#ikkuna.export.subscriber.ModuleData._epoch" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Epoch of the received messages (should match across all msgs in one
+iteration)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.ModuleData.add_message">
+<code class="descname">add_message</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.ModuleData.add_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new message to this object. Will fail if the new messsage does not have the same
+sequence number and epoch.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message</strong> (<a class="reference internal" href="#ikkuna.export.messages.NetworkData" title="ikkuna.export.messages.NetworkData"><em>ikkuna.export.messages.NetworkData</em></a>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.6)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If the message is for a different module (layer) or a message of this kind was already
+received.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.ModuleData.complete">
+<code class="descname">complete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.ModuleData.complete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check i all expected messages have been received. This means the message can be released
+to subscribers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.ModuleData.getattr">
+<code class="descname">getattr</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.ModuleData.getattr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override to mimick a property for each kind of message in this data (e.g.
+<code class="docutils literal notranslate"><span class="pre">activations</span></code>)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.ModuleData.step">
+<code class="descname">step</code><em class="property"> = 0</em><a class="headerlink" href="#ikkuna.export.subscriber.ModuleData.step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ikkuna.export.subscriber.Subscriber">
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">Subscriber</code><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<p>Base class for receiving and processing activations, gradients and other stuff into
+insightful metrics.</p>
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.Subscriber._counter">
+<code class="descname">_counter</code><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber._counter" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Number of times the subscriber was called</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.Subscriber.epoch_finished">
+<code class="descname">epoch_finished</code><span class="sig-paren">(</span><em>epoch</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber.epoch_finished" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called automatically by the <code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.Exporter</span></code> object when an epoch has just
+finished.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>epoch</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – 0-based epoch index</td>
 </tr>
 </tbody>
 </table>
@@ -263,39 +578,24 @@ Will trigger exportation of all new gradient data.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="ikkuna.export.export.NetworkData">
-<em class="property">class </em><code class="descclassname">ikkuna.export.export.</code><code class="descname">NetworkData</code><span class="sig-paren">(</span><em>step</em>, <em>epoch</em>, <em>kind</em>, <em>module</em>, <em>payload</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.NetworkData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
-<dl class="attribute">
-<dt id="ikkuna.export.export.NetworkData.epoch">
-<code class="descname">epoch</code><a class="headerlink" href="#ikkuna.export.export.NetworkData.epoch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 1</p>
+<dt id="ikkuna.export.subscriber.Subscription">
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">Subscription</code><span class="sig-paren">(</span><em>subscriber</em>, <em>kinds</em>, <em>tag=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.Subscription" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Specification for a subscription that can span multiple kinds and a tag.</p>
+<dl class="method">
+<dt id="ikkuna.export.subscriber.Subscription.epoch_finished">
+<code class="descname">epoch_finished</code><span class="sig-paren">(</span><em>epoch</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.Subscription.epoch_finished" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
-<dl class="attribute">
-<dt id="ikkuna.export.export.NetworkData.kind">
-<code class="descname">kind</code><a class="headerlink" href="#ikkuna.export.export.NetworkData.kind" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 2</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.export.NetworkData.module">
-<code class="descname">module</code><a class="headerlink" href="#ikkuna.export.export.NetworkData.module" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 3</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.export.NetworkData.payload">
-<code class="descname">payload</code><a class="headerlink" href="#ikkuna.export.export.NetworkData.payload" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 4</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.export.NetworkData.step">
-<code class="descname">step</code><a class="headerlink" href="#ikkuna.export.export.NetworkData.step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 0</p>
-</dd></dl>
-
+<dl class="class">
+<dt id="ikkuna.export.subscriber.SynchronizedSubscription">
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">SynchronizedSubscription</code><span class="sig-paren">(</span><em>subscriber</em>, <em>kinds</em>, <em>tag=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.SynchronizedSubscription" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ikkuna.export.subscriber.Subscription" title="ikkuna.export.subscriber.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscription</span></code></a></p>
+<p>A subscription which buffers messages and publishes a set of messages, each of a different
+kind, when one round (a train step) is over. This is useful for receiving several kinds of
+messages in each train step and always have them be processed together.</p>
 </dd></dl>
 
 </div>
@@ -315,6 +615,9 @@ Will trigger exportation of all new gradient data.</p>
 <li><a class="reference internal" href="#">ikkuna.export package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-ikkuna.export.export">ikkuna.export.export module</a></li>
+<li><a class="reference internal" href="#module-ikkuna.export.magic">ikkuna.export.magic module</a></li>
+<li><a class="reference internal" href="#module-ikkuna.export.messages">ikkuna.export.messages module</a></li>
+<li><a class="reference internal" href="#module-ikkuna.export.subscriber">ikkuna.export.subscriber module</a></li>
 <li><a class="reference internal" href="#module-ikkuna.export">Module contents</a></li>
 </ul>
 </li>

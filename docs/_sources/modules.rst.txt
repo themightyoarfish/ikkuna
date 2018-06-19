@@ -6,3 +6,4 @@ ai_ikkuna
 
    ikkuna
    main
+   train
