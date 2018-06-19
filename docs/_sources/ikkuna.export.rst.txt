@@ -1,6 +1,13 @@
 ikkuna.export package
 =====================
 
+Subpackages
+-----------
+
+.. toctree::
+
+    ikkuna.export.subscriber
+
 Submodules
 ----------
 
@@ -24,14 +31,6 @@ ikkuna.export.messages module
 -----------------------------
 
 .. automodule:: ikkuna.export.messages
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-ikkuna.export.subscriber module
--------------------------------
-
-.. automodule:: ikkuna.export.subscriber
     :members:
     :undoc-members:
     :show-inheritance:
