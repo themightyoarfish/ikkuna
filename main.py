@@ -111,11 +111,26 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer):
     trainer.add_model(model_str)
     trainer.optimize(name=optimizer)
 
+    import time
+    cum_time = 0
+    n_batches = 0
     for e in range(epochs):
-        print(f'Starting epoch {e:5d} of {epochs:5d}')
         for batch_idx in range(batches_per_epoch):
+
+            t0 = time.time()
             trainer.train()
+            t1 = time.time()
+
+            n_batches += 1
+            cum_time += t1-t0
+
+            if batch_idx % 10 == 0:
+                print(f'\repoch {e+1:>5d}/{epochs:<5d} '
+                      f'| batch {batch_idx+1:>5d}/{batches_per_epoch:<5d} '
+                      f'| {1. / (cum_time / n_batches):<3.1f} b/s', end='')
+
         accuracy = trainer.test(dataset_test)
+        print('')
         print(f'Test accuracy: {accuracy}')
 
 
