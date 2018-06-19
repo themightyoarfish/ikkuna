@@ -90,42 +90,6 @@ generating a name for each.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.export.export.Exporter.__call__">
-<code class="descname">__call__</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Call self as a function.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.export.Exporter.__dict__">
-<code class="descname">__dict__</code><em class="property"> = mappingproxy({'__module__': 'ikkuna.export.export', '__doc__': 'Class for managing publishing of data from model code.\n\n    An :class:`Exporter` is used in the model code by either explicitly registering modules for\n    tracking with :meth:`Exporter.add_modules()` or by calling it with newly constructed modules\n    which will then be returned as-is, but be registered in the process.\n\n    .. code-block:: python\n\n        e = Exporter(...)\n        features = nn.Sequential([\n            nn.Linear(...),\n            e(nn.Conv2d(...)),\n            nn.ReLU()\n        ])\n\n    No further changes to the model code are necessary, but for certain visualizations, the\n    exporter requires access to the model in its entirety, so :meth:`Exporter.add_model()` should be\n    used.\n\n    Attributes\n    ----------\n    _modules    :   list\n                    All tracked modules\n    _layer_counter  :   defaultdict\n                        Dictionary tracking number and kind of added modules for\n                        generating a name for each.\n    _layer_names    :   list\n                        List which parallels _modules and contains the label for each\n    _weight_cache   :   dict\n                        Cache for keeping the previous weights for computing differences\n    _bias_cache :   dict\n    ', '__init__': &lt;function Exporter.__init__&gt;, 'subscribe': &lt;function Exporter.subscribe&gt;, 'get_or_make_label': &lt;function Exporter.get_or_make_label&gt;, 'add_modules': &lt;function Exporter.add_modules&gt;, '__call__': &lt;function Exporter.__call__&gt;, 'publish': &lt;function Exporter.publish&gt;, 'train': &lt;function Exporter.train&gt;, 'test': &lt;function Exporter.test&gt;, 'export': &lt;function Exporter.export&gt;, 'new_activations': &lt;function Exporter.new_activations&gt;, 'new_gradients': &lt;function Exporter.new_gradients&gt;, 'set_model': &lt;function Exporter.set_model&gt;, 'step': &lt;function Exporter.step&gt;, 'epoch_finished': &lt;function Exporter.epoch_finished&gt;, '__dict__': &lt;attribute '__dict__' of 'Exporter' objects&gt;, '__weakref__': &lt;attribute '__weakref__' of 'Exporter' objects&gt;})</em><a class="headerlink" href="#ikkuna.export.export.Exporter.__dict__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.export.Exporter.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>frequency=1</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a new <code class="docutils literal notranslate"><span class="pre">Exporter</span></code>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>frequency</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of training steps to pass by before publishing a new update.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.export.Exporter.__module__">
-<code class="descname">__module__</code><em class="property"> = 'ikkuna.export.export'</em><a class="headerlink" href="#ikkuna.export.export.Exporter.__module__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.export.Exporter.__weakref__">
-<code class="descname">__weakref__</code><a class="headerlink" href="#ikkuna.export.export.Exporter.__weakref__" title="Permalink to this definition">¶</a></dt>
-<dd><p>list of weak references to the object (if defined)</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="ikkuna.export.export.Exporter.add_modules">
 <code class="descname">add_modules</code><span class="sig-paren">(</span><em>module</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.add_modules" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add modules to supervise. Currently, only activations and gradients are tracked. If the
@@ -320,29 +284,6 @@ Parameter.</p>
 <dd><p><em>str</em> – Name for the parameter, usually the layer identifier</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ikkuna.export.magic.WatchedParameter.__getattribute__">
-<code class="descname">__getattribute__</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.magic.WatchedParameter.__getattribute__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return getattr(self, name).</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.magic.WatchedParameter.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>baseObject</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.magic.WatchedParameter.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.magic.WatchedParameter.__module__">
-<code class="descname">__module__</code><em class="property"> = 'ikkuna.export.magic'</em><a class="headerlink" href="#ikkuna.export.magic.WatchedParameter.__module__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="staticmethod">
-<dt id="ikkuna.export.magic.WatchedParameter.__new__">
-<em class="property">static </em><code class="descname">__new__</code><span class="sig-paren">(</span><em>*args</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.magic.WatchedParameter.__new__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create and return a new object.  See help(type) for accurate signature.</p>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="function">
@@ -388,34 +329,6 @@ tensor was not sufficient.</p>
 <dt id="ikkuna.export.messages.NetworkData">
 <em class="property">class </em><code class="descclassname">ikkuna.export.messages.</code><code class="descname">NetworkData</code><span class="sig-paren">(</span><em>tag</em>, <em>seq</em>, <em>step</em>, <em>epoch</em>, <em>kind</em>, <em>module</em>, <em>payload</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.NetworkData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
-<dl class="method">
-<dt id="ikkuna.export.messages.NetworkData.__getnewargs__">
-<code class="descname">__getnewargs__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.NetworkData.__getnewargs__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return self as a plain tuple.  Used by copy and pickle.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.messages.NetworkData.__module__">
-<code class="descname">__module__</code><em class="property"> = 'ikkuna.export.messages'</em><a class="headerlink" href="#ikkuna.export.messages.NetworkData.__module__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="staticmethod">
-<dt id="ikkuna.export.messages.NetworkData.__new__">
-<em class="property">static </em><code class="descname">__new__</code><span class="sig-paren">(</span><em>tag</em>, <em>seq</em>, <em>step</em>, <em>epoch</em>, <em>kind</em>, <em>module</em>, <em>payload</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.NetworkData.__new__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create new instance of NetworkData(tag, seq, step, epoch, kind, module, payload)</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.messages.NetworkData.__repr__">
-<code class="descname">__repr__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.NetworkData.__repr__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a nicely formatted representation string</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.messages.NetworkData.__slots__">
-<code class="descname">__slots__</code><em class="property"> = ()</em><a class="headerlink" href="#ikkuna.export.messages.NetworkData.__slots__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="method">
 <dt id="ikkuna.export.messages.NetworkData._asdict">
 <code class="descname">_asdict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.NetworkData._asdict" title="Permalink to this definition">¶</a></dt>
@@ -544,45 +457,6 @@ only in the context <a class="reference internal" href="#ikkuna.export.subscribe
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ikkuna.export.subscriber.HistogramSubscriber.__abstractmethods__">
-<code class="descname">__abstractmethods__</code><em class="property"> = frozenset()</em><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber.__abstractmethods__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.subscriber.HistogramSubscriber.__call__">
-<code class="descname">__call__</code><span class="sig-paren">(</span><em>module_datas</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Every tenth call will be buffered and every tenth buffering will lead to updating
-histograms.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.subscriber.HistogramSubscriber.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>clip_min</em>, <em>clip_max</em>, <em>step</em>, <em>buffer_size=10</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>clip_min</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Lower limit</li>
-<li><strong>clip_min</strong> – Upper limit</li>
-<li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Step between histogram bins</li>
-<li><strong>buffer_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of calls to <a class="reference internal" href="#ikkuna.export.subscriber.HistogramSubscriber.__call__" title="ikkuna.export.subscriber.HistogramSubscriber.__call__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">HistogramSubscriber.__call__()</span></code></a> to buffer</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.6)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If <cite>clip_max</cite> is not greater than <cite>clip_min</cite></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.subscriber.HistogramSubscriber.__module__">
-<code class="descname">__module__</code><em class="property"> = 'ikkuna.export.subscriber'</em><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber.__module__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
 <dt id="ikkuna.export.subscriber.HistogramSubscriber._abc_cache">
 <code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber._abc_cache" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -669,40 +543,6 @@ iteration)</p>
 <code class="descname">_epoch</code><a class="headerlink" href="#ikkuna.export.subscriber.ModuleData._epoch" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>int</em> – Epoch of the received messages (should match across all msgs in one
 iteration)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.subscriber.ModuleData.__dict__">
-<code class="descname">__dict__</code><em class="property"> = mappingproxy({'__module__': 'ikkuna.export.subscriber', '__doc__': 'Data object for holding a set of artifacts for a module at one point during training.\n    This data type can be used to buffer different kinds and check whether all expected kinds have\n    been received for a module.\n\n    Attributes\n    ----------\n    _module :   str\n                Name of the layer\n    _expected_kinds :   list(str)\n                        The expected kinds of messages per iteration\n    _data   :   dict(str, torch.Tensor)\n                The tensors received for each kind\n    _seq    :   int\n                Sequence number of this object (incremented whenever a :class:`ModuleData` is\n                created)\n    _step   :   int\n                Sequence number of the received messages (should match across all msgs in one\n                iteration)\n    _epoch  :   int\n                Epoch of the received messages (should match across all msgs in one\n                iteration)\n    ', 'step': 0, '__init__': &lt;function ModuleData.__init__&gt;, 'complete': &lt;function ModuleData.complete&gt;, '_check_step': &lt;function ModuleData._check_step&gt;, '_check_epoch': &lt;function ModuleData._check_epoch&gt;, 'add_message': &lt;function ModuleData.add_message&gt;, 'getattr': &lt;function ModuleData.getattr&gt;, '__str__': &lt;function ModuleData.__str__&gt;, '__repr__': &lt;function ModuleData.__repr__&gt;, '__dict__': &lt;attribute '__dict__' of 'ModuleData' objects&gt;, '__weakref__': &lt;attribute '__weakref__' of 'ModuleData' objects&gt;})</em><a class="headerlink" href="#ikkuna.export.subscriber.ModuleData.__dict__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.subscriber.ModuleData.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>module</em>, <em>kinds</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.ModuleData.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.subscriber.ModuleData.__module__">
-<code class="descname">__module__</code><em class="property"> = 'ikkuna.export.subscriber'</em><a class="headerlink" href="#ikkuna.export.subscriber.ModuleData.__module__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.subscriber.ModuleData.__repr__">
-<code class="descname">__repr__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.ModuleData.__repr__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return repr(self).</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.subscriber.ModuleData.__str__">
-<code class="descname">__str__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.ModuleData.__str__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return str(self).</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.subscriber.ModuleData.__weakref__">
-<code class="descname">__weakref__</code><a class="headerlink" href="#ikkuna.export.subscriber.ModuleData.__weakref__" title="Permalink to this definition">¶</a></dt>
-<dd><p>list of weak references to the object (if defined)</p>
 </dd></dl>
 
 <dl class="method">
@@ -799,39 +639,6 @@ insightful metrics.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ikkuna.export.subscriber.Subscriber.__abstractmethods__">
-<code class="descname">__abstractmethods__</code><em class="property"> = frozenset({'__call__', 'epoch_finished'})</em><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber.__abstractmethods__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.subscriber.Subscriber.__call__">
-<code class="descname">__call__</code><span class="sig-paren">(</span><em>module_datas</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Callback for processing a set of <a class="reference internal" href="#ikkuna.export.subscriber.ModuleData" title="ikkuna.export.subscriber.ModuleData"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleData</span></code></a> objects. The exact nature of these
-pacakges is determined by the <a class="reference internal" href="#ikkuna.export.subscriber.Subscription" title="ikkuna.export.subscriber.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscription</span></code></a> attached to this <a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>module_datas</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.6)"><em>list</em></a><em>(</em><a class="reference internal" href="#ikkuna.export.subscriber.ModuleData" title="ikkuna.export.subscriber.ModuleData"><em>ModuleData</em></a><em>)</em>) – </td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.6)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If any of the received <a class="reference internal" href="#ikkuna.export.subscriber.ModuleData" title="ikkuna.export.subscriber.ModuleData"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleData</span></code></a> objects is not <a class="reference internal" href="#ikkuna.export.subscriber.ModuleData.complete" title="ikkuna.export.subscriber.ModuleData.complete"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ModuleData.complete()</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.subscriber.Subscriber.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.subscriber.Subscriber.__module__">
-<code class="descname">__module__</code><em class="property"> = 'ikkuna.export.subscriber'</em><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber.__module__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
 <dt id="ikkuna.export.subscriber.Subscriber._abc_cache">
 <code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber._abc_cache" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -874,56 +681,6 @@ finished.</p>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Specification for a subscription that can span multiple kinds and a tag.</p>
 <dl class="method">
-<dt id="ikkuna.export.subscriber.Subscription.__call__">
-<code class="descname">__call__</code><span class="sig-paren">(</span><em>network_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.Subscription.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Callback for receiving an incoming message.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>network_data</strong> (<em>ikkuna.messages.NetworkData</em>) – </td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.subscriber.Subscription.__dict__">
-<code class="descname">__dict__</code><em class="property"> = mappingproxy({'__module__': 'ikkuna.export.subscriber', '__doc__': 'Specification for a subscription that can span multiple kinds and a tag.', '__init__': &lt;function Subscription.__init__&gt;, 'epoch_finished': &lt;function Subscription.epoch_finished&gt;, '_new_message': &lt;function Subscription._new_message&gt;, '__call__': &lt;function Subscription.__call__&gt;, '__dict__': &lt;attribute '__dict__' of 'Subscription' objects&gt;, '__weakref__': &lt;attribute '__weakref__' of 'Subscription' objects&gt;})</em><a class="headerlink" href="#ikkuna.export.subscriber.Subscription.__dict__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.subscriber.Subscription.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>subscriber</em>, <em>kinds</em>, <em>tag=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.Subscription.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>subscriber</strong> (<a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><em>Subscriber</em></a>) – Object that wants to receive the messages</li>
-<li><strong>kinds</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.6)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>)</em>) – List of string identifiers for different message kinds. These are all the
-message kinds the subscriber wishes to receive</li>
-<li><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em> or </em><em>None</em>) – Optional tag for filtering messages. If <code class="docutils literal notranslate"><span class="pre">None</span></code> is passed, all messages will be
-relayed</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.subscriber.Subscription.__module__">
-<code class="descname">__module__</code><em class="property"> = 'ikkuna.export.subscriber'</em><a class="headerlink" href="#ikkuna.export.subscriber.Subscription.__module__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.subscriber.Subscription.__weakref__">
-<code class="descname">__weakref__</code><a class="headerlink" href="#ikkuna.export.subscriber.Subscription.__weakref__" title="Permalink to this definition">¶</a></dt>
-<dd><p>list of weak references to the object (if defined)</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="ikkuna.export.subscriber.Subscription._new_message">
 <code class="descname">_new_message</code><span class="sig-paren">(</span><em>network_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.Subscription._new_message" title="Permalink to this definition">¶</a></dt>
 <dd><p>Process a newly arrived message. Subclasses should override this method for any special
@@ -952,31 +709,6 @@ treatment.</p>
 <p>A subscription which buffers messages and publishes a set of messages, each of a different
 kind, when one round (a train step) is over. This is useful for receiving several kinds of
 messages in each train step and always have them be processed together.</p>
-<dl class="method">
-<dt id="ikkuna.export.subscriber.SynchronizedSubscription.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>subscriber</em>, <em>kinds</em>, <em>tag=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.SynchronizedSubscription.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>subscriber</strong> (<a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><em>Subscriber</em></a>) – Object that wants to receive the messages</li>
-<li><strong>kinds</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.6)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>)</em>) – List of string identifiers for different message kinds. These are all the
-message kinds the subscriber wishes to receive</li>
-<li><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em> or </em><em>None</em>) – Optional tag for filtering messages. If <code class="docutils literal notranslate"><span class="pre">None</span></code> is passed, all messages will be
-relayed</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.subscriber.SynchronizedSubscription.__module__">
-<code class="descname">__module__</code><em class="property"> = 'ikkuna.export.subscriber'</em><a class="headerlink" href="#ikkuna.export.subscriber.SynchronizedSubscription.__module__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="method">
 <dt id="ikkuna.export.subscriber.SynchronizedSubscription._new_message">
 <code class="descname">_new_message</code><span class="sig-paren">(</span><em>network_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.SynchronizedSubscription._new_message" title="Permalink to this definition">¶</a></dt>
