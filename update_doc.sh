@@ -8,4 +8,4 @@ cd $cwd
 if [ ! -d "docs" ]; then
     mkdir docs
 fi
-cp -r doc/build/html/. docs
+cp -r sphinx/build/html/. docs
