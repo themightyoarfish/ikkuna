@@ -1,0 +1,112 @@
+from ikkuna.export.subscriber import Subscriber
+from matplotlib import pyplot as plt
+import numpy as np
+from collections import defaultdict
+
+
+class HistogramSubscriber(Subscriber):
+
+    '''A :class:`Subscriber` which subsamples training artifacts and computes histograms per epoch.
+    Histograms are non-normalized.
+
+    Attributes
+    ----------
+    _clip_max   :   float
+                    Maximum bin edge in the histogram
+    _clip_min   :   float
+                    Minimum bin edge in the histogram
+    _bin_edges  :   np.ndarray
+                    Edges of the histogram bins computed from `_clip_max`, `_clip_min`, and the step
+                    size
+    _buffer_size    :   int
+                        number of artifacts to buffer before computing a histogram. This makes sense
+                        only in the context :class:`SynchronizedSubscription` (i think)
+    _buffer :   list
+                List for keeping indirect references to gpu tensors
+    _update_counter :   int
+                        Counter for subsampling the calls made to this :class:`Subscriber`
+    _gradient_hist  :   dict
+                        Per-module cumulative histogram
+    '''
+
+    def __init__(self, clip_min, clip_max, step, buffer_size=10):
+        '''
+        Parameters
+        ----------
+        clip_min    :   float
+                        Lower limit
+        clip_min    :   float
+                        Upper limit
+        step    :   float
+                    Step between histogram bins
+        buffer_size :   int
+                        Number of calls to :meth:`HistogramSubscriber.__call__()` to buffer
+
+        Raises
+        ------
+        ValueError
+            If `clip_max` is not greater than `clip_min`
+        '''
+        super().__init__()
+        if clip_max <= clip_min:
+            raise ValueError(f'`clip_min` must be smaller than'
+                             ' `clip_max` (was {clip_min} and {clip_max})')
+        n_bins = int((clip_max - clip_min) // step)
+        assert n_bins > 0, 'Bin number must be strictly positive.'
+
+        self._bin_edges      = np.linspace(clip_min, clip_max, num=n_bins)
+        self._gradient_hist  = defaultdict(lambda: np.zeros(n_bins, dtype=np.int64))
+        self._nbins          = n_bins
+        self._clip_max       = clip_max
+        self._clip_min       = clip_min
+        self._buffer_size    = buffer_size
+        self._buffer         = []
+        self._update_counter = 0
+
+    def update_histograms(self):
+        '''Update the histograms from the current buffer.'''
+        for module_data in self._buffer:
+            module                        = module_data._module
+            data                          = module_data._data['gradients'].cpu()
+            hist                          = data.histc(self._nbins, self._clip_min, self._clip_max)
+            self._gradient_hist[module]  += hist.numpy().astype(np.int64)
+
+    def __call__(self, module_datas):
+        '''Every tenth call will be buffered and every tenth buffering will lead to updating
+        histograms.'''
+        super().__call__(module_datas)
+
+        if self._counter % 10 != 0:
+            return
+
+        if (self._update_counter + 1) % self._buffer_size == 0:
+            self.update_histograms()
+            self._buffer = []
+        self._buffer.extend(module_datas)
+        self._update_counter += 1
+
+    def epoch_finished(self, epoch):
+        super().epoch_finished(epoch)
+        modules    = list(self._gradient_hist.keys())
+        histograms = list(self._gradient_hist.values())
+        n_modules  = len(modules)
+        h, w       = (int(np.floor(np.sqrt(n_modules))), int(np.ceil(np.sqrt(n_modules))))
+
+        figure, axarr = plt.subplots(h, w)
+        figure.suptitle(f'Gradient Histograms for epoch {epoch}')
+
+        for i in range(h):
+            for j in range(w):
+                index = h*i+j
+
+                ax = axarr[i][j]
+                ax.clear()
+
+                ax.set_title(str(modules[index]))
+                ax.set_yscale('log')
+                ax.plot(self._bin_edges, histograms[index], linewidth=1)
+                ax.grid(True)
+
+        figure.tight_layout()
+        figure.subplots_adjust(hspace=0.5, wspace=0.5)
+        figure.show()
