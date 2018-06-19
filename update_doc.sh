@@ -3,7 +3,7 @@
 set -x
 
 cwd=$(pwd)
-cd doc && make html
+cd sphinx && make html
 cd $cwd
 if [ ! -d "docs" ]; then
     mkdir docs
