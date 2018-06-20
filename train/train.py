@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from ikkuna import models
+import models
 from torch.utils.data import DataLoader
 from ikkuna.utils import create_optimizer, initialize_model
 from ikkuna.export import Exporter

@@ -63,7 +63,7 @@ def initialize_model(module, bias_val=0.01):
         If ``module`` is not one of the known models (currently :class:`ikkuna.models.AlexNetMini`
         and :class:`ikkuna.models.DenseNet`)
     '''
-    from ikkuna import models
+    import models
     import torch.nn as nn
     if isinstance(module, models.AlexNetMini):
         for m in module.modules():
