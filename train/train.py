@@ -70,9 +70,9 @@ class Trainer:
         print(f'Number of classes: {self._num_classes}')
         print(f'Data shape: {self._shape}')
         self._exporter      = Exporter()
-        from ikkuna.export.subscriber import HistogramSubscriber, SynchronizedSubscription
-        subscriber = HistogramSubscriber(-2e-6, 2e-6, 1e-7)
-        subscription = SynchronizedSubscription(subscriber, ['activations', 'gradients'])
+        from ikkuna.export.subscriber import RatioSubscriber, SynchronizedSubscription
+        subscriber = RatioSubscriber()
+        subscription = SynchronizedSubscription(subscriber, ['weights', 'weight_updates'])
         self._exporter.subscribe(subscription)
 
     def optimize(self, **kwargs):
