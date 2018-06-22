@@ -183,11 +183,17 @@ class Exporter(object):
         if hasattr(module, 'weight'):
             if module in self._weight_cache:
                 self.export('weight_updates', module, module.weight - self._weight_cache[module])
+            else:
+                self.export('weight_updates', module, torch.zeros_like(module.weight))
             self.export('weights', module, module.weight)
             self._weight_cache[module] = torch.tensor(module.weight)
         if hasattr(module, 'bias'):
+            # in the first train step, there can be no updates, so we just publish zeros, otherwise
+            # clients would error out since they don't receive the expected messages
             if module in self._bias_cache:
                 self.export('bias_updates', module, module.bias - self._bias_cache[module])
+            else:
+                self.export('bias_updates', module, torch.zeros_like(module.bias))
             self.export('biases', module, module.bias)
             self._bias_cache[module] = torch.tensor(module.bias)
         self.export('activations', module, out_)
