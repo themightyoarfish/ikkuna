@@ -60,30 +60,41 @@ class HistogramSubscriber(Subscriber):
         self._clip_max       = clip_max
         self._clip_min       = clip_min
         self._buffer_size    = buffer_size
-        self._buffer         = []
-        self._update_counter = 0
+        self._buffer         = defaultdict(list)
+        self._update_counter = defaultdict(int)
 
-    def update_histograms(self):
-        '''Update the histograms from the current buffer.'''
-        for module_data in self._buffer:
+    def update_histogram(self, module):
+        '''Update the histogram of a module from the current buffer.
+
+        Parameters
+        ----------
+        module  :   str
+                    Layer abel for which the histogram should be updated from the buffer
+        '''
+        for module_data in self._buffer[module]:
             module                        = module_data._module
             data                          = module_data._data['gradients'].cpu()
             hist                          = data.histc(self._nbins, self._clip_min, self._clip_max)
             self._gradient_hist[module]  += hist.numpy().astype(np.int64)
 
-    def __call__(self, module_datas):
+    def _clear(self):
+        self._buffer.clear()
+        self._gradient_hist.clear()
+
+    def __call__(self, module_data):
         '''Every tenth call will be buffered and every tenth buffering will lead to updating
         histograms.'''
-        super().__call__(module_datas)
+        super().__call__(module_data)
+        module = module_data._module
 
-        if self._counter % 10 != 0:
+        if self._counter[module] % 10 != 0:
             return
 
-        if (self._update_counter + 1) % self._buffer_size == 0:
-            self.update_histograms()
-            self._buffer = []
-        self._buffer.extend(module_datas)
-        self._update_counter += 1
+        if (self._update_counter[module] + 1) % self._buffer_size == 0:
+            self.update_histogram(module)
+            self._buffer[module] = []
+        self._buffer[module].append(module_data)
+        self._update_counter[module] += 1
 
     def epoch_finished(self, epoch):
         super().epoch_finished(epoch)
@@ -110,3 +121,4 @@ class HistogramSubscriber(Subscriber):
         figure.tight_layout()
         figure.subplots_adjust(hspace=0.5, wspace=0.5)
         figure.show()
+        self._clear()

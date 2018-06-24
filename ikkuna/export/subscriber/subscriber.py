@@ -8,6 +8,7 @@ should be subclassed for adding new metrics.
 
 '''
 import abc
+from collections import defaultdict
 
 
 class ModuleData(object):
@@ -143,7 +144,17 @@ class ModuleData(object):
 
 class Subscription(object):
 
-    '''Specification for a subscription that can span multiple kinds and a tag.'''
+    '''Specification for a subscription that can span multiple kinds and a tag.
+
+    Attributes
+    ----------
+    _tag    :   str
+                Tag for filtering the processed messages
+    _subscriber :   Subscriber
+                    The subscriber associated with the subscription
+    _kinds  :   list(str)
+                Message kinds we are interested in
+    '''
 
     def __init__(self, subscriber, kinds, tag=None):
         '''
@@ -175,7 +186,7 @@ class Subscription(object):
         '''
         data = ModuleData(network_data.module, network_data.kind)
         data.add_message(network_data)
-        self._subscriber([data])
+        self._subscriber(data)
 
     def __call__(self, network_data):
         '''Callback for receiving an incoming message.
@@ -223,8 +234,7 @@ class SynchronizedSubscription(Subscription):
         self._modules     = {}
 
     def _new_message(self, network_data):
-        '''Start a new round if a new sequence number is seen. If the buffer is full, all is
-        published.'''
+        '''Start a new round if a new sequence number is seen.'''
 
         # if we get a new sequence number, a new train step must have begun
         if self._current_seq is None or self._current_seq != network_data.seq:
@@ -236,13 +246,15 @@ class SynchronizedSubscription(Subscription):
             self._modules[module] = ModuleData(module, self._kinds)
         self._modules[module].add_message(network_data)
 
+        delete_these = []
         # all full? publish
-        # NOTE: This assumes that the messages for a set of modules are interleaved, otherwise,
-        # we'll have finished the first module before others are filled. A cleaner way to do this
-        # would be to have a list of modules to expect and not publish before all have been
-        # completed.
-        if all(map(lambda d: d.complete(), self._modules.values())):
-            self._subscriber(list(self._modules.values()))
+        for module, data in self._modules.items():
+            if data.complete():
+                self._subscriber(data)
+                delete_these.append(module)
+
+        for module in delete_these:
+            del self._modules[module]
 
 
 class Subscriber(abc.ABC):
@@ -252,31 +264,30 @@ class Subscriber(abc.ABC):
 
     Attributes
     ----------
-    _counter    :   int
-                    Number of times the subscriber was called
+    _counter    :   dict(str, int)
+                    Number of times the subscriber was called for each module label
     '''
 
     def __init__(self):
-        self._counter = 0
+        self._counter = defaultdict(int)
 
     @abc.abstractmethod
-    def __call__(self, module_datas):
-        '''Callback for processing a set of :class:`ModuleData` objects. The exact nature of these
-        pacakges is determined by the :class:`Subscription` attached to this :class:`Subscriber`.
+    def __call__(self, module_data):
+        '''Callback for processing a :class:`ModuleData` object. The exact nature of this
+        package is determined by the :class:`Subscription` attached to this :class:`Subscriber`.
 
         Parameters
         ----------
-        module_datas    :   list(ModuleData)
+        module_data    :   ModuleData
 
         Raises
         ------
         ValueError
-            If any of the received :class:`ModuleData` objects is not :meth:`ModuleData.complete()`
+            If the received :class:`ModuleData` object is not :meth:`ModuleData.complete()`
         '''
-        for m in module_datas:
-            if not m.complete():
-                raise ValueError(f'Data received for "{m._module}" is not complete.')
-        self._counter += 1
+        if not module_data.complete():
+            raise ValueError(f'Data received for "{module_data._module}" is not complete.')
+        self._counter[module_data._module] += 1
 
     @abc.abstractmethod
     def epoch_finished(self, epoch):
