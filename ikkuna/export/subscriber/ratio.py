@@ -3,7 +3,6 @@ from matplotlib import pyplot as plt
 import numpy as np
 from collections import defaultdict
 from matplotlib.ticker import FixedLocator, FixedFormatter
-import sys
 import torch
 
 ZERO_TENSOR = torch.tensor(0.0).cuda()
@@ -23,13 +22,15 @@ class RatioSubscriber(Subscriber):
         self._figure, self._ax  = plt.subplots()
         self._plots             = {}
         self._batches_per_epoch = None
-        self._ylims             = None
+        self._ylims             = ylims
         self._average           = int(average)
 
         self._ax.set_autoscaley_on(True)
-        self._ax.set_title('Update/Weight ratios per layer')
+        self._ax.set_title(f'Update/Weight ratios per layer (average of {average})')
         self._ax.set_xlabel('Mean update ratio')
         self._ax.set_xlabel('Epoch start')
+        if ylims:
+            self._ax.set_ylim(*ylims)
 
     def _process_data(self, module_data):
         module  = module_data._module
@@ -59,7 +60,10 @@ class RatioSubscriber(Subscriber):
 
             ratios = self._ratios[module]
             ratios.append(ratio)
-            if self._average > 1 and len(ratios) % self._average == 0:
+            # counter is incremented by superclass only after this method has returned, so look 1
+            # ahead
+            current_ratio_index = self._counter[module] + 1
+            if self._average > 1 and current_ratio_index % self._average == 0:
                 ratios[-self._average:] = [np.mean(ratios[-self._average:])]
 
     def epoch_finished(self, epoch):
@@ -92,7 +96,8 @@ class RatioSubscriber(Subscriber):
 
         # set the axes view to accomodate new data
         self._ax.legend(ncol=2)
-        self._ax.relim()
+        if not self._ylims:
+            self._ax.relim()
         self._ax.autoscale_view()
 
         # redraw the figure
