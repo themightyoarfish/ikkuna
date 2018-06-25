@@ -268,10 +268,14 @@ class Subscriber(abc.ABC):
                     Number of times the subscriber was called for each module label
     '''
 
-    def __init__(self):
+    def __init__(self, subsample=1):
         self._counter = defaultdict(int)
+        self._subsample = subsample
 
     @abc.abstractmethod
+    def _process_data(self, module_data):
+        pass
+
     def __call__(self, module_data):
         '''Callback for processing a :class:`ModuleData` object. The exact nature of this
         package is determined by the :class:`Subscription` attached to this :class:`Subscriber`.
@@ -287,6 +291,10 @@ class Subscriber(abc.ABC):
         '''
         if not module_data.complete():
             raise ValueError(f'Data received for "{module_data._module}" is not complete.')
+
+        module = module_data._module
+        if (self._counter[module] + 1) % self._subsample == 0:
+            self._process_data(module_data)
         self._counter[module_data._module] += 1
 
     @abc.abstractmethod
