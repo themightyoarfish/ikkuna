@@ -24,6 +24,7 @@ class RatioSubscriber(Subscriber):
         self._plots             = {}
         self._batches_per_epoch = None
         self._ylims             = None
+        self._average           = int(average)
 
         self._ax.set_autoscaley_on(True)
         self._ax.set_title('Update/Weight ratios per layer')
@@ -51,8 +52,12 @@ class RatioSubscriber(Subscriber):
             # # moving average of ratios
             # self._ratios[module] += ratio + counter * self._ratios[module] / counter + 1
             if np.isnan(ratio):
-                raise ValueError(f'Warning nan value ratio for {module}', file=sys.stderr)
-            self._ratios[module].append(ratio)
+                raise ValueError(f'NaN value ratio for {module}')
+
+            ratios = self._ratios[module]
+            ratios.append(ratio)
+            if self._average > 1 and len(ratios) % self._average == 0:
+                ratios[-self._average:] = np.prod(ratios[-self._average:])
 
     def epoch_finished(self, epoch):
         super().epoch_finished(epoch)
@@ -64,7 +69,7 @@ class RatioSubscriber(Subscriber):
 
         # create the tick positions and labels so we only get one label per epoch, but the
         # resolution of batches
-        ticks = np.arange(epoch + 1) * self._batches_per_epoch / self._subsample
+        ticks = np.arange(epoch + 1) * self._batches_per_epoch / self._subsample / self._average
         tick_labels = [f'{e}' for e in range(epoch + 1)]
         # set ticks and labels
         # TODO: Figure out how to do this with LinearLocator or whatever so we need not do it in
