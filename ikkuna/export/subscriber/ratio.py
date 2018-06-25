@@ -40,13 +40,14 @@ class RatioSubscriber(Subscriber):
             ######################################################################################
             #  We need to see how many NaNs we have and compute the mean only over the non-nans  #
             ######################################################################################
-            n      = float(weights.numel())
-            n_nans = torch.isnan(weights).sum().to(torch.float32)
+            ratio_tensor = updates.div(weights)
+            n            = float(weights.numel())
+            n_nans       = torch.isnan(ratio_tensor).sum().to(torch.float32)
             if n_nans > 0:
-                ratio_tensor = updates.div(weights)
-                ratio_sum    = torch.where(1 - torch.isnan(ratio_tensor), ratio_tensor, 0).sum()
+                ratio_sum    = torch.where(1 - torch.isnan(ratio_tensor), ratio_tensor,
+                                           ZERO_TENSOR).sum()
             else:
-                ratio_sum   = updates.div(weights).sum()
+                ratio_sum   = ratio_tensor.sum()
             ratio = (ratio_sum / (n - n_nans)).item()
 
             # counter = self._counter[module]
