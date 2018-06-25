@@ -81,15 +81,9 @@ class HistogramSubscriber(Subscriber):
         self._buffer.clear()
         self._gradient_hist.clear()
 
-    def __call__(self, module_data):
-        '''Every tenth call will be buffered and every tenth buffering will lead to updating
-        histograms.'''
-        super().__call__(module_data)
+    def _process_data(self, module_data):
+
         module = module_data._module
-
-        if self._counter[module] % 10 != 0:
-            return
-
         if (self._update_counter[module] + 1) % self._buffer_size == 0:
             self.update_histogram(module)
             self._buffer[module] = []
