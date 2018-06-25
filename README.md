@@ -31,3 +31,14 @@ disposal.
 
 ## Documentation
 The sphinx-generated html documentation is hosted [here](https://peltarion.github.io/ai_ikkuna/).
+
+## Working with the repository/notebooks
+1. Clone the repository.
+1. `cd` into the repository.
+1. Tell git where to find the configuration information for the iPython Notebooks with this command: `git config --add include.path $(pwd)/.gitconfig` (The path needs to point to your root git repository where the `.gitconfig` is stored).
+
+### Adding a new notebook
+1. Create a new Jupyter Notebook.
+1. Hit `Edit -> Edit Notebook Metadata`.
+1. Add `"git": { "suppress_outputs": true },` as a top level element to the json metadata. This will be a notification to the git filter that we want to strip the metadata.
+
