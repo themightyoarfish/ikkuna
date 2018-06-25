@@ -53,12 +53,13 @@ class RatioSubscriber(Subscriber):
             # # moving average of ratios
             # self._ratios[module] += ratio + counter * self._ratios[module] / counter + 1
             if np.isnan(ratio):
+                __import__('ipdb').set_trace()
                 raise ValueError(f'NaN value ratio for {module}')
 
             ratios = self._ratios[module]
             ratios.append(ratio)
             if self._average > 1 and len(ratios) % self._average == 0:
-                ratios[-self._average:] = [np.prod(ratios[-self._average:])]
+                ratios[-self._average:] = [np.mean(ratios[-self._average:])]
 
     def epoch_finished(self, epoch):
         super().epoch_finished(epoch)
