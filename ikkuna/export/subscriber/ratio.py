@@ -43,7 +43,8 @@ class RatioSubscriber(Subscriber):
             n      = float(weights.numel())
             n_nans = torch.isnan(weights).sum().to(torch.float32)
             if n_nans > 0:
-                ratio_sum   = updates.div(torch.where(1 - torch.isnan(weights), weights, 0)).sum()
+                ratio_tensor = updates.div(weights)
+                ratio_sum    = torch.where(1 - torch.isnan(ratio_tensor), ratio_tensor, 0).sum()
             else:
                 ratio_sum   = updates.div(weights).sum()
             ratio = (ratio_sum / (n - n_nans)).item()
@@ -57,7 +58,7 @@ class RatioSubscriber(Subscriber):
             ratios = self._ratios[module]
             ratios.append(ratio)
             if self._average > 1 and len(ratios) % self._average == 0:
-                ratios[-self._average:] = np.prod(ratios[-self._average:])
+                ratios[-self._average:] = [np.prod(ratios[-self._average:])]
 
     def epoch_finished(self, epoch):
         super().epoch_finished(epoch)
