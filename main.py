@@ -11,14 +11,29 @@ accepts the following arguments:
    :func: get_parser
    :prog: main.py
 '''
-import numpy as np
+####################
+#  stdlib imports  #
+####################
 from argparse import ArgumentParser
 
+#######################
+#  3rd party imports  #
+#######################
+import numpy as np
 import torch
 import torchvision
 from torchvision.transforms import ToTensor, Compose
 
+#######################
+#  1st party imports  #
+#######################
 from train import Trainer, DatasetMeta
+
+import random
+random.seed(0)
+torch.manual_seed(0)
+torch.cuda.manual_seed_all(0)
+np.random.seed(0)
 
 
 def _load_dataset(name):
@@ -86,7 +101,7 @@ def _load_dataset(name):
     return meta_train, meta_test
 
 
-def _main(dataset_str, model_str, batch_size, epochs, optimizer):
+def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
     '''Run the training procedure.
 
     Parameters
@@ -111,6 +126,13 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer):
     trainer.add_model(model_str)
     trainer.optimize(name=optimizer)
 
+    from ikkuna.export.subscriber import RatioSubscriber, SynchronizedSubscription
+    subscriber = RatioSubscriber(average=kwargs.get('average', 5),
+                                 subsample=kwargs.get('subsample', 1),
+                                 ylims=kwargs.get('ylims'))
+    subscription = SynchronizedSubscription(subscriber, ['weights', 'weight_updates'])
+    trainer.add_subscription(subscription)
+
     import time
     cum_time = 0
     n_batches = 0
@@ -124,13 +146,13 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer):
             n_batches += 1
             cum_time += t1-t0
 
-            print(f'\repoch {e+1:>5d}/{epochs:<5d} '
-                  f'| batch {batch_idx+1:>5d}/{batches_per_epoch:<5d} '
+            print(f'\repoch {e:>5d}/{epochs-1:<5d} '
+                  f'| batch {batch_idx:>5d}/{batches_per_epoch-1:<5d} '
                   f'| {1. / (cum_time / n_batches):<3.1f} b/s', end='')
 
         accuracy = trainer.test(dataset_test)
         print('')
-        print(f'Test accuracy: {accuracy}')
+        print(f'Test accuracy: {accuracy:3.4f}')
 
 
 def get_parser():
