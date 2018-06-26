@@ -43,7 +43,7 @@ class AlexNetMini(nn.Module):
             e(nn.Conv2d(64, 192, kernel_size=3, padding=2)),
             e(nn.ReLU(inplace=True)),
             nn.MaxPool2d(kernel_size=3, stride=2),
-            nn.Conv2d(192, 192, kernel_size=3, padding=1),
+            e(nn.Conv2d(192, 192, kernel_size=3, padding=1)),
             nn.ReLU(inplace=True),
         )
         self.H_out =  H // (2 * 2 * 2)
@@ -53,9 +53,9 @@ class AlexNetMini(nn.Module):
             e(nn.Linear(192 * self.H_out * self.W_out, 2048)),
             nn.ReLU(inplace=True),
             nn.Dropout(),
-            nn.Linear(2048, 2048),
+            e(nn.Linear(2048, 2048)),
             nn.ReLU(inplace=True),
-            nn.Linear(2048, num_classes),
+            e(nn.Linear(2048, num_classes)),
         )
 
     def forward(self, x):
