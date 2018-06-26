@@ -26,7 +26,7 @@ class RatioSubscriber(Subscriber):
         self._average           = int(average)
 
         self._ax.set_autoscaley_on(True)
-        self._ax.set_title(f'Update/Weight ratios per layer (average of {average})')
+        self._ax.set_title(f'Update/Weight ratios per layer (average of {average} batches)')
         self._ax.set_xlabel('Mean update ratio')
         self._ax.set_xlabel('Epoch start')
 
@@ -81,7 +81,7 @@ class RatioSubscriber(Subscriber):
         for idx, (module, ratios) in enumerate(self._ratios.items()):
 
             if module not in self._plots:
-                self._plots[module] = self._ax.plot([], [], linewidth=0.5, label=f'{module}')[0]
+                self._plots[module] = self._ax.plot([], [], label=f'{module}')[0]
 
             n_avg = self._average
             n = len(ratios)
