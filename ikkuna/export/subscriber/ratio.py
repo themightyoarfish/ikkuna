@@ -29,8 +29,6 @@ class RatioSubscriber(Subscriber):
         self._ax.set_title(f'Update/Weight ratios per layer (average of {average})')
         self._ax.set_xlabel('Mean update ratio')
         self._ax.set_xlabel('Epoch start')
-        if ylims:
-            self._ax.set_ylim(*ylims)
 
     def _process_data(self, module_data):
         module  = module_data._module
@@ -60,11 +58,6 @@ class RatioSubscriber(Subscriber):
 
             ratios = self._ratios[module]
             ratios.append(ratio)
-            # counter is incremented by superclass only after this method has returned, so look 1
-            # ahead
-            current_ratio_index = self._counter[module] + 1
-            if self._average > 1 and current_ratio_index % self._average == 0:
-                ratios[-self._average:] = [np.mean(ratios[-self._average:])]
 
     def epoch_finished(self, epoch):
         super().epoch_finished(epoch)
@@ -76,8 +69,9 @@ class RatioSubscriber(Subscriber):
 
         # create the tick positions and labels so we only get one label per epoch, but the
         # resolution of batches
-        ticks = np.arange(epoch + 1) * self._batches_per_epoch / self._subsample / self._average
-        tick_labels = [f'{e}' for e in range(epoch + 1)]
+        epoch_range = np.arange(epoch + 1)
+        ticks = epoch_range * self._batches_per_epoch / self._subsample / self._average
+        tick_labels = [f'{e}' for e in epoch_range]
         # set ticks and labels
         # TODO: Figure out how to do this with LinearLocator or whatever so we need not do it in
         # every redraw
@@ -89,16 +83,26 @@ class RatioSubscriber(Subscriber):
             if module not in self._plots:
                 self._plots[module] = self._ax.plot([], [], linewidth=0.5, label=f'{module}')[0]
 
+            n_avg = self._average
+            n = len(ratios)
+            # create subsequences of length n_avg, dropping elements as necessary
+            chunks = [ratios[i:i+n_avg] for i in range(0, n, n_avg) if i+n_avg <= n]
+            ratios_averaged = list(map(np.mean, chunks))
+
             # set the extended data for the plots
-            x = np.arange(len(ratios))
+            x = np.arange(n // n_avg)
             self._plots[module].set_xdata(x)
-            self._plots[module].set_ydata(ratios)
+            self._plots[module].set_ydata(ratios_averaged)
 
         # set the axes view to accomodate new data
         self._ax.legend(ncol=2)
         if not self._ylims:
             self._ax.relim()
-        self._ax.autoscale_view()
+            self._ax.autoscale_view()
+        else:
+            self._ax.relim()
+            self._ax.set_ylim(self._ylims)
+            self._ax.autoscale_view(scaley=False)
 
         # redraw the figure
         self._figure.canvas.draw()
