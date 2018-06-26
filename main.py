@@ -29,11 +29,14 @@ from torchvision.transforms import ToTensor, Compose
 #######################
 from train import Trainer, DatasetMeta
 
+SEED = 1234
 import random
-random.seed(0)
-torch.manual_seed(0)
-torch.cuda.manual_seed_all(0)
-np.random.seed(0)
+random.seed(SEED)
+torch.manual_seed(SEED)
+torch.cuda.manual_seed_all(SEED)
+np.random.seed(SEED)
+import os
+os.environ['PYTHONHASHSEED'] = '0'
 
 
 def _load_dataset(name):
