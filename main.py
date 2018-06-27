@@ -15,6 +15,9 @@ accepts the following arguments:
 #  stdlib imports  #
 ####################
 from argparse import ArgumentParser
+import time
+import random
+import os
 
 #######################
 #  3rd party imports  #
@@ -28,14 +31,13 @@ from torchvision.transforms import ToTensor, Compose
 #  1st party imports  #
 #######################
 from train import Trainer, DatasetMeta
+from ikkuna.export.subscriber import RatioSubscriber, SynchronizedSubscription
 
 SEED = 1234
-import random
 random.seed(SEED)
 torch.manual_seed(SEED)
 torch.cuda.manual_seed_all(SEED)
 np.random.seed(SEED)
-import os
 os.environ['PYTHONHASHSEED'] = '0'
 
 
@@ -129,14 +131,12 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
     trainer.add_model(model_str)
     trainer.optimize(name=optimizer)
 
-    from ikkuna.export.subscriber import RatioSubscriber, SynchronizedSubscription
     subscriber = RatioSubscriber(average=kwargs.get('average', 5),
                                  subsample=kwargs.get('subsample', 1),
                                  ylims=kwargs.get('ylims'))
-    subscription = SynchronizedSubscription(subscriber, ['weights', 'weight_updates'])
+    subscription = SynchronizedSubscription(subscriber, ['weight_updates', 'weights'])
     trainer.add_subscription(subscription)
 
-    import time
     cum_time = 0
     n_batches = 0
     for e in range(epochs):
