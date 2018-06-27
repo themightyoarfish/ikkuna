@@ -9,15 +9,13 @@
     <title>ikkuna.models package &#8212; ikkuna 0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="ikkuna.utils package" href="ikkuna.utils.html" />
-    <link rel="prev" title="ikkuna.export.subscriber package" href="ikkuna.export.subscriber.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -37,116 +35,14 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-ikkuna.models.alexnet">
-<span id="ikkuna-models-alexnet-module"></span><h2>ikkuna.models.alexnet module<a class="headerlink" href="#module-ikkuna.models.alexnet" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="module-alexnet"></span><p>This module defines <code class="xref py py-class docutils literal notranslate"><span class="pre">AlexNetMini</span></code>, a reduced version of AlexNet. Adapted from
-torchvision.models.alexnet.</p>
-<dl class="class">
-<dt id="ikkuna.models.alexnet.AlexNetMini">
-<em class="property">class </em><code class="descclassname">ikkuna.models.alexnet.</code><code class="descname">AlexNetMini</code><span class="sig-paren">(</span><em>input_shape</em>, <em>num_classes=1000</em>, <em>exporter=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.models.alexnet.AlexNetMini" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
-<p>Reduced AlexNet (basically just a few conv layers with relu and
-max-pooling) which attempts to adapt to arbitrary input sizes, provided they are large enough to
-survive the strides and conv cutoffs.</p>
-<dl class="attribute">
-<dt id="ikkuna.models.alexnet.AlexNetMini.features">
-<code class="descname">features</code><a class="headerlink" href="#ikkuna.models.alexnet.AlexNetMini.features" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>nn.Module</em> – Convolutional module, extracting features from the input</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.models.alexnet.AlexNetMini.classifier">
-<code class="descname">classifier</code><a class="headerlink" href="#ikkuna.models.alexnet.AlexNetMini.classifier" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>nn.Module</em> – Linear classifier with relu and dropout</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.models.alexnet.AlexNetMini.H_out">
-<code class="descname">H_out</code><a class="headerlink" href="#ikkuna.models.alexnet.AlexNetMini.H_out" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – Output height of the classifier</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.models.alexnet.AlexNetMini.W_out">
-<code class="descname">W_out</code><a class="headerlink" href="#ikkuna.models.alexnet.AlexNetMini.W_out" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – Output width of the classifier</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.models.alexnet.AlexNetMini.forward">
-<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.models.alexnet.AlexNetMini.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Defines the computation performed at every call.</p>
-<p>Should be overridden by all subclasses.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Although the recipe for forward pass needs to be defined within
-this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
-instead of this since the former takes care of running the
-registered hooks while the latter silently ignores them.</p>
+<div class="section" id="ikkuna-models-alexnet-module">
+<h2>ikkuna.models.alexnet module<a class="headerlink" href="#ikkuna-models-alexnet-module" title="Permalink to this headline">¶</a></h2>
 </div>
-</dd></dl>
-
-</dd></dl>
-
+<div class="section" id="ikkuna-models-densenet-module">
+<h2>ikkuna.models.densenet module<a class="headerlink" href="#ikkuna-models-densenet-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-ikkuna.models.densenet">
-<span id="ikkuna-models-densenet-module"></span><h2>ikkuna.models.densenet module<a class="headerlink" href="#module-ikkuna.models.densenet" title="Permalink to this headline">¶</a></h2>
-<p>Adapted from torchvision.models.densenet</p>
-<dl class="class">
-<dt id="ikkuna.models.densenet.DenseNet">
-<em class="property">class </em><code class="descclassname">ikkuna.models.densenet.</code><code class="descname">DenseNet</code><span class="sig-paren">(</span><em>input_shape</em>, <em>growth_rate=32</em>, <em>block_config=(6</em>, <em>12)</em>, <em>num_init_features=32</em>, <em>bn_size=4</em>, <em>drop_rate=0</em>, <em>num_classes=1000</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.models.densenet.DenseNet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
-<dl class="method">
-<dt id="ikkuna.models.densenet.DenseNet.forward">
-<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.models.densenet.DenseNet.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Defines the computation performed at every call.</p>
-<p>Should be overridden by all subclasses.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Although the recipe for forward pass needs to be defined within
-this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
-instead of this since the former takes care of running the
-registered hooks while the latter silently ignores them.</p>
-</div>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="ikkuna.models.densenet._DenseBlock">
-<em class="property">class </em><code class="descclassname">ikkuna.models.densenet.</code><code class="descname">_DenseBlock</code><span class="sig-paren">(</span><em>num_layers</em>, <em>num_input_features</em>, <em>bn_size</em>, <em>growth_rate</em>, <em>drop_rate</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.models.densenet._DenseBlock" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.container.Sequential</span></code></p>
-</dd></dl>
-
-<dl class="class">
-<dt id="ikkuna.models.densenet._DenseLayer">
-<em class="property">class </em><code class="descclassname">ikkuna.models.densenet.</code><code class="descname">_DenseLayer</code><span class="sig-paren">(</span><em>num_input_features</em>, <em>growth_rate</em>, <em>bn_size</em>, <em>drop_rate</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.models.densenet._DenseLayer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.container.Sequential</span></code></p>
-<dl class="method">
-<dt id="ikkuna.models.densenet._DenseLayer.forward">
-<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.models.densenet._DenseLayer.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Defines the computation performed at every call.</p>
-<p>Should be overridden by all subclasses.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Although the recipe for forward pass needs to be defined within
-this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
-instead of this since the former takes care of running the
-registered hooks while the latter silently ignores them.</p>
-</div>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="ikkuna.models.densenet._Transition">
-<em class="property">class </em><code class="descclassname">ikkuna.models.densenet.</code><code class="descname">_Transition</code><span class="sig-paren">(</span><em>num_input_features</em>, <em>num_output_features</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.models.densenet._Transition" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.container.Sequential</span></code></p>
-</dd></dl>
-
-</div>
-<div class="section" id="module-ikkuna.models">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ikkuna.models" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
@@ -160,9 +56,9 @@ registered hooks while the latter silently ignores them.</p>
   <ul>
 <li><a class="reference internal" href="#">ikkuna.models package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-ikkuna.models.alexnet">ikkuna.models.alexnet module</a></li>
-<li><a class="reference internal" href="#module-ikkuna.models.densenet">ikkuna.models.densenet module</a></li>
-<li><a class="reference internal" href="#module-ikkuna.models">Module contents</a></li>
+<li><a class="reference internal" href="#ikkuna-models-alexnet-module">ikkuna.models.alexnet module</a></li>
+<li><a class="reference internal" href="#ikkuna-models-densenet-module">ikkuna.models.densenet module</a></li>
+<li><a class="reference internal" href="#module-contents">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -170,12 +66,6 @@ registered hooks while the latter silently ignores them.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-  <li><a href="modules.html">ai_ikkuna</a><ul>
-  <li><a href="ikkuna.html">ikkuna package</a><ul>
-      <li>Previous: <a href="ikkuna.export.subscriber.html" title="previous chapter">ikkuna.export.subscriber package</a></li>
-      <li>Next: <a href="ikkuna.utils.html" title="next chapter">ikkuna.utils package</a></li>
-  </ul></li>
-  </ul></li>
   </ul></li>
 </ul>
 </div>
@@ -206,7 +96,7 @@ registered hooks while the latter silently ignores them.</p>
       &copy;2018, Rasmus Diederichsen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |

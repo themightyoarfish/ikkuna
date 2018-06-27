@@ -9,14 +9,14 @@
     <title>ikkuna.export.subscriber package &#8212; ikkuna 0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="ikkuna.models package" href="ikkuna.models.html" />
+    <link rel="next" title="ikkuna.utils package" href="ikkuna.utils.html" />
     <link rel="prev" title="ikkuna.export package" href="ikkuna.export.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -110,6 +110,16 @@ only in the context <code class="xref py py-class docutils literal notranslate">
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="ikkuna.export.subscriber.histogram.HistogramSubscriber._clear">
+<code class="descname">_clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.histogram.HistogramSubscriber._clear" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.histogram.HistogramSubscriber._process_data">
+<code class="descname">_process_data</code><span class="sig-paren">(</span><em>module_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.histogram.HistogramSubscriber._process_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="ikkuna.export.subscriber.histogram.HistogramSubscriber.epoch_finished">
 <code class="descname">epoch_finished</code><span class="sig-paren">(</span><em>epoch</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.histogram.HistogramSubscriber.epoch_finished" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called automatically by the <code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.Exporter</span></code> object when an epoch has just
@@ -125,10 +135,122 @@ finished.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.export.subscriber.histogram.HistogramSubscriber.update_histograms">
-<code class="descname">update_histograms</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.histogram.HistogramSubscriber.update_histograms" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the histograms from the current buffer.</p>
+<dt id="ikkuna.export.subscriber.histogram.HistogramSubscriber.update_histogram">
+<code class="descname">update_histogram</code><span class="sig-paren">(</span><em>module</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.histogram.HistogramSubscriber.update_histogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the histogram of a module from the current buffer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>module</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – Layer abel for which the histogram should be updated from the buffer</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ikkuna.export.subscriber.ratio">
+<span id="ikkuna-export-subscriber-ratio-module"></span><h2>ikkuna.export.subscriber.ratio module<a class="headerlink" href="#module-ikkuna.export.subscriber.ratio" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ikkuna.export.subscriber.ratio.RatioSubscriber">
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.ratio.</code><code class="descname">RatioSubscriber</code><span class="sig-paren">(</span><em>subsample=1</em>, <em>average=1</em>, <em>ylims=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.ratio.RatioSubscriber" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ikkuna.export.subscriber.subscriber.Subscriber" title="ikkuna.export.subscriber.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.subscriber.Subscriber</span></code></a></p>
+<p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code> which computes the average ratio between two quantities.  The dividend
+will be the first element of th <code class="xref py py-attr docutils literal notranslate"><span class="pre">Subscriber.kinds</span></code> property, the divisor the second.
+Therefore it is vital to pass the message kinds to the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subsciber.Subsciprion</span></code> object in the correct order.</p>
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.ratio.RatioSubscriber._ratios">
+<code class="descname">_ratios</code><a class="headerlink" href="#ikkuna.export.subscriber.ratio.RatioSubscriber._ratios" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict(str, list)</em> – Per-module record of ratios for each batch</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.ratio.RatioSubscriber._figure">
+<code class="descname">_figure</code><a class="headerlink" href="#ikkuna.export.subscriber.ratio.RatioSubscriber._figure" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>plt.Figure</em> – Figure to plot ratios in (will update continuously)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.ratio.RatioSubscriber._ax">
+<code class="descname">_ax</code><a class="headerlink" href="#ikkuna.export.subscriber.ratio.RatioSubscriber._ax" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>plt.AxesSubplot</em> – Axes containing the plots</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.ratio.RatioSubscriber._batches_per_epoch">
+<code class="descname">_batches_per_epoch</code><a class="headerlink" href="#ikkuna.export.subscriber.ratio.RatioSubscriber._batches_per_epoch" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Inferred number of batches per epoch. This relies on each epoch being
+full-sized (no smaller last batch)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.ratio.RatioSubscriber._ylims">
+<code class="descname">_ylims</code><a class="headerlink" href="#ikkuna.export.subscriber.ratio.RatioSubscriber._ylims" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>tuple</em> – Y-axis limits for the plot. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, axis will be automatically scaled</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.ratio.RatioSubscriber._average">
+<code class="descname">_average</code><a class="headerlink" href="#ikkuna.export.subscriber.ratio.RatioSubscriber._average" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Number of successive ratios to average for the plot</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.ratio.RatioSubscriber._abc_cache">
+<code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.ratio.RatioSubscriber._abc_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.ratio.RatioSubscriber._abc_negative_cache">
+<code class="descname">_abc_negative_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.ratio.RatioSubscriber._abc_negative_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.ratio.RatioSubscriber._abc_negative_cache_version">
+<code class="descname">_abc_negative_cache_version</code><em class="property"> = 192</em><a class="headerlink" href="#ikkuna.export.subscriber.ratio.RatioSubscriber._abc_negative_cache_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.ratio.RatioSubscriber._abc_registry">
+<code class="descname">_abc_registry</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.ratio.RatioSubscriber._abc_registry" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.ratio.RatioSubscriber._label_plot">
+<code class="descname">_label_plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.ratio.RatioSubscriber._label_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the plot titles and labels.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.6)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – In case <code class="xref py py-attr docutils literal notranslate"><span class="pre">Subscriber.kinds</span></code> is not set.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.ratio.RatioSubscriber._process_data">
+<code class="descname">_process_data</code><span class="sig-paren">(</span><em>module_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.ratio.RatioSubscriber._process_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>The ratio between the two kinds is computed over the subset of not-NaN values and added
+to the record.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.ratio.RatioSubscriber.epoch_finished">
+<code class="descname">epoch_finished</code><span class="sig-paren">(</span><em>epoch</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.ratio.RatioSubscriber.epoch_finished" title="Permalink to this definition">¶</a></dt>
+<dd><p>The plot is updated, respecting the <code class="docutils literal notranslate"><span class="pre">average</span></code> parameter set. Successive ratio values
+are averaged. The plot’s X-axis labels are in the unit of epochs, but the actual plot
+resolution is <a href="#id1"><span class="problematic" id="id2">``</span></a>batches_per_epoch / subsample / average.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.ratio.RatioSubscriber.kinds">
+<code class="descname">kinds</code><a class="headerlink" href="#ikkuna.export.subscriber.ratio.RatioSubscriber.kinds" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -266,14 +388,21 @@ to subscribers.</p>
 
 <dl class="class">
 <dt id="ikkuna.export.subscriber.subscriber.Subscriber">
-<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.subscriber.</code><code class="descname">Subscriber</code><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.Subscriber" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.subscriber.</code><code class="descname">Subscriber</code><span class="sig-paren">(</span><em>subsample=1</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.Subscriber" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
 <p>Base class for receiving and processing activations, gradients and other stuff into
 insightful metrics.</p>
 <dl class="attribute">
 <dt id="ikkuna.export.subscriber.subscriber.Subscriber._counter">
 <code class="descname">_counter</code><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.Subscriber._counter" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – Number of times the subscriber was called</p>
+<dd><p><em>dict(str, int)</em> – Number of times the subscriber was called for each module label</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.subscriber.Subscriber.kinds">
+<code class="descname">kinds</code><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.Subscriber.kinds" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list(str)</em> – List of string identifiers for different message kinds. These are all the
+message kinds the subscriber wishes to receive</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -297,6 +426,11 @@ insightful metrics.</p>
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="ikkuna.export.subscriber.subscriber.Subscriber._process_data">
+<code class="descname">_process_data</code><span class="sig-paren">(</span><em>module_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.Subscriber._process_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="ikkuna.export.subscriber.subscriber.Subscriber.epoch_finished">
 <code class="descname">epoch_finished</code><span class="sig-paren">(</span><em>epoch</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.Subscriber.epoch_finished" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called automatically by the <code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.Exporter</span></code> object when an epoch has just
@@ -311,6 +445,11 @@ finished.</p>
 </table>
 </dd></dl>
 
+<dl class="attribute">
+<dt>
+<code class="descname">kinds</code></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -318,6 +457,24 @@ finished.</p>
 <em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.subscriber.</code><code class="descname">Subscription</code><span class="sig-paren">(</span><em>subscriber</em>, <em>kinds</em>, <em>tag=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.Subscription" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Specification for a subscription that can span multiple kinds and a tag.</p>
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.subscriber.Subscription._tag">
+<code class="descname">_tag</code><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.Subscription._tag" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – Tag for filtering the processed messages</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.subscriber.Subscription._subscriber">
+<code class="descname">_subscriber</code><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.Subscription._subscriber" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Subscriber</em> – The subscriber associated with the subscription</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.subscriber.Subscription._kinds">
+<code class="descname">_kinds</code><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.Subscription._kinds" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list(str)</em> – Message kinds we are interested in</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="ikkuna.export.subscriber.subscriber.Subscription._new_message">
 <code class="descname">_new_message</code><span class="sig-paren">(</span><em>network_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.Subscription._new_message" title="Permalink to this definition">¶</a></dt>
@@ -350,8 +507,7 @@ messages in each train step and always have them be processed together.</p>
 <dl class="method">
 <dt id="ikkuna.export.subscriber.subscriber.SynchronizedSubscription._new_message">
 <code class="descname">_new_message</code><span class="sig-paren">(</span><em>network_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.SynchronizedSubscription._new_message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Start a new round if a new sequence number is seen. If the buffer is full, all is
-published.</p>
+<dd><p>Start a new round if a new sequence number is seen.</p>
 </dd></dl>
 
 <dl class="method">
@@ -390,6 +546,7 @@ which kinds were received in this round.</p>
 <li><a class="reference internal" href="#">ikkuna.export.subscriber package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-ikkuna.export.subscriber.histogram">ikkuna.export.subscriber.histogram module</a></li>
+<li><a class="reference internal" href="#module-ikkuna.export.subscriber.ratio">ikkuna.export.subscriber.ratio module</a></li>
 <li><a class="reference internal" href="#module-ikkuna.export.subscriber.subscriber">ikkuna.export.subscriber.subscriber module</a></li>
 <li><a class="reference internal" href="#module-ikkuna.export.subscriber">Module contents</a></li>
 </ul>
@@ -403,7 +560,7 @@ which kinds were received in this round.</p>
   <li><a href="ikkuna.html">ikkuna package</a><ul>
   <li><a href="ikkuna.export.html">ikkuna.export package</a><ul>
       <li>Previous: <a href="ikkuna.export.html" title="previous chapter">ikkuna.export package</a></li>
-      <li>Next: <a href="ikkuna.models.html" title="next chapter">ikkuna.models package</a></li>
+      <li>Next: <a href="ikkuna.utils.html" title="next chapter">ikkuna.utils package</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -437,7 +594,7 @@ which kinds were received in this round.</p>
       &copy;2018, Rasmus Diederichsen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |

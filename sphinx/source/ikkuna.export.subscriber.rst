@@ -12,6 +12,14 @@ ikkuna.export.subscriber.histogram module
     :undoc-members:
     :show-inheritance:
 
+ikkuna.export.subscriber.ratio module
+-------------------------------------
+
+.. automodule:: ikkuna.export.subscriber.ratio
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 ikkuna.export.subscriber.subscriber module
 ------------------------------------------
 

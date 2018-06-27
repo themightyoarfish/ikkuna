@@ -7,4 +7,5 @@ ai_ikkuna
    code_graveyard
    ikkuna
    main
+   models
    train

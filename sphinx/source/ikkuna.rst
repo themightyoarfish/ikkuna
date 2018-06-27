@@ -7,7 +7,6 @@ Subpackages
 .. toctree::
 
     ikkuna.export
-    ikkuna.models
     ikkuna.utils
 
 Module contents
