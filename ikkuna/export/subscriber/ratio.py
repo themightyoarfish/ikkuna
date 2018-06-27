@@ -1,9 +1,10 @@
-from ikkuna.export.subscriber import Subscriber
 from matplotlib import pyplot as plt
+from matplotlib.ticker import FixedLocator, FixedFormatter
 import numpy as np
 from collections import defaultdict
-from matplotlib.ticker import FixedLocator, FixedFormatter
 import torch
+
+from ikkuna.export.subscriber import Subscriber
 
 ZERO_TENSOR = torch.tensor(0.0).cuda()
 
@@ -13,7 +14,7 @@ class RatioSubscriber(Subscriber):
     '''A :class:`Subscriber` which computes the average ratio between two quantities.  The dividend
     will be the first element of th :attr:`Subscriber.kinds` property, the divisor the second.
     Therefore it is vital to pass the message kinds to the
-    :class:`ikkuna.export.subsciber.Subsciprion` object in the correct order.
+    :class:`ikkuna.export.subsciber.Subscription` object in the correct order.
 
     Attributes
     ----------
