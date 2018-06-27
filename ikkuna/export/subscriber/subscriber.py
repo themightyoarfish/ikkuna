@@ -162,16 +162,13 @@ class Subscription(object):
         ----------
         subscriber  :   Subscriber
                         Object that wants to receive the messages
-        kinds   :   list(str)
-                    List of string identifiers for different message kinds. These are all the
-                    message kinds the subscriber wishes to receive
         tag :   str or None
                 Optional tag for filtering messages. If ``None`` is passed, all messages will be
                 relayed
         '''
         self._tag        = tag
         self._subscriber = subscriber
-        self._kinds = kinds
+        self._subscriber.kinds = kinds
 
     def epoch_finished(self, epoch):
         self._subscriber.epoch_finished(epoch)
@@ -195,7 +192,7 @@ class Subscription(object):
         ----------
         network_data    :   ikkuna.messages.NetworkData
         '''
-        if network_data.kind not in self._kinds:
+        if network_data.kind not in self._subscriber.kinds:
             return
 
         if self._tag is None or self._tag == network_data.tag:
@@ -243,7 +240,7 @@ class SynchronizedSubscription(Subscription):
         # module not seen -> init data
         module = network_data.module
         if module not in self._modules:
-            self._modules[module] = ModuleData(module, self._kinds)
+            self._modules[module] = ModuleData(module, self._subscriber.kinds)
         self._modules[module].add_message(network_data)
 
         delete_these = []
@@ -266,11 +263,23 @@ class Subscriber(abc.ABC):
     ----------
     _counter    :   dict(str, int)
                     Number of times the subscriber was called for each module label
+    kinds   :   list(str)
+                List of string identifiers for different message kinds. These are all the
+                message kinds the subscriber wishes to receive
     '''
 
     def __init__(self, subsample=1):
-        self._counter = defaultdict(int)
+        self._counter   = defaultdict(int)
         self._subsample = subsample
+        self._kinds     = None
+
+    @property
+    def kinds(self):
+        return self._kinds
+
+    @kinds.setter
+    def kinds(self, kinds):
+        self.kinds = kinds
 
     @abc.abstractmethod
     def _process_data(self, module_data):
@@ -293,6 +302,7 @@ class Subscriber(abc.ABC):
             raise ValueError(f'Data received for "{module_data._module}" is not complete.')
 
         module = module_data._module
+        # only do work for subsample of messages
         if (self._counter[module] + 1) % self._subsample == 0:
             self._process_data(module_data)
         self._counter[module_data._module] += 1
