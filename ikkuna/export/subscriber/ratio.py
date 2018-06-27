@@ -82,7 +82,7 @@ class RatioSubscriber(Subscriber):
             raise ValueError('`kinds` property not set')
 
         self._ax.set_title(f'{self._kinds[0]}/{self._kinds[1]} ratios per layer '
-                           '(average of {average} batches)')
+                           '(average of {self._average} batches)')
         self._ax.set_xlabel('Ratio')
         self._ax.set_xlabel('epoch (start)')
 
