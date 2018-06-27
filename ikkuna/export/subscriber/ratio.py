@@ -10,13 +10,41 @@ ZERO_TENSOR = torch.tensor(0.0).cuda()
 
 class RatioSubscriber(Subscriber):
 
-    '''A :class:`Subscriber` which computes the average ratio between weights and updates per epoch
+    '''A :class:`Subscriber` which computes the average ratio between two quantities.  The dividend
+    will be the first element of th :attr:`Subscriber.kinds` property, the divisor the second.
+    Therefore it is vital to pass the message kinds to the
+    :class:`ikkuna.export.subsciber.Subsciprion` object in the correct order.
 
     Attributes
     ----------
+    _ratios :   dict(str, list)
+                Per-module record of ratios for each batch
+    _figure :   plt.Figure
+                Figure to plot ratios in (will update continuously)
+    _ax     :   plt.AxesSubplot
+                Axes containing the plots
+    _batches_per_epoch  :   int
+                            Inferred number of batches per epoch. This relies on each epoch being
+                            full-sized (no smaller last batch)
+    _ylims  :   tuple
+                Y-axis limits for the plot. If ``None``, axis will be automatically scaled
+    _average    :   int
+                    Number of successive ratios to average for the plot
     '''
 
     def __init__(self, subsample=1, average=1, ylims=None):
+        '''
+        Parameters
+        ----------
+        subsample   :   int
+                        Factor for subsampling incoming messages. Only every ``subsample``-th
+                        message will be processed.
+        average :   int
+                    Inverse resolution of the plot. For plotting ``average`` ratios will be averaged
+                    for each module to remove noise.
+        ylims   :   tuple(int, int)
+                    Optional Y-axis limits
+        '''
         super().__init__(subsample=subsample)
         self._ratios            = defaultdict(list)
         self._figure, self._ax  = plt.subplots()
@@ -26,40 +54,69 @@ class RatioSubscriber(Subscriber):
         self._average           = int(average)
 
         self._ax.set_autoscaley_on(True)
-        self._ax.set_title(f'Update/Weight ratios per layer (average of {average} batches)')
-        self._ax.set_xlabel('Mean update ratio')
-        self._ax.set_xlabel('Epoch start')
+
+    @Subscriber.kinds.setter
+    def kinds(self, kinds):
+        '''Override to trigger plot labeling when property is set, since kinds are not known
+        before.
+
+        Raises
+        ------
+        ValueError
+            If more then 2 topics passed
+        '''
+        if len(kinds) > 2:
+            raise ValueError(f'Expected exactly 2 message kinds, got {len(kinds)}')
+        self._kinds = kinds
+        self._label_plot()
+
+    def _label_plot(self):
+        '''Set the plot titles and labels.
+
+        Raises
+        ------
+        ValueError
+            In case :attr:`Subscriber.kinds` is not set.
+        '''
+        if not self.kinds:
+            raise ValueError('`kinds` property not set')
+
+        self._ax.set_title(f'{self._kinds[0]}/{self._kinds[1]} ratios per layer '
+                           '(average of {average} batches)')
+        self._ax.set_xlabel('Ratio')
+        self._ax.set_xlabel('epoch (start)')
 
     def _process_data(self, module_data):
+        '''The ratio between the two kinds is computed over the subset of not-NaN values and added
+        to the record.'''
         module  = module_data._module
-        if (self._counter[module] + 1) % self._subsample == 0:
-            weights = module_data._data['weights']
-            updates = module_data._data['weight_updates']
 
-            ######################################################################################
-            #  We need to see how many NaNs we have and compute the mean only over the non-nans  #
-            ######################################################################################
-            ratio_tensor = updates.div(weights)
-            n            = float(weights.numel())
-            n_nans       = torch.isnan(ratio_tensor).sum().to(torch.float32)
-            if n_nans > 0:
-                ratio_sum    = torch.where(1 - torch.isnan(ratio_tensor), ratio_tensor,
-                                           ZERO_TENSOR).sum()
-            else:
-                ratio_sum   = ratio_tensor.sum()
-            ratio = (ratio_sum / (n - n_nans)).item()
+        dividend = module_data._data[self.kinds[0]]
+        divisor  = module_data._data[self.kinds[1]]
 
-            # counter = self._counter[module]
-            # # moving average of ratios
-            # self._ratios[module] += ratio + counter * self._ratios[module] / counter + 1
-            if np.isnan(ratio):
-                __import__('ipdb').set_trace()
-                raise ValueError(f'NaN value ratio for {module}')
+        ######################################################################################
+        #  We need to see how many NaNs we have and compute the mean only over the non-nans  #
+        ######################################################################################
+        ratio_tensor = dividend.div(divisor)
+        n            = float(divisor.numel())
+        nan_tensor   = torch.isnan(ratio_tensor)
+        n_nans       = nan_tensor.sum().to(torch.float32)
+        if n_nans > 0:
+            ratio_sum = torch.where(1 - nan_tensor, ratio_tensor, ZERO_TENSOR).sum()
+        else:
+            ratio_sum = ratio_tensor.sum()
+        ratio = (ratio_sum / (n - n_nans)).item()
 
-            ratios = self._ratios[module]
-            ratios.append(ratio)
+        if np.isnan(ratio):
+            raise ValueError(f'NaN value ratio for {module}')
+
+        ratios = self._ratios[module]
+        ratios.append(ratio)
 
     def epoch_finished(self, epoch):
+        '''The plot is updated, respecting the ``average`` parameter set. Successive ratio values
+        are averaged. The plot's X-axis labels are in the unit of epochs, but the actual plot
+        resolution is ``batches_per_epoch / subsample / average.'''
         super().epoch_finished(epoch)
 
         counters = self._counter.values()
@@ -70,7 +127,7 @@ class RatioSubscriber(Subscriber):
         # create the tick positions and labels so we only get one label per epoch, but the
         # resolution of batches
         epoch_range = np.arange(epoch + 1)
-        ticks = epoch_range * self._batches_per_epoch / self._subsample / self._average
+        ticks       = epoch_range * self._batches_per_epoch / self._subsample / self._average
         tick_labels = [f'{e}' for e in epoch_range]
         # set ticks and labels
         # TODO: Figure out how to do this with LinearLocator or whatever so we need not do it in
@@ -84,9 +141,9 @@ class RatioSubscriber(Subscriber):
                 self._plots[module] = self._ax.plot([], [], label=f'{module}')[0]
 
             n_avg = self._average
-            n = len(ratios)
+            n     = len(ratios)
             # create subsequences of length n_avg, dropping elements as necessary
-            chunks = [ratios[i:i+n_avg] for i in range(0, n, n_avg) if i+n_avg <= n]
+            chunks          = [ratios[i:i+n_avg] for i in range(0, n, n_avg) if i+n_avg <= n]
             ratios_averaged = list(map(np.mean, chunks))
 
             # set the extended data for the plots
