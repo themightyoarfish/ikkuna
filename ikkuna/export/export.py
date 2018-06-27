@@ -1,6 +1,10 @@
+import re
 import torch
 from collections import defaultdict
+
 from ikkuna.export.messages import NetworkData
+
+NUMBER_REGEX = re.compile(r'\d+')
 
 
 class Exporter(object):
@@ -90,7 +94,15 @@ class Exporter(object):
         else:
             index      = self._modules.index(module)
             layer_name = self._layer_names[index]
+        self._layer_counter[module.__class__.__name__] += 1
         return layer_name
+
+    def _add_module(self, name, module):
+        if module not in self._modules:
+            self._layer_names.append(name)
+            self._modules.append(module)
+            module.register_forward_hook(self.new_activations)
+            module.register_backward_hook(self.new_gradients)
 
     def add_modules(self, module):
         '''Add modules to supervise. Currently, only activations and gradients are tracked. If the
@@ -108,15 +120,26 @@ class Exporter(object):
         '''
         if isinstance(module, tuple):   # name already given -> use that
             layer_name, module = module
+            self._add_module(layer_name, module)
+            return module
+        elif isinstance(module, torch.nn.Module):
+            # if sequential module, recursivels add children. generate names or take given names
+            if isinstance(module, torch.nn.Sequential):
+                named_children = module.named_children()
+                for name, mod in named_children:
+                    # the nn.Sequential module adds its children with str(index) names in the
+                    # absence of a given name. Therefore we assume that if we see such names, they
+                    # were not user-selected and can be overridden with more descriptive ones
+                    if re.match(NUMBER_REGEX, name):
+                        return self.add_modules(mod)
+                    else:
+                        return self.add_modules((name, mod))
+            else:
+                layer_name = self.get_or_make_label(module)
+                self._add_module(layer_name, module)
+                return module
         else:
-            layer_name = self.get_or_make_label(module)
-            self._layer_counter[module.__class__.__name__] += 1
-        if module not in self._modules:
-            self._layer_names.append(layer_name)
-            self._modules.append(module)
-            module.register_forward_hook(self.new_activations)
-            module.register_backward_hook(self.new_gradients)
-        return module
+            raise ValueError(f'Don\'t know how to handle {module.__class__.__name__}')
 
     def __call__(self, *args):
         # TODO: Handle initialization methods torch.nn.Sequential with named modules
