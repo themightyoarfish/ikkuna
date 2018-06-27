@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from collections import OrderedDict
+from ikkuna.export import Exporter
 
 
 class _DenseLayer(nn.Sequential):
@@ -47,9 +48,12 @@ class _Transition(nn.Sequential):
 
 class DenseNet(nn.Module):
     def __init__(self, input_shape, growth_rate=32, block_config=(6, 12),
-                 num_init_features=32, bn_size=4, drop_rate=0, num_classes=1000):
+                 num_init_features=32, bn_size=4, drop_rate=0, num_classes=1000, exporter=None):
 
         super(DenseNet, self).__init__()
+
+        self._exporter = e = exporter or Exporter()
+        e.set_model(self)
 
         # if batch dim not present, add 1
         if len(input_shape) == 2:
@@ -64,6 +68,7 @@ class DenseNet(nn.Module):
             ('relu0', nn.ReLU(inplace=True)),
             ('pool0', nn.MaxPool2d(kernel_size=3, stride=2, padding=1)),
         ]))
+        e.add_modules(self.features)
 
         # Each denseblock
         num_features = num_init_features
