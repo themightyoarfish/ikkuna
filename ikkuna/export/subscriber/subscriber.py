@@ -269,9 +269,10 @@ class Subscriber(abc.ABC):
     '''
 
     def __init__(self, subsample=1):
-        self._counter   = defaultdict(int)
-        self._subsample = subsample
-        self._kinds     = None
+        self._counter       = defaultdict(int)
+        self._subsample     = subsample
+        self._kinds         = None
+        self._current_epoch = 0
 
     @property
     def kinds(self):
@@ -317,4 +318,4 @@ class Subscriber(abc.ABC):
         epoch   :   int
                     0-based epoch index
         '''
-        pass
+        self._current_epoch = epoch
