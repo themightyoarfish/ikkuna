@@ -114,6 +114,12 @@ class RatioSubscriber(Subscriber):
         ratios = self._ratios[module]
         ratios.append(ratio)
 
+        # every self._average calls, we replace the last self._average elements with their mean
+        # possibly a running average would be more efficient, but who's counting
+        n_past_ratios = self._counter[module] + 1
+        if n_past_ratios % self._average == 0:
+            ratios[-self._average:] = (np.mean(ratios[-self._average:]),)
+
     def epoch_finished(self, epoch):
         '''The plot is updated, respecting the ``average`` parameter set. Successive ratio values
         are averaged. The plot's X-axis labels are in the unit of epochs, but the actual plot
@@ -141,16 +147,11 @@ class RatioSubscriber(Subscriber):
             if module not in self._plots:
                 self._plots[module] = self._ax.plot([], [], label=f'{module}')[0]
 
-            n_avg = self._average
-            n     = len(ratios)
-            # create subsequences of length n_avg, dropping elements as necessary
-            chunks          = [ratios[i:i+n_avg] for i in range(0, n, n_avg) if i+n_avg <= n]
-            ratios_averaged = list(map(np.mean, chunks))
-
+            n = len(ratios)
             # set the extended data for the plots
-            x = np.arange(n // n_avg)
+            x = np.arange(n)
             self._plots[module].set_xdata(x)
-            self._plots[module].set_ydata(ratios_averaged)
+            self._plots[module].set_ydata(ratios)
 
         # set the axes view to accomodate new data
         self._ax.legend(ncol=2)
