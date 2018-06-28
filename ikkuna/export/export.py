@@ -11,7 +11,7 @@ class Exporter(object):
     '''Class for managing publishing of data from model code.
 
     An :class:`Exporter` is used in the model code by either explicitly registering modules for
-    tracking with :meth:`Exporter.add_modules()` or by calling it with newly constructed modules
+    tracking with :meth:`Exporter.add_modules` or by calling it with newly constructed modules
     which will then be returned as-is, but be registered in the process.
 
     .. code-block:: python
@@ -24,7 +24,7 @@ class Exporter(object):
         ])
 
     No further changes to the model code are necessary, but for certain visualizations, the
-    exporter requires access to the model in its entirety, so :meth:`Exporter.add_model()` should be
+    exporter requires access to the model in its entirety, so :meth:`Exporter.add_model` should be
     used.
 
     Attributes
@@ -62,6 +62,12 @@ class Exporter(object):
         self._train_step         = 0
         self._epoch              = 0
         self._global_step        = 0
+        self._is_training        = True
+
+    def _check_model(self):
+        if not self._model:
+            import sys
+            print('Warning: No model set. This will either do nothing or crash.', file=sys.stderr)
 
     def subscribe(self, subscription):
         '''Add a subscriber function or a callable for a certain event. The signature should be
@@ -107,23 +113,25 @@ class Exporter(object):
     def add_modules(self, module):
         '''Add modules to supervise. Currently, only activations and gradients are tracked. If the
         module has ``weight`` and/or ``bias`` members, updates to those will be tracked.
-
-        .. note::
-            In the future, this method should automagically discover which parts of a compound
-            module or list of modules need to be tracked and return a fused module so it still works
-            in :class:`torch.nn.Sequential` and the like.
+        The method will recursively add all children of a :class:`torch.nn.Sequential` module. Other
+        containers are currently unsupported in will result in activations and gradients being
+        tracked for the module as one.
 
         Parameters
         ----------
-        module  :   torch.nn.Module
-                    In a future version, a list of modules should be supported.
+        module  :   tuple(str, torch.nn.Module) or torch.nn.Module
+
+        Raises
+        ------
+        ValueError
+            If ``module`` is neither a tuple, nor a (subclass of) :class:`torch.nn.Module`
         '''
         if isinstance(module, tuple):   # name already given -> use that
             layer_name, module = module
             self._add_module(layer_name, module)
             return module
         elif isinstance(module, torch.nn.Module):
-            # if sequential module, recursivels add children. generate names or take given names
+            # if sequential module, recursively add children. generate names or take given names
             if isinstance(module, torch.nn.Sequential):
                 named_children = module.named_children()
                 for name, mod in named_children:
@@ -131,9 +139,10 @@ class Exporter(object):
                     # absence of a given name. Therefore we assume that if we see such names, they
                     # were not user-selected and can be overridden with more descriptive ones
                     if re.match(NUMBER_REGEX, name):
-                        return self.add_modules(mod)
+                        self.add_modules(mod)
                     else:
-                        return self.add_modules((name, mod))
+                        self.add_modules((name, mod))
+                return module
             else:
                 layer_name = self.get_or_make_label(module)
                 self._add_module(layer_name, module)
@@ -160,6 +169,7 @@ class Exporter(object):
         data    :   torch.Tensor
                     Payload
         '''
+        self._check_model()
         for sub in self._subscriptions:
             msg = NetworkData(seq=self._global_step, tag=None, kind=kind,
                               module=self.get_or_make_label(module), step=self._train_step,
@@ -210,7 +220,7 @@ class Exporter(object):
                 self.export('weight_updates', module, torch.zeros_like(module.weight))
             self.export('weights', module, module.weight)
             self._weight_cache[module] = torch.tensor(module.weight)
-        if hasattr(module, 'bias'):
+        if hasattr(module, 'bias') and module.bias is not None:   # bias can be present, but be None
             # in the first train step, there can be no updates, so we just publish zeros, otherwise
             # clients would error out since they don't receive the expected messages
             if module in self._bias_cache:
