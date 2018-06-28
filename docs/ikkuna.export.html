@@ -105,21 +105,30 @@ generating a name for each.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="ikkuna.export.export.Exporter._add_module">
+<code class="descname">_add_module</code><span class="sig-paren">(</span><em>name</em>, <em>module</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter._add_module" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.export.Exporter._check_model">
+<code class="descname">_check_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter._check_model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="ikkuna.export.export.Exporter.add_modules">
 <code class="descname">add_modules</code><span class="sig-paren">(</span><em>module</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.add_modules" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add modules to supervise. Currently, only activations and gradients are tracked. If the
-module has <code class="docutils literal notranslate"><span class="pre">weight</span></code> and/or <code class="docutils literal notranslate"><span class="pre">bias</span></code> members, updates to those will be tracked.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">In the future, this method should automagically discover which parts of a compound
-module or list of modules need to be tracked and return a fused module so it still works
-in <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Sequential</span></code> and the like.</p>
-</div>
+module has <code class="docutils literal notranslate"><span class="pre">weight</span></code> and/or <code class="docutils literal notranslate"><span class="pre">bias</span></code> members, updates to those will be tracked.
+The method will recursively add all children of a <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Sequential</span></code> module. Other
+containers are currently unsupported in will result in activations and gradients being
+tracked for the module as one.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>module</strong> (<em>torch.nn.Module</em>) – In a future version, a list of modules should be supported.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>module</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>torch.nn.Module</em><em>) or </em><em>torch.nn.Module</em>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.6)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If <code class="docutils literal notranslate"><span class="pre">module</span></code> is neither a tuple, nor a (subclass of) <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></td>
 </tr>
 </tbody>
 </table>

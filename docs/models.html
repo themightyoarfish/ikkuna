@@ -91,11 +91,34 @@ registered hooks while the latter silently ignores them.</p>
 </div>
 <div class="section" id="module-models.densenet">
 <span id="models-densenet-module"></span><h2>models.densenet module<a class="headerlink" href="#module-models.densenet" title="Permalink to this headline">¶</a></h2>
-<p>Adapted from torchvision.models.densenet</p>
+<p>From <a class="reference external" href="https://github.com/gpleiss/efficient_densenet_pytorch/blob/master/models/densenet.py">https://github.com/gpleiss/efficient_densenet_pytorch/blob/master/models/densenet.py</a></p>
 <dl class="class">
 <dt id="models.densenet.DenseNet">
-<em class="property">class </em><code class="descclassname">models.densenet.</code><code class="descname">DenseNet</code><span class="sig-paren">(</span><em>input_shape</em>, <em>growth_rate=32</em>, <em>block_config=(6</em>, <em>12)</em>, <em>num_init_features=32</em>, <em>bn_size=4</em>, <em>drop_rate=0</em>, <em>num_classes=1000</em><span class="sig-paren">)</span><a class="headerlink" href="#models.densenet.DenseNet" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">models.densenet.</code><code class="descname">DenseNet</code><span class="sig-paren">(</span><em>input_shape</em>, <em>growth_rate=12</em>, <em>block_config=(16</em>, <em>16</em>, <em>16)</em>, <em>compression=0.5</em>, <em>num_init_features=24</em>, <em>bn_size=4</em>, <em>drop_rate=0</em>, <em>num_classes=10</em>, <em>small_inputs=True</em>, <em>efficient=False</em>, <em>exporter=None</em><span class="sig-paren">)</span><a class="headerlink" href="#models.densenet.DenseNet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Densenet-BC model class, based on
+<cite>“Densely Connected Convolutional Networks” &lt;https://arxiv.org/pdf/1608.06993.pdf&gt;</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>growth_rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – how many filters to add each layer (<code class="docutils literal notranslate"><span class="pre">k</span></code> in paper)</li>
+<li><strong>block_config</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.6)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>)</em>) – 3 or 4 ints,  how many layers in each pooling block</li>
+<li><strong>num_init_features</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – the number of filters to learn in the first convolution layer</li>
+<li><strong>bn_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – multiplicative factor for number of bottle neck layers (i.e. <code class="docutils literal notranslate"><span class="pre">bn_size</span></code> * <code class="docutils literal notranslate"><span class="pre">k</span></code>
+features in the bottleneck layer)</li>
+<li><strong>drop_rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – dropout rate after each dense layer</li>
+<li><strong>num_classes</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – number of classification classes</li>
+<li><strong>small_inputs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – set to True if images are <code class="docutils literal notranslate"><span class="pre">32x32</span></code> (e.g. CIFAR). Otherwise assumes images
+are larger.</li>
+<li><strong>efficient</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to use checkpointing. Much more memory efficient, but slower.</li>
+<li><strong>exporter</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.export.Exporter" title="ikkuna.export.export.Exporter"><em>Exporter</em></a>) – Optional exporter to use for monitoring</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="models.densenet.DenseNet.forward">
 <code class="descname">forward</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#models.densenet.DenseNet.forward" title="Permalink to this definition">¶</a></dt>
@@ -114,17 +137,31 @@ registered hooks while the latter silently ignores them.</p>
 
 <dl class="class">
 <dt id="models.densenet._DenseBlock">
-<em class="property">class </em><code class="descclassname">models.densenet.</code><code class="descname">_DenseBlock</code><span class="sig-paren">(</span><em>num_layers</em>, <em>num_input_features</em>, <em>bn_size</em>, <em>growth_rate</em>, <em>drop_rate</em><span class="sig-paren">)</span><a class="headerlink" href="#models.densenet._DenseBlock" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.container.Sequential</span></code></p>
+<em class="property">class </em><code class="descclassname">models.densenet.</code><code class="descname">_DenseBlock</code><span class="sig-paren">(</span><em>num_layers</em>, <em>num_input_features</em>, <em>bn_size</em>, <em>growth_rate</em>, <em>drop_rate</em>, <em>efficient=False</em><span class="sig-paren">)</span><a class="headerlink" href="#models.densenet._DenseBlock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<dl class="method">
+<dt id="models.densenet._DenseBlock.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>init_features</em><span class="sig-paren">)</span><a class="headerlink" href="#models.densenet._DenseBlock.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="models.densenet._DenseLayer">
-<em class="property">class </em><code class="descclassname">models.densenet.</code><code class="descname">_DenseLayer</code><span class="sig-paren">(</span><em>num_input_features</em>, <em>growth_rate</em>, <em>bn_size</em>, <em>drop_rate</em><span class="sig-paren">)</span><a class="headerlink" href="#models.densenet._DenseLayer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.container.Sequential</span></code></p>
+<em class="property">class </em><code class="descclassname">models.densenet.</code><code class="descname">_DenseLayer</code><span class="sig-paren">(</span><em>num_input_features</em>, <em>growth_rate</em>, <em>bn_size</em>, <em>drop_rate</em>, <em>efficient=False</em><span class="sig-paren">)</span><a class="headerlink" href="#models.densenet._DenseLayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <dl class="method">
 <dt id="models.densenet._DenseLayer.forward">
-<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#models.densenet._DenseLayer.forward" title="Permalink to this definition">¶</a></dt>
+<code class="descname">forward</code><span class="sig-paren">(</span><em>*prev_features</em><span class="sig-paren">)</span><a class="headerlink" href="#models.densenet._DenseLayer.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines the computation performed at every call.</p>
 <p>Should be overridden by all subclasses.</p>
 <div class="admonition note">
@@ -143,6 +180,11 @@ registered hooks while the latter silently ignores them.</p>
 <em class="property">class </em><code class="descclassname">models.densenet.</code><code class="descname">_Transition</code><span class="sig-paren">(</span><em>num_input_features</em>, <em>num_output_features</em><span class="sig-paren">)</span><a class="headerlink" href="#models.densenet._Transition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.container.Sequential</span></code></p>
 </dd></dl>
+
+<dl class="function">
+<dt id="models.densenet._bn_function_factory">
+<code class="descclassname">models.densenet.</code><code class="descname">_bn_function_factory</code><span class="sig-paren">(</span><em>norm</em>, <em>relu</em>, <em>conv</em><span class="sig-paren">)</span><a class="headerlink" href="#models.densenet._bn_function_factory" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 <div class="section" id="module-models">
