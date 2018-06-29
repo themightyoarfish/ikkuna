@@ -93,29 +93,28 @@ class Exporter(object):
         -------
         str
         '''
+        layer_kind = module.__class__.__name__.lower()
         if module not in self._modules:
-            layer_kind = module.__class__.__name__
             number     = self._layer_counter[layer_kind]
-            layer_name = f'{layer_kind}-{number}'
+            layer_name = f'{layer_kind}{number}'
         else:
             index      = self._modules.index(module)
             layer_name = self._layer_names[index]
-        self._layer_counter[module.__class__.__name__] += 1
+        self._layer_counter[layer_kind] += 1
         return layer_name
 
-    def _add_module(self, name, module):
+    def _add_module_by_name(self, name, module):
         if module not in self._modules:
             self._layer_names.append(name)
             self._modules.append(module)
             module.register_forward_hook(self.new_activations)
             module.register_backward_hook(self.new_gradients)
 
-    def add_modules(self, module):
-        '''Add modules to supervise. Currently, only activations and gradients are tracked. If the
-        module has ``weight`` and/or ``bias`` members, updates to those will be tracked.
-        The method will recursively add all children of a :class:`torch.nn.Sequential` module. Other
-        containers are currently unsupported in will result in activations and gradients being
-        tracked for the module as one.
+    def add_modules(self, module, name='', recursive=True):
+        '''Add modules to supervise. If the module has ``weight`` and/or ``bias`` members, updates
+        to those will be tracked.  The method will recursively add all children of a
+        :class:`torch.nn.Sequential` module. Other containers are currently unsupported in will
+        result in activations and gradients being tracked for the module as one.
 
         Parameters
         ----------
@@ -127,35 +126,27 @@ class Exporter(object):
             If ``module`` is neither a tuple, nor a (subclass of) :class:`torch.nn.Module`
         '''
         if isinstance(module, tuple):   # name already given -> use that
-            layer_name, module = module
-            self._add_module(layer_name, module)
-            return module
+            suffix, module = module
+            name = f'{name}/{suffix}'
+            self.add_modules(module, name)
         elif isinstance(module, torch.nn.Module):
-            # if sequential module, recursively add children. generate names or take given names
-            if isinstance(module, torch.nn.Sequential):
-                named_children = module.named_children()
-                for name, mod in named_children:
+            named_children = list(module.named_children())
+            if named_children and recursive:
+                for child_name, child_module in named_children:
                     # the nn.Sequential module adds its children with str(index) names in the
                     # absence of a given name. Therefore we assume that if we see such names, they
                     # were not user-selected and can be overridden with more descriptive ones
-                    if re.match(NUMBER_REGEX, name):
-                        self.add_modules(mod)
-                    else:
-                        self.add_modules((name, mod))
-                return module
+                    if re.match(NUMBER_REGEX, child_name):
+                        child_name = self.get_or_make_label(child_module)
+                    self.add_modules(child_module, f'{name}/{child_name}')
             else:
-                layer_name = self.get_or_make_label(module)
-                self._add_module(layer_name, module)
-                return module
+                self._add_module_by_name(name, module)
         else:
             raise ValueError(f'Don\'t know how to handle {module.__class__.__name__}')
 
-    def __call__(self, *args):
-        # TODO: Handle initialization methods torch.nn.Sequential with named modules
-        if all(map(lambda o: isinstance(o, torch.nn.Module), args)):
-            return self.add_modules(*args)
-        elif len(args) == 1 and isinstance(args[0], torch.optim.Optimizer):
-            return self.add_optimizer(args[0])
+    def __call__(self, module, recursive=True):
+        self.add_modules(module, recursive)
+        return module
 
     def publish(self, module, kind, data):
         '''Publish an update to all registered subscribers.
