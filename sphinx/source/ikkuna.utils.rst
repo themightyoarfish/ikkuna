@@ -4,6 +4,14 @@ ikkuna.utils package
 Submodules
 ----------
 
+ikkuna.utils.module\_tree module
+--------------------------------
+
+.. automodule:: ikkuna.utils.module_tree
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 ikkuna.utils.utils module
 -------------------------
 

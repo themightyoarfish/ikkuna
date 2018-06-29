@@ -1,3 +1,4 @@
+import sys
 from matplotlib import pyplot as plt
 from matplotlib.ticker import FixedLocator, FixedFormatter
 import numpy as np
@@ -125,6 +126,11 @@ class RatioSubscriber(Subscriber):
         are averaged. The plot's X-axis labels are in the unit of epochs, but the actual plot
         resolution is ``batches_per_epoch / subsample / average.'''
         super().epoch_finished(epoch)
+
+        # exit early if nothing to be done
+        if len(self._counter) == 0:
+            print('Warning: No ratios recorded.', file=sys.stderr)
+            return
 
         counters = self._counter.values()
         assert len(set(counters)) == 1, 'Some modules have different counters.'
