@@ -153,8 +153,10 @@ class RatioSubscriber(Subscriber):
             self._plots[module].set_xdata(x)
             self._plots[module].set_ydata(ratios)
 
+        self._figure.subplots_adjust(right=0.7)
+        self._ax.legend(bbox_to_anchor=(1, 0.5), ncol=1)
+
         # set the axes view to accomodate new data
-        self._ax.legend(ncol=2)
         if not self._ylims:
             self._ax.relim()
             self._ax.autoscale_view()

@@ -135,8 +135,6 @@ class DenseNet(nn.Module):
             self.features.add_module('pool0', nn.MaxPool2d(kernel_size=3, stride=2, padding=1,
                                                            ceil_mode=False))
 
-        self._exporter.add_modules(self.features)
-
         # Each denseblock
         num_features = num_init_features
         for i, num_layers in enumerate(block_config):
@@ -148,7 +146,6 @@ class DenseNet(nn.Module):
                 drop_rate=drop_rate,
                 efficient=efficient,
             )
-            self._exporter.add_modules(block)
             self.features.add_module('denseblock%d' % (i + 1), block)
             num_features = num_features + num_layers * growth_rate
             if i != len(block_config) - 1:
@@ -174,6 +171,8 @@ class DenseNet(nn.Module):
                 param.data.fill_(0)
             elif 'classifier' in name and 'bias' in name:
                 param.data.fill_(0)
+
+        self._exporter.add_modules(self)
 
     def forward(self, x):
         features = self.features(x)

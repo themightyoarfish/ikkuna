@@ -37,26 +37,28 @@ class AlexNetMini(nn.Module):
         H, W, C = input_shape
 
         self.features = nn.Sequential(
-            (nn.Conv2d(C, 64, kernel_size=5, stride=2, padding=1)),
-            (nn.ReLU(inplace=True)),
+            nn.Conv2d(C, 64, kernel_size=5, stride=2, padding=1),
+            nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=3, stride=2),
-            (nn.Conv2d(64, 192, kernel_size=3, padding=2)),
-            (nn.ReLU(inplace=True)),
+            nn.Conv2d(64, 192, kernel_size=3, padding=2),
+            nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=3, stride=2),
-            (nn.Conv2d(192, 192, kernel_size=3, padding=1)),
+            nn.Conv2d(192, 192, kernel_size=3, padding=1),
             nn.ReLU(inplace=True),
         )
         self.H_out =  H // (2 * 2 * 2)
         self.W_out =  W // (2 * 2 * 2)
         self.classifier = nn.Sequential(
             nn.Dropout(),
-            (nn.Linear(192 * self.H_out * self.W_out, 2048)),
+            nn.Linear(192 * self.H_out * self.W_out, 2048),
             nn.ReLU(inplace=True),
             nn.Dropout(),
-            (nn.Linear(2048, 2048)),
+            nn.Linear(2048, 2048),
             nn.ReLU(inplace=True),
-            e(nn.Linear(2048, num_classes)),
+            nn.Linear(2048, num_classes),
         )
+
+        e.add_modules(self)
 
     def forward(self, x):
         x = self.features(x)
