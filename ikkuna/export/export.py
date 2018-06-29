@@ -1,8 +1,10 @@
+import sys
 import re
 import torch
 from collections import defaultdict
 
 from ikkuna.export.messages import NetworkData
+from ikkuna.utils import ModuleTree
 
 NUMBER_REGEX = re.compile(r'\d+')
 
@@ -31,10 +33,7 @@ class Exporter(object):
     ----------
     _modules    :   list
                     All tracked modules
-    _layer_counter  :   defaultdict
-                        Dictionary tracking number and kind of added modules for
-                        generating a name for each.
-    _layer_names    :   list
+    _module_names    :   list
                         List which parallels _modules and contains the label for each
     _weight_cache   :   dict
                         Cache for keeping the previous weights for computing differences
@@ -51,8 +50,7 @@ class Exporter(object):
         '''
         self._modules            = []
         self._frequency          = frequency
-        self._layer_counter      = defaultdict(int)
-        self._layer_names        = []
+        self._module_names       = []
         self._weight_cache       = {}     # expensive :(
         self._bias_cache         = {}
         self._subscriptions      = set()
@@ -66,7 +64,6 @@ class Exporter(object):
 
     def _check_model(self):
         if not self._model:
-            import sys
             print('Warning: No model set. This will either do nothing or crash.', file=sys.stderr)
 
     def subscribe(self, subscription):
@@ -81,44 +78,21 @@ class Exporter(object):
         '''
         self._subscriptions.add(subscription)
 
-    def get_or_make_label(self, module):
-        '''Create or retrieve the label for a module. If the module is already tracked, its label
-        is returned, else a new one is created.
-
-        Parameters
-        ----------
-        module  :   torch.nn.Module
-
-        Returns
-        -------
-        str
-        '''
-        layer_kind = module.__class__.__name__.lower()
-        if module not in self._modules:
-            number     = self._layer_counter[layer_kind]
-            layer_name = f'{layer_kind}{number}'
-        else:
-            index      = self._modules.index(module)
-            layer_name = self._layer_names[index]
-        self._layer_counter[layer_kind] += 1
-        return layer_name
-
     def _add_module_by_name(self, name, module):
-        if module not in self._modules:
-            self._layer_names.append(name)
-            self._modules.append(module)
-            module.register_forward_hook(self.new_activations)
-            module.register_backward_hook(self.new_gradients)
+        self._module_names.append(name)
+        self._modules.append(module)
+        module.register_forward_hook(self.new_activations)
+        module.register_backward_hook(self.new_gradients)
 
-    def add_modules(self, module, name='', recursive=True):
+    def add_modules(self, module, recursive=True):
         '''Add modules to supervise. If the module has ``weight`` and/or ``bias`` members, updates
-        to those will be tracked.  The method will recursively add all children of a
-        :class:`torch.nn.Sequential` module. Other containers are currently unsupported in will
-        result in activations and gradients being tracked for the module as one.
+        to those will be tracked.
 
         Parameters
         ----------
         module  :   tuple(str, torch.nn.Module) or torch.nn.Module
+        recursive   :   bool
+                        Descend recursively into the module tree
 
         Raises
         ------
@@ -126,20 +100,13 @@ class Exporter(object):
             If ``module`` is neither a tuple, nor a (subclass of) :class:`torch.nn.Module`
         '''
         if isinstance(module, tuple):   # name already given -> use that
-            suffix, module = module
-            name = f'{name}/{suffix}'
-            self.add_modules(module, name)
-        elif isinstance(module, torch.nn.Module):
-            named_children = list(module.named_children())
-            if named_children and recursive:
-                for child_name, child_module in named_children:
-                    # the nn.Sequential module adds its children with str(index) names in the
-                    # absence of a given name. Therefore we assume that if we see such names, they
-                    # were not user-selected and can be overridden with more descriptive ones
-                    if re.match(NUMBER_REGEX, child_name):
-                        child_name = self.get_or_make_label(child_module)
-                    self.add_modules(child_module, f'{name}/{child_name}')
-            else:
+            name, module = module
+        else:
+            name = module.__class__.__name__.lower()
+
+        if isinstance(module, torch.nn.Module):
+            mod_hierarchy = ModuleTree(module, name=name, recursive=recursive, drop_name=recursive)
+            for name, module in mod_hierarchy.preorder():
                 self._add_module_by_name(name, module)
         else:
             raise ValueError(f'Don\'t know how to handle {module.__class__.__name__}')
@@ -162,8 +129,9 @@ class Exporter(object):
         '''
         self._check_model()
         for sub in self._subscriptions:
+            index = self._modules.index(module)
             msg = NetworkData(seq=self._global_step, tag=None, kind=kind,
-                              module=self.get_or_make_label(module), step=self._train_step,
+                              module=self._module_names[index], step=self._train_step,
                               epoch=self._epoch, payload=data)
             sub(msg)
 
