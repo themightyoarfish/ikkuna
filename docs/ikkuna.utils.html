@@ -17,7 +17,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="main module" href="main.html" />
-    <link rel="prev" title="ikkuna.models package" href="ikkuna.models.html" />
+    <link rel="prev" title="ikkuna.export.subscriber package" href="ikkuna.export.subscriber.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -36,6 +36,57 @@
 <h1>ikkuna.utils package<a class="headerlink" href="#ikkuna-utils-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-ikkuna.utils.module_tree">
+<span id="ikkuna-utils-module-tree-module"></span><h2>ikkuna.utils.module_tree module<a class="headerlink" href="#module-ikkuna.utils.module_tree" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-module_tree"></span><p>This module defines the <code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleTree</span></code> class for easily traversing a module hierarchy in order
+to generate unique hierarchical names for all involved modules to be used as dictinary keys.</p>
+<dl class="class">
+<dt id="ikkuna.utils.module_tree.ModuleTree">
+<em class="property">class </em><code class="descclassname">ikkuna.utils.module_tree.</code><code class="descname">ModuleTree</code><span class="sig-paren">(</span><em>module</em>, <em>name=None</em>, <em>drop_name=True</em>, <em>recursive=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.module_tree.ModuleTree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="attribute">
+<dt id="ikkuna.utils.module_tree.ModuleTree._module">
+<code class="descname">_module</code><a class="headerlink" href="#ikkuna.utils.module_tree.ModuleTree._module" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>torch.nn.Module</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.utils.module_tree.ModuleTree._name">
+<code class="descname">_name</code><a class="headerlink" href="#ikkuna.utils.module_tree.ModuleTree._name" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – Hierarchical name for this module</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.utils.module_tree.ModuleTree._children">
+<code class="descname">_children</code><a class="headerlink" href="#ikkuna.utils.module_tree.ModuleTree._children" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list(ModuleTree)</em> – Children of this module. Can be empty.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.utils.module_tree.ModuleTree._type_counter">
+<code class="descname">_type_counter</code><a class="headerlink" href="#ikkuna.utils.module_tree.ModuleTree._type_counter" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict(int)</em> – Dict for keeping track of number of child modules of each class. Used for
+disambiguating e.g. different successive conv layers which are children of
+the same sequential module.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.utils.module_tree.ModuleTree.preorder">
+<code class="descname">preorder</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.module_tree.ModuleTree.preorder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Traverse the tree in preorder.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Yields:</th><td class="field-body"><em>tuple(str, torch.nn.Module)</em> – Pairs of generated hierarchical names with their associated modules</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-ikkuna.utils.utils">
 <span id="ikkuna-utils-utils-module"></span><h2>ikkuna.utils.utils module<a class="headerlink" href="#module-ikkuna.utils.utils" title="Permalink to this headline">¶</a></h2>
@@ -118,6 +169,7 @@ and <code class="xref py py-class docutils literal notranslate"><span class="pre
   <ul>
 <li><a class="reference internal" href="#">ikkuna.utils package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-ikkuna.utils.module_tree">ikkuna.utils.module_tree module</a></li>
 <li><a class="reference internal" href="#module-ikkuna.utils.utils">ikkuna.utils.utils module</a></li>
 <li><a class="reference internal" href="#module-ikkuna.utils">Module contents</a></li>
 </ul>
@@ -129,7 +181,7 @@ and <code class="xref py py-class docutils literal notranslate"><span class="pre
   <li><a href="index.html">Documentation overview</a><ul>
   <li><a href="modules.html">ai_ikkuna</a><ul>
   <li><a href="ikkuna.html">ikkuna package</a><ul>
-      <li>Previous: <a href="ikkuna.models.html" title="previous chapter">ikkuna.models package</a></li>
+      <li>Previous: <a href="ikkuna.export.subscriber.html" title="previous chapter">ikkuna.export.subscriber package</a></li>
       <li>Next: <a href="main.html" title="next chapter">main module</a></li>
   </ul></li>
   </ul></li>

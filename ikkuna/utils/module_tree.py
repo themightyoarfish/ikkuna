@@ -8,13 +8,40 @@ to generate unique hierarchical names for all involved modules to be used as dic
 '''
 import re
 from collections import defaultdict
+import torch
 
 NUMBER_REGEX = re.compile(r'\d+')
 
 
 class ModuleTree(object):
+    '''
+    Attributes
+    ----------
+    _module :   torch.nn.Module
+    _name   :   str
+                Hierarchical name for this module
+    _children   :   list(ModuleTree)
+                    Children of this module. Can be empty.
+    _type_counter   :   dict(int)
+                        Dict for keeping track of number of child modules of each class. Used for
+                        disambiguating e.g. different successive conv layers which are children of
+                        the same sequential module.
+    '''
 
     def __init__(self, module, name=None, drop_name=True, recursive=True):
+        '''
+        Parameters
+        ----------
+        module  :   torch.nn.Module
+        name    :   str or None
+                    If no name is given, one will be generated. If ``drop_name == True``, this
+                    parameter is ignored
+        drop_name   :   bool
+                        Ignore the given name and set it to ``''``. Useful for dropping the root
+                        name (e.g. ``alexnet``) lest it appear in every child name.
+        recursive   :   bool
+                        Add all :meth:`torch.nn.Module.named_children` as children to this tree
+        '''
         # for the root node, it often makes sense not to include the name, since it will not add any
         # information
         if drop_name:
@@ -32,11 +59,16 @@ class ModuleTree(object):
 
         if recursive:
             named_children = list(module.named_children())
+
+            # children could be empty
             if named_children:
                 for child_name, child in named_children:
                     child_class = child.__class__
+                    # again, if it's just an index, make a new name. TODO: Figure out how to
+                    # deduplicate this
                     if re.match(NUMBER_REGEX, child_name):
                         child_name = f'{child_class.__name__.lower()}{self._type_counter[child_class]}'
+
                     self._children.append(ModuleTree(child,
                                                      name=f'{self._name}/{child_name}',
                                                      drop_name=False,
@@ -45,6 +77,13 @@ class ModuleTree(object):
                     self._type_counter[child.__class__] += 1
 
     def preorder(self):
+        '''Traverse the tree in preorder.
+
+        Yields
+        ------
+        tuple(str, torch.nn.Module)
+            Pairs of generated hierarchical names with their associated modules
+        '''
         if not self._children:
             yield (self._name, self._module)
         else:

@@ -91,7 +91,7 @@
         <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.subscriber.Subscriber._abc_registry">(ikkuna.export.subscriber.subscriber.Subscriber attribute)</a>
 </li>
       </ul></li>
-      <li><a href="ikkuna.export.html#ikkuna.export.export.Exporter._add_module">_add_module() (ikkuna.export.export.Exporter method)</a>
+      <li><a href="ikkuna.export.html#ikkuna.export.export.Exporter._add_module_by_name">_add_module_by_name() (ikkuna.export.export.Exporter method)</a>
 </li>
       <li><a href="ikkuna.export.html#ikkuna.export.messages.NetworkData._asdict">_asdict() (ikkuna.export.messages.NetworkData method)</a>
 
@@ -122,6 +122,8 @@
       <li><a href="ikkuna.export.html#ikkuna.export.export.Exporter._check_model">_check_model() (ikkuna.export.export.Exporter method)</a>
 </li>
       <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.subscriber.ModuleData._check_step">_check_step() (ikkuna.export.subscriber.subscriber.ModuleData method)</a>
+</li>
+      <li><a href="ikkuna.utils.html#ikkuna.utils.module_tree.ModuleTree._children">_children (ikkuna.utils.module_tree.ModuleTree attribute)</a>
 </li>
       <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.histogram.HistogramSubscriber._clear">_clear() (ikkuna.export.subscriber.histogram.HistogramSubscriber method)</a>
 </li>
@@ -163,10 +165,6 @@
 </li>
       <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.ratio.RatioSubscriber._label_plot">_label_plot() (ikkuna.export.subscriber.ratio.RatioSubscriber method)</a>
 </li>
-      <li><a href="ikkuna.export.html#ikkuna.export.export.Exporter._layer_counter">_layer_counter (ikkuna.export.export.Exporter attribute)</a>
-</li>
-      <li><a href="ikkuna.export.html#ikkuna.export.export.Exporter._layer_names">_layer_names (ikkuna.export.export.Exporter attribute)</a>
-</li>
       <li><a href="main.html#main._load_dataset">_load_dataset() (in module main)</a>
 </li>
       <li><a href="train.html#train.train.Trainer._loss_function">_loss_function (train.train.Trainer attribute)</a>
@@ -182,11 +180,21 @@
       <li><a href="train.html#train.train.Trainer._model">_model (train.train.Trainer attribute)</a>
 </li>
       <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.subscriber.ModuleData._module">_module (ikkuna.export.subscriber.subscriber.ModuleData attribute)</a>
+
+      <ul>
+        <li><a href="ikkuna.utils.html#ikkuna.utils.module_tree.ModuleTree._module">(ikkuna.utils.module_tree.ModuleTree attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="ikkuna.export.html#ikkuna.export.export.Exporter._module_names">_module_names (ikkuna.export.export.Exporter attribute)</a>
 </li>
       <li><a href="ikkuna.export.html#ikkuna.export.export.Exporter._modules">_modules (ikkuna.export.export.Exporter attribute)</a>
 </li>
       <li><a href="ikkuna.export.html#ikkuna.export.magic.WatchedParameter._name">_name (ikkuna.export.magic.WatchedParameter attribute)</a>
+
+      <ul>
+        <li><a href="ikkuna.utils.html#ikkuna.utils.module_tree.ModuleTree._name">(ikkuna.utils.module_tree.ModuleTree attribute)</a>
 </li>
+      </ul></li>
       <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.subscriber.Subscription._new_message">_new_message() (ikkuna.export.subscriber.subscriber.Subscription method)</a>
 
       <ul>
@@ -232,6 +240,8 @@
       <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.subscriber.Subscription._tag">_tag (ikkuna.export.subscriber.subscriber.Subscription attribute)</a>
 </li>
       <li><a href="models.html#models.densenet._Transition">_Transition (class in models.densenet)</a>
+</li>
+      <li><a href="ikkuna.utils.html#ikkuna.utils.module_tree.ModuleTree._type_counter">_type_counter (ikkuna.utils.module_tree.ModuleTree attribute)</a>
 </li>
       <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.histogram.HistogramSubscriber._update_counter">_update_counter (ikkuna.export.subscriber.histogram.HistogramSubscriber attribute)</a>
 </li>
@@ -341,12 +351,10 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="ikkuna.export.html#ikkuna.export.export.Exporter.get_or_make_label">get_or_make_label() (ikkuna.export.export.Exporter method)</a>
+      <li><a href="main.html#main.get_parser">get_parser() (in module main)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="main.html#main.get_parser">get_parser() (in module main)</a>
-</li>
       <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.subscriber.ModuleData.getattr">getattr() (ikkuna.export.subscriber.subscriber.ModuleData method)</a>
 </li>
   </ul></td>
@@ -389,6 +397,8 @@
 </li>
       <li><a href="ikkuna.utils.html#module-ikkuna.utils">ikkuna.utils (module)</a>
 </li>
+      <li><a href="ikkuna.utils.html#module-ikkuna.utils.module_tree">ikkuna.utils.module_tree (module)</a>
+</li>
       <li><a href="ikkuna.utils.html#module-ikkuna.utils.utils">ikkuna.utils.utils (module)</a>
 </li>
       <li><a href="ikkuna.utils.html#ikkuna.utils.utils.initialize_model">initialize_model() (in module ikkuna.utils.utils)</a>
@@ -421,15 +431,19 @@
 </li>
       <li><a href="models.html#module-models">models (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models.html#module-models.alexnet">models.alexnet (module)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models.html#module-models.densenet">models.densenet (module)</a>
 </li>
       <li><a href="ikkuna.export.html#ikkuna.export.messages.NetworkData.module">module (ikkuna.export.messages.NetworkData attribute)</a>
 </li>
+      <li><a href="ikkuna.utils.html#module-module_tree">module_tree (module)</a>
+</li>
       <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.subscriber.ModuleData">ModuleData (class in ikkuna.export.subscriber.subscriber)</a>
+</li>
+      <li><a href="ikkuna.utils.html#ikkuna.utils.module_tree.ModuleTree">ModuleTree (class in ikkuna.utils.module_tree)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -463,9 +477,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ikkuna.export.html#ikkuna.export.magic.patch_mutator">patch_mutator() (in module ikkuna.export.magic)</a>
 </li>
+      <li><a href="ikkuna.export.html#ikkuna.export.messages.NetworkData.payload">payload (ikkuna.export.messages.NetworkData attribute)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="ikkuna.export.html#ikkuna.export.messages.NetworkData.payload">payload (ikkuna.export.messages.NetworkData attribute)</a>
+      <li><a href="ikkuna.utils.html#ikkuna.utils.module_tree.ModuleTree.preorder">preorder() (ikkuna.utils.module_tree.ModuleTree method)</a>
 </li>
       <li><a href="ikkuna.export.html#ikkuna.export.export.Exporter.publish">publish() (ikkuna.export.export.Exporter method)</a>
 </li>

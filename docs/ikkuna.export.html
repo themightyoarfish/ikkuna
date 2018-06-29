@@ -80,15 +80,8 @@ used.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ikkuna.export.export.Exporter._layer_counter">
-<code class="descname">_layer_counter</code><a class="headerlink" href="#ikkuna.export.export.Exporter._layer_counter" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>defaultdict</em> – Dictionary tracking number and kind of added modules for
-generating a name for each.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.export.Exporter._layer_names">
-<code class="descname">_layer_names</code><a class="headerlink" href="#ikkuna.export.export.Exporter._layer_names" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.export.export.Exporter._module_names">
+<code class="descname">_module_names</code><a class="headerlink" href="#ikkuna.export.export.Exporter._module_names" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>list</em> – List which parallels _modules and contains the label for each</p>
 </dd></dl>
 
@@ -105,8 +98,8 @@ generating a name for each.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.export.export.Exporter._add_module">
-<code class="descname">_add_module</code><span class="sig-paren">(</span><em>name</em>, <em>module</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter._add_module" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.export.export.Exporter._add_module_by_name">
+<code class="descname">_add_module_by_name</code><span class="sig-paren">(</span><em>name</em>, <em>module</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter._add_module_by_name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -116,19 +109,21 @@ generating a name for each.</p>
 
 <dl class="method">
 <dt id="ikkuna.export.export.Exporter.add_modules">
-<code class="descname">add_modules</code><span class="sig-paren">(</span><em>module</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.add_modules" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add modules to supervise. Currently, only activations and gradients are tracked. If the
-module has <code class="docutils literal notranslate"><span class="pre">weight</span></code> and/or <code class="docutils literal notranslate"><span class="pre">bias</span></code> members, updates to those will be tracked.
-The method will recursively add all children of a <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Sequential</span></code> module. Other
-containers are currently unsupported in will result in activations and gradients being
-tracked for the module as one.</p>
+<code class="descname">add_modules</code><span class="sig-paren">(</span><em>module</em>, <em>recursive=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.add_modules" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add modules to supervise. If the module has <code class="docutils literal notranslate"><span class="pre">weight</span></code> and/or <code class="docutils literal notranslate"><span class="pre">bias</span></code> members, updates
+to those will be tracked.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>module</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>torch.nn.Module</em><em>) or </em><em>torch.nn.Module</em>) – </td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>module</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>torch.nn.Module</em><em>) or </em><em>torch.nn.Module</em>) – </li>
+<li><strong>recursive</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Descend recursively into the module tree</li>
+</ul>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.6)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If <code class="docutils literal notranslate"><span class="pre">module</span></code> is neither a tuple, nor a (subclass of) <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.6)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If <code class="docutils literal notranslate"><span class="pre">module</span></code> is neither a tuple, nor a (subclass of) <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -154,25 +149,6 @@ tracked for the module as one.</p>
 <li><strong>data</strong> (<em>torch.Tensor</em>) – Payload to publish</li>
 </ul>
 </td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.export.Exporter.get_or_make_label">
-<code class="descname">get_or_make_label</code><span class="sig-paren">(</span><em>module</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.get_or_make_label" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create or retrieve the label for a module. If the module is already tracked, its label
-is returned, else a new one is created.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>module</strong> (<em>torch.nn.Module</em>) – </td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)">str</a></td>
 </tr>
 </tbody>
 </table>
