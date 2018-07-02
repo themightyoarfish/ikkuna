@@ -111,7 +111,7 @@ class RatioSubscriber(Subscriber):
         if self._batches_per_epoch is None:
             self._batches_per_epoch = list(counters)[0]
 
-        # create the tick positions and labels so we only get one label per epoch, but the
+        # create the tick positions and labels so we only get one tick label per epoch, but the
         # resolution of batches
         epoch_range = np.arange(epoch + 1)
         ticks       = epoch_range * self._batches_per_epoch / self._subsample / self._average

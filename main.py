@@ -51,7 +51,7 @@ def _load_dataset(name):
     Returns
     -------
     tuple
-        2 :class:`DataLoader` s are returned, one for train and one test set
+        2 :class:`DatasetMeta` s are returned, one for train and one test set
     '''
     transforms = Compose([ToTensor()])
     try:
@@ -92,9 +92,9 @@ def _load_dataset(name):
             data, _ = dataset.test_data, dataset.test_labels  # noqa
 
         # if only three dimensions, assume [N, H, W], else [N, H, W, C]
-        H, W = data.shape[1:3]
+        N, H, W = data.shape[:3]
         C = data.shape[-1] if len(data.shape) == 4 else 1
-        return (H, W, C)
+        return (N, H, W, C)
 
     meta_train = DatasetMeta(dataset=dataset_train, num_classes=num_classes(dataset_train),
                              shape=shape(dataset_train))
@@ -120,35 +120,34 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
     '''
 
     dataset_train, dataset_test = _load_dataset(dataset_str)
-    N_train                     = len(dataset_train.dataset)
-    batches_per_epoch           = int(N_train / batch_size + 0.5)
-    print(f'Data size: {N_train}')
-    print(f'Batches per epoch: {batches_per_epoch}')
 
     trainer = Trainer(dataset_train, batch_size=batch_size)
     trainer.add_model(model_str)
     trainer.optimize(name=optimizer)
 
     ratio_subscriber = RatioSubscriber(['weight_updates', 'weights'],
-                                       average=kwargs.get('average', 5),
+                                       average=kwargs.get('average', 10),
                                        subsample=kwargs.get('subsample', 1),
                                        ylims=kwargs.get('ylims'))
     histogram_subscriber = HistogramSubscriber(['activations'], clip_min=-1e-6, clip_max=1e-6,
                                                step=1e-7)
     trainer.add_subscriber(ratio_subscriber)
-    trainer.add_subscriber(histogram_subscriber)
+    # trainer.add_subscriber(histogram_subscriber)
 
-    cum_time = 0
+    batches_per_epoch = trainer.batches_per_epoch
+    print(f'Batches per epoch: {batches_per_epoch}')
+
+    cum_time  = 0
     n_batches = 0
     for e in range(epochs):
         for batch_idx in range(batches_per_epoch):
 
             t0 = time.time()
-            trainer.train()
+            trainer.train_batch()
             t1 = time.time()
 
             n_batches += 1
-            cum_time += t1-t0
+            cum_time += t1 - t0
 
             print(f'\repoch {e:>5d}/{epochs-1:<5d} '
                   f'| batch {batch_idx:>5d}/{batches_per_epoch-1:<5d} '

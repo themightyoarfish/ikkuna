@@ -21,7 +21,7 @@ class Trainer:
     _num_classes    :   int
                         Number of target categories (inferred)
     _shape  :   list
-                Shape of the input data (H, W, C)
+                Shape of the input data (N, H, W, C)
     _batch_size :   int
                     Training batch size
     _loss_function  :   nn._Loss
@@ -56,12 +56,15 @@ class Trainer:
         #                                  Acquire parameters                                      #
         ############################################################################################
         self._dataset, self._num_classes, self._shape = dataset_meta
-        self._batch_size    = kwargs.pop('batch_size', 1)
-        self._loss_function = kwargs.pop('loss', nn.CrossEntropyLoss())
-        sampler             = torch.utils.data.sampler.RandomSampler(self._dataset)
-        self._dataloader    = DataLoader(self._dataset, batch_size=self._batch_size,
-                                         sampler=sampler)
-        self._data_iter     = iter(self._dataloader)
+        self._batch_size        = kwargs.pop('batch_size', 1)
+        self._loss_function     = kwargs.pop('loss', nn.CrossEntropyLoss())
+        sampler                 = torch.utils.data.sampler.RandomSampler(self._dataset)
+        self._dataloader        = DataLoader(self._dataset, batch_size=self._batch_size,
+                                             sampler=sampler)
+        self._data_iter         = iter(self._dataloader)
+        N_train                 = self._shape[0]
+        self._batches_per_epoch = round(N_train / self._batch_size + 0.5)
+        self._batch_counter     = 0
 
         # we use these to peek one step ahead in the data iterator to know an epoch has ended
         # already in the epoch's final iteration, not at the beginning of the next one
@@ -69,7 +72,15 @@ class Trainer:
 
         print(f'Number of classes: {self._num_classes}')
         print(f'Data shape: {self._shape}')
-        self._exporter      = Exporter()
+        self._exporter          = Exporter()
+
+    @property
+    def current_batch(self):
+        return self._batch_counter
+
+    @property
+    def batches_per_epoch(self):
+        return self._batches_per_epoch
 
     def add_subscriber(self, subscription):
         self._exporter.subscribe(subscription)
@@ -101,11 +112,11 @@ class Trainer:
                         Name of the model (must exist in :mod:`models`)
         '''
         Model = getattr(models, model_str)
-        self._model = Model(self._shape, num_classes=self._num_classes, exporter=self._exporter)
+        self._model = Model(self._shape[1:], num_classes=self._num_classes, exporter=self._exporter)
         initialize_model(self._model)
         self._model.cuda()
 
-    def train(self):
+    def train_batch(self):
         '''Run through 1 batch in the training set. The iterator will wrap around and
         restart at the beginning.'''
 
@@ -114,7 +125,6 @@ class Trainer:
         self._model.train(True)
 
         X, Y = self._next_X, self._next_Y
-
         data, labels = X.cuda(), Y.cuda()
         self._optimizer.zero_grad()
         output = self._model(data)
@@ -126,8 +136,11 @@ class Trainer:
             self._next_X, self._next_Y = next(self._data_iter)
         except StopIteration:
             self._exporter.epoch_finished()
-            self._data_iter            = iter(self._dataloader)
+            self._batch_counter = 0
+            self._data_iter = iter(self._dataloader)
             self._next_X, self._next_Y = next(self._data_iter)
+
+        self._batch_counter += 1
 
     def test(self, dataset):
         '''Run through the test set once.

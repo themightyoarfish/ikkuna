@@ -106,7 +106,7 @@ class HistogramSubscriber(Subscriber):
 
         for i in range(h):
             for j in range(w):
-                index = h*i+j
+                index = h * i + j
 
                 ax = axarr[i][j]
                 ax.clear()
@@ -115,8 +115,9 @@ class HistogramSubscriber(Subscriber):
                 ax.set_yscale('log')
                 ax.plot(self._bin_edges, histograms[index], linewidth=1)
                 ax.grid(True)
+                ax.ticklabel_format(style='scientific', axis='x', scilimits=(0, 0))
 
         figure.tight_layout()
-        figure.subplots_adjust(hspace=0.5, wspace=0.5)
+        figure.subplots_adjust(hspace=1, wspace=1)
         figure.show()
         self._clear()
