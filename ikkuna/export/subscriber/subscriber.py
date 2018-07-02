@@ -39,14 +39,14 @@ class ModuleData(object):
     step = 0
 
     def __init__(self, module, kinds):
-        self._module = module
+        self._module         = module
         self._expected_kinds = kinds
-        self._data = {kind: None
-                      for kind in kinds}
-        self._seq  = ModuleData.step
-        ModuleData.step += 1
-        self._step = None
-        self._epoch = None
+        self._data           = {kind: None
+                                for kind in kinds}
+        self._seq         = ModuleData.step
+        ModuleData.step  += 1
+        self._step        = None
+        self._epoch       = None
 
     def complete(self):
         '''Check i all expected messages have been received. This means the message can be released
@@ -152,11 +152,9 @@ class Subscription(object):
                 Tag for filtering the processed messages
     _subscriber :   Subscriber
                     The subscriber associated with the subscription
-    _kinds  :   list(str)
-                Message kinds we are interested in
     '''
 
-    def __init__(self, subscriber, kinds, tag=None):
+    def __init__(self, subscriber, tag=None):
         '''
         Parameters
         ----------
@@ -168,12 +166,8 @@ class Subscription(object):
         '''
         self._tag        = tag
         self._subscriber = subscriber
-        self._subscriber.kinds = kinds
 
-    def epoch_finished(self, epoch):
-        self._subscriber.epoch_finished(epoch)
-
-    def _new_message(self, network_data):
+    def _process_message(self, network_data):
         '''Process a newly arrived message. Subclasses should override this method for any special
         treatment.
 
@@ -185,7 +179,7 @@ class Subscription(object):
         data.add_message(network_data)
         self._subscriber(data)
 
-    def __call__(self, network_data):
+    def receive_message(self, network_data):
         '''Callback for receiving an incoming message.
 
         Parameters
@@ -196,7 +190,7 @@ class Subscription(object):
             return
 
         if self._tag is None or self._tag == network_data.tag:
-            self._new_message(network_data)
+            self._process_message(network_data)
 
 
 class SynchronizedSubscription(Subscription):
@@ -204,8 +198,8 @@ class SynchronizedSubscription(Subscription):
     kind, when one round (a train step) is over. This is useful for receiving several kinds of
     messages in each train step and always have them be processed together.'''
 
-    def __init__(self, subscriber, kinds, tag=None):
-        super().__init__(subscriber, kinds, tag)
+    def __init__(self, subscriber, tag=None):
+        super().__init__(subscriber, tag)
         self._current_seq = None
         self._modules     = {}
         self._step        = None
@@ -230,7 +224,7 @@ class SynchronizedSubscription(Subscription):
         self._current_seq = seq
         self._modules     = {}
 
-    def _new_message(self, network_data):
+    def _process_message(self, network_data):
         '''Start a new round if a new sequence number is seen.'''
 
         # if we get a new sequence number, a new train step must have begun
@@ -247,7 +241,7 @@ class SynchronizedSubscription(Subscription):
         # all full? publish
         for module, data in self._modules.items():
             if data.complete():
-                self._subscriber(data)
+                self._subscriber.process_data(data)
                 delete_these.append(module)
 
         for module in delete_these:
@@ -268,11 +262,13 @@ class Subscriber(abc.ABC):
                 message kinds the subscriber wishes to receive
     '''
 
-    def __init__(self, subsample=1):
+    def __init__(self, kinds, tag=None, subsample=1):
         self._counter       = defaultdict(int)
         self._subsample     = subsample
-        self._kinds         = None
+        self._kinds         = kinds
         self._current_epoch = 0
+        # This must be set in the subclass to create the desired subscription
+        self._subscription  = None
 
     @property
     def kinds(self):
@@ -280,13 +276,16 @@ class Subscriber(abc.ABC):
 
     @kinds.setter
     def kinds(self, kinds):
-        self.kinds = kinds
+        self._kinds = kinds
 
     @abc.abstractmethod
-    def _process_data(self, module_data):
+    def _metric(self, module_data):
         pass
 
-    def __call__(self, module_data):
+    def receive_message(self, network_data):
+        self._subscription.receive_message(network_data)
+
+    def process_data(self, module_data):
         '''Callback for processing a :class:`ModuleData` object. The exact nature of this
         package is determined by the :class:`Subscription` attached to this :class:`Subscriber`.
 
@@ -305,7 +304,7 @@ class Subscriber(abc.ABC):
         module = module_data._module
         # only do work for subsample of messages
         if (self._counter[module] + 1) % self._subsample == 0:
-            self._process_data(module_data)
+            self._metric(module_data)
         self._counter[module_data._module] += 1
 
     @abc.abstractmethod

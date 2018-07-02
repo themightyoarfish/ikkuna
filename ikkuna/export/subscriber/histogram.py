@@ -1,4 +1,4 @@
-from ikkuna.export.subscriber import Subscriber
+from ikkuna.export.subscriber import Subscriber, SynchronizedSubscription
 from matplotlib import pyplot as plt
 import numpy as np
 from collections import defaultdict
@@ -25,11 +25,11 @@ class HistogramSubscriber(Subscriber):
                 List for keeping indirect references to gpu tensors
     _update_counter :   int
                         Counter for subsampling the calls made to this :class:`Subscriber`
-    _gradient_hist  :   dict
+    _hist  :   dict
                         Per-module cumulative histogram
     '''
 
-    def __init__(self, clip_min, clip_max, step, buffer_size=10):
+    def __init__(self, kinds, clip_min, clip_max, step, buffer_size=10, tag=None):
         '''
         Parameters
         ----------
@@ -47,15 +47,16 @@ class HistogramSubscriber(Subscriber):
         ValueError
             If `clip_max` is not greater than `clip_min`
         '''
-        super().__init__()
+        super().__init__(kinds, tag=tag)
         if clip_max <= clip_min:
             raise ValueError(f'`clip_min` must be smaller than'
                              ' `clip_max` (was {clip_min} and {clip_max})')
         n_bins = int((clip_max - clip_min) // step)
         assert n_bins > 0, 'Bin number must be strictly positive.'
 
+        self._subscription   = SynchronizedSubscription(self, tag)
         self._bin_edges      = np.linspace(clip_min, clip_max, num=n_bins)
-        self._gradient_hist  = defaultdict(lambda: np.zeros(n_bins, dtype=np.int64))
+        self._hist           = defaultdict(lambda: np.zeros(n_bins, dtype=np.int64))
         self._nbins          = n_bins
         self._clip_max       = clip_max
         self._clip_min       = clip_min
@@ -73,15 +74,18 @@ class HistogramSubscriber(Subscriber):
         '''
         for module_data in self._buffer[module]:
             module                        = module_data._module
-            data                          = module_data._data['gradients'].cpu()
+            kind                          = self.kinds[0]
+            data                          = module_data._data[kind].cpu()
             hist                          = data.histc(self._nbins, self._clip_min, self._clip_max)
-            self._gradient_hist[module]  += hist.numpy().astype(np.int64)
+            if hist.requires_grad:
+                hist = hist.detach()
+            self._hist[module]           += hist.numpy().astype(np.int64)
 
     def _clear(self):
         self._buffer.clear()
-        self._gradient_hist.clear()
+        self._hist.clear()
 
-    def _process_data(self, module_data):
+    def _metric(self, module_data):
 
         module = module_data._module
         if (self._update_counter[module] + 1) % self._buffer_size == 0:
@@ -92,8 +96,8 @@ class HistogramSubscriber(Subscriber):
 
     def epoch_finished(self, epoch):
         super().epoch_finished(epoch)
-        modules    = list(self._gradient_hist.keys())
-        histograms = list(self._gradient_hist.values())
+        modules    = list(self._hist.keys())
+        histograms = list(self._hist.values())
         n_modules  = len(modules)
         h, w       = (int(np.floor(np.sqrt(n_modules))), int(np.ceil(np.sqrt(n_modules))))
 

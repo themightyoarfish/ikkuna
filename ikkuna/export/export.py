@@ -53,7 +53,7 @@ class Exporter(object):
         self._module_names       = []
         self._weight_cache       = {}     # expensive :(
         self._bias_cache         = {}
-        self._subscriptions      = set()
+        self._subscribers        = set()
         self._activation_counter = defaultdict(int)
         self._gradient_counter   = defaultdict(int)
         self._model              = None
@@ -66,17 +66,15 @@ class Exporter(object):
         if not self._model:
             print('Warning: No model set. This will either do nothing or crash.', file=sys.stderr)
 
-    def subscribe(self, subscription):
-        '''Add a subscriber function or a callable for a certain event. The signature should be
-
-        .. py:function:: callback(data: NetworkData)
+    def subscribe(self, subscriber):
+        '''Add a subscriber.
 
         Parameters
         ----------
-        subscription    :   ikkuna.export.subscriber.Subscription
-                            Subscription to register
+        subscription    :   ikkuna.export.subscriber.Subscriber
+                            Subscriber to register
         '''
-        self._subscriptions.add(subscription)
+        self._subscribers.add(subscriber)
 
     def _add_module_by_name(self, name, module):
         self._module_names.append(name)
@@ -128,12 +126,12 @@ class Exporter(object):
                     Payload
         '''
         self._check_model()
-        for sub in self._subscriptions:
+        for sub in self._subscribers:
             index = self._modules.index(module)
             msg = NetworkData(seq=self._global_step, tag=None, kind=kind,
                               module=self._module_names[index], step=self._train_step,
                               epoch=self._epoch, payload=data)
-            sub(msg)
+            sub.receive_message(msg)
 
     def train(self, train=True):
         self._is_training = train
@@ -152,7 +150,7 @@ class Exporter(object):
         data    :   torch.Tensor
                     Payload to publish
         '''
-        if len(self._subscriptions) == 0:
+        if len(self._subscribers) == 0:
             pass
         else:
             self.publish(module, kind, data)
@@ -249,7 +247,7 @@ class Exporter(object):
 
     def epoch_finished(self):
         '''Increase the epoch counter and reset the batch counter.'''
-        for sub in self._subscriptions:
+        for sub in self._subscribers:
             sub.epoch_finished(self._epoch)
         self._epoch      += 1
         self._train_step = 0

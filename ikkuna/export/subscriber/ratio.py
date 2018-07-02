@@ -5,7 +5,7 @@ import numpy as np
 from collections import defaultdict
 import torch
 
-from ikkuna.export.subscriber import Subscriber
+from ikkuna.export.subscriber import Subscriber, SynchronizedSubscription
 
 ZERO_TENSOR = torch.tensor(0.0).cuda()
 
@@ -34,7 +34,7 @@ class RatioSubscriber(Subscriber):
                     Number of successive ratios to average for the plot
     '''
 
-    def __init__(self, subsample=1, average=1, ylims=None):
+    def __init__(self, kinds, tag=None, subsample=1, average=1, ylims=None):
         '''
         Parameters
         ----------
@@ -47,7 +47,8 @@ class RatioSubscriber(Subscriber):
         ylims   :   tuple(int, int)
                     Optional Y-axis limits
         '''
-        super().__init__(subsample=subsample)
+        super().__init__(kinds, tag=tag, subsample=subsample)
+        self._subscription      = SynchronizedSubscription(self, tag)
         self._ratios            = defaultdict(list)
         self._figure, self._ax  = plt.subplots()
         self._plots             = {}
@@ -56,39 +57,12 @@ class RatioSubscriber(Subscriber):
         self._average           = int(average)
 
         self._ax.set_autoscaley_on(True)
-
-    @Subscriber.kinds.setter
-    def kinds(self, kinds):
-        '''Override to trigger plot labeling when property is set, since kinds are not known
-        before.
-
-        Raises
-        ------
-        ValueError
-            If more then 2 topics passed
-        '''
-        if len(kinds) > 2:
-            raise ValueError(f'Expected exactly 2 message kinds, got {len(kinds)}')
-        self._kinds = kinds
-        self._label_plot()
-
-    def _label_plot(self):
-        '''Set the plot titles and labels.
-
-        Raises
-        ------
-        ValueError
-            In case :attr:`Subscriber.kinds` is not set.
-        '''
-        if not self.kinds:
-            raise ValueError('`kinds` property not set')
-
-        self._ax.set_title(f'{self._kinds[0]}/{self._kinds[1]} ratios per layer '
+        self._ax.set_title(f'{self.kinds[0]}/{self.kinds[1]} ratios per layer '
                            f'(average of {self._average} batches)')
         self._ax.set_xlabel('Ratio')
         self._ax.set_xlabel('epoch (start)')
 
-    def _process_data(self, module_data):
+    def _metric(self, module_data):
         '''The ratio between the two kinds is computed over the subset of not-NaN values and added
         to the record.'''
         module  = module_data._module

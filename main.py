@@ -1,8 +1,6 @@
 '''
 .. moduleauthor:: Rasmus Diederichsen <rasmus@peltarion.com>
 
-.. module:: main
-
 This module contains functions and classes for simplifying the training of ANN classifiers. It
 accepts the following arguments:
 
@@ -31,7 +29,7 @@ from torchvision.transforms import ToTensor, Compose
 #  1st party imports  #
 #######################
 from train import Trainer, DatasetMeta
-from ikkuna.export.subscriber import RatioSubscriber, SynchronizedSubscription
+from ikkuna.export.subscriber import RatioSubscriber, HistogramSubscriber
 
 SEED = 1234
 random.seed(SEED)
@@ -131,11 +129,14 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
     trainer.add_model(model_str)
     trainer.optimize(name=optimizer)
 
-    subscriber = RatioSubscriber(average=kwargs.get('average', 5),
-                                 subsample=kwargs.get('subsample', 1),
-                                 ylims=kwargs.get('ylims'))
-    subscription = SynchronizedSubscription(subscriber, ['weight_updates', 'weights'])
-    trainer.add_subscription(subscription)
+    ratio_subscriber = RatioSubscriber(['weight_updates', 'weights'],
+                                       average=kwargs.get('average', 5),
+                                       subsample=kwargs.get('subsample', 1),
+                                       ylims=kwargs.get('ylims'))
+    histogram_subscriber = HistogramSubscriber(['activations'], clip_min=-1e-6, clip_max=1e-6,
+                                               step=1e-7)
+    trainer.add_subscriber(ratio_subscriber)
+    trainer.add_subscriber(histogram_subscriber)
 
     cum_time = 0
     n_batches = 0

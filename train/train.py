@@ -71,7 +71,7 @@ class Trainer:
         print(f'Data shape: {self._shape}')
         self._exporter      = Exporter()
 
-    def add_subscription(self, subscription):
+    def add_subscriber(self, subscription):
         self._exporter.subscribe(subscription)
 
     def optimize(self, **kwargs):
