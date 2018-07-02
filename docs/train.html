@@ -41,7 +41,7 @@
 <dl class="class">
 <dt id="train.train.DatasetMeta">
 <em class="property">class </em><code class="descclassname">train.train.</code><code class="descname">DatasetMeta</code><span class="sig-paren">(</span><em>dataset</em>, <em>num_classes</em>, <em>shape</em><span class="sig-paren">)</span><a class="headerlink" href="#train.train.DatasetMeta" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
 <dl class="method">
 <dt id="train.train.DatasetMeta._asdict">
 <code class="descname">_asdict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#train.train.DatasetMeta._asdict" title="Permalink to this definition">¶</a></dt>
@@ -93,7 +93,7 @@
 <dl class="class">
 <dt id="train.train.Trainer">
 <em class="property">class </em><code class="descclassname">train.train.</code><code class="descname">Trainer</code><span class="sig-paren">(</span><em>dataset_meta: train.train.DatasetMeta</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#train.train.Trainer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class to bundle all logic and parameters that go into training and testing a model on some
 dataset.</p>
 <dl class="attribute">
@@ -163,15 +163,15 @@ necessary.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – Name of the model (must exist in <a class="reference internal" href="models.html#module-models" title="models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">models</span></code></a>)</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the model (must exist in <a class="reference internal" href="models.html#module-models" title="models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">models</span></code></a>)</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="train.train.Trainer.add_subscription">
-<code class="descname">add_subscription</code><span class="sig-paren">(</span><em>subscription</em><span class="sig-paren">)</span><a class="headerlink" href="#train.train.Trainer.add_subscription" title="Permalink to this definition">¶</a></dt>
+<dt id="train.train.Trainer.add_subscriber">
+<code class="descname">add_subscriber</code><span class="sig-paren">(</span><em>subscription</em><span class="sig-paren">)</span><a class="headerlink" href="#train.train.Trainer.add_subscriber" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -183,7 +183,7 @@ necessary.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – Name of the optimizer (must exist in <code class="xref py py-mod docutils literal notranslate"><span class="pre">torch.optim</span></code>)</li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the optimizer (must exist in <code class="xref py py-mod docutils literal notranslate"><span class="pre">torch.optim</span></code>)</li>
 <li><strong>other kwargs are forwarded to the optimizer constructor</strong> (<em>All</em>) – </li>
 </ul>
 </td>

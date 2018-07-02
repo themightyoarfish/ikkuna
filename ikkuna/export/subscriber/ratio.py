@@ -98,7 +98,7 @@ class RatioSubscriber(Subscriber):
     def epoch_finished(self, epoch):
         '''The plot is updated, respecting the ``average`` parameter set. Successive ratio values
         are averaged. The plot's X-axis labels are in the unit of epochs, but the actual plot
-        resolution is ``batches_per_epoch / subsample / average.'''
+        resolution is ``batches_per_epoch / subsample / average``.'''
         super().epoch_finished(epoch)
 
         # exit early if nothing to be done

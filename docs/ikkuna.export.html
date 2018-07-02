@@ -57,7 +57,7 @@
 <dl class="class">
 <dt id="ikkuna.export.export.Exporter">
 <em class="property">class </em><code class="descclassname">ikkuna.export.export.</code><code class="descname">Exporter</code><span class="sig-paren">(</span><em>frequency=1</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class for managing publishing of data from model code.</p>
 <p>An <a class="reference internal" href="#ikkuna.export.export.Exporter" title="ikkuna.export.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> is used in the model code by either explicitly registering modules for
 tracking with <a class="reference internal" href="#ikkuna.export.export.Exporter.add_modules" title="ikkuna.export.export.Exporter.add_modules"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Exporter.add_modules()</span></code></a> or by calling it with newly constructed modules
@@ -117,12 +117,12 @@ to those will be tracked.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>module</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>torch.nn.Module</em><em>) or </em><em>torch.nn.Module</em>) – </li>
-<li><strong>recursive</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Descend recursively into the module tree</li>
+<li><strong>module</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>torch.nn.Module</em><em>) or </em><em>torch.nn.Module</em>) – </li>
+<li><strong>recursive</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Descend recursively into the module tree</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.6)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If <code class="docutils literal notranslate"><span class="pre">module</span></code> is neither a tuple, nor a (subclass of) <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If <code class="docutils literal notranslate"><span class="pre">module</span></code> is neither a tuple, nor a (subclass of) <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></p>
 </td>
 </tr>
 </tbody>
@@ -144,7 +144,7 @@ to those will be tracked.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – Kind of subscription</li>
+<li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Kind of subscription</li>
 <li><strong>module</strong> (<em>torch.nn.Module</em>) – </li>
 <li><strong>data</strong> (<em>torch.Tensor</em>) – Payload to publish</li>
 </ul>
@@ -204,7 +204,7 @@ Will trigger exportation of all new gradient data.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>module</strong> (<em>torch.nn.Module</em>) – The module in question</li>
-<li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – Kind of subscriber to notify</li>
+<li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Kind of subscriber to notify</li>
 <li><strong>data</strong> (<em>torch.Tensor</em>) – Payload</li>
 </ul>
 </td>
@@ -235,18 +235,13 @@ Will trigger exportation of all new gradient data.</p>
 
 <dl class="method">
 <dt id="ikkuna.export.export.Exporter.subscribe">
-<code class="descname">subscribe</code><span class="sig-paren">(</span><em>subscription</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.subscribe" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a subscriber function or a callable for a certain event. The signature should be</p>
-<dl class="function">
-<dt id="ikkuna.export.export.Exporter.callback">
-<code class="descname">callback</code><span class="sig-paren">(</span><em>data: NetworkData</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.callback" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<code class="descname">subscribe</code><span class="sig-paren">(</span><em>subscriber</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.subscribe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a subscriber.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>subscription</strong> (<em>ikkuna.export.subscriber.Subscription</em>) – Subscription to register</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>subscription</strong> (<em>ikkuna.export.subscriber.Subscriber</em>) – Subscriber to register</td>
 </tr>
 </tbody>
 </table>
@@ -310,7 +305,7 @@ tensor was not sufficient.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>method</strong> (<em>MethodType</em>) – Bound method to wrap</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.6)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If method is unbound or bound to object without a <code class="docutils literal notranslate"><span class="pre">_label</span></code> attribute.</td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If method is unbound or bound to object without a <code class="docutils literal notranslate"><span class="pre">_label</span></code> attribute.</td>
 </tr>
 </tbody>
 </table>
@@ -328,7 +323,7 @@ tensor was not sufficient.</p>
 <dl class="class">
 <dt id="ikkuna.export.messages.NetworkData">
 <em class="property">class </em><code class="descclassname">ikkuna.export.messages.</code><code class="descname">NetworkData</code><span class="sig-paren">(</span><em>tag</em>, <em>seq</em>, <em>step</em>, <em>epoch</em>, <em>kind</em>, <em>module</em>, <em>payload</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.NetworkData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
 <dl class="method">
 <dt id="ikkuna.export.messages.NetworkData._asdict">
 <code class="descname">_asdict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.NetworkData._asdict" title="Permalink to this definition">¶</a></dt>
