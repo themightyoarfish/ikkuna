@@ -129,8 +129,8 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
                                        average=kwargs.get('average', 10),
                                        subsample=kwargs.get('subsample', 1),
                                        ylims=kwargs.get('ylims'))
-    histogram_subscriber = HistogramSubscriber(['activations'], clip_min=-1e-6, clip_max=1e-6,
-                                               step=1e-7)
+    #histogram_subscriber = HistogramSubscriber(['activations'], clip_min=-1e-6, clip_max=1e-6,
+    #                                           step=1e-7)
     trainer.add_subscriber(ratio_subscriber)
     # trainer.add_subscriber(histogram_subscriber)
 

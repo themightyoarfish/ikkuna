@@ -25,9 +25,8 @@ class Exporter(object):
             nn.ReLU()
         ])
 
-    No further changes to the model code are necessary, but for certain visualizations, the
-    exporter requires access to the model in its entirety, so :meth:`Exporter.add_model` should be
-    used.
+    No further changes to the model code are necessary, but for a call to :meth:`Exporter.add_model`
+    to have the :class:`Exporter` wire up the appropriate callbacks.
 
     Attributes
     ----------
