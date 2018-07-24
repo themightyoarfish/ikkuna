@@ -34,7 +34,7 @@ class RatioSubscriber(Subscriber):
                     Number of successive ratios to average for the plot
     '''
 
-    def __init__(self, kinds, tag=None, subsample=1, average=1, ylims=None):
+    def __init__(self, kinds, tag=None, subsample=1, average=1, ylims=None, absolute=True):
         '''
         Parameters
         ----------
@@ -46,6 +46,8 @@ class RatioSubscriber(Subscriber):
                     for each module to remove noise.
         ylims   :   tuple(int, int)
                     Optional Y-axis limits
+        absolute :  bool
+                    Whether to use absolute ratio
         '''
         super().__init__(kinds, tag=tag, subsample=subsample)
         self._subscription      = SynchronizedSubscription(self, tag)
@@ -55,6 +57,10 @@ class RatioSubscriber(Subscriber):
         self._batches_per_epoch = None
         self._ylims             = ylims
         self._average           = int(average)
+        if absolute:
+            self._fn = torch.abs
+        else:
+            self._fn = lambda x: x
 
         self._ax.set_autoscaley_on(True)
         self._ax.set_title(f'{self.kinds[0]}/{self.kinds[1]} ratios per layer '
@@ -73,7 +79,7 @@ class RatioSubscriber(Subscriber):
         ######################################################################################
         #  We need to see how many NaNs we have and compute the mean only over the non-nans  #
         ######################################################################################
-        ratio_tensor = dividend.div(divisor)
+        ratio_tensor = self._fn(dividend.div(divisor))
         n            = float(divisor.numel())
         nan_tensor   = torch.isnan(ratio_tensor)
         n_nans       = nan_tensor.sum().to(torch.float32)
