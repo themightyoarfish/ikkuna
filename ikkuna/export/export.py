@@ -81,7 +81,7 @@ class Exporter(object):
         module.register_forward_hook(self.new_activations)
         module.register_backward_hook(self.new_gradients)
 
-    def add_modules(self, module, recursive=True):
+    def add_modules(self, module, recursive=True, depth=-1):
         '''Add modules to supervise. If the module has ``weight`` and/or ``bias`` members, updates
         to those will be tracked.
 
@@ -90,7 +90,8 @@ class Exporter(object):
         module  :   tuple(str, torch.nn.Module) or torch.nn.Module
         recursive   :   bool
                         Descend recursively into the module tree
-
+        depth   :   int
+                    Depth to which to traverse the tree. Modules below this level will be ignored
         Raises
         ------
         ValueError
@@ -103,13 +104,24 @@ class Exporter(object):
 
         if isinstance(module, torch.nn.Module):
             mod_hierarchy = ModuleTree(module, name=name, recursive=recursive, drop_name=recursive)
-            for name, module in mod_hierarchy.preorder():
+            for name, module in mod_hierarchy.preorder(depth):
                 self._add_module_by_name(name, module)
         else:
             raise ValueError(f'Don\'t know how to handle {module.__class__.__name__}')
 
-    def __call__(self, module, recursive=True):
-        self.add_modules(module, recursive)
+    def __call__(self, module, recursive=True, depth=-1):
+        '''Shorthand for :meth:`Exporter.add_modules()` which returns its input unmodified.
+
+        Parameters
+        ----------
+        see :meth:`Exporter.add_modules()`
+
+        Returns
+        -------
+        torch.nn.Module
+            The input ``module``
+        '''
+        self.add_modules(module, recursive, depth)
         return module
 
     def publish(self, module, kind, data):
@@ -156,7 +168,7 @@ class Exporter(object):
 
     def new_activations(self, module, in_, out_):
         '''Callback for newly arriving activations. Registered as a hook to the tracked modules.
-        Will trigger exportation of all new activation and weight/bias data.
+        Will trigger export of all new activation and weight/bias data.
 
         Parameters
         ----------
@@ -189,7 +201,7 @@ class Exporter(object):
 
     def new_gradients(self, module, in_, out_):
         '''Callback for newly arriving gradients. Registered as a hook to the tracked modules.
-        Will trigger exportation of all new gradient data.
+        Will trigger export of all new gradient data.
 
         Parameters
         ----------

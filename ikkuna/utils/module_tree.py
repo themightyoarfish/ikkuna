@@ -8,7 +8,6 @@ to generate unique hierarchical names for all involved modules to be used as dic
 '''
 import re
 from collections import defaultdict
-import torch
 
 NUMBER_REGEX = re.compile(r'\d+')
 
@@ -67,7 +66,9 @@ class ModuleTree(object):
                     # again, if it's just an index, make a new name. TODO: Figure out how to
                     # deduplicate this
                     if re.match(NUMBER_REGEX, child_name):
-                        child_name = f'{child_class.__name__.lower()}{self._type_counter[child_class]}'
+                        class_name = child_class.__name__.lower()
+                        class_index = self._type_counter[child_class]
+                        child_name = f'{class_name}{class_index}'
 
                     self._children.append(ModuleTree(child,
                                                      name=f'{self._name}/{child_name}',
@@ -76,7 +77,7 @@ class ModuleTree(object):
                                           )
                     self._type_counter[child.__class__] += 1
 
-    def preorder(self):
+    def preorder(self, depth=-1):
         '''Traverse the tree in preorder.
 
         Yields
@@ -87,5 +88,12 @@ class ModuleTree(object):
         if not self._children:
             yield (self._name, self._module)
         else:
-            for child in self._children:
-                yield from child.preorder()
+            if depth == 0:
+                yield (self._name, self._module)
+            elif depth > 0:
+                depth -= 1
+                for child in self._children:
+                    yield from child.preorder(depth)
+            else:
+                for child in self._children:
+                    yield from child.preorder()
