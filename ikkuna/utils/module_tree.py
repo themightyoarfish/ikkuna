@@ -7,9 +7,11 @@ This module defines the :class:`ModuleTree` class for easily traversing a module
 to generate unique hierarchical names for all involved modules to be used as dictinary keys.
 '''
 import re
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 
 NUMBER_REGEX = re.compile(r'\d+')
+
+NamedModule = namedtuple('NamedModule', ['module', 'name', 'parent'])
 
 
 class ModuleTree(object):
@@ -77,23 +79,24 @@ class ModuleTree(object):
                                           )
                     self._type_counter[child.__class__] += 1
 
-    def preorder(self, depth=-1):
+    def preorder(self, depth=-1, parent=None):
         '''Traverse the tree in preorder.
 
         Yields
         ------
-        tuple(str, torch.nn.Module)
-            Pairs of generated hierarchical names with their associated modules
+        ikkuna.utils.NamedModule
+            Tuple of name, module and parent module
         '''
+        parent = parent or self._module
         if not self._children:
-            yield (self._name, self._module)
+            yield NamedModule(name=self._name, module=self._module, parent=parent)
         else:
             if depth == 0:
-                yield (self._name, self._module)
+                yield NamedModule(name=self._name, module=self._module, parent=parent)
             elif depth > 0:
                 depth -= 1
                 for child in self._children:
-                    yield from child.preorder(depth)
+                    yield from child.preorder(depth, parent=parent)
             else:
                 for child in self._children:
                     yield from child.preorder()

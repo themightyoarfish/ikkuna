@@ -71,10 +71,12 @@ class RatioSubscriber(Subscriber):
     def _metric(self, module_data):
         '''The ratio between the two kinds is computed over the subset of not-NaN values and added
         to the record.'''
-        module  = module_data._module
+
+        module  = module_data.module.name
 
         dividend = module_data._data[self.kinds[0]]
         divisor  = module_data._data[self.kinds[1]]
+        numel    = divisor.numel()
 
         ######################################################################################
         #  We need to see how many NaNs we have and compute the mean only over the non-nans  #
@@ -113,6 +115,7 @@ class RatioSubscriber(Subscriber):
             return
 
         counters = self._counter.values()
+
         assert len(set(counters)) == 1, 'Some modules have different counters.'
         if self._batches_per_epoch is None:
             self._batches_per_epoch = list(counters)[0]

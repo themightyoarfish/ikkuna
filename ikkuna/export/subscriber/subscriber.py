@@ -29,24 +29,46 @@ class ModuleData(object):
                 Sequence number of this object (incremented whenever a :class:`ModuleData` is
                 created)
     _step   :   int
-                Sequence number of the received messages (should match across all msgs in one
-                iteration)
+                Sequence number (training step) of the received messages (should match across all
+                msgs in one iteration)
     _epoch  :   int
                 Epoch of the received messages (should match across all msgs in one
                 iteration)
     '''
 
-    step = 0
+    global_seq = 0
 
     def __init__(self, module, kinds):
         self._module         = module
         self._expected_kinds = kinds
-        self._data           = {kind: None
-                                for kind in kinds}
-        self._seq         = ModuleData.step
-        ModuleData.step  += 1
-        self._step        = None
-        self._epoch       = None
+        self._data           = {kind: None for kind in kinds}
+        self._seq            = ModuleData.global_seq
+        self._step           = None
+        self._epoch          = None
+        ModuleData.global_seq  += 1
+
+    @property
+    def module(self):
+        return self._module
+
+    @property
+    def expected_kinds(self):
+        return self._expected_kinds
+
+    @property
+    def data(self):
+        return self._data
+
+    @property
+    def seq(self):
+        return self._seq
+
+    @property
+    def step(self):
+        return self._step
+
+    def epoch(self):
+        return self._epoch
 
     def complete(self):
         '''Check i all expected messages have been received. This means the message can be released
@@ -124,7 +146,7 @@ class ModuleData(object):
 
         self._data[message.kind] = message.payload
 
-    def getattr(self, name):
+    def __getattr__(self, name):
         '''Override to mimick a property for each kind of message in this data (e.g.
         ``activations``)'''
         if name in self._expected_kinds:
@@ -301,11 +323,11 @@ class Subscriber(abc.ABC):
         if not module_data.complete():
             raise ValueError(f'Data received for "{module_data._module}" is not complete.')
 
-        module = module_data._module
+        module_name = module_data.module.name
         # only do work for subsample of messages
-        if (self._counter[module] + 1) % self._subsample == 0:
+        if (self._counter[module_name] + 1) % self._subsample == 0:
             self._metric(module_data)
-        self._counter[module_data._module] += 1
+        self._counter[module_name] += 1
 
     @abc.abstractmethod
     def epoch_finished(self, epoch):

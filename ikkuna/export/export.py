@@ -1,12 +1,9 @@
 import sys
-import re
 import torch
 from collections import defaultdict
 
 from ikkuna.export.messages import NetworkData
 from ikkuna.utils import ModuleTree
-
-NUMBER_REGEX = re.compile(r'\d+')
 
 
 class Exporter(object):
@@ -30,10 +27,8 @@ class Exporter(object):
 
     Attributes
     ----------
-    _modules    :   list
+    _modules    :   list(ikkuna.utils.NamedModule)
                     All tracked modules
-    _module_names    :   list
-                        List which parallels _modules and contains the label for each
     _weight_cache   :   dict
                         Cache for keeping the previous weights for computing differences
     _bias_cache :   dict
@@ -49,7 +44,6 @@ class Exporter(object):
         '''
         self._modules            = []
         self._frequency          = frequency
-        self._module_names       = []
         self._weight_cache       = {}     # expensive :(
         self._bias_cache         = {}
         self._subscribers        = set()
@@ -75,9 +69,10 @@ class Exporter(object):
         '''
         self._subscribers.add(subscriber)
 
-    def _add_module_by_name(self, name, module):
-        self._module_names.append(name)
-        self._modules.append(module)
+    def _add_module_by_name(self, named_module):
+        name = named_module.name
+        module = named_module.module
+        self._modules.append(named_module)
         module.register_forward_hook(self.new_activations)
         module.register_backward_hook(self.new_gradients)
 
@@ -103,9 +98,10 @@ class Exporter(object):
             name = module.__class__.__name__.lower()
 
         if isinstance(module, torch.nn.Module):
-            mod_hierarchy = ModuleTree(module, name=name, recursive=recursive, drop_name=recursive)
-            for name, module in mod_hierarchy.preorder(depth):
-                self._add_module_by_name(name, module)
+            module_tree = ModuleTree(module, name=name, recursive=recursive, drop_name=recursive)
+            for named_module in module_tree.preorder(depth):
+                module, name, parent = named_module
+                self._add_module_by_name(named_module)
         else:
             raise ValueError(f'Don\'t know how to handle {module.__class__.__name__}')
 
@@ -138,9 +134,12 @@ class Exporter(object):
         '''
         self._check_model()
         for sub in self._subscribers:
-            index = self._modules.index(module)
+            try:
+                index = next(i for i, m in enumerate(self._modules) if m.module == module)
+            except StopIteration:
+                raise RuntimeError(f'Received message for unknown module {module.name}')
             msg = NetworkData(seq=self._global_step, tag=None, kind=kind,
-                              module=self._module_names[index], step=self._train_step,
+                              module=self._modules[index], step=self._train_step,
                               epoch=self._epoch, payload=data)
             sub.receive_message(msg)
 
