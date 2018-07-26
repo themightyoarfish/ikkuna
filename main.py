@@ -125,16 +125,16 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
     trainer.add_model(model_str)
     trainer.optimize(name=optimizer)
 
-    # ratio_subscriber = RatioSubscriber(['weight_updates', 'weights'],
-    #                                    average=kwargs.get('average', 10),
-    #                                    subsample=kwargs.get('subsample', 1),
-    #                                    ylims=kwargs.get('ylims'))
-    #histogram_subscriber = HistogramSubscriber(['activations'], clip_min=-1e-6, clip_max=1e-6,
+    ratio_subscriber = RatioSubscriber(['weight_updates', 'weights'],
+                                       average=kwargs.get('average'),
+                                       subsample=kwargs.get('subsample'),
+                                       ylims=kwargs.get('ylims'))
+    # histogram_subscriber = HistogramSubscriber(['activations'], clip_min=-1e-6, clip_max=1e-6,
     #                                           step=1e-7)
-    # trainer.add_subscriber(ratio_subscriber)
+    trainer.add_subscriber(ratio_subscriber)
     # trainer.add_subscriber(histogram_subscriber)
-    spectral_norm_subscriber = SpectralNormSubscriber(['weights'], average=kwargs.get('average', 10))
-    trainer.add_subscriber(spectral_norm_subscriber)
+    # spectral_norm_subscriber = SpectralNormSubscriber(['weights'], average=kwargs.get('average', 10))
+    # trainer.add_subscriber(spectral_norm_subscriber)
 
     batches_per_epoch = trainer.batches_per_epoch
     print(f'Batches per epoch: {batches_per_epoch}')
@@ -182,13 +182,17 @@ def get_parser():
     parser.add_argument('-b', '--batch-size', type=int, default=128)
     parser.add_argument('-e', '--epochs', type=int, default=10)
     parser.add_argument('-o', '--optimizer', type=str, default='Adam')
+    parser.add_argument('-a', '--average', type=int, default=10)
+    parser.add_argument('-s', '--subsample', type=int, default=1)
     return parser
 
 
 def main():
 
     args = get_parser().parse_args()
-    _main(args.dataset, args.model, args.batch_size, args.epochs, args.optimizer)
+    kwargs = vars(args)
+    _main(kwargs.pop('dataset'), kwargs.pop('model'), kwargs.pop('batch_size'),
+          kwargs.pop('epochs'), kwargs.pop('optimizer'), **vars(args))
 
 
 if __name__ == '__main__':
