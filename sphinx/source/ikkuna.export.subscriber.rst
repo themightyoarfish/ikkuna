@@ -20,6 +20,14 @@ ikkuna.export.subscriber.ratio module
     :undoc-members:
     :show-inheritance:
 
+ikkuna.export.subscriber.spectral\_norm module
+----------------------------------------------
+
+.. automodule:: ikkuna.export.subscriber.spectral_norm
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 ikkuna.export.subscriber.subscriber module
 ------------------------------------------
 

@@ -37,6 +37,55 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
+<div class="section" id="module-ikkuna.utils.compound_module">
+<span id="ikkuna-utils-compound-module-module"></span><h2>ikkuna.utils.compound_module module<a class="headerlink" href="#module-ikkuna.utils.compound_module" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ikkuna.utils.compound_module.CompoundModule">
+<em class="property">class </em><code class="descclassname">ikkuna.utils.compound_module.</code><code class="descname">CompoundModule</code><span class="sig-paren">(</span><em>module</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.compound_module.CompoundModule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>A module comprised of more submodules which can be treated as a whole.</p>
+<dl class="method">
+<dt id="ikkuna.utils.compound_module.CompoundModule.add_module">
+<code class="descname">add_module</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.compound_module.CompoundModule.add_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a child module to the current module.</p>
+<p>The module can be accessed as an attribute using the given name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>string</em>) – name of the child module. The child module can be
+accessed from this module using the given name</li>
+<li><strong>parameter</strong> (<em>Module</em>) – child module to be added to the module.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.utils.compound_module.CompoundModule.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.compound_module.CompoundModule.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.utils.compound_module.CompoundModule.leaves">
+<code class="descname">leaves</code><span class="sig-paren">(</span><em>module=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.compound_module.CompoundModule.leaves" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-ikkuna.utils.module_tree">
 <span id="ikkuna-utils-module-tree-module"></span><h2>ikkuna.utils.module_tree module<a class="headerlink" href="#module-ikkuna.utils.module_tree" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-module_tree"></span><p>This module defines the <code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleTree</span></code> class for easily traversing a module hierarchy in order
@@ -44,7 +93,7 @@ to generate unique hierarchical names for all involved modules to be used as dic
 <dl class="class">
 <dt id="ikkuna.utils.module_tree.ModuleTree">
 <em class="property">class </em><code class="descclassname">ikkuna.utils.module_tree.</code><code class="descname">ModuleTree</code><span class="sig-paren">(</span><em>module</em>, <em>name=None</em>, <em>drop_name=True</em>, <em>recursive=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.module_tree.ModuleTree" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <dl class="attribute">
 <dt id="ikkuna.utils.module_tree.ModuleTree._module">
 <code class="descname">_module</code><a class="headerlink" href="#ikkuna.utils.module_tree.ModuleTree._module" title="Permalink to this definition">¶</a></dt>
@@ -73,16 +122,68 @@ the same sequential module.</p>
 
 <dl class="method">
 <dt id="ikkuna.utils.module_tree.ModuleTree.preorder">
-<code class="descname">preorder</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.module_tree.ModuleTree.preorder" title="Permalink to this definition">¶</a></dt>
+<code class="descname">preorder</code><span class="sig-paren">(</span><em>depth=-1</em>, <em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.module_tree.ModuleTree.preorder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Traverse the tree in preorder.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Yields:</th><td class="field-body"><em>tuple(str, torch.nn.Module)</em> – Pairs of generated hierarchical names with their associated modules</td>
+<tr class="field-odd field"><th class="field-name">Yields:</th><td class="field-body"><em>ikkuna.utils.NamedModule</em> – Tuple of name, module and parent module</td>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ikkuna.utils.module_tree.NamedModule">
+<em class="property">class </em><code class="descclassname">ikkuna.utils.module_tree.</code><code class="descname">NamedModule</code><span class="sig-paren">(</span><em>module</em>, <em>name</em>, <em>parent</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.module_tree.NamedModule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
+<dl class="method">
+<dt id="ikkuna.utils.module_tree.NamedModule._asdict">
+<code class="descname">_asdict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.module_tree.NamedModule._asdict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new OrderedDict which maps field names to their values.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.utils.module_tree.NamedModule._fields">
+<code class="descname">_fields</code><em class="property"> = ('module', 'name', 'parent')</em><a class="headerlink" href="#ikkuna.utils.module_tree.NamedModule._fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="ikkuna.utils.module_tree.NamedModule._make">
+<em class="property">classmethod </em><code class="descname">_make</code><span class="sig-paren">(</span><em>iterable</em>, <em>new=&lt;built-in method __new__ of type object&gt;</em>, <em>len=&lt;built-in function len&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.module_tree.NamedModule._make" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a new NamedModule object from a sequence or iterable</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.utils.module_tree.NamedModule._replace">
+<code class="descname">_replace</code><span class="sig-paren">(</span><em>**kwds</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.module_tree.NamedModule._replace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new NamedModule object replacing specified fields with new values</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.utils.module_tree.NamedModule._source">
+<code class="descname">_source</code><em class="property"> = &quot;from builtins import property as _property, tuple as _tuple\nfrom operator import itemgetter as _itemgetter\nfrom collections import OrderedDict\n\nclass NamedModule(tuple):\n    'NamedModule(module, name, parent)'\n\n    __slots__ = ()\n\n    _fields = ('module', 'name', 'parent')\n\n    def __new__(_cls, module, name, parent):\n        'Create new instance of NamedModule(module, name, parent)'\n        return _tuple.__new__(_cls, (module, name, parent))\n\n    &#64;classmethod\n    def _make(cls, iterable, new=tuple.__new__, len=len):\n        'Make a new NamedModule object from a sequence or iterable'\n        result = new(cls, iterable)\n        if len(result) != 3:\n            raise TypeError('Expected 3 arguments, got %d' % len(result))\n        return result\n\n    def _replace(_self, **kwds):\n        'Return a new NamedModule object replacing specified fields with new values'\n        result = _self._make(map(kwds.pop, ('module', 'name', 'parent'), _self))\n        if kwds:\n            raise ValueError('Got unexpected field names: %r' % list(kwds))\n        return result\n\n    def __repr__(self):\n        'Return a nicely formatted representation string'\n        return self.__class__.__name__ + '(module=%r, name=%r, parent=%r)' % self\n\n    def _asdict(self):\n        'Return a new OrderedDict which maps field names to their values.'\n        return OrderedDict(zip(self._fields, self))\n\n    def __getnewargs__(self):\n        'Return self as a plain tuple.  Used by copy and pickle.'\n        return tuple(self)\n\n    module = _property(_itemgetter(0), doc='Alias for field number 0')\n\n    name = _property(_itemgetter(1), doc='Alias for field number 1')\n\n    parent = _property(_itemgetter(2), doc='Alias for field number 2')\n\n&quot;</em><a class="headerlink" href="#ikkuna.utils.module_tree.NamedModule._source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.utils.module_tree.NamedModule.module">
+<code class="descname">module</code><a class="headerlink" href="#ikkuna.utils.module_tree.NamedModule.module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.utils.module_tree.NamedModule.name">
+<code class="descname">name</code><a class="headerlink" href="#ikkuna.utils.module_tree.NamedModule.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.utils.module_tree.NamedModule.parent">
+<code class="descname">parent</code><a class="headerlink" href="#ikkuna.utils.module_tree.NamedModule.parent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
 </dd></dl>
 
 </dd></dl>
@@ -100,7 +201,7 @@ the same sequential module.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of all optimizer names.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.6)">list</a>(<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)">str</a>)</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>(<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a>)</td>
 </tr>
 </tbody>
 </table>
@@ -117,12 +218,12 @@ with <code class="docutils literal notranslate"><span class="pre">requires_grad<
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>model</strong> (<em>nn.Module</em>) – </li>
-<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – Name of the optimizer</li>
-<li><strong>kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – All arguments which should be passed to the optimizer.</li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the optimizer</li>
+<li><strong>kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – All arguments which should be passed to the optimizer.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.6)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If superflous <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> are passed.</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If superflous <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> are passed.</p>
 </td>
 </tr>
 </tbody>
@@ -141,11 +242,11 @@ skip if not present.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>module</strong> (<em>torch.nn.Module</em>) – The model</li>
-<li><strong>bias_val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Constant for biases (should be small and positive)</li>
+<li><strong>bias_val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Constant for biases (should be small and positive)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.6)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If <code class="docutils literal notranslate"><span class="pre">module</span></code> is not one of the known models (currently <code class="xref py py-class docutils literal notranslate"><span class="pre">models.AlexNetMini</span></code>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If <code class="docutils literal notranslate"><span class="pre">module</span></code> is not one of the known models (currently <code class="xref py py-class docutils literal notranslate"><span class="pre">models.AlexNetMini</span></code>
 and <code class="xref py py-class docutils literal notranslate"><span class="pre">models.DenseNet</span></code>)</p>
 </td>
 </tr>
@@ -169,6 +270,7 @@ and <code class="xref py py-class docutils literal notranslate"><span class="pre
   <ul>
 <li><a class="reference internal" href="#">ikkuna.utils package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-ikkuna.utils.compound_module">ikkuna.utils.compound_module module</a></li>
 <li><a class="reference internal" href="#module-ikkuna.utils.module_tree">ikkuna.utils.module_tree module</a></li>
 <li><a class="reference internal" href="#module-ikkuna.utils.utils">ikkuna.utils.utils module</a></li>
 <li><a class="reference internal" href="#module-ikkuna.utils">Module contents</a></li>
