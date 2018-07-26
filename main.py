@@ -187,6 +187,7 @@ def get_parser():
     parser.add_argument('-o', '--optimizer', type=str, default='Adam')
     parser.add_argument('-a', '--average', type=int, default=10)
     parser.add_argument('-s', '--subsample', type=int, default=1)
+    parser.add_argument('-y', '--ylims', nargs=2, type=int, default=None)
     return parser
 
 
