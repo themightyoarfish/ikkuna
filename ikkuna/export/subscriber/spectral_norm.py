@@ -4,37 +4,16 @@ from matplotlib.ticker import FixedLocator, FixedFormatter
 import numpy as np
 from collections import defaultdict
 import torch
+from torch.nn.functional import normalize
 
 from ikkuna.export.subscriber import Subscriber, SynchronizedSubscription
 
 ZERO_TENSOR = torch.tensor(0.0).cuda()
 
 
-class RatioSubscriber(Subscriber):
+class SpectralNormSubscriber(Subscriber):
 
-    '''A :class:`Subscriber` which computes the average ratio between two quantities.  The dividend
-    will be the first element of th :attr:`Subscriber.kinds` property, the divisor the second.
-    Therefore it is vital to pass the message kinds to the
-    :class:`ikkuna.export.subsciber.Subscription` object in the correct order.
-
-    Attributes
-    ----------
-    _ratios :   dict(str, list)
-                Per-module record of ratios for each batch
-    _figure :   plt.Figure
-                Figure to plot ratios in (will update continuously)
-    _ax     :   plt.AxesSubplot
-                Axes containing the plots
-    _batches_per_epoch  :   int
-                            Inferred number of batches per epoch. This relies on each epoch being
-                            full-sized (no smaller last batch)
-    _ylims  :   tuple
-                Y-axis limits for the plot. If ``None``, axis will be automatically scaled
-    _average    :   int
-                    Number of successive ratios to average for the plot
-    '''
-
-    def __init__(self, kinds, tag=None, subsample=1, average=1, ylims=None, absolute=True):
+    def __init__(self, kinds, tag=None, subsample=1, average=1, ylims=None):
         '''
         Parameters
         ----------
@@ -42,76 +21,70 @@ class RatioSubscriber(Subscriber):
                         Factor for subsampling incoming messages. Only every ``subsample``-th
                         message will be processed.
         average :   int
-                    Inverse resolution of the plot. For plotting ``average`` ratios will be averaged
+                    Inverse resolution of the plot. For plotting ``average`` norms will be averaged
                     for each module to remove noise.
         ylims   :   tuple(int, int)
                     Optional Y-axis limits
-        absolute :  bool
-                    Whether to use absolute ratio
         '''
         super().__init__(kinds, tag=tag, subsample=subsample)
         self._subscription      = SynchronizedSubscription(self, tag)
-        self._ratios            = defaultdict(list)
+        self._norms             = defaultdict(list)
         self._figure, self._ax  = plt.subplots()
         self._plots             = {}
         self._batches_per_epoch = None
         self._ylims             = ylims
         self._average           = int(average)
-        if absolute:
-            self._fn = torch.abs
-        else:
-            self._fn = lambda x: x
 
         self._ax.set_autoscaley_on(True)
-        self._ax.set_title(f'{self.kinds[0]}/{self.kinds[1]} ratios per layer '
-                           f'(average of {self._average} batches)')
-        self._ax.set_xlabel('Ratio')
+        self._ax.set_title(f'Spectral norms of {self.kinds[0]} per '
+                           f'layer (average of {self._average} batches)')
+        self._ax.set_xlabel('Spectral norm')
         self._ax.set_xlabel('epoch (start)')
+        self.u = dict()
 
     def _metric(self, module_data):
-        '''The ratio between the two kinds is computed over the subset of not-NaN values and added
-        to the record.'''
+        '''The spectral norm computation is taken from the `Pytorch implementation of spectral norm
+        <https://pytorch.org/docs/master/_modules/torch/nn/utils/spectral_norm.html>`_. It's
+        possible to use SVD instead, but we are not interested in the full matrix decomposition,
+        merely in the singular values.'''
 
         module  = module_data.module.name
 
-        dividend = module_data._data[self.kinds[0]]
-        divisor  = module_data._data[self.kinds[1]]
-        numel    = divisor.numel()
+        # get and reshape the weight tensor to 2d
+        weights = module_data._data[self.kinds[0]]
+        height = weights.size(0)
+        weights2d = weights.reshape(height, -1)
 
-        ######################################################################################
-        #  We need to see how many NaNs we have and compute the mean only over the non-nans  #
-        ######################################################################################
-        ratio_tensor = self._fn(dividend.div(divisor))
-        n            = float(divisor.numel())
-        nan_tensor   = torch.isnan(ratio_tensor)
-        n_nans       = nan_tensor.sum().to(torch.float32)
-        if n_nans > 0:
-            ratio_sum = torch.where(1 - nan_tensor, ratio_tensor, ZERO_TENSOR).sum()
-        else:
-            ratio_sum = ratio_tensor.sum()
-        ratio = (ratio_sum / (n - n_nans)).item()
+        # buffer for power iteration (don't know what the mahematical purpose is)
+        if module not in self.u:
+            self.u[module] = normalize(weights2d.new_empty(height).normal_(0, 1), dim=0)
 
-        if np.isnan(ratio):
-            raise ValueError(f'NaN value ratio for {module}')
+        # estimate singular values
+        with torch.no_grad():
+            for _ in range(3):
+                v = normalize(torch.matmul(weights2d.t(), self.u[module]), dim=0)
+                self.u[module] = normalize(torch.matmul(weights2d, v), dim=0)
 
-        ratios = self._ratios[module]
-        ratios.append(ratio)
+        norm = torch.dot(self.u[module], torch.matmul(weights2d, v)).item()
+
+        norms = self._norms[module]
+        norms.append(norm)
 
         # every self._average calls, we replace the last self._average elements with their mean
         # possibly a running average would be more efficient, but who's counting
-        n_past_ratios = self._counter[module] + 1
-        if n_past_ratios % self._average == 0:
-            ratios[-self._average:] = (np.mean(ratios[-self._average:]),)
+        n_past_norms = self._counter[module] + 1
+        if n_past_norms % self._average == 0:
+            norms[-self._average:] = (np.mean(norms[-self._average:]),)
 
     def epoch_finished(self, epoch):
-        '''The plot is updated, respecting the ``average`` parameter set. Successive ratio values
+        '''The plot is updated, respecting the ``average`` parameter set. Successive norm values
         are averaged. The plot's X-axis labels are in the unit of epochs, but the actual plot
         resolution is ``batches_per_epoch / subsample / average``.'''
         super().epoch_finished(epoch)
 
         # exit early if nothing to be done
         if len(self._counter) == 0:
-            print('Warning: No ratios recorded.', file=sys.stderr)
+            print('Warning: No norms recorded.', file=sys.stderr)
             return
 
         counters = self._counter.values()
@@ -131,16 +104,16 @@ class RatioSubscriber(Subscriber):
         self._ax.xaxis.set_major_locator(FixedLocator(ticks))
         self._ax.xaxis.set_major_formatter(FixedFormatter(tick_labels))
 
-        for idx, (module, ratios) in enumerate(self._ratios.items()):
+        for idx, (module, norms) in enumerate(self._norms.items()):
 
             if module not in self._plots:
                 self._plots[module] = self._ax.plot([], [], label=f'{module}')[0]
 
-            n = len(ratios)
+            n = len(norms)
             # set the extended data for the plots
             x = np.arange(n)
             self._plots[module].set_xdata(x)
-            self._plots[module].set_ydata(ratios)
+            self._plots[module].set_ydata(norms)
 
         self._figure.subplots_adjust(right=0.7)
         self._ax.legend(bbox_to_anchor=(1, 0.5), ncol=1)

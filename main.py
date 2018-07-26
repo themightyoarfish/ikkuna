@@ -29,7 +29,7 @@ from torchvision.transforms import ToTensor, Compose
 #  1st party imports  #
 #######################
 from train import Trainer, DatasetMeta
-from ikkuna.export.subscriber import RatioSubscriber, HistogramSubscriber
+from ikkuna.export.subscriber import RatioSubscriber, HistogramSubscriber, SpectralNormSubscriber
 
 SEED = 1234
 random.seed(SEED)
@@ -125,14 +125,16 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
     trainer.add_model(model_str)
     trainer.optimize(name=optimizer)
 
-    ratio_subscriber = RatioSubscriber(['weight_updates', 'weights'],
-                                       average=kwargs.get('average', 10),
-                                       subsample=kwargs.get('subsample', 1),
-                                       ylims=kwargs.get('ylims'))
+    # ratio_subscriber = RatioSubscriber(['weight_updates', 'weights'],
+    #                                    average=kwargs.get('average', 10),
+    #                                    subsample=kwargs.get('subsample', 1),
+    #                                    ylims=kwargs.get('ylims'))
     #histogram_subscriber = HistogramSubscriber(['activations'], clip_min=-1e-6, clip_max=1e-6,
     #                                           step=1e-7)
-    trainer.add_subscriber(ratio_subscriber)
+    # trainer.add_subscriber(ratio_subscriber)
     # trainer.add_subscriber(histogram_subscriber)
+    spectral_norm_subscriber = SpectralNormSubscriber(['weights'], average=kwargs.get('average', 10))
+    trainer.add_subscriber(spectral_norm_subscriber)
 
     batches_per_epoch = trainer.batches_per_epoch
     print(f'Batches per epoch: {batches_per_epoch}')
