@@ -126,15 +126,18 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
     trainer.optimize(name=optimizer)
 
     ratio_subscriber = RatioSubscriber(['weight_updates', 'weights'],
-                                       average=kwargs.get('average'),
-                                       subsample=kwargs.get('subsample'),
+                                       average=kwargs['average'],
+                                       subsample=kwargs['subsample'],
                                        ylims=kwargs.get('ylims'))
     # histogram_subscriber = HistogramSubscriber(['activations'], clip_min=-1e-6, clip_max=1e-6,
     #                                           step=1e-7)
     trainer.add_subscriber(ratio_subscriber)
     # trainer.add_subscriber(histogram_subscriber)
-    # spectral_norm_subscriber = SpectralNormSubscriber(['weights'], average=kwargs.get('average', 10))
-    # trainer.add_subscriber(spectral_norm_subscriber)
+    spectral_norm_subscriber = SpectralNormSubscriber(['weights'],
+                                                      ylims=kwargs['ylims'],
+                                                      subsample=kwargs['subsample'],
+                                                      average=kwargs['average'])
+    trainer.add_subscriber(spectral_norm_subscriber)
 
     batches_per_epoch = trainer.batches_per_epoch
     print(f'Batches per epoch: {batches_per_epoch}')

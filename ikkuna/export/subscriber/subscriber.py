@@ -340,3 +340,116 @@ class Subscriber(abc.ABC):
                     0-based epoch index
         '''
         self._current_epoch = epoch
+
+
+from matplotlib import pyplot as plt
+from matplotlib.ticker import FixedLocator, FixedFormatter
+import numpy as np
+import sys
+
+
+class LinePlotSubscriber(Subscriber):
+
+    '''Base class for subscribers that output scalar values per time and module
+
+    Attributes
+    ----------
+    _metric_values :    dict(str, list)
+                        Per-module record of the scalar metric values for each batch
+    _figure :   plt.Figure
+                Figure to plot metric values in (will update continuously)
+    _ax     :   plt.AxesSubplot
+                Axes containing the plots
+    _batches_per_epoch  :   int
+                            Inferred number of batches per epoch. This relies on each epoch being
+                            full-sized (no smaller last batch)
+    _ylims  :   tuple
+                Y-axis limits for the plot. If ``None``, axis will be automatically scaled
+    _average    :   int
+                    Number of successive values to average for the plot
+    '''
+
+    def __init__(self, kinds, tag=None, subsample=1, average=1, ylims=None):
+        '''
+        Parameters
+        ----------
+        subsample   :   int
+                        Factor for subsampling incoming messages. Only every ``subsample``-th
+                        message will be processed.
+        average :   int
+                    Inverse resolution of the plot. For plotting ``average`` ratios will be averaged
+                    for each module to remove noise.
+        ylims   :   tuple(int, int)
+                    Optional Y-axis limits
+        '''
+        super().__init__(kinds, tag, subsample)
+        self._average           = int(average)
+        self._metric_values            = defaultdict(list)
+        self._figure, self._ax  = plt.subplots()
+        self._plots             = {}
+        self._ylims             = ylims
+        self._batches_per_epoch = None
+        # This must be set in the subclass to create the desired subscription
+        self._subscription  = None
+        self._ax.set_xlabel('epoch (start)')
+        self._ax.set_autoscaley_on(True)
+
+    @abc.abstractmethod
+    def _metric(self, module_data):
+        pass
+
+    def epoch_finished(self, epoch):
+        '''The plot is updated, respecting the ``average`` parameter set. Successive metric values
+        resolution is ``batches_per_epoch / subsample / average``.'''
+        super().epoch_finished(epoch)
+
+        # exit early if nothing to be done
+        if len(self._counter) == 0:
+            import ipdb; ipdb.set_trace()  # XXX BREAKPOINT
+            print('Warning: No metric recorded.', file=sys.stderr)
+            return
+
+        counters = self._counter.values()
+
+        assert len(set(counters)) == 1, 'Some modules have different counters.'
+        if self._batches_per_epoch is None:
+            self._batches_per_epoch = list(counters)[0]
+
+        # create the tick positions and labels so we only get one tick label per epoch, but the
+        # resolution of batches
+        epoch_range = np.arange(epoch + 1)
+        ticks       = epoch_range * self._batches_per_epoch / self._subsample / self._average
+        tick_labels = [f'{e}' for e in epoch_range]
+        # set ticks and labels
+        # TODO: Figure out how to do this with LinearLocator or whatever so we need not do it in
+        # every redraw
+        self._ax.xaxis.set_major_locator(FixedLocator(ticks))
+        self._ax.xaxis.set_major_formatter(FixedFormatter(tick_labels))
+
+        for idx, (module, metric_values) in enumerate(self._metric_values.items()):
+
+            if module not in self._plots:
+                self._plots[module] = self._ax.plot([], [], label=f'{module}')[0]
+
+            n = len(metric_values)
+            # set the extended data for the plots
+            x = np.arange(n)
+            self._plots[module].set_xdata(x)
+            self._plots[module].set_ydata(metric_values)
+
+        self._figure.subplots_adjust(right=0.7)
+        self._ax.legend(bbox_to_anchor=(1, 0.5), ncol=1)
+
+        # set the axes view to accomodate new data
+        if not self._ylims:
+            self._ax.relim()
+            self._ax.autoscale_view()
+        else:
+            self._ax.relim()
+            self._ax.set_ylim(self._ylims)
+            self._ax.autoscale_view(scaley=False)
+
+        # redraw the figure
+        self._figure.canvas.draw()
+        self._figure.canvas.flush_events()
+        self._figure.show()
