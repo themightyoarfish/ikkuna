@@ -13,14 +13,9 @@ class SpectralNormSubscriber(LinePlotSubscriber):
         '''
         Parameters
         ----------
-        subsample   :   int
-                        Factor for subsampling incoming messages. Only every ``subsample``-th
-                        message will be processed.
-        average :   int
-                    Inverse resolution of the plot. For plotting ``average`` norms will be averaged
-                    for each module to remove noise.
+        see :class:`LinePlotSubscriber`
         '''
-        super().__init__(kinds, tag=tag, subsample=subsample, ylims=ylims)
+        super().__init__(kinds, tag=tag, subsample=subsample, average=average, ylims=ylims)
         self._subscription      = SynchronizedSubscription(self, tag)
 
         self._ax.set_title(f'Spectral norms of {self.kinds[0]} per '
