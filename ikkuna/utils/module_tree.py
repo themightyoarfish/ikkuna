@@ -7,11 +7,10 @@ This module defines the :class:`ModuleTree` class for easily traversing a module
 to generate unique hierarchical names for all involved modules to be used as dictinary keys.
 '''
 import re
-from collections import defaultdict, namedtuple
+from collections import defaultdict
+from ikkuna.utils import NamedModule
 
 NUMBER_REGEX = re.compile(r'\d+')
-
-NamedModule = namedtuple('NamedModule', ['module', 'name', 'parent'])
 
 
 class ModuleTree(object):
