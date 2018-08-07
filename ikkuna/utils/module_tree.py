@@ -8,7 +8,6 @@ to generate unique hierarchical names for all involved modules to be used as dic
 '''
 import re
 from collections import defaultdict
-from ikkuna.utils import NamedModule
 
 NUMBER_REGEX = re.compile(r'\d+')
 
@@ -86,6 +85,10 @@ class ModuleTree(object):
         ikkuna.utils.NamedModule
             Tuple of name, module and parent module
         '''
+        # due to some weird bug, we cannot import this at the top despite the fact that there is no
+        # circular import
+        from ikkuna.utils import NamedModule
+
         parent = parent or self._module
         if not self._children:
             yield NamedModule(name=self._name, module=self._module, parent=parent)
