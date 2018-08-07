@@ -102,3 +102,6 @@ ENV/
 
 *.swp
 code_graveyard.py
+runs
+*.swp
+*.swo
