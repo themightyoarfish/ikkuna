@@ -17,7 +17,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="models package" href="models.html" />
-    <link rel="prev" title="ikkuna.utils package" href="ikkuna.utils.html" />
+    <link rel="prev" title="ikkuna.visualization package" href="ikkuna.visualization.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -39,6 +39,7 @@ accepts the following arguments:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="o">-</span><span class="n">m</span> <span class="p">{</span><span class="n">AlexNetMini</span><span class="p">,</span><span class="n">DenseNet</span><span class="p">}</span> <span class="o">-</span><span class="n">d</span>
                <span class="p">{</span><span class="n">MNIST</span><span class="p">,</span><span class="n">FashionMNIST</span><span class="p">,</span><span class="n">CIFAR10</span><span class="p">,</span><span class="n">CIFAR100</span><span class="p">}</span> <span class="p">[</span><span class="o">-</span><span class="n">b</span> <span class="n">BATCH_SIZE</span><span class="p">]</span>
                <span class="p">[</span><span class="o">-</span><span class="n">e</span> <span class="n">EPOCHS</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">o</span> <span class="n">OPTIMIZER</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">a</span> <span class="n">AVERAGE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">s</span> <span class="n">SUBSAMPLE</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">-</span><span class="n">y</span> <span class="n">YLIMS</span> <span class="n">YLIMS</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span> <span class="p">{</span><span class="n">tb</span><span class="p">,</span><span class="n">mpl</span><span class="p">}]</span>
 </pre></div>
 </div>
 <div class="section" id="Named Arguments">
@@ -71,6 +72,15 @@ accepts the following arguments:</p>
 <kbd>-s, --subsample</kbd></td>
 </tr>
 <tr><td>&#160;</td><td>Default: 1</td></tr>
+<tr><td class="option-group">
+<kbd>-y, --ylims</kbd></td>
+<td></td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd>-v, --visualisation</kbd></td>
+</tr>
+<tr><td>&#160;</td><td><p class="first">Possible choices: tb, mpl</p>
+<p class="last">Default: “tb”</p>
+</td></tr>
 </tbody>
 </table>
 </div>
@@ -156,7 +166,7 @@ extension.</p>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
   <li><a href="modules.html">ai_ikkuna</a><ul>
-      <li>Previous: <a href="ikkuna.utils.html" title="previous chapter">ikkuna.utils package</a></li>
+      <li>Previous: <a href="ikkuna.visualization.html" title="previous chapter">ikkuna.visualization package</a></li>
       <li>Next: <a href="models.html" title="next chapter">models package</a></li>
   </ul></li>
   </ul></li>

@@ -16,7 +16,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="main module" href="main.html" />
+    <link rel="next" title="ikkuna.visualization package" href="ikkuna.visualization.html" />
     <link rel="prev" title="ikkuna.export.subscriber package" href="ikkuna.export.subscriber.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -136,53 +136,56 @@ the same sequential module.</p>
 
 </dd></dl>
 
+</div>
+<div class="section" id="module-ikkuna.utils.named_module">
+<span id="ikkuna-utils-named-module-module"></span><h2>ikkuna.utils.named_module module<a class="headerlink" href="#module-ikkuna.utils.named_module" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="ikkuna.utils.module_tree.NamedModule">
-<em class="property">class </em><code class="descclassname">ikkuna.utils.module_tree.</code><code class="descname">NamedModule</code><span class="sig-paren">(</span><em>module</em>, <em>name</em>, <em>parent</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.module_tree.NamedModule" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.utils.named_module.NamedModule">
+<em class="property">class </em><code class="descclassname">ikkuna.utils.named_module.</code><code class="descname">NamedModule</code><span class="sig-paren">(</span><em>module</em>, <em>name</em>, <em>parent</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.named_module.NamedModule" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
 <dl class="method">
-<dt id="ikkuna.utils.module_tree.NamedModule._asdict">
-<code class="descname">_asdict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.module_tree.NamedModule._asdict" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.utils.named_module.NamedModule._asdict">
+<code class="descname">_asdict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.named_module.NamedModule._asdict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a new OrderedDict which maps field names to their values.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ikkuna.utils.module_tree.NamedModule._fields">
-<code class="descname">_fields</code><em class="property"> = ('module', 'name', 'parent')</em><a class="headerlink" href="#ikkuna.utils.module_tree.NamedModule._fields" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.utils.named_module.NamedModule._fields">
+<code class="descname">_fields</code><em class="property"> = ('module', 'name', 'parent')</em><a class="headerlink" href="#ikkuna.utils.named_module.NamedModule._fields" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="classmethod">
-<dt id="ikkuna.utils.module_tree.NamedModule._make">
-<em class="property">classmethod </em><code class="descname">_make</code><span class="sig-paren">(</span><em>iterable</em>, <em>new=&lt;built-in method __new__ of type object&gt;</em>, <em>len=&lt;built-in function len&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.module_tree.NamedModule._make" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.utils.named_module.NamedModule._make">
+<em class="property">classmethod </em><code class="descname">_make</code><span class="sig-paren">(</span><em>iterable</em>, <em>new=&lt;built-in method __new__ of type object&gt;</em>, <em>len=&lt;built-in function len&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.named_module.NamedModule._make" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a new NamedModule object from a sequence or iterable</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.utils.module_tree.NamedModule._replace">
-<code class="descname">_replace</code><span class="sig-paren">(</span><em>**kwds</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.module_tree.NamedModule._replace" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.utils.named_module.NamedModule._replace">
+<code class="descname">_replace</code><span class="sig-paren">(</span><em>**kwds</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.named_module.NamedModule._replace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a new NamedModule object replacing specified fields with new values</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ikkuna.utils.module_tree.NamedModule._source">
-<code class="descname">_source</code><em class="property"> = &quot;from builtins import property as _property, tuple as _tuple\nfrom operator import itemgetter as _itemgetter\nfrom collections import OrderedDict\n\nclass NamedModule(tuple):\n    'NamedModule(module, name, parent)'\n\n    __slots__ = ()\n\n    _fields = ('module', 'name', 'parent')\n\n    def __new__(_cls, module, name, parent):\n        'Create new instance of NamedModule(module, name, parent)'\n        return _tuple.__new__(_cls, (module, name, parent))\n\n    &#64;classmethod\n    def _make(cls, iterable, new=tuple.__new__, len=len):\n        'Make a new NamedModule object from a sequence or iterable'\n        result = new(cls, iterable)\n        if len(result) != 3:\n            raise TypeError('Expected 3 arguments, got %d' % len(result))\n        return result\n\n    def _replace(_self, **kwds):\n        'Return a new NamedModule object replacing specified fields with new values'\n        result = _self._make(map(kwds.pop, ('module', 'name', 'parent'), _self))\n        if kwds:\n            raise ValueError('Got unexpected field names: %r' % list(kwds))\n        return result\n\n    def __repr__(self):\n        'Return a nicely formatted representation string'\n        return self.__class__.__name__ + '(module=%r, name=%r, parent=%r)' % self\n\n    def _asdict(self):\n        'Return a new OrderedDict which maps field names to their values.'\n        return OrderedDict(zip(self._fields, self))\n\n    def __getnewargs__(self):\n        'Return self as a plain tuple.  Used by copy and pickle.'\n        return tuple(self)\n\n    module = _property(_itemgetter(0), doc='Alias for field number 0')\n\n    name = _property(_itemgetter(1), doc='Alias for field number 1')\n\n    parent = _property(_itemgetter(2), doc='Alias for field number 2')\n\n&quot;</em><a class="headerlink" href="#ikkuna.utils.module_tree.NamedModule._source" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.utils.named_module.NamedModule._source">
+<code class="descname">_source</code><em class="property"> = &quot;from builtins import property as _property, tuple as _tuple\nfrom operator import itemgetter as _itemgetter\nfrom collections import OrderedDict\n\nclass NamedModule(tuple):\n    'NamedModule(module, name, parent)'\n\n    __slots__ = ()\n\n    _fields = ('module', 'name', 'parent')\n\n    def __new__(_cls, module, name, parent):\n        'Create new instance of NamedModule(module, name, parent)'\n        return _tuple.__new__(_cls, (module, name, parent))\n\n    &#64;classmethod\n    def _make(cls, iterable, new=tuple.__new__, len=len):\n        'Make a new NamedModule object from a sequence or iterable'\n        result = new(cls, iterable)\n        if len(result) != 3:\n            raise TypeError('Expected 3 arguments, got %d' % len(result))\n        return result\n\n    def _replace(_self, **kwds):\n        'Return a new NamedModule object replacing specified fields with new values'\n        result = _self._make(map(kwds.pop, ('module', 'name', 'parent'), _self))\n        if kwds:\n            raise ValueError('Got unexpected field names: %r' % list(kwds))\n        return result\n\n    def __repr__(self):\n        'Return a nicely formatted representation string'\n        return self.__class__.__name__ + '(module=%r, name=%r, parent=%r)' % self\n\n    def _asdict(self):\n        'Return a new OrderedDict which maps field names to their values.'\n        return OrderedDict(zip(self._fields, self))\n\n    def __getnewargs__(self):\n        'Return self as a plain tuple.  Used by copy and pickle.'\n        return tuple(self)\n\n    module = _property(_itemgetter(0), doc='Alias for field number 0')\n\n    name = _property(_itemgetter(1), doc='Alias for field number 1')\n\n    parent = _property(_itemgetter(2), doc='Alias for field number 2')\n\n&quot;</em><a class="headerlink" href="#ikkuna.utils.named_module.NamedModule._source" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="ikkuna.utils.module_tree.NamedModule.module">
-<code class="descname">module</code><a class="headerlink" href="#ikkuna.utils.module_tree.NamedModule.module" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.utils.named_module.NamedModule.module">
+<code class="descname">module</code><a class="headerlink" href="#ikkuna.utils.named_module.NamedModule.module" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 0</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ikkuna.utils.module_tree.NamedModule.name">
-<code class="descname">name</code><a class="headerlink" href="#ikkuna.utils.module_tree.NamedModule.name" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.utils.named_module.NamedModule.name">
+<code class="descname">name</code><a class="headerlink" href="#ikkuna.utils.named_module.NamedModule.name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 1</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ikkuna.utils.module_tree.NamedModule.parent">
-<code class="descname">parent</code><a class="headerlink" href="#ikkuna.utils.module_tree.NamedModule.parent" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.utils.named_module.NamedModule.parent">
+<code class="descname">parent</code><a class="headerlink" href="#ikkuna.utils.named_module.NamedModule.parent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 2</p>
 </dd></dl>
 
@@ -207,6 +210,11 @@ the same sequential module.</p>
 </table>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="ikkuna.utils.utils.compute_bin">
+<code class="descclassname">ikkuna.utils.utils.</code><code class="descname">compute_bin</code><a class="headerlink" href="#ikkuna.utils.utils.compute_bin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="function">
 <dt id="ikkuna.utils.utils.create_optimizer">
 <code class="descclassname">ikkuna.utils.utils.</code><code class="descname">create_optimizer</code><span class="sig-paren">(</span><em>model</em>, <em>name</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.utils.create_optimizer" title="Permalink to this definition">¶</a></dt>
@@ -228,6 +236,12 @@ with <code class="docutils literal notranslate"><span class="pre">requires_grad<
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ikkuna.utils.utils.dtype_min_max">
+<code class="descclassname">ikkuna.utils.utils.</code><code class="descname">dtype_min_max</code><span class="sig-paren">(</span><em>dtype</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.utils.dtype_min_max" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the min and max value for a numeric dtype</p>
 </dd></dl>
 
 <dl class="function">
@@ -254,6 +268,37 @@ and <code class="xref py py-class docutils literal notranslate"><span class="pre
 </table>
 </dd></dl>
 
+<dl class="function">
+<dt id="ikkuna.utils.utils.make_fill_polygons">
+<code class="descclassname">ikkuna.utils.utils.</code><code class="descname">make_fill_polygons</code><span class="sig-paren">(</span><em>xs</em>, <em>ys</em>, <em>zs</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.utils.make_fill_polygons" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a set of polygons to fill the space below a line in 3d.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">mpl_toolkits.mplot3d.art3d.Poly3DCollection</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ikkuna.utils.utils.numba_gpu_histogram">
+<code class="descclassname">ikkuna.utils.utils.</code><code class="descname">numba_gpu_histogram</code><span class="sig-paren">(</span><em>a_gpu</em>, <em>bins</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.utils.numba_gpu_histogram" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ikkuna.utils.utils.tensor_to_numba">
+<code class="descclassname">ikkuna.utils.utils.</code><code class="descname">tensor_to_numba</code><span class="sig-paren">(</span><em>tensor</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.utils.tensor_to_numba" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ikkuna.utils.utils.typestr">
+<code class="descclassname">ikkuna.utils.utils.</code><code class="descname">typestr</code><span class="sig-paren">(</span><em>tensor</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.utils.typestr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 <div class="section" id="module-ikkuna.utils">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ikkuna.utils" title="Permalink to this headline">¶</a></h2>
@@ -272,6 +317,7 @@ and <code class="xref py py-class docutils literal notranslate"><span class="pre
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-ikkuna.utils.compound_module">ikkuna.utils.compound_module module</a></li>
 <li><a class="reference internal" href="#module-ikkuna.utils.module_tree">ikkuna.utils.module_tree module</a></li>
+<li><a class="reference internal" href="#module-ikkuna.utils.named_module">ikkuna.utils.named_module module</a></li>
 <li><a class="reference internal" href="#module-ikkuna.utils.utils">ikkuna.utils.utils module</a></li>
 <li><a class="reference internal" href="#module-ikkuna.utils">Module contents</a></li>
 </ul>
@@ -284,7 +330,7 @@ and <code class="xref py py-class docutils literal notranslate"><span class="pre
   <li><a href="modules.html">ai_ikkuna</a><ul>
   <li><a href="ikkuna.html">ikkuna package</a><ul>
       <li>Previous: <a href="ikkuna.export.subscriber.html" title="previous chapter">ikkuna.export.subscriber package</a></li>
-      <li>Next: <a href="main.html" title="next chapter">main module</a></li>
+      <li>Next: <a href="ikkuna.visualization.html" title="next chapter">ikkuna.visualization package</a></li>
   </ul></li>
   </ul></li>
   </ul></li>

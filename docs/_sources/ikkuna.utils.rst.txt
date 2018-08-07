@@ -20,6 +20,14 @@ ikkuna.utils.module\_tree module
     :undoc-members:
     :show-inheritance:
 
+ikkuna.utils.named\_module module
+---------------------------------
+
+.. automodule:: ikkuna.utils.named_module
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 ikkuna.utils.utils module
 -------------------------
 

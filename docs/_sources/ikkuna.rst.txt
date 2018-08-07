@@ -8,6 +8,7 @@ Subpackages
 
     ikkuna.export
     ikkuna.utils
+    ikkuna.visualization
 
 Module contents
 ---------------
