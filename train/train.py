@@ -60,7 +60,7 @@ class Trainer:
         self._loss_function     = kwargs.pop('loss', nn.CrossEntropyLoss())
         sampler                 = torch.utils.data.sampler.RandomSampler(self._dataset)
         self._dataloader        = DataLoader(self._dataset, batch_size=self._batch_size,
-                                             sampler=sampler)
+                                             sampler=sampler, pin_memory=True)
         self._data_iter         = iter(self._dataloader)
         N_train                 = self._shape[0]
         self._batches_per_epoch = round(N_train / self._batch_size + 0.5)
@@ -125,7 +125,7 @@ class Trainer:
         self._model.train(True)
 
         X, Y = self._next_X, self._next_Y
-        data, labels = X.cuda(), Y.cuda()
+        data, labels = X.cuda(async=True), Y.cuda(async=True)
         self._optimizer.zero_grad()
         output = self._model(data)
         loss   = self._loss_function(output, labels)
@@ -150,12 +150,13 @@ class Trainer:
         dataset  :   DatasetMeta
         '''
         self._model.train(False)
-        test_loader = DataLoader(dataset.dataset, batch_size=self._batch_size, shuffle=True)
+        test_loader = DataLoader(dataset.dataset, batch_size=self._batch_size, shuffle=True,
+                                 pin_memory=True)
 
         num_correct = 0
         n = 0
         for X, _labels in test_loader:
             n           += X.shape[0]
-            predictions  = self._model(X.cuda()).argmax(1)
+            predictions  = self._model(X.cuda(async=True)).argmax(1)
             num_correct += (predictions.cpu() == _labels).sum()
         return num_correct.item() / n
