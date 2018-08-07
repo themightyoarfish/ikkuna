@@ -236,7 +236,7 @@ class MPLBackend(Backend):
         #  Histogram args  #
         ####################
         self._buffer      = defaultdict(list)
-        self._buffer_lim  = kwargs.get('buffer_size', 100)
+        self._buffer_lim  = kwargs.get('buffer_size', 20)
 
     def _prepare_axis(self, ax):
         '''Prepare the line plot axis with labels and scaling.'''
@@ -363,4 +363,4 @@ class TBBackend(Backend):
         self._writer.add_scalars(f'{self.title}', {module: datum}, global_step=step)
 
     def add_histogram(self, module, datum, step):
-        self._writer.add_histogram(f'{self.title}: {module.name}', datum, global_step=step)
+        self._writer.add_histogram(f'{self.title}: {module.name}', datum, global_step=step, bins=50)
