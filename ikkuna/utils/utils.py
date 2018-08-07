@@ -1,4 +1,10 @@
 def make_fill_polygons(xs, ys, zs):
+    '''Make a set of polygons to fill the space below a line in 3d.
+
+    Returns
+    -------
+    mpl_toolkits.mplot3d.art3d.Poly3DCollection
+    '''
     from mpl_toolkits.mplot3d.art3d import Poly3DCollection
     v = []
     h = 0
@@ -95,6 +101,7 @@ def initialize_model(module, bias_val=0.01):
     else:
         raise ValueError(f'Don\'t know how to initialize {module.__class__.__name__}')
 
+
 ####################################################################################################
 #                                           NUMBA stuffs                                           #
 ####################################################################################################
@@ -189,6 +196,7 @@ def numba_gpu_histogram(a_gpu, bins):
 ##################
 import numba.cuda as cuda
 import sys
+import torch
 
 
 def typestr(tensor):
