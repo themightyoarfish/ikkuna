@@ -125,19 +125,19 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
     trainer.add_model(model_str)
     trainer.optimize(name=optimizer)
 
-    ratio_subscriber = RatioSubscriber(['weight_updates', 'weights'],
-                                       average=kwargs['average'],
-                                       subsample=kwargs['subsample'],
-                                       ylims=kwargs.get('ylims'))
-    # histogram_subscriber = HistogramSubscriber(['activations'], clip_min=-1e-6, clip_max=1e-6,
-    #                                           step=1e-7)
-    trainer.add_subscriber(ratio_subscriber)
-    # trainer.add_subscriber(histogram_subscriber)
-    spectral_norm_subscriber = SpectralNormSubscriber(['weights'],
-                                                      ylims=kwargs['ylims'],
-                                                      subsample=kwargs['subsample'],
-                                                      average=kwargs['average'])
-    trainer.add_subscriber(spectral_norm_subscriber)
+    # ratio_subscriber = RatioSubscriber(['weight_updates', 'weights'],
+    #                                    subsample=kwargs['subsample'],
+    #                                    ylims=kwargs.get('ylims'),
+    #                                    backend=kwargs['visualisation'])
+    histogram_subscriber = HistogramSubscriber(['activations'], backend=kwargs['visualisation'])
+    # trainer.add_subscriber(ratio_subscriber)
+    trainer.add_subscriber(histogram_subscriber)
+    # spectral_norm_subscriber = SpectralNormSubscriber(['weights'],
+    #                                                   ylims=kwargs['ylims'],
+    #                                                   subsample=kwargs['subsample'],
+    #                                                   backend=kwargs['visualisation']
+    #                                                   )
+    # trainer.add_subscriber(spectral_norm_subscriber)
 
     batches_per_epoch = trainer.batches_per_epoch
     print(f'Batches per epoch: {batches_per_epoch}')
@@ -188,6 +188,7 @@ def get_parser():
     parser.add_argument('-a', '--average', type=int, default=10)
     parser.add_argument('-s', '--subsample', type=int, default=1)
     parser.add_argument('-y', '--ylims', nargs=2, type=int, default=None)
+    parser.add_argument('-v', '--visualisation', type=str, choices=['tb', 'mpl'], default='tb')
     return parser
 
 
