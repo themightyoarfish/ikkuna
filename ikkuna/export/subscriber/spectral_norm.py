@@ -1,26 +1,25 @@
-import numpy as np
 import torch
 from torch.nn.functional import normalize
 
-from ikkuna.export.subscriber import LinePlotSubscriber, SynchronizedSubscription
+from ikkuna.export.subscriber import PlotSubscriber, SynchronizedSubscription
 
 ZERO_TENSOR = torch.tensor(0.0).cuda()
 
 
-class SpectralNormSubscriber(LinePlotSubscriber):
+class SpectralNormSubscriber(PlotSubscriber):
 
-    def __init__(self, kinds, tag=None, subsample=1, average=1, ylims=None):
+    def __init__(self, kinds, tag=None, subsample=1, ylims=None, backend='tb'):
         '''
         Parameters
         ----------
-        see :class:`LinePlotSubscriber`
+        see :class:`PlotSubscriber`
         '''
-        super().__init__(kinds, tag=tag, subsample=subsample, average=average, ylims=ylims)
-        self._subscription      = SynchronizedSubscription(self, tag)
+        subscription      = SynchronizedSubscription(self, tag)
 
-        self._ax.set_title(f'Spectral norms of {self.kinds[0]} per '
-                           f'layer (average of {self._average} batches)')
-        self._ax.set_xlabel('Spectral norm')
+        title = f'Spectral norms of {kinds[0]} per layer'
+        xlabel = 'Spectral norm'
+        super().__init__(kinds, subscription, {'title': title, 'xlabel': xlabel, 'ylims': ylims},
+                         tag=tag, subsample=subsample, backend=backend)
         self.u = dict()
 
     def _metric(self, module_data):
@@ -48,11 +47,4 @@ class SpectralNormSubscriber(LinePlotSubscriber):
 
         norm = torch.dot(self.u[module], torch.matmul(weights2d, v)).item()
 
-        norms = self._metric_values[module]
-        norms.append(norm)
-
-        # every self._average calls, we replace the last self._average elements with their mean
-        # possibly a running average would be more efficient, but who's counting
-        n_past_norms = self._counter[module] + 1
-        if n_past_norms % self._average == 0:
-            norms[-self._average:] = (np.mean(norms[-self._average:]),)
+        self._backend.add_data(module, norm, module_data.step)
