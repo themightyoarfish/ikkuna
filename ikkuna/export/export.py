@@ -22,6 +22,16 @@ class Exporter(object):
             nn.ReLU()
         ])
 
+    Modules will be tracked recursive unless specified otherwise, meaning the following is possible:
+
+    .. code-block:: python
+
+        e = Exporter(...)
+        e.add_modules(extremely_complex_model)
+        # e will now track all layers of extremely_complex_model
+
+    :meth:`Exporter.epoch_finished` should be called upon finishing an epoch.
+
     No further changes to the model code are necessary, but for a call to :meth:`Exporter.add_model`
     to have the :class:`Exporter` wire up the appropriate callbacks.
 
@@ -127,6 +137,7 @@ class Exporter(object):
         self._check_model()
         for sub in self._subscribers:
             try:
+                # TODO: Can I save the NamedModule instead of having to searh for it?
                 index = next(i for i, m in enumerate(self._modules) if m.module == module)
             except StopIteration:
                 raise RuntimeError(f'Received message for unknown module {module.name}')
@@ -171,6 +182,15 @@ class Exporter(object):
         '''
         if not self._is_training:
             return
+        if self._train_step == 0:
+            msg_epoch = NetworkData(seq=self._global_step, tag=None, kind='epoch_started',
+                                    step=self._train_step, epoch=self._epoch)
+            msg_batch = NetworkData(seq=self._global_step, tag=None, kind='batch_started',
+                                    step=self._train_step, epoch=self._epoch)
+            for sub in self._subscribers:
+                sub.receive_message(msg_epoch)
+                sub.receive_message(msg_batch)
+
         self._activation_counter[module] += 1
         if hasattr(module, 'weight'):
             if module in self._weight_cache:
@@ -247,9 +267,18 @@ class Exporter(object):
         self._train_step  += 1
         self._global_step += 1
 
+        msg = NetworkData(seq=self._global_step, tag=None, kind='batch_finished',
+                          step=self._train_step, epoch=self._epoch)
+        for sub in self._subscribers:
+            sub.receive_message(msg)
+
     def epoch_finished(self):
         '''Increase the epoch counter and reset the batch counter.'''
         for sub in self._subscribers:
             sub.epoch_finished(self._epoch)
+        msg = NetworkData(seq=self._global_step, tag=None, kind='epoch_finished',
+                          step=self._train_step, epoch=self._epoch)
+        for sub in self._subscribers:
+            sub.receive_message(msg)
         self._epoch      += 1
         self._train_step = 0
