@@ -1,8 +1,12 @@
 from collections import namedtuple
 
 
-class NetworkData(namedtuple('NetworkData', ['tag', 'seq', 'step', 'epoch', 'kind', 'module',
-                                             'payload'])):
+allowed_kinds = {
+    'weights', 'weight_updates', 'biases', 'bias_updates', 'activations', 'gradients'
+}
+
+
+class NetworkData(object):
     '''
     Primitive data emitted from the :class:`ikkun.export.Exporter`. These messages are assembled
     into :class:`ModuleData` objects in the :class:`ikkuna.export.subscriber.Subscription`. Perhaps
@@ -23,6 +27,63 @@ class NetworkData(namedtuple('NetworkData', ['tag', 'seq', 'step', 'epoch', 'kin
     module  :   ikkuna.utils.NamedModule
     payload :   torch.Tensor
     '''
+    def __init__(self, tag, seq, step, epoch, kind, module, payload):
+        self._tag     = tag
+        self._seq     = seq
+        self.step     = step
+        self.epoch    = epoch
+        self.kind     = kind
+        self._module  = module
+        self._payload = payload
+
+    @property
+    def tag(self):
+        return self._tag
+
+    @property
+    def seq(self):
+        return self._seq
+
+    @property
+    def step(self):
+        return self._step
+
+    @step.setter
+    def step(self, value):
+        if value < 0:
+            raise ValueError
+        else:
+            self._step = value
+
+    @property
+    def epoch(self):
+        return self._epoch
+
+    @epoch.setter
+    def epoch(self, value):
+        if value < 0:
+            raise ValueError
+        else:
+            self._epoch = value
+
+    @property
+    def kind(self):
+        return self._kind
+
+    @kind.setter
+    def kind(self, value):
+        if value not in allowed_kinds:
+            raise ValueError
+        else:
+            self._kind = value
+
+    @property
+    def module(self):
+        return self._module
+
+    @property
+    def payload(self):
+        return self._payload
 
 
 class ModuleData(object):

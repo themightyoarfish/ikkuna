@@ -19,7 +19,7 @@ class AlexNetMini(nn.Module):
     features    :   nn.Module
                     Convolutional module, extracting features from the input
     classifier  :   nn.Module
-                    Linear classifier with relu and dropout
+                    Classifier with relu and dropout
     H_out   :   int
                 Output height of the classifier
     W_out   :   int

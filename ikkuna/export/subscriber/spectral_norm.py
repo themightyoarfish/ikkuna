@@ -41,7 +41,7 @@ class SpectralNormSubscriber(PlotSubscriber):
 
         # estimate singular values
         with torch.no_grad():
-            for _ in range(3):
+            for _ in range(3):      # TODO: Make niter parameter
                 v = normalize(torch.matmul(weights2d.t(), self.u[module]), dim=0)
                 self.u[module] = normalize(torch.matmul(weights2d, v), dim=0)
 

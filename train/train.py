@@ -72,7 +72,7 @@ class Trainer:
 
         print(f'Number of classes: {self._num_classes}')
         print(f'Data shape: {self._shape}')
-        self._exporter          = Exporter()
+        self._exporter = Exporter()
 
     @property
     def current_batch(self):
@@ -150,7 +150,8 @@ class Trainer:
         dataset  :   DatasetMeta
         '''
         self._model.train(False)
-        test_loader = DataLoader(dataset.dataset, batch_size=self._batch_size, shuffle=True,
+        # TODO: Utilize GPU completely instead of conservatively using training batch size
+        test_loader = DataLoader(dataset.dataset, batch_size=self._batch_size, shuffle=False,
                                  pin_memory=True)
 
         num_correct = 0

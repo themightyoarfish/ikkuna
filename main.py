@@ -134,11 +134,11 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
                                                       subsample=kwargs['subsample'],
                                                       backend=kwargs['visualisation']
                                                       )
-    trainer.add_subscriber(spectral_norm_subscriber)
+    # histogram_subscriber = HistogramSubscriber(['activations'], backend=kwargs['visualisation'])
 
+    trainer.add_subscriber(spectral_norm_subscriber)
     trainer.add_subscriber(ratio_subscriber)
-    histogram_subscriber = HistogramSubscriber(['activations'], backend=kwargs['visualisation'])
-    trainer.add_subscriber(histogram_subscriber)
+    # trainer.add_subscriber(histogram_subscriber)
 
     batches_per_epoch = trainer.batches_per_epoch
     print(f'Batches per epoch: {batches_per_epoch}')
