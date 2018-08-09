@@ -14,13 +14,13 @@ class DatasetMeta(namedtuple('DatasetMeta', ['dataset', 'num_classes', 'shape'])
 
 
 class Trainer:
-    '''Class to bundle all logic and parameters that go into training and testing a model on some
+    '''Class to bundle all logic and parameters that go into training a model on some
     dataset.
 
     Attributes
     ----------
     _dataset :  Dataset
-                The dataset used for training (can differ from the test set)
+                The dataset used for training
     _num_classes    :   int
                         Number of target categories (inferred)
     _shape  :   list
@@ -111,7 +111,7 @@ class Trainer:
         print(f'Using {self._optimizer.__class__.__name__} optimizer')
 
     def add_model(self, model_str):
-        '''Set the model to train/test.
+        '''Set the model to train.
 
         .. warning::
             Currently, the function automatically calls :meth:`nn.Module.cuda()` and hence a GPU is
@@ -152,23 +152,3 @@ class Trainer:
             self._next_X, self._next_Y = next(self._data_iter)
 
         self._batch_counter += 1
-
-    def test(self, dataset):
-        '''Run through the test set once.
-
-        Parameters
-        ----------
-        dataset  :   DatasetMeta
-        '''
-        self._model.train(False)
-        # TODO: Utilize GPU completely instead of conservatively using training batch size
-        test_loader = DataLoader(dataset.dataset, batch_size=self._batch_size, shuffle=False,
-                                 pin_memory=True)
-
-        num_correct = 0
-        n = 0
-        for X, labels in test_loader:
-            n           += X.shape[0]
-            predictions  = self._model(X.cuda(async=True)).argmax(1)
-            num_correct += (predictions.cpu() == labels).sum()
-        return num_correct.item() / n
