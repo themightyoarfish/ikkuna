@@ -34,16 +34,9 @@ class Exporter(object):
     _bias_cache :   dict
     '''
 
-    def __init__(self, frequency=1):
-        '''Create a new ``Exporter``.
-
-        Parameters
-        ----------
-        frequency   :   int
-                        Number of training steps to pass by before publishing a new update.
-        '''
+    def __init__(self):
+        '''Create a new ``Exporter``.'''
         self._modules            = []
-        self._frequency          = frequency
         self._weight_cache       = {}     # expensive :(
         self._bias_cache         = {}
         self._subscribers        = set()
@@ -70,7 +63,6 @@ class Exporter(object):
         self._subscribers.add(subscriber)
 
     def _add_module_by_name(self, named_module):
-        name = named_module.name
         module = named_module.module
         self._modules.append(named_module)
         module.register_forward_hook(self.new_activations)
