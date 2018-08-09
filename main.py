@@ -29,7 +29,8 @@ from torchvision.transforms import ToTensor, Compose
 #  1st party imports  #
 #######################
 from train import Trainer, DatasetMeta
-from ikkuna.export.subscriber import RatioSubscriber, HistogramSubscriber, SpectralNormSubscriber
+from ikkuna.export.subscriber import (RatioSubscriber, HistogramSubscriber, SpectralNormSubscriber,
+                                      AccuracySubscriber)
 
 SEED = 1234
 random.seed(SEED)
@@ -134,10 +135,13 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
                                                       subsample=kwargs['subsample'],
                                                       backend=kwargs['visualisation']
                                                       )
+    test_accuracy_subscriber = AccuracySubscriber(dataset_test, trainer.model.forward,
+                                                  frequency=trainer.batches_per_epoch)
     # histogram_subscriber = HistogramSubscriber(['activations'], backend=kwargs['visualisation'])
 
     trainer.add_subscriber(spectral_norm_subscriber)
     trainer.add_subscriber(ratio_subscriber)
+    trainer.add_subscriber(test_accuracy_subscriber)
     # trainer.add_subscriber(histogram_subscriber)
 
     batches_per_epoch = trainer.batches_per_epoch
@@ -159,9 +163,9 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
                   f'| batch {batch_idx:>5d}/{batches_per_epoch-1:<5d} '
                   f'| {1. / (cum_time / n_batches):<3.1f} b/s', end='')
 
-        accuracy = trainer.test(dataset_test)
-        print('')
-        print(f'Test accuracy: {accuracy:3.4f}')
+            if batch_idx % 20 == 0:
+                cum_time = 0
+                n_batches = 0
 
 
 def get_parser():
