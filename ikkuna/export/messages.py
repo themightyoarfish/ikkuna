@@ -1,9 +1,12 @@
-from collections import namedtuple
-
-
-allowed_kinds = {
-    'weights', 'weight_updates', 'biases', 'bias_updates', 'activations', 'gradients'
+meta_kinds = {
+    'batch_started', 'batch_finished', 'epoch_started', 'epoch_finished'
 }
+
+data_kinds = {
+    'weights', 'weight_updates', 'biases', 'bias_updates', 'activations', 'gradients',
+}
+
+allowed_kinds = set.union(meta_kinds, data_kinds)
 
 
 class NetworkData(object):
@@ -25,9 +28,11 @@ class NetworkData(object):
     kind    :   str
                 Message kind
     module  :   ikkuna.utils.NamedModule
+                Can be ``None`` if this is a metadata message, such as ``epoch_finished``
     payload :   torch.Tensor
+                Can be ``None`` if this is a metadata message, such as ``epoch_finished``
     '''
-    def __init__(self, tag, seq, step, epoch, kind, module, payload):
+    def __init__(self, tag, seq, step, epoch, kind, module=None, payload=None):
         self._tag     = tag
         self._seq     = seq
         self.step     = step
@@ -35,6 +40,10 @@ class NetworkData(object):
         self.kind     = kind
         self._module  = module
         self._payload = payload
+
+        if kind not in meta_kinds and (module is None or payload is None):
+            raise ValueError('Empty module and payload fields are only allowed for meta messages '
+                             f'{meta_kinds}')
 
     @property
     def tag(self):
@@ -73,7 +82,7 @@ class NetworkData(object):
     @kind.setter
     def kind(self, value):
         if value not in allowed_kinds:
-            raise ValueError
+            raise ValueError(f'Invalid message kind "{value}"')
         else:
             self._kind = value
 
@@ -115,6 +124,8 @@ class ModuleData(object):
 
     def __init__(self, module, kinds):
         self._module            = module
+        if isinstance(kinds, str):  # this has bitten me before. base subscriptions don't use multiple kinds
+            kinds = [kinds]
         self._expected_kinds    = kinds
         self._data              = {kind: None for kind in kinds}
         self._seq               = ModuleData.global_seq
@@ -154,7 +165,11 @@ class ModuleData(object):
         bool
         '''
         # check if any _data entry is still None
-        return all(map(lambda val: val is not None, self._data.values()))
+        if all(map(lambda k: k in meta_kinds, self._expected_kinds)):
+            # only meta kinds -> don't wait for payload
+            return True
+        else:
+            return all(map(lambda val: val is not None, self._data.values()))
 
     def _check_step(self, step):
         '''Check step consistency or set current step, if not set.
