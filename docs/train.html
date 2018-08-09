@@ -40,53 +40,12 @@
 <span id="train-train-module"></span><h2>train.train module<a class="headerlink" href="#module-train.train" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="train.train.DatasetMeta">
-<em class="property">class </em><code class="descclassname">train.train.</code><code class="descname">DatasetMeta</code><span class="sig-paren">(</span><em>dataset</em>, <em>num_classes</em>, <em>shape</em><span class="sig-paren">)</span><a class="headerlink" href="#train.train.DatasetMeta" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
-<dl class="method">
-<dt id="train.train.DatasetMeta._asdict">
-<code class="descname">_asdict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#train.train.DatasetMeta._asdict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a new OrderedDict which maps field names to their values.</p>
-</dd></dl>
-
+<em class="property">class </em><code class="descclassname">train.train.</code><code class="descname">DatasetMeta</code><a class="headerlink" href="#train.train.DatasetMeta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#train.train.DatasetMeta" title="train.train.DatasetMeta"><code class="xref py py-class docutils literal notranslate"><span class="pre">train.train.DatasetMeta</span></code></a></p>
 <dl class="attribute">
-<dt id="train.train.DatasetMeta._fields">
-<code class="descname">_fields</code><em class="property"> = ('dataset', 'num_classes', 'shape')</em><a class="headerlink" href="#train.train.DatasetMeta._fields" title="Permalink to this definition">¶</a></dt>
+<dt id="train.train.DatasetMeta.size">
+<code class="descname">size</code><a class="headerlink" href="#train.train.DatasetMeta.size" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="classmethod">
-<dt id="train.train.DatasetMeta._make">
-<em class="property">classmethod </em><code class="descname">_make</code><span class="sig-paren">(</span><em>iterable</em>, <em>new=&lt;built-in method __new__ of type object&gt;</em>, <em>len=&lt;built-in function len&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#train.train.DatasetMeta._make" title="Permalink to this definition">¶</a></dt>
-<dd><p>Make a new DatasetMeta object from a sequence or iterable</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="train.train.DatasetMeta._replace">
-<code class="descname">_replace</code><span class="sig-paren">(</span><em>**kwds</em><span class="sig-paren">)</span><a class="headerlink" href="#train.train.DatasetMeta._replace" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a new DatasetMeta object replacing specified fields with new values</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="train.train.DatasetMeta._source">
-<code class="descname">_source</code><em class="property"> = &quot;from builtins import property as _property, tuple as _tuple\nfrom operator import itemgetter as _itemgetter\nfrom collections import OrderedDict\n\nclass DatasetMeta(tuple):\n    'DatasetMeta(dataset, num_classes, shape)'\n\n    __slots__ = ()\n\n    _fields = ('dataset', 'num_classes', 'shape')\n\n    def __new__(_cls, dataset, num_classes, shape):\n        'Create new instance of DatasetMeta(dataset, num_classes, shape)'\n        return _tuple.__new__(_cls, (dataset, num_classes, shape))\n\n    &#64;classmethod\n    def _make(cls, iterable, new=tuple.__new__, len=len):\n        'Make a new DatasetMeta object from a sequence or iterable'\n        result = new(cls, iterable)\n        if len(result) != 3:\n            raise TypeError('Expected 3 arguments, got %d' % len(result))\n        return result\n\n    def _replace(_self, **kwds):\n        'Return a new DatasetMeta object replacing specified fields with new values'\n        result = _self._make(map(kwds.pop, ('dataset', 'num_classes', 'shape'), _self))\n        if kwds:\n            raise ValueError('Got unexpected field names: %r' % list(kwds))\n        return result\n\n    def __repr__(self):\n        'Return a nicely formatted representation string'\n        return self.__class__.__name__ + '(dataset=%r, num_classes=%r, shape=%r)' % self\n\n    def _asdict(self):\n        'Return a new OrderedDict which maps field names to their values.'\n        return OrderedDict(zip(self._fields, self))\n\n    def __getnewargs__(self):\n        'Return self as a plain tuple.  Used by copy and pickle.'\n        return tuple(self)\n\n    dataset = _property(_itemgetter(0), doc='Alias for field number 0')\n\n    num_classes = _property(_itemgetter(1), doc='Alias for field number 1')\n\n    shape = _property(_itemgetter(2), doc='Alias for field number 2')\n\n&quot;</em><a class="headerlink" href="#train.train.DatasetMeta._source" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="train.train.DatasetMeta.dataset">
-<code class="descname">dataset</code><a class="headerlink" href="#train.train.DatasetMeta.dataset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 0</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="train.train.DatasetMeta.num_classes">
-<code class="descname">num_classes</code><a class="headerlink" href="#train.train.DatasetMeta.num_classes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 1</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="train.train.DatasetMeta.shape">
-<code class="descname">shape</code><a class="headerlink" href="#train.train.DatasetMeta.shape" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 2</p>
-</dd></dl>
 
 </dd></dl>
 
@@ -182,6 +141,16 @@ necessary.</p>
 <dl class="attribute">
 <dt id="train.train.Trainer.current_batch">
 <code class="descname">current_batch</code><a class="headerlink" href="#train.train.Trainer.current_batch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="train.train.Trainer.exporter">
+<code class="descname">exporter</code><a class="headerlink" href="#train.train.Trainer.exporter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="train.train.Trainer.model">
+<code class="descname">model</code><a class="headerlink" href="#train.train.Trainer.model" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">

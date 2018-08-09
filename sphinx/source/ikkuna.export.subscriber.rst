@@ -4,6 +4,14 @@ ikkuna.export.subscriber package
 Submodules
 ----------
 
+ikkuna.export.subscriber.accuracy module
+----------------------------------------
+
+.. automodule:: ikkuna.export.subscriber.accuracy
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 ikkuna.export.subscriber.histogram module
 -----------------------------------------
 

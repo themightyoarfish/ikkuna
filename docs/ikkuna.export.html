@@ -40,6 +40,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="ikkuna.export.subscriber.html">ikkuna.export.subscriber package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="ikkuna.export.subscriber.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ikkuna.export.subscriber.html#module-ikkuna.export.subscriber.accuracy">ikkuna.export.subscriber.accuracy module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ikkuna.export.subscriber.html#module-ikkuna.export.subscriber.histogram">ikkuna.export.subscriber.histogram module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ikkuna.export.subscriber.html#module-ikkuna.export.subscriber.ratio">ikkuna.export.subscriber.ratio module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ikkuna.export.subscriber.html#module-ikkuna.export.subscriber.spectral_norm">ikkuna.export.subscriber.spectral_norm module</a></li>
@@ -57,7 +58,7 @@
 <span id="ikkuna-export-export-module"></span><h2>ikkuna.export.export module<a class="headerlink" href="#module-ikkuna.export.export" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="ikkuna.export.export.Exporter">
-<em class="property">class </em><code class="descclassname">ikkuna.export.export.</code><code class="descname">Exporter</code><span class="sig-paren">(</span><em>frequency=1</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ikkuna.export.export.</code><code class="descname">Exporter</code><a class="headerlink" href="#ikkuna.export.export.Exporter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class for managing publishing of data from model code.</p>
 <p>An <a class="reference internal" href="#ikkuna.export.export.Exporter" title="ikkuna.export.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> is used in the model code by either explicitly registering modules for
@@ -71,6 +72,13 @@ which will then be returned as-is, but be registered in the process.</p>
 <span class="p">])</span>
 </pre></div>
 </div>
+<p>Modules will be tracked recursive unless specified otherwise, meaning the following is possible:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">e</span> <span class="o">=</span> <span class="n">Exporter</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">e</span><span class="o">.</span><span class="n">add_modules</span><span class="p">(</span><span class="n">extremely_complex_model</span><span class="p">)</span>
+<span class="c1"># e will now track all layers of extremely_complex_model</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="#ikkuna.export.export.Exporter.epoch_finished" title="ikkuna.export.export.Exporter.epoch_finished"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Exporter.epoch_finished()</span></code></a> should be called upon finishing an epoch.</p>
 <p>No further changes to the model code are necessary, but for a call to <code class="xref py py-meth docutils literal notranslate"><span class="pre">Exporter.add_model()</span></code>
 to have the <a class="reference internal" href="#ikkuna.export.export.Exporter" title="ikkuna.export.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> wire up the appropriate callbacks.</p>
 <dl class="attribute">
@@ -255,70 +263,165 @@ Will trigger export of all new gradient data.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-ikkuna.export.magic">
-<span id="ikkuna-export-magic-module"></span><h2>ikkuna.export.magic module<a class="headerlink" href="#module-ikkuna.export.magic" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-ikkuna.export.messages">
+<span id="ikkuna-export-messages-module"></span><h2>ikkuna.export.messages module<a class="headerlink" href="#module-ikkuna.export.messages" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="ikkuna.export.magic.WatchedParameter">
-<em class="property">class </em><code class="descclassname">ikkuna.export.magic.</code><code class="descname">WatchedParameter</code><span class="sig-paren">(</span><em>baseObject</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.magic.WatchedParameter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.parameter.Parameter</span></code></p>
-<p>Wrapper class in order to trap mutations to a tensor inside a parameter. This is necesssary
-to retrieve updates to weights as applied by the optimizer, not just the raw gradients.</p>
-<p>We cannot simply set the <code class="docutils literal notranslate"><span class="pre">param.data</span></code> field directly since whenever it is accessed, torch
-creates a new python object referencing the data, which is then returned, meaning our wrapper
-will not actually get notified when stuff happens since the updates are being done on a new
-object with a reference to the binary data. Thus we need to start one level above, at the
-Parameter.</p>
+<dt id="ikkuna.export.messages.ModuleData">
+<em class="property">class </em><code class="descclassname">ikkuna.export.messages.</code><code class="descname">ModuleData</code><span class="sig-paren">(</span><em>module</em>, <em>kinds</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.ModuleData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Data object for holding a set of artifacts for a module at one point during training.
+This data type can be used to buffer different kinds and check whether all expected kinds have
+been received for a module.</p>
 <dl class="attribute">
-<dt id="ikkuna.export.magic.WatchedParameter._name">
-<code class="descname">_name</code><a class="headerlink" href="#ikkuna.export.magic.WatchedParameter._name" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – Name for the parameter, usually the layer identifier</p>
+<dt id="ikkuna.export.messages.ModuleData._module">
+<code class="descname">_module</code><a class="headerlink" href="#ikkuna.export.messages.ModuleData._module" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – Name of the layer</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="ikkuna.export.messages.ModuleData._expected_kinds">
+<code class="descname">_expected_kinds</code><a class="headerlink" href="#ikkuna.export.messages.ModuleData._expected_kinds" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list(str)</em> – The expected kinds of messages per iteration</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="ikkuna.export.magic.patch_mutator">
-<code class="descclassname">ikkuna.export.magic.</code><code class="descname">patch_mutator</code><span class="sig-paren">(</span><em>method</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.magic.patch_mutator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Patch mutating <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code> methods used by builtin optimizers so that the changes
-made to the tensor can be recorded. Permissible methods must be bound (retrieved via Tensor
-object, not class) and are <code class="docutils literal notranslate"><span class="pre">add_</span></code>, <code class="docutils literal notranslate"><span class="pre">addcdiv_</span></code>, and <code class="docutils literal notranslate"><span class="pre">mul_</span></code> at this time. The
-<code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Parameter</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code> object to which the method is bound must
-posses a <code class="docutils literal notranslate"><span class="pre">_label</span></code> attribute (must be patched externally) in order to identify the layer which
-the weights belong to.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">I tried subclassing <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Parameter</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code> in order to simply
-trap calls to the mutating methods, and replace the values in the <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Module</span></code> s
-containing them, but this fails either because a new <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code> object is created
-on each access or because there’s weird error hinting at device mismatch between my wrapper
-class and the update tensors. Forwarding each and every property access to the wrapped
-tensor was not sufficient.</p>
-</div>
+<dl class="attribute">
+<dt id="ikkuna.export.messages.ModuleData._data">
+<code class="descname">_data</code><a class="headerlink" href="#ikkuna.export.messages.ModuleData._data" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict(str, torch.Tensor)</em> – The tensors received for each kind</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.ModuleData._seq">
+<code class="descname">_seq</code><a class="headerlink" href="#ikkuna.export.messages.ModuleData._seq" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Global sequence number of this class (incremented whenever a <a class="reference internal" href="#ikkuna.export.messages.ModuleData" title="ikkuna.export.messages.ModuleData"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleData</span></code></a> is
+created)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.ModuleData._step">
+<code class="descname">_step</code><a class="headerlink" href="#ikkuna.export.messages.ModuleData._step" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Sequence number (training step) of the received messages (should match across all
+msgs in one iteration)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.ModuleData._epoch">
+<code class="descname">_epoch</code><a class="headerlink" href="#ikkuna.export.messages.ModuleData._epoch" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Epoch of the received messages (should match across all msgs in one
+iteration)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.messages.ModuleData._check_epoch">
+<code class="descname">_check_epoch</code><span class="sig-paren">(</span><em>epoch</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.ModuleData._check_epoch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check epoch consistency or set current epoch, if not set.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>method</strong> (<em>MethodType</em>) – Bound method to wrap</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>epoch</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Step number to check</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If method is unbound or bound to object without a <code class="docutils literal notranslate"><span class="pre">_label</span></code> attribute.</td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If <code class="docutils literal notranslate"><span class="pre">epoch</span></code> does not match the current epoch.</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
-<dl class="function">
-<dt id="ikkuna.export.magic.record">
-<code class="descclassname">ikkuna.export.magic.</code><code class="descname">record</code><span class="sig-paren">(</span><em>tensor</em>, <em>label</em>, <em>method_name</em>, <em>*method_args</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.magic.record" title="Permalink to this definition">¶</a></dt>
-<dd><p>Record changes to a tensor.</p>
+<dl class="method">
+<dt id="ikkuna.export.messages.ModuleData._check_step">
+<code class="descname">_check_step</code><span class="sig-paren">(</span><em>step</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.ModuleData._check_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check step consistency or set current step, if not set.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Step number to check</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If <code class="docutils literal notranslate"><span class="pre">step</span></code> does not match the current step.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
-</div>
-<div class="section" id="module-ikkuna.export.messages">
-<span id="ikkuna-export-messages-module"></span><h2>ikkuna.export.messages module<a class="headerlink" href="#module-ikkuna.export.messages" title="Permalink to this headline">¶</a></h2>
+<dl class="method">
+<dt id="ikkuna.export.messages.ModuleData.add_message">
+<code class="descname">add_message</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.ModuleData.add_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new message to this object. Will fail if the new messsage does not have the same
+sequence number and epoch.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message</strong> (<a class="reference internal" href="#ikkuna.export.messages.NetworkData" title="ikkuna.export.messages.NetworkData"><em>ikkuna.export.messages.NetworkData</em></a>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If the message is for a different module (layer) or a message of this kind was already
+received.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.messages.ModuleData.complete">
+<code class="descname">complete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.ModuleData.complete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check i all expected messages have been received. This means the message can be released
+to subscribers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.ModuleData.data">
+<code class="descname">data</code><a class="headerlink" href="#ikkuna.export.messages.ModuleData.data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.messages.ModuleData.epoch">
+<code class="descname">epoch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.ModuleData.epoch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.ModuleData.expected_kinds">
+<code class="descname">expected_kinds</code><a class="headerlink" href="#ikkuna.export.messages.ModuleData.expected_kinds" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.ModuleData.global_seq">
+<code class="descname">global_seq</code><em class="property"> = 0</em><a class="headerlink" href="#ikkuna.export.messages.ModuleData.global_seq" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.ModuleData.module">
+<code class="descname">module</code><a class="headerlink" href="#ikkuna.export.messages.ModuleData.module" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.ModuleData.seq">
+<code class="descname">seq</code><a class="headerlink" href="#ikkuna.export.messages.ModuleData.seq" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.ModuleData.step">
+<code class="descname">step</code><a class="headerlink" href="#ikkuna.export.messages.ModuleData.step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="class">
 <dt id="ikkuna.export.messages.NetworkData">
-<em class="property">class </em><code class="descclassname">ikkuna.export.messages.</code><code class="descname">NetworkData</code><a class="headerlink" href="#ikkuna.export.messages.NetworkData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ikkuna.export.messages.NetworkData" title="ikkuna.export.messages.NetworkData"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.NetworkData</span></code></a></p>
+<em class="property">class </em><code class="descclassname">ikkuna.export.messages.</code><code class="descname">NetworkData</code><span class="sig-paren">(</span><em>tag</em>, <em>seq</em>, <em>step</em>, <em>epoch</em>, <em>kind</em>, <em>module=None</em>, <em>payload=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.NetworkData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Primitive data emitted from the <code class="xref py py-class docutils literal notranslate"><span class="pre">ikkun.export.Exporter</span></code>. These messages are assembled
+into <a class="reference internal" href="#ikkuna.export.messages.ModuleData" title="ikkuna.export.messages.ModuleData"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleData</span></code></a> objects in the <code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscription</span></code>. Perhaps
+these classes are not perfectly named.</p>
 <dl class="attribute">
 <dt id="ikkuna.export.messages.NetworkData.tag">
 <code class="descname">tag</code><a class="headerlink" href="#ikkuna.export.messages.NetworkData.tag" title="Permalink to this definition">¶</a></dt>
@@ -352,14 +455,49 @@ tensor was not sufficient.</p>
 <dl class="attribute">
 <dt id="ikkuna.export.messages.NetworkData.module">
 <code class="descname">module</code><a class="headerlink" href="#ikkuna.export.messages.NetworkData.module" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>ikkuna.utils.NamedModule</em></p>
+<dd><p><em>ikkuna.utils.NamedModule</em> – Can be <code class="docutils literal notranslate"><span class="pre">None</span></code> if this is a metadata message, such as <code class="docutils literal notranslate"><span class="pre">epoch_finished</span></code></p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ikkuna.export.messages.NetworkData.payload">
 <code class="descname">payload</code><a class="headerlink" href="#ikkuna.export.messages.NetworkData.payload" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>torch.Tensor</em></p>
+<dd><p><em>torch.Tensor</em> – Can be <code class="docutils literal notranslate"><span class="pre">None</span></code> if this is a metadata message, such as <code class="docutils literal notranslate"><span class="pre">epoch_finished</span></code></p>
 </dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">epoch</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">kind</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">module</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">payload</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">seq</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">step</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">tag</code></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -381,7 +519,6 @@ tensor was not sufficient.</p>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-ikkuna.export.export">ikkuna.export.export module</a></li>
-<li><a class="reference internal" href="#module-ikkuna.export.magic">ikkuna.export.magic module</a></li>
 <li><a class="reference internal" href="#module-ikkuna.export.messages">ikkuna.export.messages module</a></li>
 <li><a class="reference internal" href="#module-ikkuna.export">Module contents</a></li>
 </ul>

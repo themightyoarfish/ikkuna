@@ -19,14 +19,6 @@ ikkuna.export.export module
     :undoc-members:
     :show-inheritance:
 
-ikkuna.export.magic module
---------------------------
-
-.. automodule:: ikkuna.export.magic
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 ikkuna.export.messages module
 -----------------------------
 
