@@ -48,7 +48,7 @@ class Subscription(object):
         '''
         data = ModuleData(network_data.module, network_data.kind)
         data.add_message(network_data)
-        self._subscriber(data)
+        self._subscriber.process_data(data)
 
     def receive_message(self, network_data):
         '''Callback for receiving an incoming message.
