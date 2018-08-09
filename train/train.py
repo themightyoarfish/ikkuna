@@ -7,7 +7,10 @@ from ikkuna.export import Exporter
 from collections import namedtuple
 
 
-DatasetMeta = namedtuple('DatasetMeta', ['dataset', 'num_classes', 'shape'])
+class DatasetMeta(namedtuple('DatasetMeta', ['dataset', 'num_classes', 'shape'])):
+    @property
+    def size(self):
+        return self.shape[0]
 
 
 class Trainer:
@@ -81,6 +84,14 @@ class Trainer:
     @property
     def batches_per_epoch(self):
         return self._batches_per_epoch
+
+    @property
+    def model(self):
+        return self._model
+
+    @property
+    def exporter(self):
+        return self._exporter
 
     def add_subscriber(self, subscription):
         self._exporter.subscribe(subscription)
@@ -156,8 +167,8 @@ class Trainer:
 
         num_correct = 0
         n = 0
-        for X, _labels in test_loader:
+        for X, labels in test_loader:
             n           += X.shape[0]
             predictions  = self._model(X.cuda(async=True)).argmax(1)
-            num_correct += (predictions.cpu() == _labels).sum()
+            num_correct += (predictions.cpu() == labels).sum()
         return num_correct.item() / n
