@@ -39,10 +39,39 @@
 </div>
 <div class="section" id="module-models.alexnet">
 <span id="models-alexnet-module"></span><h2>models.alexnet module<a class="headerlink" href="#module-models.alexnet" title="Permalink to this headline">¶</a></h2>
+<p>This module defines <a class="reference internal" href="#models.AlexNetMini" title="models.AlexNetMini"><code class="xref py py-class docutils literal notranslate"><span class="pre">models.AlexNetMini</span></code></a>, a reduced version of AlexNet. Adapted from
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">torchvision.models.alexnet()</span></code>.</p>
 <dl class="class">
 <dt id="models.alexnet.AlexNetMini">
 <em class="property">class </em><code class="descclassname">models.alexnet.</code><code class="descname">AlexNetMini</code><span class="sig-paren">(</span><em>input_shape</em>, <em>num_classes=1000</em>, <em>exporter=None</em><span class="sig-paren">)</span><a class="headerlink" href="#models.alexnet.AlexNetMini" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Reduced AlexNet (basically just a few conv layers with relu and
+max-pooling) which attempts to adapt to arbitrary input sizes, provided they are large enough to
+survive the strides and conv cutoffs.</p>
+<dl class="attribute">
+<dt id="models.alexnet.AlexNetMini.features">
+<code class="descname">features</code><a class="headerlink" href="#models.alexnet.AlexNetMini.features" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>torch.nn.Module</em> – Convolutional module, extracting features from the input</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="models.alexnet.AlexNetMini.classifier">
+<code class="descname">classifier</code><a class="headerlink" href="#models.alexnet.AlexNetMini.classifier" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>torch.nn.Module</em> – Classifier with relu and dropout</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="models.alexnet.AlexNetMini.H_out">
+<code class="descname">H_out</code><a class="headerlink" href="#models.alexnet.AlexNetMini.H_out" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Output height of the classifier</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="models.alexnet.AlexNetMini.W_out">
+<code class="descname">W_out</code><a class="headerlink" href="#models.alexnet.AlexNetMini.W_out" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Output width of the classifier</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="models.alexnet.AlexNetMini.forward">
 <code class="descname">forward</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#models.alexnet.AlexNetMini.forward" title="Permalink to this definition">¶</a></dt>
@@ -84,7 +113,7 @@ features in the bottleneck layer)</li>
 <li><strong>small_inputs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – set to True if images are <code class="docutils literal notranslate"><span class="pre">32x32</span></code> (e.g. CIFAR). Otherwise assumes images
 are larger.</li>
 <li><strong>efficient</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to use checkpointing. Much more memory efficient, but slower.</li>
-<li><strong>exporter</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.export.Exporter" title="ikkuna.export.export.Exporter"><em>Exporter</em></a>) – Optional exporter to use for monitoring</li>
+<li><strong>exporter</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><em>ikkuna.export.Exporter</em></a>) – Optional exporter to use for monitoring</li>
 </ul>
 </td>
 </tr>
@@ -164,6 +193,33 @@ registered hooks while the latter silently ignores them.</p>
 <dt id="models.AlexNetMini">
 <em class="property">class </em><code class="descclassname">models.</code><code class="descname">AlexNetMini</code><span class="sig-paren">(</span><em>input_shape</em>, <em>num_classes=1000</em>, <em>exporter=None</em><span class="sig-paren">)</span><a class="headerlink" href="#models.AlexNetMini" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Reduced AlexNet (basically just a few conv layers with relu and
+max-pooling) which attempts to adapt to arbitrary input sizes, provided they are large enough to
+survive the strides and conv cutoffs.</p>
+<dl class="attribute">
+<dt id="models.AlexNetMini.features">
+<code class="descname">features</code><a class="headerlink" href="#models.AlexNetMini.features" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>torch.nn.Module</em> – Convolutional module, extracting features from the input</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="models.AlexNetMini.classifier">
+<code class="descname">classifier</code><a class="headerlink" href="#models.AlexNetMini.classifier" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>torch.nn.Module</em> – Classifier with relu and dropout</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="models.AlexNetMini.H_out">
+<code class="descname">H_out</code><a class="headerlink" href="#models.AlexNetMini.H_out" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Output height of the classifier</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="models.AlexNetMini.W_out">
+<code class="descname">W_out</code><a class="headerlink" href="#models.AlexNetMini.W_out" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Output width of the classifier</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="models.AlexNetMini.forward">
 <code class="descname">forward</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#models.AlexNetMini.forward" title="Permalink to this definition">¶</a></dt>
@@ -201,7 +257,7 @@ features in the bottleneck layer)</li>
 <li><strong>small_inputs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – set to True if images are <code class="docutils literal notranslate"><span class="pre">32x32</span></code> (e.g. CIFAR). Otherwise assumes images
 are larger.</li>
 <li><strong>efficient</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to use checkpointing. Much more memory efficient, but slower.</li>
-<li><strong>exporter</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.export.Exporter" title="ikkuna.export.export.Exporter"><em>Exporter</em></a>) – Optional exporter to use for monitoring</li>
+<li><strong>exporter</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><em>ikkuna.export.Exporter</em></a>) – Optional exporter to use for monitoring</li>
 </ul>
 </td>
 </tr>
