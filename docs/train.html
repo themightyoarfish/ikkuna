@@ -53,12 +53,12 @@
 <dt id="train.train.Trainer">
 <em class="property">class </em><code class="descclassname">train.train.</code><code class="descname">Trainer</code><span class="sig-paren">(</span><em>dataset_meta: train.train.DatasetMeta</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#train.train.Trainer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Class to bundle all logic and parameters that go into training and testing a model on some
+<p>Class to bundle all logic and parameters that go into training a model on some
 dataset.</p>
 <dl class="attribute">
 <dt id="train.train.Trainer._dataset">
 <code class="descname">_dataset</code><a class="headerlink" href="#train.train.Trainer._dataset" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>Dataset</em> – The dataset used for training (can differ from the test set)</p>
+<dd><p><em>Dataset</em> – The dataset used for training</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -112,7 +112,7 @@ dataset.</p>
 <dl class="method">
 <dt id="train.train.Trainer.add_model">
 <code class="descname">add_model</code><span class="sig-paren">(</span><em>model_str</em><span class="sig-paren">)</span><a class="headerlink" href="#train.train.Trainer.add_model" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the model to train/test.</p>
+<dd><p>Set the model to train.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">Currently, the function automatically calls <code class="xref py py-meth docutils literal notranslate"><span class="pre">nn.Module.cuda()</span></code> and hence a GPU is
@@ -166,20 +166,6 @@ necessary.</p>
 <li><strong>other kwargs are forwarded to the optimizer constructor</strong> (<em>All</em>) – </li>
 </ul>
 </td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="train.train.Trainer.test">
-<code class="descname">test</code><span class="sig-paren">(</span><em>dataset</em><span class="sig-paren">)</span><a class="headerlink" href="#train.train.Trainer.test" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run through the test set once.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dataset</strong> (<a class="reference internal" href="#train.train.DatasetMeta" title="train.train.DatasetMeta"><em>DatasetMeta</em></a>) – </td>
 </tr>
 </tbody>
 </table>
