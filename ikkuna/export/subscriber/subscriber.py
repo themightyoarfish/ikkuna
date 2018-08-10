@@ -3,8 +3,8 @@
 
 .. module:: subscriber
 
-This module contains the base definition for subscriber functionality. The :class:`Subscriber` class
-should be subclassed for adding new metrics.
+This module contains the base definition for subscriber functionality. The
+:class:`ikkuna.export.subscriber.Subscriber` class should be subclassed for adding new metrics.
 
 '''
 import abc
@@ -21,7 +21,7 @@ class Subscription(object):
     ----------
     _tag    :   str
                 Tag for filtering the processed messages
-    _subscriber :   Subscriber
+    _subscriber :   ikkuna.export.subscriber.Subscriber
                     The subscriber associated with the subscription
     '''
 
@@ -29,7 +29,7 @@ class Subscription(object):
         '''
         Parameters
         ----------
-        subscriber  :   Subscriber
+        subscriber  :   ikkuna.export.subscriber.Subscriber
                         Object that wants to receive the messages
         tag :   str or None
                 Optional tag for filtering messages. If ``None`` is passed, all messages will be
@@ -44,7 +44,7 @@ class Subscription(object):
 
         Parameters
         ----------
-        network_data    :   ikkuna.messages.NetworkData
+        network_data    :   ikkuna.export.messages.NetworkData
         '''
         data = ModuleData(network_data.module, network_data.kind)
         data.add_message(network_data)
@@ -55,7 +55,7 @@ class Subscription(object):
 
         Parameters
         ----------
-        network_data    :   ikkuna.messages.NetworkData
+        network_data    :   ikkuna.export.messages.NetworkData
         '''
         if network_data.kind not in self._subscriber.kinds:
             return
@@ -128,9 +128,9 @@ class Subscriber(abc.ABC):
     ----------
     _counter    :   dict(ikkuna.utils.NamedModule, int)
                     Number of times the subscriber was called for each module label. Since one
-                    :class:`Subscriber` is associated with only one configuration of
-                    :class:`ikkuna.export.messages.ModuleData`, this will enable proper subsampling
-                    the messages.
+                    :class:`ikkuna.export.subscriber.Subscriber` is associated with only one
+                    configuration of :class:`ikkuna.export.messages.ModuleData`, this will enable
+                    proper subsampling the messages.
     kinds   :   list(str)
                 List of string identifiers for different message kinds. These are all the
                 message kinds the subscriber wishes to receive
@@ -159,17 +159,19 @@ class Subscriber(abc.ABC):
         self._subscription.receive_message(network_data)
 
     def process_data(self, module_data):
-        '''Callback for processing a :class:`ModuleData` object. The exact nature of this
-        package is determined by the :class:`Subscription` attached to this :class:`Subscriber`.
+        '''Callback for processing a :class:`ikkuna.export.messages.ModuleData` object. The exact
+        nature of this package is determined by the :class:`ikkuna.export.subscriber.Subscription`
+        attached to this :class:`ikkuna.export.subscriber.Subscriber`.
 
         Parameters
         ----------
-        module_data    :   ModuleData
+        module_data    :   ikkuna.export.messages.ModuleData
 
         Raises
         ------
         ValueError
-            If the received :class:`ModuleData` object is not :meth:`ModuleData.complete()`
+            If the received :class:`ikkuna.export.messages.ModuleData` object is not
+            :meth:`ikkuna.export.messages.ModuleData.complete()`
         '''
         if not module_data.complete():
             raise ValueError(f'Data received for "{module_data._module}" is not complete.')

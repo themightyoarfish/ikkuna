@@ -14,11 +14,8 @@
 #
 import os
 import sys
+sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../../'))
-sys.path.insert(0, os.path.abspath('../../ikkuna/models/'))
-sys.path.insert(0, os.path.abspath('../../ikkuna/export'))
-sys.path.insert(0, os.path.abspath('../../ikkuna/utils'))
-
 
 # -- Project information -----------------------------------------------------
 
@@ -170,6 +167,17 @@ texinfo_documents = [
 # -- Options for intersphinx extension ---------------------------------------
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'https://docs.python.org/': None}
+intersphinx_mapping = {'python': ('https://docs.python.org/', None),
+                       'matplotlib': ('https://matplotlib.org/', None),
+                       'torch': ('https://pytorch.org/docs/master/', None),
+                       'torchvision': ('https://pytorch.org/docs/master/', None)}
 
 autodoc_default_flags = ['private-members']
+nitpick_ignore = [('py:mod', 'torchvision.datasets'),
+                  ('py:meth', 'torchvision.models.alexnet'),
+                  # These two occur when inheriting from Module. Dunno why.
+                  ('py:class', 'torch.nn.modules.module.Module'),
+                  ('py:class', 'Module'),
+                  # This happens when inheriting from Sequential
+                  ('py:class', 'torch.nn.modules.container.Sequential')
+                  ]

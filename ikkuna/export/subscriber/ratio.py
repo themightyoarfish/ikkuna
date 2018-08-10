@@ -8,10 +8,11 @@ ZERO_TENSOR = torch.tensor(0.0).cuda()
 
 class RatioSubscriber(PlotSubscriber):
 
-    '''A :class:`Subscriber` which computes the average ratio between two quantities.  The dividend
-    will be the first element of the :attr:`Subscriber.kinds` property, the divisor the second.
-    Therefore it is vital to pass the message kinds to the
-    :class:`ikkuna.export.subscriber.Subscription` object in the correct order.'''
+    '''A :class:`ikkuna.export.subscriber.Subscriber` which computes the average ratio between two
+    quantities.  The dividend will be the first element of the
+    :attr:`ikkuna.export.subscriber.Subscriber.kinds` property, the divisor the second.  Therefore
+    it is vital to pass the message kinds to the :class:`ikkuna.export.subscriber.Subscription`
+    object in the correct order.'''
 
     def __init__(self, kinds, tag=None, subsample=1, ylims=None, backend='tb', absolute=True):
         '''

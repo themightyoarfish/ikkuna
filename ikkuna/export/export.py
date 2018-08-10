@@ -4,6 +4,7 @@ from collections import defaultdict
 
 from ikkuna.export.messages import NetworkData
 from ikkuna.utils import ModuleTree
+import ikkuna
 
 
 class Exporter(object):

@@ -39,7 +39,7 @@ accepts the following arguments:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="o">-</span><span class="n">m</span> <span class="p">{</span><span class="n">AlexNetMini</span><span class="p">,</span><span class="n">DenseNet</span><span class="p">}</span> <span class="o">-</span><span class="n">d</span>
                <span class="p">{</span><span class="n">MNIST</span><span class="p">,</span><span class="n">FashionMNIST</span><span class="p">,</span><span class="n">CIFAR10</span><span class="p">,</span><span class="n">CIFAR100</span><span class="p">}</span> <span class="p">[</span><span class="o">-</span><span class="n">b</span> <span class="n">BATCH_SIZE</span><span class="p">]</span>
                <span class="p">[</span><span class="o">-</span><span class="n">e</span> <span class="n">EPOCHS</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">o</span> <span class="n">OPTIMIZER</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">a</span> <span class="n">AVERAGE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">s</span> <span class="n">SUBSAMPLE</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">-</span><span class="n">y</span> <span class="n">YLIMS</span> <span class="n">YLIMS</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span> <span class="p">{</span><span class="n">tb</span><span class="p">,</span><span class="n">mpl</span><span class="p">}]</span>
+               <span class="p">[</span><span class="o">-</span><span class="n">y</span> <span class="n">YLIMS</span> <span class="n">YLIMS</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span> <span class="p">{</span><span class="n">tb</span><span class="p">,</span><span class="n">mpl</span><span class="p">}]</span> <span class="p">[</span><span class="o">-</span><span class="n">V</span><span class="p">]</span>
 </pre></div>
 </div>
 <div class="section" id="Named Arguments">
@@ -81,6 +81,9 @@ accepts the following arguments:</p>
 <tr><td>&#160;</td><td><p class="first">Possible choices: tb, mpl</p>
 <p class="last">Default: “tb”</p>
 </td></tr>
+<tr><td class="option-group">
+<kbd>-V, --verbose</kbd></td>
+<td>Default: False</td></tr>
 </tbody>
 </table>
 </div>
@@ -95,7 +98,7 @@ obtained from the number of different values in the training labels.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Dataset name in <code class="xref py py-mod docutils literal notranslate"><span class="pre">torchvision.datasets</span></code></td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">2 <code class="xref py py-class docutils literal notranslate"><span class="pre">DatasetMeta</span></code> s are returned, one for train and one test set</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">2 <a class="reference internal" href="train.html#train.DatasetMeta" title="train.DatasetMeta"><code class="xref py py-class docutils literal notranslate"><span class="pre">train.DatasetMeta</span></code></a> s are returned, one for train and one test set</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a></td>
 </tr>

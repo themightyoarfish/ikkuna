@@ -43,7 +43,7 @@
 <dt id="ikkuna.visualization.backend.Backend">
 <em class="property">class </em><code class="descclassname">ikkuna.visualization.backend.</code><code class="descname">Backend</code><span class="sig-paren">(</span><em>title</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.visualization.backend.Backend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
-<p>Base class for visualiation backends. <code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscriber</span></code> s use this
+<p>Base class for visualiation backends. <a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscriber</span></code></a> s use this
 class to dispatch their metrics to have them visualised.</p>
 <dl class="attribute">
 <dt id="ikkuna.visualization.backend.Backend.title">
@@ -80,8 +80,8 @@ class to dispatch their metrics to have them visualised.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>module</strong> (<em>ikkuna.utils.NamedModule</em>) – Module which emitted the data</li>
-<li><strong>datum</strong> (<em>torch.Tensor</em>) – Payload</li>
+<li><strong>module</strong> (<a class="reference internal" href="ikkuna.utils.html#ikkuna.utils.NamedModule" title="ikkuna.utils.NamedModule"><em>ikkuna.utils.NamedModule</em></a>) – Module which emitted the data</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+e9ad743 ))"><em>torch.Tensor</em></a>) – Payload</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
 </ul>
 </td>
@@ -99,8 +99,8 @@ class to dispatch their metrics to have them visualised.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>module</strong> (<em>ikkuna.utils.NamedModule</em>) – Module which emitted the data</li>
-<li><strong>datum</strong> (<em>torch.Tensor</em>) – Payload, not the histogram itself</li>
+<li><strong>module</strong> (<a class="reference internal" href="ikkuna.utils.html#ikkuna.utils.NamedModule" title="ikkuna.utils.NamedModule"><em>ikkuna.utils.NamedModule</em></a>) – Module which emitted the data</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+e9ad743 ))"><em>torch.Tensor</em></a>) – Payload, not the histogram itself</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
 </ul>
 </td>
@@ -217,8 +217,8 @@ abundance.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>module</strong> (<em>ikkuna.utils.NamedModule</em>) – Module which emitted the data</li>
-<li><strong>datum</strong> (<em>torch.Tensor</em>) – Payload</li>
+<li><strong>module</strong> (<a class="reference internal" href="ikkuna.utils.html#ikkuna.utils.NamedModule" title="ikkuna.utils.NamedModule"><em>ikkuna.utils.NamedModule</em></a>) – Module which emitted the data</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+e9ad743 ))"><em>torch.Tensor</em></a>) – Payload</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
 </ul>
 </td>
@@ -236,8 +236,8 @@ abundance.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>module</strong> (<em>ikkuna.utils.NamedModule</em>) – Module which emitted the data</li>
-<li><strong>datum</strong> (<em>torch.Tensor</em>) – Payload, not the histogram itself</li>
+<li><strong>module</strong> (<a class="reference internal" href="ikkuna.utils.html#ikkuna.utils.NamedModule" title="ikkuna.utils.NamedModule"><em>ikkuna.utils.NamedModule</em></a>) – Module which emitted the data</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+e9ad743 ))"><em>torch.Tensor</em></a>) – Payload, not the histogram itself</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
 </ul>
 </td>
@@ -302,8 +302,8 @@ with underscores due to the fact that it becomes part of a file name.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>module</strong> (<em>ikkuna.utils.NamedModule</em>) – Module which emitted the data</li>
-<li><strong>datum</strong> (<em>torch.Tensor</em>) – Payload</li>
+<li><strong>module</strong> (<a class="reference internal" href="ikkuna.utils.html#ikkuna.utils.NamedModule" title="ikkuna.utils.NamedModule"><em>ikkuna.utils.NamedModule</em></a>) – Module which emitted the data</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+e9ad743 ))"><em>torch.Tensor</em></a>) – Payload</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
 </ul>
 </td>
@@ -321,8 +321,8 @@ with underscores due to the fact that it becomes part of a file name.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>module</strong> (<em>ikkuna.utils.NamedModule</em>) – Module which emitted the data</li>
-<li><strong>datum</strong> (<em>torch.Tensor</em>) – Payload, not the histogram itself</li>
+<li><strong>module</strong> (<a class="reference internal" href="ikkuna.utils.html#ikkuna.utils.NamedModule" title="ikkuna.utils.NamedModule"><em>ikkuna.utils.NamedModule</em></a>) – Module which emitted the data</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+e9ad743 ))"><em>torch.Tensor</em></a>) – Payload, not the histogram itself</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
 </ul>
 </td>
@@ -410,7 +410,7 @@ deleted.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>iterable</em>) – Arbitrary sequence of tensors to merge for a histogram</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – Arbitrary sequence of tensors to merge for a histogram</td>
 </tr>
 </tbody>
 </table>

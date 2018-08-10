@@ -103,8 +103,8 @@ class Trainer:
         ----------
         name    :   str
                     Name of the optimizer (must exist in :mod:`torch.optim`)
-
-        All other kwargs are forwarded to the optimizer constructor
+        **kwargs
+            All other kwargs are forwarded to the optimizer constructor
         '''
         name = kwargs.pop('name', 'Adam')
         self._optimizer = create_optimizer(self._model, name, **kwargs)
@@ -114,8 +114,8 @@ class Trainer:
         '''Set the model to train.
 
         .. warning::
-            Currently, the function automatically calls :meth:`nn.Module.cuda()` and hence a GPU is
-            necessary.
+            Currently, the function automatically calls :meth:`torch.nn.Module.cuda()` and hence a
+            GPU is necessary.
 
         Parameters
         ----------

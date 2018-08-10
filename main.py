@@ -52,7 +52,7 @@ def _load_dataset(name):
     Returns
     -------
     tuple
-        2 :class:`DatasetMeta` s are returned, one for train and one test set
+        2 :class:`train.DatasetMeta` s are returned, one for train and one test set
     '''
     transforms = Compose([ToTensor()])
     try:

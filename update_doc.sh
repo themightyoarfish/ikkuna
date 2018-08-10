@@ -4,7 +4,7 @@ set -x
 
 # caution: this will fail if spaces in path
 cwd=$(pwd)
-cd sphinx && make html
+cd sphinx && make clean && make html
 cd $cwd
 if [ ! -d "docs" ]; then
     mkdir docs

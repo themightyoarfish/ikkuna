@@ -174,7 +174,7 @@ class UpdatableHistogram(object):
 
         Parameters
         ----------
-        X   :   iterable
+        X   :   list
                 Arbitrary sequence of tensors to merge for a histogram
         '''
         import torch

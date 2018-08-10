@@ -42,7 +42,7 @@ def create_optimizer(model, name, **kwargs):
 
     Parameters
     ----------
-    model   :   nn.Module
+    model   :   torch.nn.Module
     name    :   str
                 Name of the optimizer
     kwargs  :   dict

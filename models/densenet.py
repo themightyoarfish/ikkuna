@@ -103,7 +103,7 @@ class DenseNet(nn.Module):
                         are larger.
     efficient   :   bool
                     set to ``True`` to use checkpointing. Much more memory efficient, but slower.
-    exporter    :   Exporter
+    exporter    :   ikkuna.export.Exporter
                     Optional exporter to use for monitoring
     '''
     def __init__(self, input_shape, growth_rate=12, block_config=(16, 16, 16), compression=0.5,

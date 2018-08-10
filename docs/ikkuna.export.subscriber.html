@@ -103,8 +103,8 @@ set).</p>
 <dt id="ikkuna.export.subscriber.histogram.HistogramSubscriber">
 <em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.histogram.</code><code class="descname">HistogramSubscriber</code><span class="sig-paren">(</span><em>kinds</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.histogram.HistogramSubscriber" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ikkuna.export.subscriber.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.subscriber.PlotSubscriber</span></code></a></p>
-<p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code> which subsamples training artifacts and computes histograms per epoch.
-Histograms are non-normalized.</p>
+<p>A <a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscriber</span></code></a> which subsamples training artifacts and
+computes histograms per epoch.  Histograms are non-normalized.</p>
 <dl class="attribute">
 <dt id="ikkuna.export.subscriber.histogram.HistogramSubscriber._buffer">
 <code class="descname">_buffer</code><a class="headerlink" href="#ikkuna.export.subscriber.histogram.HistogramSubscriber._buffer" title="Permalink to this definition">¶</a></dt>
@@ -145,10 +145,11 @@ Histograms are non-normalized.</p>
 <dt id="ikkuna.export.subscriber.ratio.RatioSubscriber">
 <em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.ratio.</code><code class="descname">RatioSubscriber</code><span class="sig-paren">(</span><em>kinds</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em>, <em>absolute=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.ratio.RatioSubscriber" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ikkuna.export.subscriber.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.subscriber.PlotSubscriber</span></code></a></p>
-<p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code> which computes the average ratio between two quantities.  The dividend
-will be the first element of the <code class="xref py py-attr docutils literal notranslate"><span class="pre">Subscriber.kinds</span></code> property, the divisor the second.
-Therefore it is vital to pass the message kinds to the
-<code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscription</span></code> object in the correct order.</p>
+<p>A <a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscriber</span></code></a> which computes the average ratio between two
+quantities.  The dividend will be the first element of the
+<a class="reference internal" href="#ikkuna.export.subscriber.Subscriber.kinds" title="ikkuna.export.subscriber.Subscriber.kinds"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscriber.kinds</span></code></a> property, the divisor the second.  Therefore
+it is vital to pass the message kinds to the <a class="reference internal" href="#ikkuna.export.subscriber.Subscription" title="ikkuna.export.subscriber.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscription</span></code></a>
+object in the correct order.</p>
 <dl class="attribute">
 <dt id="ikkuna.export.subscriber.ratio.RatioSubscriber._abc_cache">
 <code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.ratio.RatioSubscriber._abc_cache" title="Permalink to this definition">¶</a></dt>
@@ -218,8 +219,8 @@ merely in the singular values.</p>
 </div>
 <div class="section" id="module-ikkuna.export.subscriber.subscriber">
 <span id="ikkuna-export-subscriber-subscriber-module"></span><h2>ikkuna.export.subscriber.subscriber module<a class="headerlink" href="#module-ikkuna.export.subscriber.subscriber" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="module-subscriber"></span><p>This module contains the base definition for subscriber functionality. The <code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code> class
-should be subclassed for adding new metrics.</p>
+<span class="target" id="module-subscriber"></span><p>This module contains the base definition for subscriber functionality. The
+<a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscriber</span></code></a> class should be subclassed for adding new metrics.</p>
 <dl class="class">
 <dt id="ikkuna.export.subscriber.subscriber.PlotSubscriber">
 <em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.subscriber.</code><code class="descname">PlotSubscriber</code><span class="sig-paren">(</span><em>kinds</em>, <em>subscription</em>, <em>plot_config</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.PlotSubscriber" title="Permalink to this definition">¶</a></dt>
@@ -293,7 +294,10 @@ insightful metrics.</p>
 <dl class="attribute">
 <dt id="ikkuna.export.subscriber.subscriber.Subscriber._counter">
 <code class="descname">_counter</code><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.Subscriber._counter" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict(str, int)</em> – Number of times the subscriber was called for each module label</p>
+<dd><p><em>dict(ikkuna.utils.NamedModule, int)</em> – Number of times the subscriber was called for each module label. Since one
+<a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscriber</span></code></a> is associated with only one
+configuration of <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleData" title="ikkuna.export.messages.ModuleData"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.ModuleData</span></code></a>, this will enable
+proper subsampling the messages.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -331,7 +335,7 @@ message kinds the subscriber wishes to receive</p>
 <dl class="method">
 <dt id="ikkuna.export.subscriber.subscriber.Subscriber.epoch_finished">
 <code class="descname">epoch_finished</code><span class="sig-paren">(</span><em>epoch</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.Subscriber.epoch_finished" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called automatically by the <code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.Exporter</span></code> object when an epoch has just
+<dd><p>Called automatically by the <a class="reference internal" href="ikkuna.export.html#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.Exporter</span></code></a> object when an epoch has just
 finished.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -351,15 +355,17 @@ finished.</p>
 <dl class="method">
 <dt id="ikkuna.export.subscriber.subscriber.Subscriber.process_data">
 <code class="descname">process_data</code><span class="sig-paren">(</span><em>module_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.Subscriber.process_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Callback for processing a <code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleData</span></code> object. The exact nature of this
-package is determined by the <a class="reference internal" href="#ikkuna.export.subscriber.subscriber.Subscription" title="ikkuna.export.subscriber.subscriber.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscription</span></code></a> attached to this <a class="reference internal" href="#ikkuna.export.subscriber.subscriber.Subscriber" title="ikkuna.export.subscriber.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a>.</p>
+<dd><p>Callback for processing a <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleData" title="ikkuna.export.messages.ModuleData"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.ModuleData</span></code></a> object. The exact
+nature of this package is determined by the <a class="reference internal" href="#ikkuna.export.subscriber.Subscription" title="ikkuna.export.subscriber.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscription</span></code></a>
+attached to this <a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscriber</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>module_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleData" title="ikkuna.export.messages.ModuleData"><em>ModuleData</em></a>) – </td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>module_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleData" title="ikkuna.export.messages.ModuleData"><em>ikkuna.export.messages.ModuleData</em></a>) – </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If the received <code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleData</span></code> object is not <code class="xref py py-meth docutils literal notranslate"><span class="pre">ModuleData.complete()</span></code></td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If the received <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleData" title="ikkuna.export.messages.ModuleData"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.ModuleData</span></code></a> object is not
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleData.complete" title="ikkuna.export.messages.ModuleData.complete"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ikkuna.export.messages.ModuleData.complete()</span></code></a></td>
 </tr>
 </tbody>
 </table>
@@ -386,7 +392,7 @@ package is determined by the <a class="reference internal" href="#ikkuna.export.
 <dl class="attribute">
 <dt id="ikkuna.export.subscriber.subscriber.Subscription._subscriber">
 <code class="descname">_subscriber</code><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.Subscription._subscriber" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>Subscriber</em> – The subscriber associated with the subscription</p>
+<dd><p><em>ikkuna.export.subscriber.Subscriber</em> – The subscriber associated with the subscription</p>
 </dd></dl>
 
 <dl class="method">
@@ -398,7 +404,7 @@ treatment.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>network_data</strong> (<em>ikkuna.messages.NetworkData</em>) – </td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>network_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.NetworkData" title="ikkuna.export.messages.NetworkData"><em>ikkuna.export.messages.NetworkData</em></a>) – </td>
 </tr>
 </tbody>
 </table>
@@ -412,7 +418,7 @@ treatment.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>network_data</strong> (<em>ikkuna.messages.NetworkData</em>) – </td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>network_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.NetworkData" title="ikkuna.export.messages.NetworkData"><em>ikkuna.export.messages.NetworkData</em></a>) – </td>
 </tr>
 </tbody>
 </table>
@@ -455,6 +461,411 @@ which kinds were received in this round.</p>
 </div>
 <div class="section" id="module-ikkuna.export.subscriber">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ikkuna.export.subscriber" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ikkuna.export.subscriber.Subscriber">
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">Subscriber</code><span class="sig-paren">(</span><em>kinds</em>, <em>subscription</em>, <em>tag=None</em>, <em>subsample=1</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<p>Base class for receiving and processing activations, gradients and other stuff into
+insightful metrics.</p>
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.Subscriber._counter">
+<code class="descname">_counter</code><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber._counter" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict(ikkuna.utils.NamedModule, int)</em> – Number of times the subscriber was called for each module label. Since one
+<a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscriber</span></code></a> is associated with only one
+configuration of <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleData" title="ikkuna.export.messages.ModuleData"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.ModuleData</span></code></a>, this will enable
+proper subsampling the messages.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.Subscriber.kinds">
+<code class="descname">kinds</code><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber.kinds" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list(str)</em> – List of string identifiers for different message kinds. These are all the
+message kinds the subscriber wishes to receive</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.Subscriber._abc_cache">
+<code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber._abc_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.Subscriber._abc_negative_cache">
+<code class="descname">_abc_negative_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber._abc_negative_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.Subscriber._abc_negative_cache_version">
+<code class="descname">_abc_negative_cache_version</code><em class="property"> = 197</em><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber._abc_negative_cache_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.Subscriber._abc_registry">
+<code class="descname">_abc_registry</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber._abc_registry" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.Subscriber._metric">
+<code class="descname">_metric</code><span class="sig-paren">(</span><em>module_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber._metric" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.Subscriber.epoch_finished">
+<code class="descname">epoch_finished</code><span class="sig-paren">(</span><em>epoch</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber.epoch_finished" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called automatically by the <a class="reference internal" href="ikkuna.export.html#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.Exporter</span></code></a> object when an epoch has just
+finished.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>epoch</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – 0-based epoch index</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">kinds</code></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.Subscriber.process_data">
+<code class="descname">process_data</code><span class="sig-paren">(</span><em>module_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber.process_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback for processing a <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleData" title="ikkuna.export.messages.ModuleData"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.ModuleData</span></code></a> object. The exact
+nature of this package is determined by the <a class="reference internal" href="#ikkuna.export.subscriber.Subscription" title="ikkuna.export.subscriber.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscription</span></code></a>
+attached to this <a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscriber</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>module_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleData" title="ikkuna.export.messages.ModuleData"><em>ikkuna.export.messages.ModuleData</em></a>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If the received <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleData" title="ikkuna.export.messages.ModuleData"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.ModuleData</span></code></a> object is not
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleData.complete" title="ikkuna.export.messages.ModuleData.complete"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ikkuna.export.messages.ModuleData.complete()</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.Subscriber.receive_message">
+<code class="descname">receive_message</code><span class="sig-paren">(</span><em>network_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber.receive_message" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ikkuna.export.subscriber.Subscription">
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">Subscription</code><span class="sig-paren">(</span><em>subscriber</em>, <em>tag=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.Subscription" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Specification for a subscription that can span multiple kinds and a tag.</p>
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.Subscription._tag">
+<code class="descname">_tag</code><a class="headerlink" href="#ikkuna.export.subscriber.Subscription._tag" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – Tag for filtering the processed messages</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.Subscription._subscriber">
+<code class="descname">_subscriber</code><a class="headerlink" href="#ikkuna.export.subscriber.Subscription._subscriber" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>ikkuna.export.subscriber.Subscriber</em> – The subscriber associated with the subscription</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.Subscription._process_message">
+<code class="descname">_process_message</code><span class="sig-paren">(</span><em>network_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.Subscription._process_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process a newly arrived message. Subclasses should override this method for any special
+treatment.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>network_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.NetworkData" title="ikkuna.export.messages.NetworkData"><em>ikkuna.export.messages.NetworkData</em></a>) – </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.Subscription.receive_message">
+<code class="descname">receive_message</code><span class="sig-paren">(</span><em>network_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.Subscription.receive_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback for receiving an incoming message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>network_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.NetworkData" title="ikkuna.export.messages.NetworkData"><em>ikkuna.export.messages.NetworkData</em></a>) – </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ikkuna.export.subscriber.SynchronizedSubscription">
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">SynchronizedSubscription</code><span class="sig-paren">(</span><em>subscriber</em>, <em>tag=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.SynchronizedSubscription" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ikkuna.export.subscriber.subscriber.Subscription" title="ikkuna.export.subscriber.subscriber.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.subscriber.Subscription</span></code></a></p>
+<p>A subscription which buffers messages and publishes a set of messages, each of a different
+kind, when one round (a train step) is over. This is useful for receiving several kinds of
+messages in each train step and always have them be processed together.</p>
+<dl class="method">
+<dt id="ikkuna.export.subscriber.SynchronizedSubscription._new_round">
+<code class="descname">_new_round</code><span class="sig-paren">(</span><em>seq</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.SynchronizedSubscription._new_round" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start a new round of buffering, clearing the previous cache and resetting the record for
+which kinds were received in this round.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Sequence number for the new round</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">RuntimeError</span></code></a> – If not all desired kinds have been received yet in the current round</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.SynchronizedSubscription._process_message">
+<code class="descname">_process_message</code><span class="sig-paren">(</span><em>network_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.SynchronizedSubscription._process_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start a new round if a new sequence number is seen.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ikkuna.export.subscriber.PlotSubscriber">
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">PlotSubscriber</code><span class="sig-paren">(</span><em>kinds</em>, <em>subscription</em>, <em>plot_config</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.PlotSubscriber" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ikkuna.export.subscriber.subscriber.Subscriber" title="ikkuna.export.subscriber.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.subscriber.Subscriber</span></code></a></p>
+<p>Base class for subscribers that output scalar or histogram values per time and module</p>
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.PlotSubscriber._metric_values">
+<code class="descname">_metric_values</code><a class="headerlink" href="#ikkuna.export.subscriber.PlotSubscriber._metric_values" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict(str, list)</em> – Per-module record of the scalar metric values for each batch</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.PlotSubscriber._figure">
+<code class="descname">_figure</code><a class="headerlink" href="#ikkuna.export.subscriber.PlotSubscriber._figure" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>plt.Figure</em> – Figure to plot metric values in (will update continuously)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.PlotSubscriber._ax">
+<code class="descname">_ax</code><a class="headerlink" href="#ikkuna.export.subscriber.PlotSubscriber._ax" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>plt.AxesSubplot</em> – Axes containing the plots</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.PlotSubscriber._batches_per_epoch">
+<code class="descname">_batches_per_epoch</code><a class="headerlink" href="#ikkuna.export.subscriber.PlotSubscriber._batches_per_epoch" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Inferred number of batches per epoch. This relies on each epoch being
+full-sized (no smaller last batch)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.PlotSubscriber._abc_cache">
+<code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.PlotSubscriber._abc_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.PlotSubscriber._abc_negative_cache">
+<code class="descname">_abc_negative_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.PlotSubscriber._abc_negative_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.PlotSubscriber._abc_negative_cache_version">
+<code class="descname">_abc_negative_cache_version</code><em class="property"> = 197</em><a class="headerlink" href="#ikkuna.export.subscriber.PlotSubscriber._abc_negative_cache_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.PlotSubscriber._abc_registry">
+<code class="descname">_abc_registry</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.PlotSubscriber._abc_registry" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.PlotSubscriber._metric">
+<code class="descname">_metric</code><span class="sig-paren">(</span><em>module_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.PlotSubscriber._metric" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.PlotSubscriber.epoch_finished">
+<code class="descname">epoch_finished</code><span class="sig-paren">(</span><em>epoch</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.PlotSubscriber.epoch_finished" title="Permalink to this definition">¶</a></dt>
+<dd><p>The plot is updated, respecting the <code class="docutils literal notranslate"><span class="pre">average</span></code> parameter set. Successive metric values
+resolution is <code class="docutils literal notranslate"><span class="pre">batches_per_epoch</span> <span class="pre">/</span> <span class="pre">subsample</span> <span class="pre">/</span> <span class="pre">average</span></code>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ikkuna.export.subscriber.HistogramSubscriber">
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">HistogramSubscriber</code><span class="sig-paren">(</span><em>kinds</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ikkuna.export.subscriber.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.subscriber.PlotSubscriber</span></code></a></p>
+<p>A <a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscriber</span></code></a> which subsamples training artifacts and
+computes histograms per epoch.  Histograms are non-normalized.</p>
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.HistogramSubscriber._buffer">
+<code class="descname">_buffer</code><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber._buffer" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict(list)</em> – Per-module buffer of values to compute more robust histogram</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.HistogramSubscriber._abc_cache">
+<code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber._abc_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.HistogramSubscriber._abc_negative_cache">
+<code class="descname">_abc_negative_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber._abc_negative_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.HistogramSubscriber._abc_negative_cache_version">
+<code class="descname">_abc_negative_cache_version</code><em class="property"> = 197</em><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber._abc_negative_cache_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.HistogramSubscriber._abc_registry">
+<code class="descname">_abc_registry</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber._abc_registry" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.HistogramSubscriber._metric">
+<code class="descname">_metric</code><span class="sig-paren">(</span><em>module_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber._metric" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ikkuna.export.subscriber.RatioSubscriber">
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">RatioSubscriber</code><span class="sig-paren">(</span><em>kinds</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em>, <em>absolute=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.RatioSubscriber" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ikkuna.export.subscriber.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.subscriber.PlotSubscriber</span></code></a></p>
+<p>A <a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscriber</span></code></a> which computes the average ratio between two
+quantities.  The dividend will be the first element of the
+<a class="reference internal" href="#ikkuna.export.subscriber.Subscriber.kinds" title="ikkuna.export.subscriber.Subscriber.kinds"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscriber.kinds</span></code></a> property, the divisor the second.  Therefore
+it is vital to pass the message kinds to the <a class="reference internal" href="#ikkuna.export.subscriber.Subscription" title="ikkuna.export.subscriber.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscription</span></code></a>
+object in the correct order.</p>
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.RatioSubscriber._abc_cache">
+<code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.RatioSubscriber._abc_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.RatioSubscriber._abc_negative_cache">
+<code class="descname">_abc_negative_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.RatioSubscriber._abc_negative_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.RatioSubscriber._abc_negative_cache_version">
+<code class="descname">_abc_negative_cache_version</code><em class="property"> = 197</em><a class="headerlink" href="#ikkuna.export.subscriber.RatioSubscriber._abc_negative_cache_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.RatioSubscriber._abc_registry">
+<code class="descname">_abc_registry</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.RatioSubscriber._abc_registry" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.RatioSubscriber._metric">
+<code class="descname">_metric</code><span class="sig-paren">(</span><em>module_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.RatioSubscriber._metric" title="Permalink to this definition">¶</a></dt>
+<dd><p>The ratio between the two kinds is computed over the subset of not-NaN values and added
+to the record.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ikkuna.export.subscriber.SpectralNormSubscriber">
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">SpectralNormSubscriber</code><span class="sig-paren">(</span><em>kinds</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.SpectralNormSubscriber" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ikkuna.export.subscriber.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.subscriber.PlotSubscriber</span></code></a></p>
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.SpectralNormSubscriber._abc_cache">
+<code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.SpectralNormSubscriber._abc_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.SpectralNormSubscriber._abc_negative_cache">
+<code class="descname">_abc_negative_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.SpectralNormSubscriber._abc_negative_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.SpectralNormSubscriber._abc_negative_cache_version">
+<code class="descname">_abc_negative_cache_version</code><em class="property"> = 197</em><a class="headerlink" href="#ikkuna.export.subscriber.SpectralNormSubscriber._abc_negative_cache_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.SpectralNormSubscriber._abc_registry">
+<code class="descname">_abc_registry</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.SpectralNormSubscriber._abc_registry" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.SpectralNormSubscriber._metric">
+<code class="descname">_metric</code><span class="sig-paren">(</span><em>module_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.SpectralNormSubscriber._metric" title="Permalink to this definition">¶</a></dt>
+<dd><p>The spectral norm computation is taken from the <a class="reference external" href="https://pytorch.org/docs/master/_modules/torch/nn/utils/spectral_norm.html">Pytorch implementation of spectral norm</a>. It’s
+possible to use SVD instead, but we are not interested in the full matrix decomposition,
+merely in the singular values.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ikkuna.export.subscriber.AccuracySubscriber">
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">AccuracySubscriber</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>forward_fn</em>, <em>frequency=100</em>, <em>ylims=None</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.AccuracySubscriber" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ikkuna.export.subscriber.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.subscriber.PlotSubscriber</span></code></a></p>
+<p>Subscriber which can compute the accuracy on a given data set (generally the test/validation
+set).</p>
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.AccuracySubscriber._dataset_meta">
+<code class="descname">_dataset_meta</code><a class="headerlink" href="#ikkuna.export.subscriber.AccuracySubscriber._dataset_meta" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>train.DatasetMeta</em> – Dataset to compute accuracy over</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.AccuracySubscriber._data_loader">
+<code class="descname">_data_loader</code><a class="headerlink" href="#ikkuna.export.subscriber.AccuracySubscriber._data_loader" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>torch.utils.data.DataLoader</em> – Loader on the dataset</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.AccuracySubscriber._frequency">
+<code class="descname">_frequency</code><a class="headerlink" href="#ikkuna.export.subscriber.AccuracySubscriber._frequency" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Number of batches to ignore before computing accuracy once</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.AccuracySubscriber._forward_fn">
+<code class="descname">_forward_fn</code><a class="headerlink" href="#ikkuna.export.subscriber.AccuracySubscriber._forward_fn" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>function</em> – Bound method on the model to push data through and get predictions</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.AccuracySubscriber._abc_cache">
+<code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.AccuracySubscriber._abc_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.AccuracySubscriber._abc_negative_cache">
+<code class="descname">_abc_negative_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.AccuracySubscriber._abc_negative_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.AccuracySubscriber._abc_negative_cache_version">
+<code class="descname">_abc_negative_cache_version</code><em class="property"> = 197</em><a class="headerlink" href="#ikkuna.export.subscriber.AccuracySubscriber._abc_negative_cache_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.subscriber.AccuracySubscriber._abc_registry">
+<code class="descname">_abc_registry</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.AccuracySubscriber._abc_registry" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.AccuracySubscriber._metric">
+<code class="descname">_metric</code><span class="sig-paren">(</span><em>module_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.AccuracySubscriber._metric" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 

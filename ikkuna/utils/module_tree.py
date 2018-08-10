@@ -3,7 +3,7 @@
 
 .. moduleauthor:: Rasmus Diederichsen
 
-This module defines the :class:`ModuleTree` class for easily traversing a module hierarchy in order
+This module defines the :class:`ikkuna.utils.ModuleTree` class for easily traversing a module hierarchy in order
 to generate unique hierarchical names for all involved modules to be used as dictinary keys.
 '''
 import re
