@@ -32,7 +32,7 @@ class Exporter(object):
 
     :meth:`Exporter.epoch_finished` should be called upon finishing an epoch.
 
-    No further changes to the model code are necessary, but for a call to :meth:`Exporter.add_model`
+    No further changes to the model code are necessary, but for a call to :meth:`Exporter.set_model`
     to have the :class:`Exporter` wire up the appropriate callbacks.
 
     Attributes

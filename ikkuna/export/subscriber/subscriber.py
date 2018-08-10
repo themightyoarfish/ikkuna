@@ -126,8 +126,11 @@ class Subscriber(abc.ABC):
 
     Attributes
     ----------
-    _counter    :   dict(str, int)
-                    Number of times the subscriber was called for each module label
+    _counter    :   dict(ikkuna.utils.NamedModule, int)
+                    Number of times the subscriber was called for each module label. Since one
+                    :class:`Subscriber` is associated with only one configuration of
+                    :class:`ikkuna.export.messages.ModuleData`, this will enable proper subsampling
+                    the messages.
     kinds   :   list(str)
                 List of string identifiers for different message kinds. These are all the
                 message kinds the subscriber wishes to receive

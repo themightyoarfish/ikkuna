@@ -9,7 +9,7 @@ class AccuracySubscriber(PlotSubscriber):
 
     Attributes
     ----------
-    _dataset_meta    :   train.train.DatasetMeta
+    _dataset_meta    :   train.DatasetMeta
                          Dataset to compute accuracy over
     _data_loader    :   torch.utils.data.DataLoader
                         Loader on the dataset
@@ -24,7 +24,7 @@ class AccuracySubscriber(PlotSubscriber):
         '''
         Parameters
         ----------
-        dataset_meta    :   train.train.DatasetMeta
+        dataset_meta    :   train.DatasetMeta
                             Test dataset
         forward_fn  :   function
                         Bound version of :meth:`torch.nn.Module.forward()`. This could be obtained
@@ -32,19 +32,20 @@ class AccuracySubscriber(PlotSubscriber):
         frequency   :   int
                         Inverse of the frequency with which to compute the accuracy
         '''
-        kinds = ['batch_finished']
-        title = f'Test accuracy'
+        kinds  = ['batch_finished']
+        title  = f'Test accuracy'
         ylabel = 'Accuracy'
         xlabel = 'Train step'
         subscription = Subscription(self, tag=tag)
         super().__init__(kinds, subscription, {'title': title, 'ylabel': ylabel, 'ylims': ylims,
                                                xlabel: xlabel},
                          tag=tag, subsample=subsample, backend=backend)
+
         self._dataset_meta = dataset_meta
-        self._data_loader = DataLoader(dataset_meta.dataset, batch_size=dataset_meta.size,
-                                       shuffle=False, pin_memory=True)
-        self._frequency = frequency
-        self._forward_fn = forward_fn
+        self._data_loader  = DataLoader(dataset_meta.dataset, batch_size=dataset_meta.size,
+                                        shuffle=False, pin_memory=True)
+        self._frequency    = frequency
+        self._forward_fn   = forward_fn
 
     def _metric(self, module_data):
         if self._counter[None] % self._frequency == 0:

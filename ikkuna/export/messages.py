@@ -11,7 +11,7 @@ allowed_kinds = set.union(meta_kinds, data_kinds)
 
 class NetworkData(object):
     '''
-    Primitive data emitted from the :class:`ikkun.export.Exporter`. These messages are assembled
+    Primitive data emitted from the :class:`ikkuna.export.Exporter`. These messages are assembled
     into :class:`ModuleData` objects in the :class:`ikkuna.export.subscriber.Subscription`. Perhaps
     these classes are not perfectly named.
 

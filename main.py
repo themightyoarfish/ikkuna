@@ -126,22 +126,22 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
     trainer.add_model(model_str)
     trainer.optimize(name=optimizer)
 
-    ratio_subscriber = RatioSubscriber(['weight_updates', 'weights'],
-                                       subsample=kwargs['subsample'],
-                                       ylims=kwargs.get('ylims'),
-                                       backend=kwargs['visualisation'])
+    # ratio_subscriber = RatioSubscriber(['weight_updates', 'weights'],
+    #                                    subsample=kwargs['subsample'],
+    #                                    ylims=kwargs.get('ylims'),
+    #                                    backend=kwargs['visualisation'])
     spectral_norm_subscriber = SpectralNormSubscriber(['weights'],
                                                       ylims=kwargs['ylims'],
                                                       subsample=kwargs['subsample'],
                                                       backend=kwargs['visualisation']
                                                       )
-    test_accuracy_subscriber = AccuracySubscriber(dataset_test, trainer.model.forward,
-                                                  frequency=trainer.batches_per_epoch)
+    # test_accuracy_subscriber = AccuracySubscriber(dataset_test, trainer.model.forward,
+    #                                               frequency=trainer.batches_per_epoch)
     # histogram_subscriber = HistogramSubscriber(['activations'], backend=kwargs['visualisation'])
 
     trainer.add_subscriber(spectral_norm_subscriber)
-    trainer.add_subscriber(ratio_subscriber)
-    trainer.add_subscriber(test_accuracy_subscriber)
+    # trainer.add_subscriber(ratio_subscriber)
+    # trainer.add_subscriber(test_accuracy_subscriber)
     # trainer.add_subscriber(histogram_subscriber)
 
     batches_per_epoch = trainer.batches_per_epoch
@@ -159,9 +159,10 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
             n_batches += 1
             cum_time += t1 - t0
 
-            print(f'\repoch {e:>5d}/{epochs-1:<5d} '
-                  f'| batch {batch_idx:>5d}/{batches_per_epoch-1:<5d} '
-                  f'| {1. / (cum_time / n_batches):<3.1f} b/s', end='')
+            if kwargs['verbose']:
+                print(f'\repoch {e:>5d}/{epochs-1:<5d} '
+                      f'| batch {batch_idx:>5d}/{batches_per_epoch-1:<5d} '
+                      f'| {1. / (cum_time / n_batches):<3.1f} b/s', end='')
 
             if batch_idx % 20 == 0:
                 cum_time = 0
@@ -194,6 +195,7 @@ def get_parser():
     parser.add_argument('-s', '--subsample', type=int, default=1)
     parser.add_argument('-y', '--ylims', nargs=2, type=int, default=None)
     parser.add_argument('-v', '--visualisation', type=str, choices=['tb', 'mpl'], default='tb')
+    parser.add_argument('-V', '--verbose', action='store_true')
     return parser
 
 
