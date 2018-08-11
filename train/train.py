@@ -27,13 +27,13 @@ class Trainer:
                 Shape of the input data (N, H, W, C)
     _batch_size :   int
                     Training batch size
-    _loss_function  :   nn._Loss
+    _loss_function  :   torch.nn._Loss
                         Loss function instance for training
     _dataloader :   torch.utils.data.DataLoader
                     loader for the training dataset
-    _model  :   nn.Module
+    _model  :   torch.nn.Module
     _optimizer  : torch.optim.Optimizer
-    _exporter   :   Exporter
+    _exporter   :   ikkuna.export.Exporter
     '''
 
     def __init__(self, dataset_meta: DatasetMeta, **kwargs):
@@ -53,7 +53,7 @@ class Trainer:
                             Train data, obtained via :func:`_load_dataset()`
         batch_size  :   int
         loss   :    function
-                    Defaults to nn.CrossEntropyLoss
+                    Defaults to torch.nn.CrossEntropyLoss
         '''
         ############################################################################################
         #                                  Acquire parameters                                      #

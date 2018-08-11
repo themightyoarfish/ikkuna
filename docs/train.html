@@ -82,7 +82,7 @@ dataset.</p>
 <dl class="attribute">
 <dt id="train.train.Trainer._loss_function">
 <code class="descname">_loss_function</code><a class="headerlink" href="#train.train.Trainer._loss_function" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>nn._Loss</em> – Loss function instance for training</p>
+<dd><p><em>torch.nn._Loss</em> – Loss function instance for training</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -94,7 +94,7 @@ dataset.</p>
 <dl class="attribute">
 <dt id="train.train.Trainer._model">
 <code class="descname">_model</code><a class="headerlink" href="#train.train.Trainer._model" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>nn.Module</em></p>
+<dd><p><em>torch.nn.Module</em></p>
 </dd></dl>
 
 <dl class="attribute">
@@ -106,7 +106,7 @@ dataset.</p>
 <dl class="attribute">
 <dt id="train.train.Trainer._exporter">
 <code class="descname">_exporter</code><a class="headerlink" href="#train.train.Trainer._exporter" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>Exporter</em></p>
+<dd><p><em>ikkuna.export.Exporter</em></p>
 </dd></dl>
 
 <dl class="method">
@@ -115,7 +115,7 @@ dataset.</p>
 <dd><p>Set the model to train.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">Currently, the function automatically calls <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.cuda" title="(in PyTorch vmaster (0.5.0a0+e9ad743 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.cuda()</span></code></a> and hence a
+<p class="last">Currently, the function automatically calls <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.cuda" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.cuda()</span></code></a> and hence a
 GPU is necessary.</p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
@@ -162,7 +162,7 @@ GPU is necessary.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the optimizer (must exist in <a class="reference external" href="https://pytorch.org/docs/master/optim.html#module-torch.optim" title="(in PyTorch vmaster (0.5.0a0+e9ad743 ))"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torch.optim</span></code></a>)</li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the optimizer (must exist in <a class="reference external" href="https://pytorch.org/docs/master/optim.html#module-torch.optim" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torch.optim</span></code></a>)</li>
 <li><strong>**kwargs</strong> – All other kwargs are forwarded to the optimizer constructor</li>
 </ul>
 </td>
@@ -216,7 +216,7 @@ dataset.</p>
 <dl class="attribute">
 <dt id="train.Trainer._loss_function">
 <code class="descname">_loss_function</code><a class="headerlink" href="#train.Trainer._loss_function" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>nn._Loss</em> – Loss function instance for training</p>
+<dd><p><em>torch.nn._Loss</em> – Loss function instance for training</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -228,7 +228,7 @@ dataset.</p>
 <dl class="attribute">
 <dt id="train.Trainer._model">
 <code class="descname">_model</code><a class="headerlink" href="#train.Trainer._model" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>nn.Module</em></p>
+<dd><p><em>torch.nn.Module</em></p>
 </dd></dl>
 
 <dl class="attribute">
@@ -240,7 +240,7 @@ dataset.</p>
 <dl class="attribute">
 <dt id="train.Trainer._exporter">
 <code class="descname">_exporter</code><a class="headerlink" href="#train.Trainer._exporter" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>Exporter</em></p>
+<dd><p><em>ikkuna.export.Exporter</em></p>
 </dd></dl>
 
 <dl class="method">
@@ -249,7 +249,7 @@ dataset.</p>
 <dd><p>Set the model to train.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">Currently, the function automatically calls <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.cuda" title="(in PyTorch vmaster (0.5.0a0+e9ad743 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.cuda()</span></code></a> and hence a
+<p class="last">Currently, the function automatically calls <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.cuda" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.cuda()</span></code></a> and hence a
 GPU is necessary.</p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
@@ -296,7 +296,7 @@ GPU is necessary.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the optimizer (must exist in <a class="reference external" href="https://pytorch.org/docs/master/optim.html#module-torch.optim" title="(in PyTorch vmaster (0.5.0a0+e9ad743 ))"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torch.optim</span></code></a>)</li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the optimizer (must exist in <a class="reference external" href="https://pytorch.org/docs/master/optim.html#module-torch.optim" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torch.optim</span></code></a>)</li>
 <li><strong>**kwargs</strong> – All other kwargs are forwarded to the optimizer constructor</li>
 </ul>
 </td>
