@@ -248,7 +248,7 @@
       </ul></li>
       <li><a href="ikkuna.visualization.html#ikkuna.visualization.backend.MPLBackend._buffer_lim">_buffer_lim (ikkuna.visualization.backend.MPLBackend attribute)</a>
 </li>
-      <li><a href="ikkuna.export.html#ikkuna.export.messages.ModuleData._check_epoch">_check_epoch() (ikkuna.export.messages.ModuleData method)</a>
+      <li><a href="ikkuna.export.html#ikkuna.export.messages.ModuleData._check_message">_check_message() (ikkuna.export.messages.ModuleData method)</a>
 </li>
       <li><a href="ikkuna.export.html#ikkuna.export.export.Exporter._check_model">_check_model() (ikkuna.export.export.Exporter method)</a>
 
@@ -256,8 +256,6 @@
         <li><a href="ikkuna.export.html#ikkuna.export.Exporter._check_model">(ikkuna.export.Exporter method)</a>
 </li>
       </ul></li>
-      <li><a href="ikkuna.export.html#ikkuna.export.messages.ModuleData._check_step">_check_step() (ikkuna.export.messages.ModuleData method)</a>
-</li>
       <li><a href="ikkuna.utils.html#ikkuna.utils.module_tree.ModuleTree._children">_children (ikkuna.utils.module_tree.ModuleTree attribute)</a>
 
       <ul>
@@ -336,6 +334,16 @@
 
       <ul>
         <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.AccuracySubscriber._frequency">(ikkuna.export.subscriber.AccuracySubscriber attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.subscriber.Subscription._handle_message">_handle_message() (ikkuna.export.subscriber.subscriber.Subscription method)</a>
+
+      <ul>
+        <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscription._handle_message">(ikkuna.export.subscriber.Subscription method)</a>
+</li>
+        <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.SynchronizedSubscription._handle_message">(ikkuna.export.subscriber.SynchronizedSubscription method)</a>
+</li>
+        <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.subscriber.SynchronizedSubscription._handle_message">(ikkuna.export.subscriber.subscriber.SynchronizedSubscription method)</a>
 </li>
       </ul></li>
       <li><a href="ikkuna.visualization.html#ikkuna.visualization.backend.UpdatableHistogram._hists">_hists (ikkuna.visualization.backend.UpdatableHistogram attribute)</a>
@@ -440,16 +448,6 @@
 </li>
       <li><a href="ikkuna.visualization.html#ikkuna.visualization.backend.UpdatableHistogram._prepare_plot">_prepare_plot() (ikkuna.visualization.backend.UpdatableHistogram method)</a>
 </li>
-      <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.subscriber.Subscription._process_message">_process_message() (ikkuna.export.subscriber.subscriber.Subscription method)</a>
-
-      <ul>
-        <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscription._process_message">(ikkuna.export.subscriber.Subscription method)</a>
-</li>
-        <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.SynchronizedSubscription._process_message">(ikkuna.export.subscriber.SynchronizedSubscription method)</a>
-</li>
-        <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.subscriber.SynchronizedSubscription._process_message">(ikkuna.export.subscriber.subscriber.SynchronizedSubscription method)</a>
-</li>
-      </ul></li>
       <li><a href="ikkuna.visualization.html#ikkuna.visualization.backend.MPLBackend._redraw_counter">_redraw_counter (ikkuna.visualization.backend.MPLBackend attribute)</a>
 </li>
       <li><a href="ikkuna.visualization.html#ikkuna.visualization.backend.MPLBackend._reflow_plots">_reflow_plots() (ikkuna.visualization.backend.MPLBackend method)</a>
@@ -654,7 +652,7 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="ikkuna.export.html#ikkuna.export.messages.NetworkData.epoch">epoch (ikkuna.export.messages.NetworkData attribute)</a>, <a href="ikkuna.export.html#ikkuna.export.messages.NetworkData.epoch">[1]</a>
+      <li><a href="ikkuna.export.html#ikkuna.export.messages.Message.epoch">epoch (ikkuna.export.messages.Message attribute)</a>, <a href="ikkuna.export.html#ikkuna.export.messages.Message.epoch">[1]</a>
 </li>
       <li><a href="ikkuna.export.html#ikkuna.export.messages.ModuleData.epoch">epoch() (ikkuna.export.messages.ModuleData method)</a>
 </li>
@@ -731,10 +729,6 @@
       <li><a href="main.html#main.get_parser">get_parser() (in module main)</a>
 </li>
   </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="ikkuna.export.html#ikkuna.export.messages.ModuleData.global_seq">global_seq (ikkuna.export.messages.ModuleData attribute)</a>
-</li>
-  </ul></td>
 </tr></table>
 
 <h2 id="H">H</h2>
@@ -744,6 +738,12 @@
 
       <ul>
         <li><a href="models.html#models.AlexNetMini.H_out">(models.AlexNetMini attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.subscriber.Subscription.handle_message">handle_message() (ikkuna.export.subscriber.subscriber.Subscription method)</a>
+
+      <ul>
+        <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscription.handle_message">(ikkuna.export.subscriber.Subscription method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -806,8 +806,14 @@
 <h2 id="K">K</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="ikkuna.export.html#ikkuna.export.messages.NetworkData.kind">kind (ikkuna.export.messages.NetworkData attribute)</a>, <a href="ikkuna.export.html#ikkuna.export.messages.NetworkData.kind">[1]</a>
+      <li><a href="ikkuna.export.html#ikkuna.export.messages.Message.kind">kind (ikkuna.export.messages.Message attribute)</a>, <a href="ikkuna.export.html#ikkuna.export.messages.Message.kind">[1]</a>
+
+      <ul>
+        <li><a href="ikkuna.export.html#ikkuna.export.messages.MetaMessage.kind">(ikkuna.export.messages.MetaMessage attribute)</a>
 </li>
+        <li><a href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage.kind">(ikkuna.export.messages.TrainingMessage attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.kinds">kinds (ikkuna.export.subscriber.Subscriber attribute)</a>, <a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.kinds">[1]</a>
@@ -832,6 +838,10 @@
         <li><a href="ikkuna.utils.html#ikkuna.utils.utils.make_fill_polygons">(in module ikkuna.utils.utils)</a>
 </li>
       </ul></li>
+      <li><a href="ikkuna.export.html#ikkuna.export.messages.Message">Message (class in ikkuna.export.messages)</a>
+</li>
+      <li><a href="ikkuna.export.html#ikkuna.export.messages.MetaMessage">MetaMessage (class in ikkuna.export.messages)</a>
+</li>
       <li><a href="train.html#train.train.Trainer.model">model (train.train.Trainer attribute)</a>
 
       <ul>
@@ -842,14 +852,14 @@
 </li>
       <li><a href="models.html#module-models.alexnet">models.alexnet (module)</a>
 </li>
-      <li><a href="models.html#module-models.densenet">models.densenet (module)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="models.html#module-models.densenet">models.densenet (module)</a>
+</li>
       <li><a href="ikkuna.export.html#ikkuna.export.messages.ModuleData.module">module (ikkuna.export.messages.ModuleData attribute)</a>
 
       <ul>
-        <li><a href="ikkuna.export.html#ikkuna.export.messages.NetworkData.module">(ikkuna.export.messages.NetworkData attribute)</a>, <a href="ikkuna.export.html#ikkuna.export.messages.NetworkData.module">[1]</a>
+        <li><a href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage.module">(ikkuna.export.messages.TrainingMessage attribute)</a>
 </li>
         <li><a href="ikkuna.utils.html#ikkuna.utils.NamedModule.module">(ikkuna.utils.NamedModule attribute)</a>
 </li>
@@ -886,8 +896,6 @@
         <li><a href="ikkuna.utils.html#ikkuna.utils.named_module.NamedModule">(class in ikkuna.utils.named_module)</a>
 </li>
       </ul></li>
-      <li><a href="ikkuna.export.html#ikkuna.export.messages.NetworkData">NetworkData (class in ikkuna.export.messages)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ikkuna.export.html#ikkuna.export.export.Exporter.new_activations">new_activations() (ikkuna.export.export.Exporter method)</a>
@@ -928,7 +936,7 @@
         <li><a href="ikkuna.utils.html#ikkuna.utils.NamedModule.parent">(ikkuna.utils.NamedModule attribute)</a>
 </li>
       </ul></li>
-      <li><a href="ikkuna.export.html#ikkuna.export.messages.NetworkData.payload">payload (ikkuna.export.messages.NetworkData attribute)</a>, <a href="ikkuna.export.html#ikkuna.export.messages.NetworkData.payload">[1]</a>
+      <li><a href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage.payload">payload (ikkuna.export.messages.TrainingMessage attribute)</a>
 </li>
       <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.PlotSubscriber">PlotSubscriber (class in ikkuna.export.subscriber)</a>
 
@@ -936,18 +944,24 @@
         <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.subscriber.PlotSubscriber">(class in ikkuna.export.subscriber.subscriber)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ikkuna.utils.html#ikkuna.utils.module_tree.ModuleTree.preorder">preorder() (ikkuna.utils.module_tree.ModuleTree method)</a>
 
       <ul>
         <li><a href="ikkuna.utils.html#ikkuna.utils.ModuleTree.preorder">(ikkuna.utils.ModuleTree method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.process_data">process_data() (ikkuna.export.subscriber.Subscriber method)</a>
 
       <ul>
         <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.subscriber.Subscriber.process_data">(ikkuna.export.subscriber.subscriber.Subscriber method)</a>
+</li>
+      </ul></li>
+      <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.process_meta">process_meta() (ikkuna.export.subscriber.Subscriber method)</a>
+
+      <ul>
+        <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.subscriber.Subscriber.process_meta">(ikkuna.export.subscriber.subscriber.Subscriber method)</a>
 </li>
       </ul></li>
       <li><a href="ikkuna.export.html#ikkuna.export.export.Exporter.publish">publish() (ikkuna.export.export.Exporter method)</a>
@@ -968,18 +982,14 @@
         <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.ratio.RatioSubscriber">(class in ikkuna.export.subscriber.ratio)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.receive_message">receive_message() (ikkuna.export.subscriber.Subscriber method)</a>
 
       <ul>
-        <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscription.receive_message">(ikkuna.export.subscriber.Subscription method)</a>
-</li>
         <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.subscriber.Subscriber.receive_message">(ikkuna.export.subscriber.subscriber.Subscriber method)</a>
 </li>
-        <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.subscriber.Subscription.receive_message">(ikkuna.export.subscriber.subscriber.Subscription method)</a>
-</li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ikkuna.visualization.html#ikkuna.visualization.backend.UpdatableHistogram.replot">replot() (ikkuna.visualization.backend.UpdatableHistogram method)</a>
 </li>
   </ul></td>
@@ -988,10 +998,10 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="ikkuna.export.html#ikkuna.export.messages.ModuleData.seq">seq (ikkuna.export.messages.ModuleData attribute)</a>
+      <li><a href="ikkuna.export.html#ikkuna.export.messages.Message.seq">seq (ikkuna.export.messages.Message attribute)</a>, <a href="ikkuna.export.html#ikkuna.export.messages.Message.seq">[1]</a>
 
       <ul>
-        <li><a href="ikkuna.export.html#ikkuna.export.messages.NetworkData.seq">(ikkuna.export.messages.NetworkData attribute)</a>, <a href="ikkuna.export.html#ikkuna.export.messages.NetworkData.seq">[1]</a>
+        <li><a href="ikkuna.export.html#ikkuna.export.messages.ModuleData.seq">(ikkuna.export.messages.ModuleData attribute)</a>
 </li>
       </ul></li>
       <li><a href="ikkuna.export.html#ikkuna.export.export.Exporter.set_model">set_model() (ikkuna.export.export.Exporter method)</a>
@@ -1012,10 +1022,10 @@
         <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.spectral_norm.SpectralNormSubscriber">(class in ikkuna.export.subscriber.spectral_norm)</a>
 </li>
       </ul></li>
-      <li><a href="ikkuna.export.html#ikkuna.export.messages.ModuleData.step">step (ikkuna.export.messages.ModuleData attribute)</a>
+      <li><a href="ikkuna.export.html#ikkuna.export.messages.Message.step">step (ikkuna.export.messages.Message attribute)</a>, <a href="ikkuna.export.html#ikkuna.export.messages.Message.step">[1]</a>
 
       <ul>
-        <li><a href="ikkuna.export.html#ikkuna.export.messages.NetworkData.step">(ikkuna.export.messages.NetworkData attribute)</a>, <a href="ikkuna.export.html#ikkuna.export.messages.NetworkData.step">[1]</a>
+        <li><a href="ikkuna.export.html#ikkuna.export.messages.ModuleData.step">(ikkuna.export.messages.ModuleData attribute)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -1058,7 +1068,7 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="ikkuna.export.html#ikkuna.export.messages.NetworkData.tag">tag (ikkuna.export.messages.NetworkData attribute)</a>, <a href="ikkuna.export.html#ikkuna.export.messages.NetworkData.tag">[1]</a>
+      <li><a href="ikkuna.export.html#ikkuna.export.messages.Message.tag">tag (ikkuna.export.messages.Message attribute)</a>, <a href="ikkuna.export.html#ikkuna.export.messages.Message.tag">[1]</a>
 </li>
       <li><a href="ikkuna.visualization.html#ikkuna.visualization.backend.TBBackend">TBBackend (class in ikkuna.visualization.backend)</a>
 </li>
@@ -1100,6 +1110,8 @@
         <li><a href="train.html#train.train.Trainer">(class in train.train)</a>
 </li>
       </ul></li>
+      <li><a href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage">TrainingMessage (class in ikkuna.export.messages)</a>
+</li>
       <li><a href="ikkuna.utils.html#ikkuna.utils.utils.typestr">typestr() (in module ikkuna.utils.utils)</a>
 </li>
   </ul></td>

@@ -91,8 +91,21 @@ set).</p>
 
 <dl class="method">
 <dt id="ikkuna.export.subscriber.accuracy.AccuracySubscriber._metric">
-<code class="descname">_metric</code><span class="sig-paren">(</span><em>module_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.accuracy.AccuracySubscriber._metric" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">_metric</code><span class="sig-paren">(</span><em>message_or_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.accuracy.AccuracySubscriber._metric" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is where the magic happens. Subclasses should override this method so that they can
+compute their metric upon reception of their desired messages. They should then use their
+<code class="docutils literal notranslate"><span class="pre">backend</span></code> to publish the metric.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message_or_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><em>ikkuna.export.messages.Message</em></a>) – Can either be <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.MetaMessage</span></code></a> if the
+Subscriber is not interested in actual training artifacts, or
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.TrainingMessage</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 
@@ -134,7 +147,20 @@ computes histograms per epoch.  Histograms are non-normalized.</p>
 <dl class="method">
 <dt id="ikkuna.export.subscriber.histogram.HistogramSubscriber._metric">
 <code class="descname">_metric</code><span class="sig-paren">(</span><em>module_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.histogram.HistogramSubscriber._metric" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>This is where the magic happens. Subclasses should override this method so that they can
+compute their metric upon reception of their desired messages. They should then use their
+<code class="docutils literal notranslate"><span class="pre">backend</span></code> to publish the metric.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message_or_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><em>ikkuna.export.messages.Message</em></a>) – Can either be <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.MetaMessage</span></code></a> if the
+Subscriber is not interested in actual training artifacts, or
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.TrainingMessage</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 
@@ -273,8 +299,21 @@ full-sized (no smaller last batch)</p>
 
 <dl class="method">
 <dt id="ikkuna.export.subscriber.subscriber.PlotSubscriber._metric">
-<code class="descname">_metric</code><span class="sig-paren">(</span><em>module_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.PlotSubscriber._metric" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">_metric</code><span class="sig-paren">(</span><em>message_or_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.PlotSubscriber._metric" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is where the magic happens. Subclasses should override this method so that they can
+compute their metric upon reception of their desired messages. They should then use their
+<code class="docutils literal notranslate"><span class="pre">backend</span></code> to publish the metric.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message_or_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><em>ikkuna.export.messages.Message</em></a>) – Can either be <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.MetaMessage</span></code></a> if the
+Subscriber is not interested in actual training artifacts, or
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.TrainingMessage</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ikkuna.export.subscriber.subscriber.PlotSubscriber.epoch_finished">
@@ -329,8 +368,21 @@ message kinds the subscriber wishes to receive</p>
 
 <dl class="method">
 <dt id="ikkuna.export.subscriber.subscriber.Subscriber._metric">
-<code class="descname">_metric</code><span class="sig-paren">(</span><em>module_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.Subscriber._metric" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">_metric</code><span class="sig-paren">(</span><em>message_or_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.Subscriber._metric" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is where the magic happens. Subclasses should override this method so that they can
+compute their metric upon reception of their desired messages. They should then use their
+<code class="docutils literal notranslate"><span class="pre">backend</span></code> to publish the metric.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message_or_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><em>ikkuna.export.messages.Message</em></a>) – Can either be <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.MetaMessage</span></code></a> if the
+Subscriber is not interested in actual training artifacts, or
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.TrainingMessage</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ikkuna.export.subscriber.subscriber.Subscriber.epoch_finished">
@@ -355,14 +407,14 @@ finished.</p>
 <dl class="method">
 <dt id="ikkuna.export.subscriber.subscriber.Subscriber.process_data">
 <code class="descname">process_data</code><span class="sig-paren">(</span><em>module_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.Subscriber.process_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Callback for processing a <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleData" title="ikkuna.export.messages.ModuleData"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.ModuleData</span></code></a> object. The exact
-nature of this package is determined by the <a class="reference internal" href="#ikkuna.export.subscriber.Subscription" title="ikkuna.export.subscriber.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscription</span></code></a>
-attached to this <a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscriber</span></code></a>.</p>
+<dd><p>Callback for processing a <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleData" title="ikkuna.export.messages.ModuleData"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.ModuleData</span></code></a> object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>module_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleData" title="ikkuna.export.messages.ModuleData"><em>ikkuna.export.messages.ModuleData</em></a>) – </td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>module_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleData" title="ikkuna.export.messages.ModuleData"><em>ikkuna.export.messages.ModuleData</em></a>) – The exact nature of this package is determined by the
+<a class="reference internal" href="#ikkuna.export.subscriber.Subscription" title="ikkuna.export.subscriber.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscription</span></code></a> attached to this
+<a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscriber</span></code></a>.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If the received <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleData" title="ikkuna.export.messages.ModuleData"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.ModuleData</span></code></a> object is not
 <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleData.complete" title="ikkuna.export.messages.ModuleData.complete"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ikkuna.export.messages.ModuleData.complete()</span></code></a></td>
@@ -372,8 +424,13 @@ attached to this <a class="reference internal" href="#ikkuna.export.subscriber.S
 </dd></dl>
 
 <dl class="method">
+<dt id="ikkuna.export.subscriber.subscriber.Subscriber.process_meta">
+<code class="descname">process_meta</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.Subscriber.process_meta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="ikkuna.export.subscriber.subscriber.Subscriber.receive_message">
-<code class="descname">receive_message</code><span class="sig-paren">(</span><em>network_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.Subscriber.receive_message" title="Permalink to this definition">¶</a></dt>
+<code class="descname">receive_message</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.Subscriber.receive_message" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -396,29 +453,29 @@ attached to this <a class="reference internal" href="#ikkuna.export.subscriber.S
 </dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.export.subscriber.subscriber.Subscription._process_message">
-<code class="descname">_process_message</code><span class="sig-paren">(</span><em>network_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.Subscription._process_message" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.export.subscriber.subscriber.Subscription._handle_message">
+<code class="descname">_handle_message</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.Subscription._handle_message" title="Permalink to this definition">¶</a></dt>
 <dd><p>Process a newly arrived message. Subclasses should override this method for any special
 treatment.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>network_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.NetworkData" title="ikkuna.export.messages.NetworkData"><em>ikkuna.export.messages.NetworkData</em></a>) – </td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><em>ikkuna.export.messages.Message</em></a>) – </td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.export.subscriber.subscriber.Subscription.receive_message">
-<code class="descname">receive_message</code><span class="sig-paren">(</span><em>network_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.Subscription.receive_message" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.export.subscriber.subscriber.Subscription.handle_message">
+<code class="descname">handle_message</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.Subscription.handle_message" title="Permalink to this definition">¶</a></dt>
 <dd><p>Callback for receiving an incoming message.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>network_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.NetworkData" title="ikkuna.export.messages.NetworkData"><em>ikkuna.export.messages.NetworkData</em></a>) – </td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><em>ikkuna.export.messages.TrainingMessage</em></a>) – </td>
 </tr>
 </tbody>
 </table>
@@ -434,6 +491,12 @@ treatment.</p>
 kind, when one round (a train step) is over. This is useful for receiving several kinds of
 messages in each train step and always have them be processed together.</p>
 <dl class="method">
+<dt id="ikkuna.export.subscriber.subscriber.SynchronizedSubscription._handle_message">
+<code class="descname">_handle_message</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.SynchronizedSubscription._handle_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start a new round if a new sequence number is seen.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="ikkuna.export.subscriber.subscriber.SynchronizedSubscription._new_round">
 <code class="descname">_new_round</code><span class="sig-paren">(</span><em>seq</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.SynchronizedSubscription._new_round" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start a new round of buffering, clearing the previous cache and resetting the record for
@@ -448,12 +511,6 @@ which kinds were received in this round.</p>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.subscriber.subscriber.SynchronizedSubscription._process_message">
-<code class="descname">_process_message</code><span class="sig-paren">(</span><em>network_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.SynchronizedSubscription._process_message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Start a new round if a new sequence number is seen.</p>
 </dd></dl>
 
 </dd></dl>
@@ -505,8 +562,21 @@ message kinds the subscriber wishes to receive</p>
 
 <dl class="method">
 <dt id="ikkuna.export.subscriber.Subscriber._metric">
-<code class="descname">_metric</code><span class="sig-paren">(</span><em>module_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber._metric" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">_metric</code><span class="sig-paren">(</span><em>message_or_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber._metric" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is where the magic happens. Subclasses should override this method so that they can
+compute their metric upon reception of their desired messages. They should then use their
+<code class="docutils literal notranslate"><span class="pre">backend</span></code> to publish the metric.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message_or_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><em>ikkuna.export.messages.Message</em></a>) – Can either be <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.MetaMessage</span></code></a> if the
+Subscriber is not interested in actual training artifacts, or
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.TrainingMessage</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ikkuna.export.subscriber.Subscriber.epoch_finished">
@@ -531,14 +601,14 @@ finished.</p>
 <dl class="method">
 <dt id="ikkuna.export.subscriber.Subscriber.process_data">
 <code class="descname">process_data</code><span class="sig-paren">(</span><em>module_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber.process_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Callback for processing a <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleData" title="ikkuna.export.messages.ModuleData"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.ModuleData</span></code></a> object. The exact
-nature of this package is determined by the <a class="reference internal" href="#ikkuna.export.subscriber.Subscription" title="ikkuna.export.subscriber.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscription</span></code></a>
-attached to this <a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscriber</span></code></a>.</p>
+<dd><p>Callback for processing a <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleData" title="ikkuna.export.messages.ModuleData"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.ModuleData</span></code></a> object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>module_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleData" title="ikkuna.export.messages.ModuleData"><em>ikkuna.export.messages.ModuleData</em></a>) – </td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>module_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleData" title="ikkuna.export.messages.ModuleData"><em>ikkuna.export.messages.ModuleData</em></a>) – The exact nature of this package is determined by the
+<a class="reference internal" href="#ikkuna.export.subscriber.Subscription" title="ikkuna.export.subscriber.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscription</span></code></a> attached to this
+<a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscriber</span></code></a>.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If the received <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleData" title="ikkuna.export.messages.ModuleData"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.ModuleData</span></code></a> object is not
 <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleData.complete" title="ikkuna.export.messages.ModuleData.complete"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ikkuna.export.messages.ModuleData.complete()</span></code></a></td>
@@ -548,8 +618,13 @@ attached to this <a class="reference internal" href="#ikkuna.export.subscriber.S
 </dd></dl>
 
 <dl class="method">
+<dt id="ikkuna.export.subscriber.Subscriber.process_meta">
+<code class="descname">process_meta</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber.process_meta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="ikkuna.export.subscriber.Subscriber.receive_message">
-<code class="descname">receive_message</code><span class="sig-paren">(</span><em>network_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber.receive_message" title="Permalink to this definition">¶</a></dt>
+<code class="descname">receive_message</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber.receive_message" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -572,29 +647,29 @@ attached to this <a class="reference internal" href="#ikkuna.export.subscriber.S
 </dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.export.subscriber.Subscription._process_message">
-<code class="descname">_process_message</code><span class="sig-paren">(</span><em>network_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.Subscription._process_message" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.export.subscriber.Subscription._handle_message">
+<code class="descname">_handle_message</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.Subscription._handle_message" title="Permalink to this definition">¶</a></dt>
 <dd><p>Process a newly arrived message. Subclasses should override this method for any special
 treatment.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>network_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.NetworkData" title="ikkuna.export.messages.NetworkData"><em>ikkuna.export.messages.NetworkData</em></a>) – </td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><em>ikkuna.export.messages.Message</em></a>) – </td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.export.subscriber.Subscription.receive_message">
-<code class="descname">receive_message</code><span class="sig-paren">(</span><em>network_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.Subscription.receive_message" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.export.subscriber.Subscription.handle_message">
+<code class="descname">handle_message</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.Subscription.handle_message" title="Permalink to this definition">¶</a></dt>
 <dd><p>Callback for receiving an incoming message.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>network_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.NetworkData" title="ikkuna.export.messages.NetworkData"><em>ikkuna.export.messages.NetworkData</em></a>) – </td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><em>ikkuna.export.messages.TrainingMessage</em></a>) – </td>
 </tr>
 </tbody>
 </table>
@@ -610,6 +685,12 @@ treatment.</p>
 kind, when one round (a train step) is over. This is useful for receiving several kinds of
 messages in each train step and always have them be processed together.</p>
 <dl class="method">
+<dt id="ikkuna.export.subscriber.SynchronizedSubscription._handle_message">
+<code class="descname">_handle_message</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.SynchronizedSubscription._handle_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start a new round if a new sequence number is seen.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="ikkuna.export.subscriber.SynchronizedSubscription._new_round">
 <code class="descname">_new_round</code><span class="sig-paren">(</span><em>seq</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.SynchronizedSubscription._new_round" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start a new round of buffering, clearing the previous cache and resetting the record for
@@ -624,12 +705,6 @@ which kinds were received in this round.</p>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.subscriber.SynchronizedSubscription._process_message">
-<code class="descname">_process_message</code><span class="sig-paren">(</span><em>network_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.SynchronizedSubscription._process_message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Start a new round if a new sequence number is seen.</p>
 </dd></dl>
 
 </dd></dl>
@@ -686,8 +761,21 @@ full-sized (no smaller last batch)</p>
 
 <dl class="method">
 <dt id="ikkuna.export.subscriber.PlotSubscriber._metric">
-<code class="descname">_metric</code><span class="sig-paren">(</span><em>module_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.PlotSubscriber._metric" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">_metric</code><span class="sig-paren">(</span><em>message_or_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.PlotSubscriber._metric" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is where the magic happens. Subclasses should override this method so that they can
+compute their metric upon reception of their desired messages. They should then use their
+<code class="docutils literal notranslate"><span class="pre">backend</span></code> to publish the metric.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message_or_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><em>ikkuna.export.messages.Message</em></a>) – Can either be <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.MetaMessage</span></code></a> if the
+Subscriber is not interested in actual training artifacts, or
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.TrainingMessage</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ikkuna.export.subscriber.PlotSubscriber.epoch_finished">
@@ -733,7 +821,20 @@ computes histograms per epoch.  Histograms are non-normalized.</p>
 <dl class="method">
 <dt id="ikkuna.export.subscriber.HistogramSubscriber._metric">
 <code class="descname">_metric</code><span class="sig-paren">(</span><em>module_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber._metric" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>This is where the magic happens. Subclasses should override this method so that they can
+compute their metric upon reception of their desired messages. They should then use their
+<code class="docutils literal notranslate"><span class="pre">backend</span></code> to publish the metric.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message_or_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><em>ikkuna.export.messages.Message</em></a>) – Can either be <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.MetaMessage</span></code></a> if the
+Subscriber is not interested in actual training artifacts, or
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.TrainingMessage</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 
@@ -861,8 +962,21 @@ set).</p>
 
 <dl class="method">
 <dt id="ikkuna.export.subscriber.AccuracySubscriber._metric">
-<code class="descname">_metric</code><span class="sig-paren">(</span><em>module_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.AccuracySubscriber._metric" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">_metric</code><span class="sig-paren">(</span><em>message_or_data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.AccuracySubscriber._metric" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is where the magic happens. Subclasses should override this method so that they can
+compute their metric upon reception of their desired messages. They should then use their
+<code class="docutils literal notranslate"><span class="pre">backend</span></code> to publish the metric.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message_or_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><em>ikkuna.export.messages.Message</em></a>) – Can either be <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.MetaMessage</span></code></a> if the
+Subscriber is not interested in actual training artifacts, or
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.TrainingMessage</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 

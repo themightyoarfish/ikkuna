@@ -161,7 +161,7 @@ class Subscriber(abc.ABC):
 
         Parameters
         ----------
-        message_or_data :   ikkuna.messages.Message
+        message_or_data :   ikkuna.export.messages.Message
                             Can either be :class:`ikkuna.export.messages.MetaMessage` if the
                             Subscriber is not interested in actual training artifacts, or
                             :class:`ikkuna.export.messages.TrainingMessage`

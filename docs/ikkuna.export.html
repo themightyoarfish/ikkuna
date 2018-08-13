@@ -119,13 +119,13 @@ to those will be tracked.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>module</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><em>torch.nn.Module</em></a><em>) or </em><a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><em>torch.nn.Module</em></a>) – </li>
+<li><strong>module</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.nn.Module</em></a><em>) or </em><a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.nn.Module</em></a>) – </li>
 <li><strong>recursive</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Descend recursively into the module tree</li>
 <li><strong>depth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Depth to which to traverse the tree. Modules below this level will be ignored</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If <code class="docutils literal notranslate"><span class="pre">module</span></code> is neither a tuple, nor a (subclass of) <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If <code class="docutils literal notranslate"><span class="pre">module</span></code> is neither a tuple, nor a (subclass of) <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
 </td>
 </tr>
 </tbody>
@@ -148,8 +148,8 @@ to those will be tracked.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Kind of subscription</li>
-<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><em>torch.nn.Module</em></a>) – </li>
-<li><strong>data</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><em>torch.Tensor</em></a>) – Payload to publish</li>
+<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.nn.Module</em></a>) – </li>
+<li><strong>data</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.Tensor</em></a>) – Payload to publish</li>
 </ul>
 </td>
 </tr>
@@ -167,9 +167,9 @@ Will trigger export of all new activation and weight/bias data.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><em>torch.nn.Module</em></a>) – </li>
-<li><strong>in</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><em>torch.Tensor</em></a>) – Dunno what this is</li>
-<li><strong>out</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><em>torch.Tensor</em></a>) – The new activations</li>
+<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.nn.Module</em></a>) – </li>
+<li><strong>in</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.Tensor</em></a>) – Dunno what this is</li>
+<li><strong>out</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.Tensor</em></a>) – The new activations</li>
 </ul>
 </td>
 </tr>
@@ -187,9 +187,9 @@ Will trigger export of all new gradient data.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><em>torch.nn.Module</em></a>) – </li>
-<li><strong>in</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><em>torch.Tensor</em></a>) – Dunno what this is</li>
-<li><strong>out</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><em>torch.Tensor</em></a>) – The new activations</li>
+<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.nn.Module</em></a>) – </li>
+<li><strong>in</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.Tensor</em></a>) – Dunno what this is</li>
+<li><strong>out</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.Tensor</em></a>) – The new activations</li>
 </ul>
 </td>
 </tr>
@@ -206,9 +206,9 @@ Will trigger export of all new gradient data.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><em>torch.nn.Module</em></a>) – The module in question</li>
+<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.nn.Module</em></a>) – The module in question</li>
 <li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Kind of subscriber to notify</li>
-<li><strong>data</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><em>torch.Tensor</em></a>) – Payload</li>
+<li><strong>data</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.Tensor</em></a>) – Payload</li>
 </ul>
 </td>
 </tr>
@@ -224,7 +224,7 @@ Will trigger export of all new gradient data.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><em>torch.nn.Module</em></a>) – </td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.nn.Module</em></a>) – </td>
 </tr>
 </tbody>
 </table>
@@ -265,6 +265,79 @@ Will trigger export of all new gradient data.</p>
 </div>
 <div class="section" id="module-ikkuna.export.messages">
 <span id="ikkuna-export-messages-module"></span><h2>ikkuna.export.messages module<a class="headerlink" href="#module-ikkuna.export.messages" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ikkuna.export.messages.Message">
+<em class="property">class </em><code class="descclassname">ikkuna.export.messages.</code><code class="descname">Message</code><span class="sig-paren">(</span><em>tag</em>, <em>seq</em>, <em>step</em>, <em>epoch</em>, <em>kind</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.Message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Base class for messages emitted from the <a class="reference internal" href="#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.Exporter</span></code></a>.</p>
+<dl class="attribute">
+<dt id="ikkuna.export.messages.Message.tag">
+<code class="descname">tag</code><a class="headerlink" href="#ikkuna.export.messages.Message.tag" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – The tag associated with this message</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.Message.seq">
+<code class="descname">seq</code><a class="headerlink" href="#ikkuna.export.messages.Message.seq" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Global sequence number. This counter should not reset after each epoch.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.Message.step">
+<code class="descname">step</code><a class="headerlink" href="#ikkuna.export.messages.Message.step" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Epoch-local sequence number (the current batch index)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.Message.epoch">
+<code class="descname">epoch</code><a class="headerlink" href="#ikkuna.export.messages.Message.epoch" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Current epoch number</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.Message.kind">
+<code class="descname">kind</code><a class="headerlink" href="#ikkuna.export.messages.Message.kind" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – Message kind</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">epoch</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">kind</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">seq</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">step</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">tag</code></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ikkuna.export.messages.MetaMessage">
+<em class="property">class </em><code class="descclassname">ikkuna.export.messages.</code><code class="descname">MetaMessage</code><span class="sig-paren">(</span><em>tag</em>, <em>seq</em>, <em>step</em>, <em>epoch</em>, <em>kind</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.MetaMessage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.Message</span></code></a></p>
+<dl class="attribute">
+<dt id="ikkuna.export.messages.MetaMessage.kind">
+<code class="descname">kind</code><a class="headerlink" href="#ikkuna.export.messages.MetaMessage.kind" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="class">
 <dt id="ikkuna.export.messages.ModuleData">
 <em class="property">class </em><code class="descclassname">ikkuna.export.messages.</code><code class="descname">ModuleData</code><span class="sig-paren">(</span><em>module</em>, <em>kinds</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.ModuleData" title="Permalink to this definition">¶</a></dt>
@@ -312,32 +385,16 @@ iteration)</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.export.messages.ModuleData._check_epoch">
-<code class="descname">_check_epoch</code><span class="sig-paren">(</span><em>epoch</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.ModuleData._check_epoch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check epoch consistency or set current epoch, if not set.</p>
+<dt id="ikkuna.export.messages.ModuleData._check_message">
+<code class="descname">_check_message</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.ModuleData._check_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check consistency of sequence number, step and epocg or set if not set yet</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>epoch</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Step number to check</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message</strong> (<a class="reference internal" href="#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><em>ikkuna.export.messages.TrainingMessage</em></a>) – </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If <code class="docutils literal notranslate"><span class="pre">epoch</span></code> does not match the current epoch.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.messages.ModuleData._check_step">
-<code class="descname">_check_step</code><span class="sig-paren">(</span><em>step</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.ModuleData._check_step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check step consistency or set current step, if not set.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Step number to check</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If <code class="docutils literal notranslate"><span class="pre">step</span></code> does not match the current step.</td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If <code class="docutils literal notranslate"><span class="pre">message.(seq|step|epoch)</span></code> does not match the current <code class="docutils literal notranslate"><span class="pre">(seq|step|epoch)</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -352,7 +409,7 @@ sequence number and epoch.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message</strong> (<a class="reference internal" href="#ikkuna.export.messages.NetworkData" title="ikkuna.export.messages.NetworkData"><em>ikkuna.export.messages.NetworkData</em></a>) – </td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message</strong> (<a class="reference internal" href="#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><em>ikkuna.export.messages.TrainingMessage</em></a>) – </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If the message is for a different module (layer) or a message of this kind was already
 received.</td>
@@ -394,11 +451,6 @@ to subscribers.</p>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="ikkuna.export.messages.ModuleData.global_seq">
-<code class="descname">global_seq</code><em class="property"> = 0</em><a class="headerlink" href="#ikkuna.export.messages.ModuleData.global_seq" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
 <dt id="ikkuna.export.messages.ModuleData.module">
 <code class="descname">module</code><a class="headerlink" href="#ikkuna.export.messages.ModuleData.module" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -416,87 +468,26 @@ to subscribers.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="ikkuna.export.messages.NetworkData">
-<em class="property">class </em><code class="descclassname">ikkuna.export.messages.</code><code class="descname">NetworkData</code><span class="sig-paren">(</span><em>tag</em>, <em>seq</em>, <em>step</em>, <em>epoch</em>, <em>kind</em>, <em>module=None</em>, <em>payload=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.NetworkData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Primitive data emitted from the <a class="reference internal" href="#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.Exporter</span></code></a>. These messages are assembled
-into <a class="reference internal" href="#ikkuna.export.messages.ModuleData" title="ikkuna.export.messages.ModuleData"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleData</span></code></a> objects in the <a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscription" title="ikkuna.export.subscriber.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscription</span></code></a>. Perhaps
-these classes are not perfectly named.</p>
+<dt id="ikkuna.export.messages.TrainingMessage">
+<em class="property">class </em><code class="descclassname">ikkuna.export.messages.</code><code class="descname">TrainingMessage</code><span class="sig-paren">(</span><em>tag</em>, <em>seq</em>, <em>step</em>, <em>epoch</em>, <em>kind</em>, <em>module</em>, <em>payload</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.TrainingMessage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.Message</span></code></a></p>
+<p>These messages are assembled
+into <a class="reference internal" href="#ikkuna.export.messages.ModuleData" title="ikkuna.export.messages.ModuleData"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleData</span></code></a> objects in the <a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscription" title="ikkuna.export.subscriber.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscription</span></code></a>.</p>
+<p>module  :   ikkuna.utils.NamedModule
+payload :   torch.Tensor</p>
 <dl class="attribute">
-<dt id="ikkuna.export.messages.NetworkData.tag">
-<code class="descname">tag</code><a class="headerlink" href="#ikkuna.export.messages.NetworkData.tag" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – The tag associated with this message</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.messages.NetworkData.seq">
-<code class="descname">seq</code><a class="headerlink" href="#ikkuna.export.messages.NetworkData.seq" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – Global sequence number. This counter should not reset after each epoch.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.messages.NetworkData.step">
-<code class="descname">step</code><a class="headerlink" href="#ikkuna.export.messages.NetworkData.step" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – Epoch-local sequence number (the current batch index)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.messages.NetworkData.epoch">
-<code class="descname">epoch</code><a class="headerlink" href="#ikkuna.export.messages.NetworkData.epoch" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – Current epoch number</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.messages.NetworkData.kind">
-<code class="descname">kind</code><a class="headerlink" href="#ikkuna.export.messages.NetworkData.kind" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – Message kind</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.messages.NetworkData.module">
-<code class="descname">module</code><a class="headerlink" href="#ikkuna.export.messages.NetworkData.module" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>ikkuna.utils.NamedModule</em> – Can be <code class="docutils literal notranslate"><span class="pre">None</span></code> if this is a metadata message, such as <code class="docutils literal notranslate"><span class="pre">epoch_finished</span></code></p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.messages.NetworkData.payload">
-<code class="descname">payload</code><a class="headerlink" href="#ikkuna.export.messages.NetworkData.payload" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>torch.Tensor</em> – Can be <code class="docutils literal notranslate"><span class="pre">None</span></code> if this is a metadata message, such as <code class="docutils literal notranslate"><span class="pre">epoch_finished</span></code></p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="descname">epoch</code></dt>
+<dt id="ikkuna.export.messages.TrainingMessage.kind">
+<code class="descname">kind</code><a class="headerlink" href="#ikkuna.export.messages.TrainingMessage.kind" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt>
-<code class="descname">kind</code></dt>
+<dt id="ikkuna.export.messages.TrainingMessage.module">
+<code class="descname">module</code><a class="headerlink" href="#ikkuna.export.messages.TrainingMessage.module" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt>
-<code class="descname">module</code></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="descname">payload</code></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="descname">seq</code></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="descname">step</code></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="descname">tag</code></dt>
+<dt id="ikkuna.export.messages.TrainingMessage.payload">
+<code class="descname">payload</code><a class="headerlink" href="#ikkuna.export.messages.TrainingMessage.payload" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -567,13 +558,13 @@ to those will be tracked.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>module</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><em>torch.nn.Module</em></a><em>) or </em><a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><em>torch.nn.Module</em></a>) – </li>
+<li><strong>module</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.nn.Module</em></a><em>) or </em><a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.nn.Module</em></a>) – </li>
 <li><strong>recursive</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Descend recursively into the module tree</li>
 <li><strong>depth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Depth to which to traverse the tree. Modules below this level will be ignored</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If <code class="docutils literal notranslate"><span class="pre">module</span></code> is neither a tuple, nor a (subclass of) <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If <code class="docutils literal notranslate"><span class="pre">module</span></code> is neither a tuple, nor a (subclass of) <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
 </td>
 </tr>
 </tbody>
@@ -596,8 +587,8 @@ to those will be tracked.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Kind of subscription</li>
-<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><em>torch.nn.Module</em></a>) – </li>
-<li><strong>data</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><em>torch.Tensor</em></a>) – Payload to publish</li>
+<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.nn.Module</em></a>) – </li>
+<li><strong>data</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.Tensor</em></a>) – Payload to publish</li>
 </ul>
 </td>
 </tr>
@@ -615,9 +606,9 @@ Will trigger export of all new activation and weight/bias data.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><em>torch.nn.Module</em></a>) – </li>
-<li><strong>in</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><em>torch.Tensor</em></a>) – Dunno what this is</li>
-<li><strong>out</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><em>torch.Tensor</em></a>) – The new activations</li>
+<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.nn.Module</em></a>) – </li>
+<li><strong>in</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.Tensor</em></a>) – Dunno what this is</li>
+<li><strong>out</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.Tensor</em></a>) – The new activations</li>
 </ul>
 </td>
 </tr>
@@ -635,9 +626,9 @@ Will trigger export of all new gradient data.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><em>torch.nn.Module</em></a>) – </li>
-<li><strong>in</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><em>torch.Tensor</em></a>) – Dunno what this is</li>
-<li><strong>out</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><em>torch.Tensor</em></a>) – The new activations</li>
+<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.nn.Module</em></a>) – </li>
+<li><strong>in</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.Tensor</em></a>) – Dunno what this is</li>
+<li><strong>out</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.Tensor</em></a>) – The new activations</li>
 </ul>
 </td>
 </tr>
@@ -654,9 +645,9 @@ Will trigger export of all new gradient data.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><em>torch.nn.Module</em></a>) – The module in question</li>
+<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.nn.Module</em></a>) – The module in question</li>
 <li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Kind of subscriber to notify</li>
-<li><strong>data</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><em>torch.Tensor</em></a>) – Payload</li>
+<li><strong>data</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.Tensor</em></a>) – Payload</li>
 </ul>
 </td>
 </tr>
@@ -672,7 +663,7 @@ Will trigger export of all new gradient data.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+ab6afc2 ))"><em>torch.nn.Module</em></a>) – </td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.nn.Module</em></a>) – </td>
 </tr>
 </tbody>
 </table>
