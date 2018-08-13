@@ -10,11 +10,10 @@ This module contains the base definition for subscriber functionality. The
 import abc
 from collections import defaultdict
 from ikkuna.visualization import TBBackend, MPLBackend
-from ikkuna.export.messages import ModuleData
+from ikkuna.export.messages import ModuleData, MetaMessage, TrainingMessage
 
 
 class Subscription(object):
-
     '''Specification for a subscription that can span multiple kinds and a tag.
 
     Attributes
@@ -32,36 +31,36 @@ class Subscription(object):
         subscriber  :   ikkuna.export.subscriber.Subscriber
                         Object that wants to receive the messages
         tag :   str or None
-                Optional tag for filtering messages. If ``None`` is passed, all messages will be
+                Optional tag for filtering messages. If ``None``, all messages will be
                 relayed
         '''
         self._tag        = tag
         self._subscriber = subscriber
 
-    def _process_message(self, network_data):
+    def _handle_message(self, message):
         '''Process a newly arrived message. Subclasses should override this method for any special
         treatment.
 
         Parameters
         ----------
-        network_data    :   ikkuna.export.messages.NetworkData
+        message    :   ikkuna.export.messages.Message
         '''
-        data = ModuleData(network_data.module, network_data.kind)
-        data.add_message(network_data)
-        self._subscriber.process_data(data)
+        if isinstance(message, TrainingMessage):
+            data = ModuleData(message.module, message.kind)
+            data.add_message(message)
+            self._subscriber.process_data(data)
+        else:
+            self._subscriber.process_meta(message)
 
-    def receive_message(self, network_data):
+    def handle_message(self, message):
         '''Callback for receiving an incoming message.
 
         Parameters
         ----------
-        network_data    :   ikkuna.export.messages.NetworkData
+        message    :   ikkuna.export.messages.TrainingMessage
         '''
-        if network_data.kind not in self._subscriber.kinds:
-            return
-
-        if self._tag is None or self._tag == network_data.tag:
-            self._process_message(network_data)
+        if self._tag is None or self._tag == message.tag:
+            self._handle_message(message)
 
 
 class SynchronizedSubscription(Subscription):
@@ -95,28 +94,31 @@ class SynchronizedSubscription(Subscription):
         self._current_seq = seq
         self._modules     = {}
 
-    def _process_message(self, network_data):
+    def _handle_message(self, message):
         '''Start a new round if a new sequence number is seen.'''
 
         # if we get a new sequence number, a new train step must have begun
-        if self._current_seq is None or self._current_seq != network_data.seq:
-            self._new_round(network_data.seq)
+        if self._current_seq is None or self._current_seq != message.seq:
+            self._new_round(message.seq)
 
-        # module not seen -> init data
-        module = network_data.module
-        if module not in self._modules:
-            self._modules[module] = ModuleData(module, self._subscriber.kinds)
-        self._modules[module].add_message(network_data)
+        if isinstance(message, TrainingMessage):
+            # module not seen -> init data
+            module = message.module
+            if module not in self._modules:
+                self._modules[module] = ModuleData(module, self._subscriber.kinds)
+            self._modules[module].add_message(message)
 
-        delete_these = []
-        # all full? publish
-        for module, data in self._modules.items():
-            if data.complete():
-                self._subscriber.process_data(data)
-                delete_these.append(module)
+            delete_these = []
+            # any full? publish
+            for module, data in self._modules.items():
+                if data.complete():
+                    self._subscriber.process_data(data)
+                    delete_these.append(module)
 
-        for module in delete_these:
-            del self._modules[module]
+            for module in delete_these:
+                del self._modules[module]
+        else:
+            self._subscriber.process_meta(message)
 
 
 class Subscriber(abc.ABC):
@@ -155,17 +157,27 @@ class Subscriber(abc.ABC):
     def _metric(self, module_data):
         pass
 
-    def receive_message(self, network_data):
-        self._subscription.receive_message(network_data)
+    def receive_message(self, message):
+        if message.kind not in self.kinds:
+            return
+
+        key = message.module if isinstance(message, TrainingMessage) else message.kind
+        if self._counter[key] % self._subsample == 0:
+            self._subscription.handle_message(message)
+        self._counter[key] += 1
+
+    def process_meta(self, message):
+        self._metric(message)
 
     def process_data(self, module_data):
-        '''Callback for processing a :class:`ikkuna.export.messages.ModuleData` object. The exact
-        nature of this package is determined by the :class:`ikkuna.export.subscriber.Subscription`
-        attached to this :class:`ikkuna.export.subscriber.Subscriber`.
+        '''Callback for processing a :class:`ikkuna.export.messages.ModuleData` object.
 
         Parameters
         ----------
         module_data    :   ikkuna.export.messages.ModuleData
+                            The exact nature of this package is determined by the
+                            :class:`ikkuna.export.subscriber.Subscription` attached to this
+                            :class:`ikkuna.export.subscriber.Subscriber`.
 
         Raises
         ------
@@ -176,11 +188,7 @@ class Subscriber(abc.ABC):
         if not module_data.complete():
             raise ValueError(f'Data received for "{module_data._module}" is not complete.')
 
-        module = module_data.module
-        # only do work for subsample of messages
-        if (self._counter[module] + 1) % self._subsample == 0:
-            self._metric(module_data)
-        self._counter[module] += 1
+        self._metric(module_data)
 
     @abc.abstractmethod
     def epoch_finished(self, epoch):

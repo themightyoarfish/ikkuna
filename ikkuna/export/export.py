@@ -2,7 +2,7 @@ import sys
 import torch
 from collections import defaultdict
 
-from ikkuna.export.messages import NetworkData
+from ikkuna.export.messages import TrainingMessage, MetaMessage
 from ikkuna.utils import ModuleTree
 import ikkuna
 
@@ -142,7 +142,7 @@ class Exporter(object):
                 index = next(i for i, m in enumerate(self._modules) if m.module == module)
             except StopIteration:
                 raise RuntimeError(f'Received message for unknown module {module.name}')
-            msg = NetworkData(seq=self._global_step, tag=None, kind=kind,
+            msg = TrainingMessage(seq=self._global_step, tag=None, kind=kind,
                               module=self._modules[index], step=self._train_step,
                               epoch=self._epoch, payload=data)
             sub.receive_message(msg)
@@ -184,9 +184,9 @@ class Exporter(object):
         if not self._is_training:
             return
         if self._train_step == 0:
-            msg_epoch = NetworkData(seq=self._global_step, tag=None, kind='epoch_started',
+            msg_epoch = TrainingMessage(seq=self._global_step, tag=None, kind='epoch_started',
                                     step=self._train_step, epoch=self._epoch)
-            msg_batch = NetworkData(seq=self._global_step, tag=None, kind='batch_started',
+            msg_batch = TrainingMessage(seq=self._global_step, tag=None, kind='batch_started',
                                     step=self._train_step, epoch=self._epoch)
             for sub in self._subscribers:
                 sub.receive_message(msg_epoch)
@@ -276,7 +276,7 @@ class Exporter(object):
         self._train_step  += 1
         self._global_step += 1
 
-        msg = NetworkData(seq=self._global_step, tag=None, kind='batch_finished',
+        msg = MetaMessage(seq=self._global_step, tag=None, kind='batch_finished',
                           step=self._train_step, epoch=self._epoch)
         for sub in self._subscribers:
             sub.receive_message(msg)
@@ -285,7 +285,7 @@ class Exporter(object):
         '''Increase the epoch counter and reset the batch counter.'''
         for sub in self._subscribers:
             sub.epoch_finished(self._epoch)
-        msg = NetworkData(seq=self._global_step, tag=None, kind='epoch_finished',
+        msg = MetaMessage(seq=self._global_step, tag=None, kind='epoch_finished',
                           step=self._train_step, epoch=self._epoch)
         for sub in self._subscribers:
             sub.receive_message(msg)

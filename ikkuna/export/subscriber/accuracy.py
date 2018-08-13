@@ -47,11 +47,11 @@ class AccuracySubscriber(PlotSubscriber):
         self._frequency    = frequency
         self._forward_fn   = forward_fn
 
-    def _metric(self, module_data):
-        if self._counter[None] % self._frequency == 0:
+    def _metric(self, message_or_data):
+        if self._counter['batch_finished'] % self._frequency == 0:
             X, labels   = next(iter(self._data_loader))
             outputs     = self._forward_fn(X.cuda(), should_train=False)
             predictions = outputs.argmax(1)
             n_correct   = (predictions.cpu() == labels).sum().item()
             accuracy    = n_correct / self._dataset_meta.size
-            self._backend.add_data('test accuracy', accuracy, module_data.step)
+            self._backend.add_data('test accuracy', accuracy, message_or_data.step)

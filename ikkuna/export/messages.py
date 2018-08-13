@@ -9,11 +9,9 @@ data_kinds = {
 allowed_kinds = set.union(meta_kinds, data_kinds)
 
 
-class NetworkData(object):
+class Message(object):
     '''
-    Primitive data emitted from the :class:`ikkuna.export.Exporter`. These messages are assembled
-    into :class:`ModuleData` objects in the :class:`ikkuna.export.subscriber.Subscription`. Perhaps
-    these classes are not perfectly named.
+    Base class for messages emitted from the :class:`ikkuna.export.Exporter`.
 
     Attributes
     ----------
@@ -27,23 +25,13 @@ class NetworkData(object):
                 Current epoch number
     kind    :   str
                 Message kind
-    module  :   ikkuna.utils.NamedModule
-                Can be ``None`` if this is a metadata message, such as ``epoch_finished``
-    payload :   torch.Tensor
-                Can be ``None`` if this is a metadata message, such as ``epoch_finished``
     '''
-    def __init__(self, tag, seq, step, epoch, kind, module=None, payload=None):
-        self._tag     = tag
-        self._seq     = seq
-        self.step     = step
-        self.epoch    = epoch
-        self.kind     = kind
-        self._module  = module
-        self._payload = payload
-
-        if kind not in meta_kinds and (module is None or payload is None):
-            raise ValueError('Empty module and payload fields are only allowed for meta messages '
-                             f'{meta_kinds}')
+    def __init__(self, tag, seq, step, epoch, kind):
+        self._tag  = tag
+        self._seq  = seq
+        self.step  = step
+        self.epoch = epoch
+        self.kind  = kind
 
     @property
     def tag(self):
@@ -86,6 +74,29 @@ class NetworkData(object):
         else:
             self._kind = value
 
+
+class MetaMessage(Message):
+    @Message.kind.setter
+    def kind(self, value):
+        if value not in meta_kinds:
+            raise ValueError(f'Invalid message kind "{value}"')
+        else:
+            self._kind = value
+
+
+class TrainingMessage(Message):
+    '''
+    These messages are assembled
+    into :class:`ModuleData` objects in the :class:`ikkuna.export.subscriber.Subscription`.
+
+    module  :   ikkuna.utils.NamedModule
+    payload :   torch.Tensor
+    '''
+    def __init__(self, tag, seq, step, epoch, kind, module, payload):
+        super().__init__(tag, seq, step, epoch, kind)
+        self._module  = module
+        self._payload = payload
+
     @property
     def module(self):
         return self._module
@@ -93,6 +104,13 @@ class NetworkData(object):
     @property
     def payload(self):
         return self._payload
+
+    @Message.kind.setter
+    def kind(self, value):
+        if value not in data_kinds:
+            raise ValueError(f'Invalid message kind "{value}"')
+        else:
+            self._kind = value
 
 
 class ModuleData(object):
@@ -217,7 +235,7 @@ class ModuleData(object):
 
         Parameters
         ----------
-        message :   ikkuna.export.messages.NetworkData
+        message :   ikkuna.export.messages.TrainingMessage
 
         Raises
         ------
