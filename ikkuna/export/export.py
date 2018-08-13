@@ -30,8 +30,6 @@ class Exporter(object):
         e.add_modules(extremely_complex_model)
         # e will now track all layers of extremely_complex_model
 
-    :meth:`Exporter.epoch_finished` should be called upon finishing an epoch.
-
     No further changes to the model code are necessary, but for a call to
     :meth:`~Exporter.set_model()` to have the :class:`Exporter` wire up the appropriate callbacks.
 
@@ -282,8 +280,6 @@ class Exporter(object):
 
     def epoch_finished(self):
         '''Increase the epoch counter and reset the batch counter.'''
-        for sub in self._subscribers:
-            sub.epoch_finished(self._epoch)
         msg = MetaMessage(seq=self._global_step, tag=None, kind='epoch_finished',
                           step=self._train_step, epoch=self._epoch)
         for sub in self._subscribers:

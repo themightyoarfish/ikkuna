@@ -140,7 +140,6 @@ class Trainer:
         try:
             self._next_X, self._next_Y = next(self._data_iter)
         except StopIteration:
-            self._exporter.epoch_finished()
             self._batch_counter = 0
             self._data_iter = iter(self._dataloader)
             self._next_X, self._next_Y = next(self._data_iter)

@@ -157,7 +157,6 @@ class Subscriber(abc.ABC):
     '''
 
     def __init__(self, subscription, tag=None):
-        self._current_epoch = 0
         self._subscription  = subscription
 
     @abc.abstractmethod
@@ -203,19 +202,6 @@ class Subscriber(abc.ABC):
 
         self._metric(module_data)
 
-    @abc.abstractmethod
-    def epoch_finished(self, epoch):
-        '''Called automatically by the :class:`ikkuna.export.Exporter` object when an epoch has just
-        finished.
-
-        Parameters
-        ----------
-        epoch   :   int
-                    0-based epoch index
-        '''
-        self._current_epoch = epoch
-
-
 class PlotSubscriber(Subscriber):
     '''Base class for subscribers that output scalar or histogram values per time and module
 
@@ -255,8 +241,3 @@ class PlotSubscriber(Subscriber):
     @abc.abstractmethod
     def _metric(self, message_or_data):
         pass
-
-    def epoch_finished(self, epoch):
-        '''The plot is updated, respecting the ``average`` parameter set. Successive metric values
-        resolution is ``batches_per_epoch / subsample / average``.'''
-        super().epoch_finished(epoch)
