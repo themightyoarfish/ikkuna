@@ -154,7 +154,18 @@ class Subscriber(abc.ABC):
         self._kinds = kinds
 
     @abc.abstractmethod
-    def _metric(self, module_data):
+    def _metric(self, message_or_data):
+        '''This is where the magic happens. Subclasses should override this method so that they can
+        compute their metric upon reception of their desired messages. They should then use their
+        ``backend`` to publish the metric.
+
+        Parameters
+        ----------
+        message_or_data :   ikkuna.messages.Message
+                            Can either be :class:`ikkuna.export.messages.MetaMessage` if the
+                            Subscriber is not interested in actual training artifacts, or
+                            :class:`ikkuna.export.messages.TrainingMessage`
+        '''
         pass
 
     def receive_message(self, message):
@@ -243,7 +254,7 @@ class PlotSubscriber(Subscriber):
             self._backend = MPLBackend(**plot_config)
 
     @abc.abstractmethod
-    def _metric(self, module_data):
+    def _metric(self, message_or_data):
         pass
 
     def epoch_finished(self, epoch):
