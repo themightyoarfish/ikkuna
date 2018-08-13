@@ -47,4 +47,4 @@ class SpectralNormSubscriber(PlotSubscriber):
 
         norm = torch.dot(self.u[module], torch.matmul(weights2d, v)).item()
 
-        self._backend.add_data(module, norm, module_data.step)
+        self._backend.add_data(module, norm, module_data.seq)

@@ -138,18 +138,15 @@ class ModuleData(object):
                 iteration)
     '''
 
-    global_seq = 0
-
     def __init__(self, module, kinds):
         self._module            = module
         if isinstance(kinds, str):  # this has bitten me before. base subscriptions don't use multiple kinds
             kinds = [kinds]
         self._expected_kinds    = kinds
         self._data              = {kind: None for kind in kinds}
-        self._seq               = ModuleData.global_seq
+        self._seq               = None
         self._step              = None
         self._epoch             = None
-        ModuleData.global_seq  += 1
 
     @property
     def module(self):
@@ -189,44 +186,46 @@ class ModuleData(object):
         else:
             return all(map(lambda val: val is not None, self._data.values()))
 
-    def _check_step(self, step):
-        '''Check step consistency or set current step, if not set.
+    def _check_message(self, message):
+        '''Check consistency of sequence number, step and epocg or set if not set yet
 
         Parameters
         ----------
-        step    :   int
-                    Step number to check
+        message :   ikkuna.export.messages.TrainingMessage
 
         Raises
         ------
         ValueError
-            If ``step`` does not match the current step.
+            If ``message.(seq|step|epoch)`` does not match the current ``(seq|step|epoch)``
         '''
+        ############
+        #  seqnum  #
+        ############
+        if not self._seq:
+            self._seq = message.seq
+
+        if message.seq != self._seq:
+            raise ValueError(f'Attempting to add message with seq {message.seq} to bundle with '
+                             'initial seq {self._seq}')
+
+        ##########
+        #  step  #
+        ##########
         if not self._step:
-            self._step = step
+            self._step = message.step
 
-        if step != self._step:
-            raise ValueError(f'Attempting to add message with step {step} to bundle with '
+        if message.step != self._step:
+            raise ValueError(f'Attempting to add message with step {message.step} to bundle with '
                              'initial step {self._step}')
+        #############
+        #  content  #
+        #############
 
-    def _check_epoch(self, epoch):
-        '''Check epoch consistency or set current epoch, if not set.
-
-        Parameters
-        ----------
-        epoch    :   int
-                    Step number to check
-
-        Raises
-        ------
-        ValueError
-            If ``epoch`` does not match the current epoch.
-        '''
         if not self._epoch:
-            self._epoch = epoch
+            self._epoch = message.epoch
 
-        if epoch != self._epoch:
-            raise ValueError(f'Attempting to add message from epoch {epoch} to bundle with '
+        if message.epoch != self._epoch:
+            raise ValueError(f'Attempting to add message from epoch {message.epoch} to bundle with '
                              'initial epoch {self._epoch}')
 
     def add_message(self, message):
@@ -243,8 +242,7 @@ class ModuleData(object):
             If the message is for a different module (layer) or a message of this kind was already
             received.
         '''
-        self._check_step(message.step)
-        self._check_epoch(message.epoch)
+        self._check_message(message)
 
         if self._module != message.module:
             raise ValueError(f'Unexpected module "{message.module}" (expected "{self._module}")')

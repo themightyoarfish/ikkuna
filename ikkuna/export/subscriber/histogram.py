@@ -25,4 +25,4 @@ class HistogramSubscriber(PlotSubscriber):
 
         module = module_data._module
         data   = module_data.data[self.kinds[0]]
-        self._backend.add_histogram(module, data, module_data.step)
+        self._backend.add_histogram(module, data, module_data.seq)

@@ -54,4 +54,4 @@ class AccuracySubscriber(PlotSubscriber):
             predictions = outputs.argmax(1)
             n_correct   = (predictions.cpu() == labels).sum().item()
             accuracy    = n_correct / self._dataset_meta.size
-            self._backend.add_data('test accuracy', accuracy, message_or_data.step)
+            self._backend.add_data('test accuracy', accuracy, message_or_data.seq)

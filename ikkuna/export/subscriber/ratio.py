@@ -59,4 +59,4 @@ class RatioSubscriber(PlotSubscriber):
         if np.isnan(ratio):
             raise ValueError(f'NaN value ratio for {module}')
 
-        self._backend.add_data(module, ratio, module_data.step)
+        self._backend.add_data(module, ratio, module_data.seq)
