@@ -62,7 +62,7 @@
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class for managing publishing of data from model code.</p>
 <p>An <a class="reference internal" href="#ikkuna.export.export.Exporter" title="ikkuna.export.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> is used in the model code by either explicitly registering modules for
-tracking with <a class="reference internal" href="#ikkuna.export.export.Exporter.add_modules" title="ikkuna.export.export.Exporter.add_modules"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Exporter.add_modules()</span></code></a> or by calling it with newly constructed modules
+tracking with <a class="reference internal" href="#ikkuna.export.export.Exporter.add_modules" title="ikkuna.export.export.Exporter.add_modules"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_modules()</span></code></a> or by calling it with newly constructed modules
 which will then be returned as-is, but be registered in the process.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">e</span> <span class="o">=</span> <span class="n">Exporter</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 <span class="n">features</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span>
@@ -79,8 +79,8 @@ which will then be returned as-is, but be registered in the process.</p>
 </pre></div>
 </div>
 <p><a class="reference internal" href="#ikkuna.export.export.Exporter.epoch_finished" title="ikkuna.export.export.Exporter.epoch_finished"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Exporter.epoch_finished()</span></code></a> should be called upon finishing an epoch.</p>
-<p>No further changes to the model code are necessary, but for a call to <a class="reference internal" href="#ikkuna.export.export.Exporter.set_model" title="ikkuna.export.export.Exporter.set_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Exporter.set_model()</span></code></a>
-to have the <a class="reference internal" href="#ikkuna.export.export.Exporter" title="ikkuna.export.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> wire up the appropriate callbacks.</p>
+<p>No further changes to the model code are necessary, but for a call to
+<a class="reference internal" href="#ikkuna.export.export.Exporter.set_model" title="ikkuna.export.export.Exporter.set_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_model()</span></code></a> to have the <a class="reference internal" href="#ikkuna.export.export.Exporter" title="ikkuna.export.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> wire up the appropriate callbacks.</p>
 <dl class="attribute">
 <dt id="ikkuna.export.export.Exporter._modules">
 <code class="descname">_modules</code><a class="headerlink" href="#ikkuna.export.export.Exporter._modules" title="Permalink to this definition">¶</a></dt>
@@ -99,7 +99,7 @@ to have the <a class="reference internal" href="#ikkuna.export.export.Exporter" 
 <dd><p><em>dict</em></p>
 </dd></dl>
 
-<p>Create a new <code class="docutils literal notranslate"><span class="pre">Exporter</span></code>.</p>
+<p>Create a new <a class="reference internal" href="#ikkuna.export.export.Exporter" title="ikkuna.export.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a>.</p>
 <dl class="method">
 <dt id="ikkuna.export.export.Exporter._add_module_by_name">
 <code class="descname">_add_module_by_name</code><span class="sig-paren">(</span><em>named_module</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter._add_module_by_name" title="Permalink to this definition">¶</a></dt>
@@ -270,7 +270,7 @@ Will trigger export of all new gradient data.</p>
 <dt id="ikkuna.export.messages.Message">
 <em class="property">class </em><code class="descclassname">ikkuna.export.messages.</code><code class="descname">Message</code><span class="sig-paren">(</span><em>tag</em>, <em>seq</em>, <em>step</em>, <em>epoch</em>, <em>kind</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.Message" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Base class for messages emitted from the <a class="reference internal" href="#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.Exporter</span></code></a>.</p>
+<p>Base class for messages emitted from the <a class="reference internal" href="#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a>.</p>
 <dl class="attribute">
 <dt id="ikkuna.export.messages.Message.tag">
 <code class="descname">tag</code><a class="headerlink" href="#ikkuna.export.messages.Message.tag" title="Permalink to this definition">¶</a></dt>
@@ -388,7 +388,7 @@ iteration)</p>
 <dl class="method">
 <dt id="ikkuna.export.messages.ModuleData._check_message">
 <code class="descname">_check_message</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.ModuleData._check_message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check consistency of sequence number, step and epocg or set if not set yet</p>
+<dd><p>Check consistency of sequence number, step and epoch or set if not set yet</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -473,7 +473,7 @@ to subscribers.</p>
 <em class="property">class </em><code class="descclassname">ikkuna.export.messages.</code><code class="descname">TrainingMessage</code><span class="sig-paren">(</span><em>tag</em>, <em>seq</em>, <em>step</em>, <em>epoch</em>, <em>kind</em>, <em>module</em>, <em>payload</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.TrainingMessage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.Message</span></code></a></p>
 <p>These messages are assembled
-into <a class="reference internal" href="#ikkuna.export.messages.ModuleData" title="ikkuna.export.messages.ModuleData"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleData</span></code></a> objects in the <a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscription" title="ikkuna.export.subscriber.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscription</span></code></a>.</p>
+into <a class="reference internal" href="#ikkuna.export.messages.ModuleData" title="ikkuna.export.messages.ModuleData"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleData</span></code></a> objects in the <a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscription" title="ikkuna.export.subscriber.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscription</span></code></a>.</p>
 <p>module  :   ikkuna.utils.NamedModule
 payload :   torch.Tensor</p>
 <dl class="attribute">
@@ -502,7 +502,7 @@ payload :   torch.Tensor</p>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class for managing publishing of data from model code.</p>
 <p>An <a class="reference internal" href="#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> is used in the model code by either explicitly registering modules for
-tracking with <a class="reference internal" href="#ikkuna.export.Exporter.add_modules" title="ikkuna.export.Exporter.add_modules"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Exporter.add_modules()</span></code></a> or by calling it with newly constructed modules
+tracking with <a class="reference internal" href="#ikkuna.export.Exporter.add_modules" title="ikkuna.export.Exporter.add_modules"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_modules()</span></code></a> or by calling it with newly constructed modules
 which will then be returned as-is, but be registered in the process.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">e</span> <span class="o">=</span> <span class="n">Exporter</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 <span class="n">features</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span>
@@ -519,8 +519,8 @@ which will then be returned as-is, but be registered in the process.</p>
 </pre></div>
 </div>
 <p><a class="reference internal" href="#ikkuna.export.Exporter.epoch_finished" title="ikkuna.export.Exporter.epoch_finished"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Exporter.epoch_finished()</span></code></a> should be called upon finishing an epoch.</p>
-<p>No further changes to the model code are necessary, but for a call to <a class="reference internal" href="#ikkuna.export.Exporter.set_model" title="ikkuna.export.Exporter.set_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Exporter.set_model()</span></code></a>
-to have the <a class="reference internal" href="#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> wire up the appropriate callbacks.</p>
+<p>No further changes to the model code are necessary, but for a call to
+<a class="reference internal" href="#ikkuna.export.Exporter.set_model" title="ikkuna.export.Exporter.set_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_model()</span></code></a> to have the <a class="reference internal" href="#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> wire up the appropriate callbacks.</p>
 <dl class="attribute">
 <dt id="ikkuna.export.Exporter._modules">
 <code class="descname">_modules</code><a class="headerlink" href="#ikkuna.export.Exporter._modules" title="Permalink to this definition">¶</a></dt>
@@ -539,7 +539,7 @@ to have the <a class="reference internal" href="#ikkuna.export.Exporter" title="
 <dd><p><em>dict</em></p>
 </dd></dl>
 
-<p>Create a new <code class="docutils literal notranslate"><span class="pre">Exporter</span></code>.</p>
+<p>Create a new <a class="reference internal" href="#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a>.</p>
 <dl class="method">
 <dt id="ikkuna.export.Exporter._add_module_by_name">
 <code class="descname">_add_module_by_name</code><span class="sig-paren">(</span><em>named_module</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter._add_module_by_name" title="Permalink to this definition">¶</a></dt>

@@ -12,7 +12,7 @@ class SpectralNormSubscriber(PlotSubscriber):
         '''
         Parameters
         ----------
-        see :class:`ikkuna.export.subscriber.PlotSubscriber`
+        see :class:`~ikkuna.export.subscriber.PlotSubscriber`
         '''
         subscription = SynchronizedSubscription(self, kinds, tag, subsample)
 

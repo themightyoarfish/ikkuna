@@ -1,10 +1,8 @@
 '''
 .. moduleauthor:: Rasmus Diederichsen
 
-.. module:: subscriber
-
 This module contains the base definition for subscriber functionality. The
-:class:`ikkuna.export.subscriber.Subscriber` class should be subclassed for adding new metrics.
+:class:`~ikkuna.export.subscriber.Subscriber` class should be subclassed for adding new metrics.
 
 '''
 import abc
@@ -153,7 +151,6 @@ class SynchronizedSubscription(Subscription):
 
 
 class Subscriber(abc.ABC):
-
     '''Base class for receiving and processing activations, gradients and other stuff into
     insightful metrics.
 
@@ -167,14 +164,15 @@ class Subscriber(abc.ABC):
     def _metric(self, message_or_data):
         '''This is where the magic happens. Subclasses should override this method so that they can
         compute their metric upon reception of their desired messages. They should then use their
-        ``backend`` to publish the metric.
+        :attr:`~ikkuna.export.subscriber.PlotSubscriber.backend` property to publish the metric (if
+        they display line plots).
 
         Parameters
         ----------
         message_or_data :   ikkuna.export.messages.Message
-                            Can either be :class:`ikkuna.export.messages.MetaMessage` if the
+                            Can either be :class:`~ikkuna.export.messages.MetaMessage` if the
                             Subscriber is not interested in actual training artifacts, or
-                            :class:`ikkuna.export.messages.TrainingMessage`
+                            :class:`~ikkuna.export.messages.TrainingMessage`
         '''
         pass
 
@@ -185,7 +183,7 @@ class Subscriber(abc.ABC):
         self._metric(message)
 
     def process_data(self, module_data):
-        '''Callback for processing a :class:`ikkuna.export.messages.ModuleData` object.
+        '''Callback for processing a :class:`~ikkuna.export.messages.ModuleData` object.
 
         Parameters
         ----------
@@ -197,8 +195,8 @@ class Subscriber(abc.ABC):
         Raises
         ------
         ValueError
-            If the received :class:`ikkuna.export.messages.ModuleData` object is not
-            :meth:`ikkuna.export.messages.ModuleData.complete()`
+            If the received :class:`~ikkuna.export.messages.ModuleData` object is not
+            :meth:`~ikkuna.export.messages.ModuleData.complete()`
         '''
         if not module_data.complete():
             raise ValueError(f'Data received for "{module_data._module}" is not complete.')
@@ -219,7 +217,6 @@ class Subscriber(abc.ABC):
 
 
 class PlotSubscriber(Subscriber):
-
     '''Base class for subscribers that output scalar or histogram values per time and module
 
     Attributes
@@ -239,9 +236,6 @@ class PlotSubscriber(Subscriber):
         '''
         Parameters
         ----------
-        average :   int
-                    Inverse resolution of the plot. For plotting ``average`` ratios will be averaged
-                    for each module to remove noise.
         ylims   :   tuple(int, int)
                     Optional Y-axis limits
         '''
@@ -253,6 +247,10 @@ class PlotSubscriber(Subscriber):
             self._backend = TBBackend(**plot_config)
         else:
             self._backend = MPLBackend(**plot_config)
+
+    @property
+    def backend(self):
+        return self._backend
 
     @abc.abstractmethod
     def _metric(self, message_or_data):

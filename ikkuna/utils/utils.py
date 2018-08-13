@@ -77,8 +77,8 @@ def initialize_model(module, bias_val=0.01):
     Raises
     ------
     ValueError
-        If ``module`` is not one of the known models (currently :class:`models.AlexNetMini`
-        and :class:`models.DenseNet`)
+        If ``module`` is not one of the known models (currently :class:`~models.AlexNetMini`
+        and :class:`~models.DenseNet`)
     '''
     import models
     import torch.nn as nn

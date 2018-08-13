@@ -8,8 +8,8 @@ from ikkuna.utils import make_fill_polygons
 
 
 class Backend(abc.ABC):
-    '''Base class for visualiation backends. :class:`ikkuna.export.subscriber.Subscriber` s use this
-    class to dispatch their metrics to have them visualised.
+    '''Base class for visualiation backends. :class:`~ikkuna.export.subscriber.Subscriber` s use
+    this class to dispatch their metrics to have them visualised.
 
     Attributes
     ----------
@@ -186,7 +186,7 @@ class UpdatableHistogram(object):
 
 
 class MPLBackend(Backend):
-    '''Matplotlib backend (use in Jupyter with %matplotlib inline or via X-forwarding over ssh
+    '''Matplotlib backend (use in Jupyter with ``%matplotlib inline`` or via X-forwarding over ssh
     [barely useable])
 
     Attributes

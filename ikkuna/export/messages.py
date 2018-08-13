@@ -11,7 +11,7 @@ allowed_kinds = set.union(meta_kinds, data_kinds)
 
 class Message(object):
     '''
-    Base class for messages emitted from the :class:`ikkuna.export.Exporter`.
+    Base class for messages emitted from the :class:`~ikkuna.export.Exporter`.
 
     Attributes
     ----------
@@ -87,7 +87,7 @@ class MetaMessage(Message):
 class TrainingMessage(Message):
     '''
     These messages are assembled
-    into :class:`ModuleData` objects in the :class:`ikkuna.export.subscriber.Subscription`.
+    into :class:`ModuleData` objects in the :class:`~ikkuna.export.subscriber.Subscription`.
 
     module  :   ikkuna.utils.NamedModule
     payload :   torch.Tensor
@@ -187,7 +187,7 @@ class ModuleData(object):
             return all(map(lambda val: val is not None, self._data.values()))
 
     def _check_message(self, message):
-        '''Check consistency of sequence number, step and epocg or set if not set yet
+        '''Check consistency of sequence number, step and epoch or set if not set yet
 
         Parameters
         ----------

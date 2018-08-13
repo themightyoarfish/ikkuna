@@ -4,14 +4,13 @@ from collections import defaultdict
 
 from ikkuna.export.messages import TrainingMessage, MetaMessage
 from ikkuna.utils import ModuleTree
-import ikkuna
 
 
 class Exporter(object):
     '''Class for managing publishing of data from model code.
 
     An :class:`Exporter` is used in the model code by either explicitly registering modules for
-    tracking with :meth:`Exporter.add_modules` or by calling it with newly constructed modules
+    tracking with :meth:`~Exporter.add_modules()` or by calling it with newly constructed modules
     which will then be returned as-is, but be registered in the process.
 
     .. code-block:: python
@@ -33,8 +32,8 @@ class Exporter(object):
 
     :meth:`Exporter.epoch_finished` should be called upon finishing an epoch.
 
-    No further changes to the model code are necessary, but for a call to :meth:`Exporter.set_model`
-    to have the :class:`Exporter` wire up the appropriate callbacks.
+    No further changes to the model code are necessary, but for a call to
+    :meth:`~Exporter.set_model()` to have the :class:`Exporter` wire up the appropriate callbacks.
 
     Attributes
     ----------
@@ -46,7 +45,7 @@ class Exporter(object):
     '''
 
     def __init__(self):
-        '''Create a new ``Exporter``.'''
+        '''Create a new :class:`Exporter`.'''
         self._modules            = []
         self._weight_cache       = {}     # expensive :(
         self._bias_cache         = {}
@@ -109,7 +108,7 @@ class Exporter(object):
             raise ValueError(f'Don\'t know how to handle {module.__class__.__name__}')
 
     def __call__(self, module, recursive=True, depth=-1):
-        '''Shorthand for :meth:`Exporter.add_modules()` which returns its input unmodified.
+        '''Shorthand for :meth:`~Exporter.add_modules()` which returns its input unmodified.
 
         Parameters
         ----------
@@ -143,8 +142,8 @@ class Exporter(object):
             except StopIteration:
                 raise RuntimeError(f'Received message for unknown module {module.name}')
             msg = TrainingMessage(seq=self._global_step, tag=None, kind=kind,
-                              module=self._modules[index], step=self._train_step,
-                              epoch=self._epoch, payload=data)
+                                  module=self._modules[index], step=self._train_step,
+                                  epoch=self._epoch, payload=data)
             sub.receive_message(msg)
 
     def train(self, train=True):
@@ -185,9 +184,9 @@ class Exporter(object):
             return
         if self._train_step == 0:
             msg_epoch = TrainingMessage(seq=self._global_step, tag=None, kind='epoch_started',
-                                    step=self._train_step, epoch=self._epoch)
+                                        step=self._train_step, epoch=self._epoch)
             msg_batch = TrainingMessage(seq=self._global_step, tag=None, kind='batch_started',
-                                    step=self._train_step, epoch=self._epoch)
+                                        step=self._train_step, epoch=self._epoch)
             for sub in self._subscribers:
                 sub.receive_message(msg_epoch)
                 sub.receive_message(msg_batch)

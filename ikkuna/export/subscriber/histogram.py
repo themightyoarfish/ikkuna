@@ -4,7 +4,7 @@ from collections import defaultdict
 
 class HistogramSubscriber(PlotSubscriber):
 
-    '''A :class:`ikkuna.export.subscriber.Subscriber` which subsamples training artifacts and
+    '''A :class:`~ikkuna.export.subscriber.Subscriber` which subsamples training artifacts and
     computes histograms per epoch.  Histograms are non-normalized.
 
     Attributes

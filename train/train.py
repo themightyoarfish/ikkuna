@@ -38,8 +38,8 @@ class Trainer:
 
     def __init__(self, dataset_meta, **kwargs):
         '''Create a new Trainer. Handlers, model and optimizer are left uninitialised and must be
-        set with :meth:`train.Trainer.add_subscriber()`, :meth:`train.Trainer.add_model()` and
-        :meth:`train.Trainer.optimize()` before calling :meth:`train.Trainer.train_batch()`.
+        set with :meth:`~train.Trainer.add_subscriber()`, :meth:`~train.Trainer.add_model()` and
+        :meth:`~train.Trainer.optimize()` before calling :meth:`~train.Trainer.train_batch()`.
 
         Parameters
         ----------

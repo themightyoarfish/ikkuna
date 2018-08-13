@@ -43,8 +43,8 @@
 <dt id="ikkuna.visualization.backend.Backend">
 <em class="property">class </em><code class="descclassname">ikkuna.visualization.backend.</code><code class="descname">Backend</code><span class="sig-paren">(</span><em>title</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.visualization.backend.Backend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
-<p>Base class for visualiation backends. <a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.Subscriber</span></code></a> s use this
-class to dispatch their metrics to have them visualised.</p>
+<p>Base class for visualiation backends. <a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a> s use
+this class to dispatch their metrics to have them visualised.</p>
 <dl class="attribute">
 <dt id="ikkuna.visualization.backend.Backend.title">
 <code class="descname">title</code><a class="headerlink" href="#ikkuna.visualization.backend.Backend.title" title="Permalink to this definition">¶</a></dt>
@@ -128,7 +128,7 @@ class to dispatch their metrics to have them visualised.</p>
 <dt id="ikkuna.visualization.backend.MPLBackend">
 <em class="property">class </em><code class="descclassname">ikkuna.visualization.backend.</code><code class="descname">MPLBackend</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ikkuna.visualization.backend.Backend" title="ikkuna.visualization.backend.Backend"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.visualization.backend.Backend</span></code></a></p>
-<p>Matplotlib backend (use in Jupyter with %matplotlib inline or via X-forwarding over ssh
+<p>Matplotlib backend (use in Jupyter with <code class="docutils literal notranslate"><span class="pre">%matplotlib</span> <span class="pre">inline</span></code> or via X-forwarding over ssh
 [barely useable])</p>
 <dl class="attribute">
 <dt id="ikkuna.visualization.backend.MPLBackend._xlabel">
