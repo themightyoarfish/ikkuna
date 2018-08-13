@@ -10,7 +10,7 @@ class RatioSubscriber(PlotSubscriber):
 
     '''A :class:`ikkuna.export.subscriber.Subscriber` which computes the average ratio between two
     quantities.  The dividend will be the first element of the
-    :attr:`ikkuna.export.subscriber.Subscriber.kinds` property, the divisor the second.  Therefore
+    :attr:`ikkuna.export.subscriber.Subscription.kinds` property, the divisor the second.  Therefore
     it is vital to pass the message kinds to the :class:`ikkuna.export.subscriber.Subscription`
     object in the correct order.'''
 
