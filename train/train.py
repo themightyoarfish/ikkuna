@@ -36,10 +36,10 @@ class Trainer:
     _exporter   :   ikkuna.export.Exporter
     '''
 
-    def __init__(self, dataset_meta: DatasetMeta, **kwargs):
+    def __init__(self, dataset_meta, **kwargs):
         '''Create a new Trainer. Handlers, model and optimizer are left uninitialised and must be
-        set with :meth:`supervise()`, :meth:`add_model` and :meth:`optimize` before calling :meth:
-        `train`.
+        set with :meth:`train.Trainer.add_subscriber()`, :meth:`train.Trainer.add_model()` and
+        :meth:`train.Trainer.optimize()` before calling :meth: `train.Trainer.train()`.
 
         .. warning::
             The order of calls must be exactly the one above, as the model must be initialised with
@@ -49,8 +49,8 @@ class Trainer:
 
         Parameters
         ----------
-        dataset_meta    :   DatasetMeta
-                            Train data, obtained via :func:`_load_dataset()`
+        dataset_meta    :   train.DatasetMeta
+                            Train data, obtained via :func:`main._load_dataset()`
         batch_size  :   int
         loss   :    function
                     Defaults to torch.nn.CrossEntropyLoss

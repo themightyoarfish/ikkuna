@@ -71,6 +71,22 @@ disambiguating e.g. different successive conv layers which are children of
 the same sequential module.</p>
 </dd></dl>
 
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.nn.Module</em></a>) – </li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – If no name is given, one will be generated. If <code class="docutils literal notranslate"><span class="pre">drop_name</span> <span class="pre">==</span> <span class="pre">True</span></code>, this
+parameter is ignored</li>
+<li><strong>drop_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Ignore the given name and set it to <code class="docutils literal notranslate"><span class="pre">''</span></code>. Useful for dropping the root
+name (e.g. <code class="docutils literal notranslate"><span class="pre">alexnet</span></code>) lest it appear in every child name.</li>
+<li><strong>recursive</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Add all <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.named_children" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.named_children()</span></code></a> as children to this tree</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="ikkuna.utils.module_tree.ModuleTree.preorder">
 <code class="descname">preorder</code><span class="sig-paren">(</span><em>depth=-1</em>, <em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.module_tree.ModuleTree.preorder" title="Permalink to this definition">¶</a></dt>
@@ -94,6 +110,7 @@ the same sequential module.</p>
 <dt id="ikkuna.utils.named_module.NamedModule">
 <em class="property">class </em><code class="descclassname">ikkuna.utils.named_module.</code><code class="descname">NamedModule</code><span class="sig-paren">(</span><em>module</em>, <em>name</em>, <em>parent</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.named_module.NamedModule" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
+<p>Create new instance of NamedModule(module, name, parent)</p>
 <dl class="method">
 <dt id="ikkuna.utils.named_module.NamedModule._asdict">
 <code class="descname">_asdict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.named_module.NamedModule._asdict" title="Permalink to this definition">¶</a></dt>
@@ -283,6 +300,22 @@ disambiguating e.g. different successive conv layers which are children of
 the same sequential module.</p>
 </dd></dl>
 
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><em>torch.nn.Module</em></a>) – </li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – If no name is given, one will be generated. If <code class="docutils literal notranslate"><span class="pre">drop_name</span> <span class="pre">==</span> <span class="pre">True</span></code>, this
+parameter is ignored</li>
+<li><strong>drop_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Ignore the given name and set it to <code class="docutils literal notranslate"><span class="pre">''</span></code>. Useful for dropping the root
+name (e.g. <code class="docutils literal notranslate"><span class="pre">alexnet</span></code>) lest it appear in every child name.</li>
+<li><strong>recursive</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Add all <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.named_children" title="(in PyTorch vmaster (0.5.0a0+fa5d95a ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.named_children()</span></code></a> as children to this tree</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="ikkuna.utils.ModuleTree.preorder">
 <code class="descname">preorder</code><span class="sig-paren">(</span><em>depth=-1</em>, <em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.ModuleTree.preorder" title="Permalink to this definition">¶</a></dt>
@@ -303,6 +336,7 @@ the same sequential module.</p>
 <dt id="ikkuna.utils.NamedModule">
 <em class="property">class </em><code class="descclassname">ikkuna.utils.</code><code class="descname">NamedModule</code><span class="sig-paren">(</span><em>module</em>, <em>name</em>, <em>parent</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.NamedModule" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
+<p>Create new instance of NamedModule(module, name, parent)</p>
 <dl class="method">
 <dt id="ikkuna.utils.NamedModule._asdict">
 <code class="descname">_asdict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.NamedModule._asdict" title="Permalink to this definition">¶</a></dt>

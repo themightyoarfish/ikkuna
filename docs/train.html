@@ -42,6 +42,7 @@
 <dt id="train.train.DatasetMeta">
 <em class="property">class </em><code class="descclassname">train.train.</code><code class="descname">DatasetMeta</code><a class="headerlink" href="#train.train.DatasetMeta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#train.train.DatasetMeta" title="train.train.DatasetMeta"><code class="xref py py-class docutils literal notranslate"><span class="pre">train.train.DatasetMeta</span></code></a></p>
+<p>Create new instance of DatasetMeta(dataset, num_classes, shape)</p>
 <dl class="attribute">
 <dt id="train.train.DatasetMeta.size">
 <code class="descname">size</code><a class="headerlink" href="#train.train.DatasetMeta.size" title="Permalink to this definition">¶</a></dt>
@@ -51,7 +52,7 @@
 
 <dl class="class">
 <dt id="train.train.Trainer">
-<em class="property">class </em><code class="descclassname">train.train.</code><code class="descname">Trainer</code><span class="sig-paren">(</span><em>dataset_meta: train.train.DatasetMeta</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#train.train.Trainer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">train.train.</code><code class="descname">Trainer</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#train.train.Trainer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class to bundle all logic and parameters that go into training a model on some
 dataset.</p>
@@ -109,6 +110,28 @@ dataset.</p>
 <dd><p><em>ikkuna.export.Exporter</em></p>
 </dd></dl>
 
+<p>Create a new Trainer. Handlers, model and optimizer are left uninitialised and must be
+set with <a class="reference internal" href="#train.Trainer.add_subscriber" title="train.Trainer.add_subscriber"><code class="xref py py-meth docutils literal notranslate"><span class="pre">train.Trainer.add_subscriber()</span></code></a>, <a class="reference internal" href="#train.Trainer.add_model" title="train.Trainer.add_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">train.Trainer.add_model()</span></code></a> and
+<a class="reference internal" href="#train.Trainer.optimize" title="train.Trainer.optimize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">train.Trainer.optimize()</span></code></a> before calling :meth: <cite>train.Trainer.train()</cite>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The order of calls must be exactly the one above, as the model must be initialised with
+the supervisor and the optimizer requires the model.</p>
+</div>
+<p>Relevant keyword args are:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dataset_meta</strong> (<a class="reference internal" href="#train.DatasetMeta" title="train.DatasetMeta"><em>train.DatasetMeta</em></a>) – Train data, obtained via <a class="reference internal" href="main.html#main._load_dataset" title="main._load_dataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">main._load_dataset()</span></code></a></li>
+<li><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – </li>
+<li><strong>loss</strong> (<em>function</em>) – Defaults to torch.nn.CrossEntropyLoss</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="train.train.Trainer.add_model">
 <code class="descname">add_model</code><span class="sig-paren">(</span><em>model_str</em><span class="sig-paren">)</span><a class="headerlink" href="#train.train.Trainer.add_model" title="Permalink to this definition">¶</a></dt>
@@ -185,7 +208,7 @@ restart at the beginning.</p>
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-train" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="train.Trainer">
-<em class="property">class </em><code class="descclassname">train.</code><code class="descname">Trainer</code><span class="sig-paren">(</span><em>dataset_meta: train.train.DatasetMeta</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#train.Trainer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">train.</code><code class="descname">Trainer</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#train.Trainer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class to bundle all logic and parameters that go into training a model on some
 dataset.</p>
@@ -243,6 +266,28 @@ dataset.</p>
 <dd><p><em>ikkuna.export.Exporter</em></p>
 </dd></dl>
 
+<p>Create a new Trainer. Handlers, model and optimizer are left uninitialised and must be
+set with <a class="reference internal" href="#train.Trainer.add_subscriber" title="train.Trainer.add_subscriber"><code class="xref py py-meth docutils literal notranslate"><span class="pre">train.Trainer.add_subscriber()</span></code></a>, <a class="reference internal" href="#train.Trainer.add_model" title="train.Trainer.add_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">train.Trainer.add_model()</span></code></a> and
+<a class="reference internal" href="#train.Trainer.optimize" title="train.Trainer.optimize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">train.Trainer.optimize()</span></code></a> before calling :meth: <cite>train.Trainer.train()</cite>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The order of calls must be exactly the one above, as the model must be initialised with
+the supervisor and the optimizer requires the model.</p>
+</div>
+<p>Relevant keyword args are:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dataset_meta</strong> (<a class="reference internal" href="#train.DatasetMeta" title="train.DatasetMeta"><em>train.DatasetMeta</em></a>) – Train data, obtained via <a class="reference internal" href="main.html#main._load_dataset" title="main._load_dataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">main._load_dataset()</span></code></a></li>
+<li><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – </li>
+<li><strong>loss</strong> (<em>function</em>) – Defaults to torch.nn.CrossEntropyLoss</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="train.Trainer.add_model">
 <code class="descname">add_model</code><span class="sig-paren">(</span><em>model_str</em><span class="sig-paren">)</span><a class="headerlink" href="#train.Trainer.add_model" title="Permalink to this definition">¶</a></dt>
@@ -318,6 +363,7 @@ restart at the beginning.</p>
 <dt id="train.DatasetMeta">
 <em class="property">class </em><code class="descclassname">train.</code><code class="descname">DatasetMeta</code><a class="headerlink" href="#train.DatasetMeta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#train.train.DatasetMeta" title="train.train.DatasetMeta"><code class="xref py py-class docutils literal notranslate"><span class="pre">train.train.DatasetMeta</span></code></a></p>
+<p>Create new instance of DatasetMeta(dataset, num_classes, shape)</p>
 <dl class="attribute">
 <dt id="train.DatasetMeta.size">
 <code class="descname">size</code><a class="headerlink" href="#train.DatasetMeta.size" title="Permalink to this definition">¶</a></dt>

@@ -93,10 +93,10 @@ class UpdatableHistogram(object):
         '''
         Parameters
         ----------
-        figure  :   matplotib.figure.Figure
+        figure  :   matplotlib.figure.Figure
                     Figure to add subplot to
         subplot_conf    :   int or tuple
-                            Subplot configuration. See :func:`matplotib.pyplot.subplots`
+                            Subplot configuration. See :func:`matplotlib.pyplot.subplots`
         title   :   str
                     Subplot title
         max_hists   :   int
@@ -186,7 +186,7 @@ class UpdatableHistogram(object):
 
 
 class MPLBackend(Backend):
-    '''Matplotlib backend (use in Jupyter with %matplotib inline or via X-forwarding over ssh
+    '''Matplotlib backend (use in Jupyter with %matplotlib inline or via X-forwarding over ssh
     [barely useable])
 
     Attributes

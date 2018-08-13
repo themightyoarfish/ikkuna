@@ -51,6 +51,14 @@ class to dispatch their metrics to have them visualised.</p>
 <dd><p><em>str</em> – The figure title</p>
 </dd></dl>
 
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Title to use for the figure.</td>
+</tr>
+</tbody>
+</table>
 <dl class="attribute">
 <dt id="ikkuna.visualization.backend.Backend._abc_cache">
 <code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.visualization.backend.Backend._abc_cache" title="Permalink to this definition">¶</a></dt>
@@ -120,7 +128,7 @@ class to dispatch their metrics to have them visualised.</p>
 <dt id="ikkuna.visualization.backend.MPLBackend">
 <em class="property">class </em><code class="descclassname">ikkuna.visualization.backend.</code><code class="descname">MPLBackend</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ikkuna.visualization.backend.Backend" title="ikkuna.visualization.backend.Backend"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.visualization.backend.Backend</span></code></a></p>
-<p>Matplotlib backend (use in Jupyter with %matplotib inline or via X-forwarding over ssh
+<p>Matplotlib backend (use in Jupyter with %matplotlib inline or via X-forwarding over ssh
 [barely useable])</p>
 <dl class="attribute">
 <dt id="ikkuna.visualization.backend.MPLBackend._xlabel">
@@ -170,6 +178,20 @@ class to dispatch their metrics to have them visualised.</p>
 <dd><p><em>int</em> – Size of the buffer</p>
 </dd></dl>
 
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>xlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – </li>
+<li><strong>ylabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – </li>
+<li><strong>ylims</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a>) – </li>
+<li><strong>buffer_lim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Buffer size for more reliable histograms</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="attribute">
 <dt id="ikkuna.visualization.backend.MPLBackend._abc_cache">
 <code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._abc_cache" title="Permalink to this definition">¶</a></dt>
@@ -394,6 +416,21 @@ with matplotlib.</p>
 <dd><p><em>str</em> – Plot title</p>
 </dd></dl>
 
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>figure</strong> (<a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v2.2.3)"><em>matplotlib.figure.Figure</em></a>) – Figure to add subplot to</li>
+<li><strong>subplot_conf</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a>) – Subplot configuration. See <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.subplots.html#matplotlib.pyplot.subplots" title="(in Matplotlib v2.2.3)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.subplots()</span></code></a></li>
+<li><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Subplot title</li>
+<li><strong>max_hists</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of histograms to keep</li>
+<li><strong>basecolor</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a>) – RGB tuple denoting the color of the most recent histogram.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="ikkuna.visualization.backend.UpdatableHistogram._prepare_plot">
 <code class="descname">_prepare_plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.visualization.backend.UpdatableHistogram._prepare_plot" title="Permalink to this definition">¶</a></dt>

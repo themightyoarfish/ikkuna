@@ -179,5 +179,8 @@ nitpick_ignore = [('py:mod', 'torchvision.datasets'),
                   ('py:class', 'torch.nn.modules.module.Module'),
                   ('py:class', 'Module'),
                   # This happens when inheriting from Sequential
-                  ('py:class', 'torch.nn.modules.container.Sequential')
+                  ('py:class', 'torch.nn.modules.container.Sequential'),
+                  ('py:class', 'function')
                   ]
+
+autoclass_content = 'both'
