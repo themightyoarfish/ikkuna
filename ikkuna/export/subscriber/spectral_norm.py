@@ -14,12 +14,12 @@ class SpectralNormSubscriber(PlotSubscriber):
         ----------
         see :class:`PlotSubscriber`
         '''
-        subscription      = SynchronizedSubscription(self, tag)
+        subscription = SynchronizedSubscription(self, kinds, tag, subsample)
 
         title = f'Spectral norms of {kinds[0]} per layer'
         xlabel = 'Spectral norm'
-        super().__init__(kinds, subscription, {'title': title, 'xlabel': xlabel, 'ylims': ylims},
-                         tag=tag, subsample=subsample, backend=backend)
+        super().__init__(subscription, {'title': title, 'xlabel': xlabel, 'ylims': ylims},
+                         tag=tag, backend=backend)
         self.u = dict()
 
     def _metric(self, module_data):
@@ -31,7 +31,7 @@ class SpectralNormSubscriber(PlotSubscriber):
         module  = module_data.module.name
 
         # get and reshape the weight tensor to 2d
-        weights = module_data._data[self.kinds[0]]
+        weights = module_data._data[self._subscription.kinds[0]]
         height = weights.size(0)
         weights2d = weights.reshape(height, -1)
 

@@ -36,10 +36,10 @@ class AccuracySubscriber(PlotSubscriber):
         title  = f'Test accuracy'
         ylabel = 'Accuracy'
         xlabel = 'Train step'
-        subscription = Subscription(self, tag=tag)
-        super().__init__(kinds, subscription, {'title': title, 'ylabel': ylabel, 'ylims': ylims,
-                                               xlabel: xlabel},
-                         tag=tag, subsample=subsample, backend=backend)
+        subscription = Subscription(self, kinds, tag, subsample)
+        super().__init__(subscription,
+                         {'title': title, 'ylabel': ylabel, 'ylims': ylims, xlabel: xlabel},
+                         tag=tag, backend=backend)
 
         self._dataset_meta = dataset_meta
         self._data_loader  = DataLoader(dataset_meta.dataset, batch_size=dataset_meta.size,
@@ -48,7 +48,7 @@ class AccuracySubscriber(PlotSubscriber):
         self._forward_fn   = forward_fn
 
     def _metric(self, message_or_data):
-        if self._counter['batch_finished'] % self._frequency == 0:
+        if self._subscription.counter['batch_finished'] % self._frequency == 0:
             X, labels   = next(iter(self._data_loader))
             outputs     = self._forward_fn(X.cuda(), should_train=False)
             predictions = outputs.argmax(1)

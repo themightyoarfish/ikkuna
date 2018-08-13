@@ -10,7 +10,7 @@ This module contains the base definition for subscriber functionality. The
 import abc
 from collections import defaultdict
 from ikkuna.visualization import TBBackend, MPLBackend
-from ikkuna.export.messages import ModuleData, MetaMessage, TrainingMessage
+from ikkuna.export.messages import ModuleData, TrainingMessage
 
 
 class Subscription(object):
@@ -22,9 +22,20 @@ class Subscription(object):
                 Tag for filtering the processed messages
     _subscriber :   ikkuna.export.subscriber.Subscriber
                     The subscriber associated with the subscription
+    counter    :   dict(ikkuna.utils.NamedModule or str, int)
+                    Number of times the subscriber was called for each module label or meta data
+                    identifier. Since one :class:`ikkuna.export.subscriber.Subscriber` is associated
+                    with only one configuration of :class:`ikkuna.export.messages.ModuleData`, this
+                    will enable proper subsampling of message streams.
+    kinds   :   list(str)
+                List of string identifiers for different message kinds. These are all the
+                message kinds the subscriber wishes to receive
+    _subsample  :   int
+                    Factor for subsampling incoming messages. Only every ``subsample``-th
+                    message will be processed.
     '''
 
-    def __init__(self, subscriber, tag=None):
+    def __init__(self, subscriber, kinds, tag=None, subsample=1):
         '''
         Parameters
         ----------
@@ -36,6 +47,18 @@ class Subscription(object):
         '''
         self._tag        = tag
         self._subscriber = subscriber
+        self._kinds      = kinds
+        self._counter    = defaultdict(int)
+        self._subsample  = subsample
+
+    @property
+    def counter(self):
+        # caution: if you alter this dict, you're on your own
+        return self._counter
+
+    @property
+    def kinds(self):
+        return self._kinds
 
     def _handle_message(self, message):
         '''Process a newly arrived message. Subclasses should override this method for any special
@@ -59,8 +82,16 @@ class Subscription(object):
         ----------
         message    :   ikkuna.export.messages.TrainingMessage
         '''
-        if self._tag is None or self._tag == message.tag:
+        if not (self._tag is None or self._tag == message.tag):
+            return
+
+        if message.kind not in self.kinds:
+            return
+
+        key = message.module if isinstance(message, TrainingMessage) else message.kind
+        if self._counter[key] % self._subsample == 0:
             self._handle_message(message)
+        self._counter[key] += 1
 
 
 class SynchronizedSubscription(Subscription):
@@ -68,8 +99,8 @@ class SynchronizedSubscription(Subscription):
     kind, when one round (a train step) is over. This is useful for receiving several kinds of
     messages in each train step and always have them be processed together.'''
 
-    def __init__(self, subscriber, tag=None):
-        super().__init__(subscriber, tag)
+    def __init__(self, subscriber, kinds, tag=None, subsample=1):
+        super().__init__(subscriber, kinds, tag, subsample)
         self._current_seq = None
         self._modules     = {}
         self._step        = None
@@ -105,7 +136,7 @@ class SynchronizedSubscription(Subscription):
             # module not seen -> init data
             module = message.module
             if module not in self._modules:
-                self._modules[module] = ModuleData(module, self._subscriber.kinds)
+                self._modules[module] = ModuleData(module, self.kinds)
             self._modules[module].add_message(message)
 
             delete_these = []
@@ -126,32 +157,11 @@ class Subscriber(abc.ABC):
     '''Base class for receiving and processing activations, gradients and other stuff into
     insightful metrics.
 
-    Attributes
-    ----------
-    _counter    :   dict(ikkuna.utils.NamedModule, int)
-                    Number of times the subscriber was called for each module label. Since one
-                    :class:`ikkuna.export.subscriber.Subscriber` is associated with only one
-                    configuration of :class:`ikkuna.export.messages.ModuleData`, this will enable
-                    proper subsampling the messages.
-    kinds   :   list(str)
-                List of string identifiers for different message kinds. These are all the
-                message kinds the subscriber wishes to receive
     '''
 
-    def __init__(self, kinds, subscription, tag=None, subsample=1):
-        self._counter       = defaultdict(int)
-        self._subsample     = subsample
-        self._kinds         = kinds
+    def __init__(self, subscription, tag=None):
         self._current_epoch = 0
         self._subscription  = subscription
-
-    @property
-    def kinds(self):
-        return self._kinds
-
-    @kinds.setter
-    def kinds(self, kinds):
-        self._kinds = kinds
 
     @abc.abstractmethod
     def _metric(self, message_or_data):
@@ -169,13 +179,7 @@ class Subscriber(abc.ABC):
         pass
 
     def receive_message(self, message):
-        if message.kind not in self.kinds:
-            return
-
-        key = message.module if isinstance(message, TrainingMessage) else message.kind
-        if self._counter[key] % self._subsample == 0:
-            self._subscription.handle_message(message)
-        self._counter[key] += 1
+        self._subscription.handle_message(message)
 
     def process_meta(self, message):
         self._metric(message)
@@ -231,20 +235,17 @@ class PlotSubscriber(Subscriber):
                             full-sized (no smaller last batch)
     '''
 
-    def __init__(self, kinds, subscription,  plot_config, tag=None, subsample=1, backend='tb'):
+    def __init__(self, subscription,  plot_config, tag=None, backend='tb'):
         '''
         Parameters
         ----------
-        subsample   :   int
-                        Factor for subsampling incoming messages. Only every ``subsample``-th
-                        message will be processed.
         average :   int
                     Inverse resolution of the plot. For plotting ``average`` ratios will be averaged
                     for each module to remove noise.
         ylims   :   tuple(int, int)
                     Optional Y-axis limits
         '''
-        super().__init__(kinds, subscription, tag, subsample)
+        super().__init__(subscription, tag)
 
         if backend not in ('tb', 'mpl'):
             raise ValueError('Backend must be "tb" or "mpl"')

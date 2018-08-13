@@ -24,11 +24,11 @@ class RatioSubscriber(PlotSubscriber):
         title = f'{kinds[0]}/{kinds[1]} ratios per layer'
         ylabel = 'Ratio'
         xlabel = 'Train step'
-        subscription = SynchronizedSubscription(self, tag)
-        super().__init__(kinds, subscription, {'title': title, 'ylabel': ylabel, 'ylims': ylims,
-                                               xlabel: xlabel},
-                         tag=tag, subsample=subsample,
-                         backend=backend)
+        subscription = SynchronizedSubscription(self, kinds, tag, subsample)
+        super().__init__(subscription, {'title': title,
+                                        'ylabel': ylabel,
+                                        'ylims': ylims, xlabel: xlabel},
+                         tag=tag, backend=backend)
         if absolute:
             self._metric_postprocess = torch.abs
         else:
@@ -40,8 +40,8 @@ class RatioSubscriber(PlotSubscriber):
 
         module  = module_data.module.name
 
-        dividend = module_data._data[self.kinds[0]]
-        divisor  = module_data._data[self.kinds[1]]
+        dividend = module_data._data[self._subscription.kinds[0]]
+        divisor  = module_data._data[self._subscription.kinds[1]]
 
         ######################################################################################
         #  We need to see how many NaNs we have and compute the mean only over the non-nans  #
