@@ -39,13 +39,7 @@ class Trainer:
     def __init__(self, dataset_meta, **kwargs):
         '''Create a new Trainer. Handlers, model and optimizer are left uninitialised and must be
         set with :meth:`train.Trainer.add_subscriber()`, :meth:`train.Trainer.add_model()` and
-        :meth:`train.Trainer.optimize()` before calling :meth: `train.Trainer.train()`.
-
-        .. warning::
-            The order of calls must be exactly the one above, as the model must be initialised with
-            the supervisor and the optimizer requires the model.
-
-        Relevant keyword args are:
+        :meth:`train.Trainer.optimize()` before calling :meth:`train.Trainer.train_batch()`.
 
         Parameters
         ----------
