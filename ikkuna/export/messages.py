@@ -1,5 +1,6 @@
 meta_kinds = {
-    'batch_started', 'batch_finished', 'epoch_started', 'epoch_finished'
+    'batch_started', 'batch_finished', 'epoch_started', 'epoch_finished', 'input_data',
+    'input_labels'
 }
 
 data_kinds = {
@@ -139,14 +140,15 @@ class ModuleData(object):
     '''
 
     def __init__(self, module, kinds):
-        self._module            = module
-        if isinstance(kinds, str):  # this has bitten me before. base subscriptions don't use multiple kinds
+        if isinstance(kinds, str):
+            # this has bitten me before. base `Subscription`s don't use multiple kinds
             kinds = [kinds]
-        self._expected_kinds    = kinds
-        self._data              = {kind: None for kind in kinds}
-        self._seq               = None
-        self._step              = None
-        self._epoch             = None
+        self._module         = module
+        self._expected_kinds = kinds
+        self._data           = {kind: None for kind in kinds}
+        self._seq            = None
+        self._step           = None
+        self._epoch          = None
 
     @property
     def module(self):
@@ -172,7 +174,7 @@ class ModuleData(object):
         return self._epoch
 
     def complete(self):
-        '''Check i all expected messages have been received. This means the message can be released
+        '''Check if all expected messages have been received. This means the bundle can be released
         to subscribers.
 
         Returns
@@ -254,7 +256,7 @@ class ModuleData(object):
 
     def __getattr__(self, name):
         '''Override to mimick a property for each kind of message in this data (e.g.
-        ``activations``)'''
+        ``module_data.activations`` instead of ``module_data.data['activations']``)'''
         if name in self._expected_kinds:
             return self._data[name]
         else:

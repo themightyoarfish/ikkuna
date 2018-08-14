@@ -1,24 +1,30 @@
 import torch
 from torch.nn.functional import normalize
 
-from ikkuna.export.subscriber import PlotSubscriber, SynchronizedSubscription
-
-ZERO_TENSOR = torch.tensor(0.0).cuda()
+from ikkuna.export.subscriber import PlotSubscriber, Subscription
 
 
 class SpectralNormSubscriber(PlotSubscriber):
 
-    def __init__(self, kinds, tag=None, subsample=1, ylims=None, backend='tb'):
+    def __init__(self, kind, tag=None, subsample=1, ylims=None, backend='tb'):
         '''
         Parameters
         ----------
-        see :class:`~ikkuna.export.subscriber.PlotSubscriber`
-        '''
-        subscription = SynchronizedSubscription(self, kinds, tag, subsample)
+        kind    :   str
+                    Message kind to compute spectral norm on. Doesn't make sense with kinds of
+                    non-matrix type.
 
-        title = f'Spectral norms of {kinds[0]} per layer'
-        xlabel = 'Spectral norm'
-        super().__init__(subscription, {'title': title, 'xlabel': xlabel, 'ylims': ylims},
+        For other parameters, see :class:`~ikkuna.export.subscriber.PlotSubscriber`
+        '''
+        if not isinstance(kind, str):
+            raise ValueError('SpectralNormSubscriber only accepts 1 kind')
+        subscription = Subscription(self, [kind], tag, subsample)
+
+        title = f'Spectral norms of {kind} per layer'
+        xlabel = 'Step'
+        ylabel = 'Spectral norm'
+        super().__init__(subscription,
+                         {'title': title, 'xlabel': xlabel, 'ylims': ylims, 'ylabel': ylabel},
                          tag=tag, backend=backend)
         self.u = dict()
 
@@ -28,11 +34,10 @@ class SpectralNormSubscriber(PlotSubscriber):
         possible to use SVD instead, but we are not interested in the full matrix decomposition,
         merely in the singular values.'''
 
-        module  = module_data.module.name
-
+        module    = module_data.module.name
         # get and reshape the weight tensor to 2d
-        weights = module_data._data[self._subscription.kinds[0]]
-        height = weights.size(0)
+        weights   = module_data._data[self._subscription.kinds[0]]
+        height    = weights.size(0)
         weights2d = weights.reshape(height, -1)
 
         # buffer for power iteration (don't know what the mahematical purpose is)
