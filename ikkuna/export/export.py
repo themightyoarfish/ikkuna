@@ -100,7 +100,7 @@ class Exporter(object):
         if isinstance(module, torch.nn.Module):
             module_tree = ModuleTree(module, name=name, recursive=recursive, drop_name=recursive)
             for named_module in module_tree.preorder(depth):
-                module, name, parent = named_module
+                module, name = named_module
                 self._add_module_by_name(named_module)
         else:
             raise ValueError(f'Don\'t know how to handle {module.__class__.__name__}')
