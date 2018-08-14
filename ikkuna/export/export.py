@@ -1,6 +1,5 @@
 import sys
 import torch
-from collections import defaultdict
 
 from ikkuna.export.messages import TrainingMessage, MetaMessage
 from ikkuna.utils import ModuleTree
@@ -48,8 +47,6 @@ class Exporter(object):
         self._weight_cache       = {}     # expensive :(
         self._bias_cache         = {}
         self._subscribers        = set()
-        self._activation_counter = defaultdict(int)
-        self._gradient_counter   = defaultdict(int)
         self._model              = None
         self._train_step         = 0
         self._epoch              = 0
@@ -189,7 +186,6 @@ class Exporter(object):
                 sub.receive_message(msg_epoch)
                 sub.receive_message(msg_batch)
 
-        self._activation_counter[module] += 1
         if hasattr(module, 'weight'):
             if module in self._weight_cache:
                 self.export('weight_updates', module, module.weight - self._weight_cache[module])
@@ -222,7 +218,6 @@ class Exporter(object):
         '''
         if not self._is_training:
             return
-        self._gradient_counter[module] += 1
         if isinstance(out_, tuple):
             if len(out_) > 1:
                 raise RuntimeError(f'Not sure what to do with tuple gradients.')
