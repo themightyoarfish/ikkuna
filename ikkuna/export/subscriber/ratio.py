@@ -7,7 +7,6 @@ ZERO_TENSOR = torch.tensor(0.0).cuda()
 
 
 class RatioSubscriber(PlotSubscriber):
-
     '''A :class:`~ikkuna.export.subscriber.Subscriber` which computes the average ratio between two
     quantities.  The dividend will be the first element of the
     :attr:`~ikkuna.export.subscriber.Subscription.kinds` property, the divisor the second.
@@ -21,13 +20,14 @@ class RatioSubscriber(PlotSubscriber):
         absolute :  bool
                     Whether to use absolute ratio
         '''
-        title = f'{kinds[0]}/{kinds[1]} ratios per layer'
-        ylabel = 'Ratio'
-        xlabel = 'Train step'
+        title        = f'{kinds[0]}/{kinds[1]} ratios per layer'
+        ylabel       = 'Ratio'
+        xlabel       = 'Train step'
         subscription = SynchronizedSubscription(self, kinds, tag, subsample)
         super().__init__(subscription, {'title': title,
                                         'ylabel': ylabel,
-                                        'ylims': ylims, xlabel: xlabel},
+                                        'ylims': ylims,
+                                        'xlabel': xlabel},
                          tag=tag, backend=backend)
         if absolute:
             self._metric_postprocess = torch.abs
