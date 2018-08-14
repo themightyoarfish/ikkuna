@@ -12,7 +12,7 @@ accepts the following arguments:
 ####################
 #  stdlib imports  #
 ####################
-from argparse import ArgumentParser
+from argparse import ArgumentParser, ArgumentTypeError
 import time
 import random
 import os
@@ -126,23 +126,31 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
     trainer.add_model(model_str)
     trainer.optimize(name=optimizer)
 
-    ratio_subscriber = RatioSubscriber(['weight_updates', 'weights'],
-                                       subsample=kwargs['subsample'],
-                                       ylims=kwargs.get('ylims'),
-                                       backend=kwargs['visualisation'])
-    # spectral_norm_subscriber = SpectralNormSubscriber(['weights'],
-    #                                                   ylims=kwargs['ylims'],
-    #                                                   subsample=kwargs['subsample'],
-    #                                                   backend=kwargs['visualisation']
-    #                                                   )
-    # test_accuracy_subscriber = AccuracySubscriber(dataset_test, trainer.model.forward,
-    #                                               frequency=trainer.batches_per_epoch)
-    # histogram_subscriber = HistogramSubscriber(['activations'], backend=kwargs['visualisation'])
+    if kwargs['spectral_norm']:
+        spectral_norm_subscriber = SpectralNormSubscriber(['weights'],
+                                                        ylims=kwargs['ylims'],
+                                                        subsample=kwargs['subsample'],
+                                                        backend=kwargs['visualisation']
+                                                        )
+        trainer.add_subscriber(spectral_norm_subscriber)
 
-    # trainer.add_subscriber(spectral_norm_subscriber)
-    trainer.add_subscriber(ratio_subscriber)
-    # trainer.add_subscriber(test_accuracy_subscriber)
-    # trainer.add_subscriber(histogram_subscriber)
+    if kwargs['test_accuracy']:
+        test_accuracy_subscriber = AccuracySubscriber(dataset_test, trainer.model.forward,
+                                                      frequency=trainer.batches_per_epoch)
+        trainer.add_subscriber(test_accuracy_subscriber)
+
+    if kwargs['ratio']:
+        for kind1, kind2 in kwargs['ratio']:
+            ratio_subscriber = RatioSubscriber([kind1, kind2],
+                                            subsample=kwargs['subsample'],
+                                            ylims=kwargs.get('ylims'),
+                                            backend=kwargs['visualisation'])
+            trainer.add_subscriber(ratio_subscriber)
+
+    if kwargs['histogram']:
+        for kind in kwargs['histogram']:
+            histogram_subscriber = HistogramSubscriber([kind], backend=kwargs['visualisation'])
+            trainer.add_subscriber(histogram_subscriber)
 
     batches_per_epoch = trainer.batches_per_epoch
     print(f'Batches per epoch: {batches_per_epoch}')
@@ -177,6 +185,15 @@ def get_parser():
     -------
     argparse.ArgumentParser
     '''
+
+    def list_of_tuples(input_):
+        '''argparse type for passing a list of tuples'''
+        try:
+            kind1, kind2 = input_.split(',')
+            return (kind1, kind2)
+        except:
+            raise ArgumentTypeError('Values must be passed as val1,val2 (without space)')
+
     parser = ArgumentParser()
     parser.add_argument(
         '-m',
@@ -196,6 +213,10 @@ def get_parser():
     parser.add_argument('-y', '--ylims', nargs=2, type=int, default=None)
     parser.add_argument('-v', '--visualisation', type=str, choices=['tb', 'mpl'], default='tb')
     parser.add_argument('-V', '--verbose', action='store_true')
+    parser.add_argument('--spectral-norm', action='store_true')
+    parser.add_argument('--histogram', nargs='*', type=str, default=None)
+    parser.add_argument('--ratio', type=list_of_tuples, nargs='*', default=None)
+    parser.add_argument('--test-accuracy', action='store_true')
     return parser
 
 
