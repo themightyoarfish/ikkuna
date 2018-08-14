@@ -172,7 +172,7 @@ class DenseNet(nn.Module):
             elif 'classifier' in name and 'bias' in name:
                 param.data.fill_(0)
 
-        self._exporter(self, depth=3)
+        self._exporter(self)
 
     def forward(self, x):
         features = self.features(x)
