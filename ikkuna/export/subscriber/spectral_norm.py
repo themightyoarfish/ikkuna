@@ -36,7 +36,7 @@ class SpectralNormSubscriber(PlotSubscriber):
 
         module    = module_data.module.name
         # get and reshape the weight tensor to 2d
-        weights   = module_data._data[self._subscription.kinds[0]]
+        weights   = module_data.data[self._subscription.kinds[0]]
         height    = weights.size(0)
         weights2d = weights.reshape(height, -1)
 

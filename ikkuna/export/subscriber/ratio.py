@@ -40,13 +40,16 @@ class RatioSubscriber(PlotSubscriber):
 
         module  = module_data.module.name
 
-        dividend = module_data._data[self._subscription.kinds[0]]
-        divisor  = module_data._data[self._subscription.kinds[1]]
+        dividend = module_data.data[self._subscription.kinds[0]]
+        divisor  = module_data.data[self._subscription.kinds[1]]
 
         ######################################################################################
         #  We need to see how many NaNs we have and compute the mean only over the non-nans  #
         ######################################################################################
-        ratio_tensor = self._metric_postprocess(dividend.div(divisor))
+        try:
+            ratio_tensor = self._metric_postprocess(dividend.div(divisor))
+        except:
+            __import__('ipdb').set_trace()
         n            = float(divisor.numel())
         nan_tensor   = torch.isnan(ratio_tensor)
         n_nans       = nan_tensor.sum().to(torch.float32)
