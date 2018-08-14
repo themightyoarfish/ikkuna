@@ -195,28 +195,31 @@ def get_parser():
             raise ArgumentTypeError('Values must be passed as val1,val2 (without space)')
 
     parser = ArgumentParser()
-    parser.add_argument(
-        '-m',
-        '--model',
-        type=str,
-        choices=[
-            'AlexNetMini',
-            'DenseNet'],
-        required=True)
+    parser.add_argument( '-m', '--model', type=str, choices=[ 'AlexNetMini', 'DenseNet'],
+                        required=True, help='Model class to train')
     data_choices = ['MNIST', 'FashionMNIST', 'CIFAR10', 'CIFAR100']
-    parser.add_argument('-d', '--dataset', type=str, choices=data_choices, required=True)
+    parser.add_argument('-d', '--dataset', type=str, choices=data_choices, required=True,
+                        help='Dataset to train on')
     parser.add_argument('-b', '--batch-size', type=int, default=128)
     parser.add_argument('-e', '--epochs', type=int, default=10)
-    parser.add_argument('-o', '--optimizer', type=str, default='Adam')
-    parser.add_argument('-a', '--average', type=int, default=10)
-    parser.add_argument('-s', '--subsample', type=int, default=1)
-    parser.add_argument('-y', '--ylims', nargs=2, type=int, default=None)
-    parser.add_argument('-v', '--visualisation', type=str, choices=['tb', 'mpl'], default='tb')
-    parser.add_argument('-V', '--verbose', action='store_true')
-    parser.add_argument('--spectral-norm', action='store_true')
-    parser.add_argument('--histogram', nargs='*', type=str, default=None)
-    parser.add_argument('--ratio', type=list_of_tuples, nargs='*', default=None)
-    parser.add_argument('--test-accuracy', action='store_true')
+    parser.add_argument('-o', '--optimizer', type=str, default='Adam', help='Optimizer to use')
+    parser.add_argument('-a', '--ratio-average', type=int, default=10, help='Number of ratios to '
+                        'average for stability (currently unused)')
+    parser.add_argument('-s', '--subsample', type=int, default=1,
+                        help='Number of batches to ignore between updates')
+    parser.add_argument('-y', '--ylims', nargs=2, type=int, default=None,
+                        help='Y-axis limits for plots')
+    parser.add_argument('-v', '--visualisation', type=str, choices=['tb', 'mpl'], default='tb',
+                        help='Visualisation backend to use.')
+    parser.add_argument('-V', '--verbose', action='store_true', help='Print training progress')
+    parser.add_argument('--spectral-norm', action='store_true',
+                        help='Use spectral norm subscriber on weights')
+    parser.add_argument('--histogram', nargs='*', type=str, default=None,
+                        help='Use histogram subscriber(s)')
+    parser.add_argument('--ratio', type=list_of_tuples, nargs='*', default=None,
+                        help='Use ratio subscriber(s)')
+    parser.add_argument('--test-accuracy', action='store_true',
+                        help='Use test set accuracy subscriber')
     return parser
 
 
