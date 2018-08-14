@@ -127,11 +127,11 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
     trainer.optimize(name=optimizer)
 
     if kwargs['spectral_norm']:
-        spectral_norm_subscriber = SpectralNormSubscriber(['weights'],
-                                                        ylims=kwargs['ylims'],
-                                                        subsample=kwargs['subsample'],
-                                                        backend=kwargs['visualisation']
-                                                        )
+        spectral_norm_subscriber = SpectralNormSubscriber('weights',
+                                                          ylims=kwargs['ylims'],
+                                                          subsample=kwargs['subsample'],
+                                                          backend=kwargs['visualisation']
+                                                          )
         trainer.add_subscriber(spectral_norm_subscriber)
 
     if kwargs['test_accuracy']:
@@ -142,9 +142,9 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
     if kwargs['ratio']:
         for kind1, kind2 in kwargs['ratio']:
             ratio_subscriber = RatioSubscriber([kind1, kind2],
-                                            subsample=kwargs['subsample'],
-                                            ylims=kwargs.get('ylims'),
-                                            backend=kwargs['visualisation'])
+                                               subsample=kwargs['subsample'],
+                                               ylims=kwargs.get('ylims'),
+                                               backend=kwargs['visualisation'])
             trainer.add_subscriber(ratio_subscriber)
 
     if kwargs['histogram']:
@@ -191,11 +191,11 @@ def get_parser():
         try:
             kind1, kind2 = input_.split(',')
             return (kind1, kind2)
-        except:
+        except:     # noqa
             raise ArgumentTypeError('Values must be passed as val1,val2 (without space)')
 
     parser = ArgumentParser()
-    parser.add_argument( '-m', '--model', type=str, choices=[ 'AlexNetMini', 'DenseNet'],
+    parser.add_argument('-m', '--model', type=str, choices=['AlexNetMini', 'DenseNet'],
                         required=True, help='Model class to train')
     data_choices = ['MNIST', 'FashionMNIST', 'CIFAR10', 'CIFAR100']
     parser.add_argument('-d', '--dataset', type=str, choices=data_choices, required=True,
