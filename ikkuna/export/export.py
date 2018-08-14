@@ -1,5 +1,6 @@
 import sys
 import torch
+from collections import defaultdict
 
 from ikkuna.export.messages import TrainingMessage, MetaMessage
 from ikkuna.utils import ModuleTree
@@ -39,23 +40,38 @@ class Exporter(object):
     _weight_cache   :   dict
                         Cache for keeping the previous weights for computing differences
     _bias_cache :   dict
+                    see ``_weight_cache``
+    _subscribers    :   set(ikkuna.export.subscriber.Subscriber)
+    _model          :   torch.nn.Module
+    _train_step :   int
+                    Current batch index
+    _global_step    :   int
+                        Global step accross all epochs
+    _epoch  :   int
+                Current epoch
+    _is_training    :   bool
+                        Flag enabling/disabling some messages during testing
+    _did_publish_grads  :   defaultdict(bool)
+                            Record for whether gradients have already been published at this train
+                            step.  This is necessary since tensor hooks are called mutliple times.
     '''
 
     def __init__(self):
-        '''Create a new :class:`Exporter`.'''
-        self._modules            = []
-        self._weight_cache       = {}     # expensive :(
-        self._bias_cache         = {}
-        self._subscribers        = set()
-        self._model              = None
-        self._train_step         = 0
-        self._epoch              = 0
-        self._global_step        = 0
-        self._is_training        = True
+        self._modules           = []
+        self._weight_cache      = {}     # potential memory hog
+        self._bias_cache        = {}
+        self._subscribers       = set()
+        self._model             = None
+        self._train_step        = 0
+        self._epoch             = 0
+        self._global_step       = 0
+        self._is_training       = True
+        self._did_publish_grads = defaultdict(bool)
 
     def _check_model(self):
         if not self._model:
-            print('Warning: No model set. This will either do nothing or crash.', file=sys.stderr)
+            import warnings
+            warnings.warn('Warning: No model set. This will either do nothing or crash.')
 
     def subscribe(self, subscriber):
         '''Add a subscriber.
@@ -71,7 +87,40 @@ class Exporter(object):
         module = named_module.module
         self._modules.append(named_module)
         module.register_forward_hook(self.new_activations)
-        module.register_backward_hook(self.new_gradients)
+
+
+        has_bias = hasattr(module, 'bias') and module.bias is not None
+        has_weight = hasattr(module, 'weight') and module.weight is not None
+        if not has_weight and not has_bias:
+            return
+
+        # For some reason, registered tensor hooks are called twicein my setup. Maybe this means
+        # that the gradient is computed twice, because the grad tensors are identical. Not sure why
+        # this is so.
+        # cache weight and bias gradients and only call new_gradients when both are received
+        grad_cache = {'weight': None, 'bias': None}
+
+        def weight_hook(grad):
+            if self._did_publish_grads[module]:
+                return
+            else:
+                grad_cache['weight'] = grad
+                if not has_bias or grad_cache['bias'] is not None:
+                    self.new_gradients(module, (grad_cache['weight'], grad_cache['bias']))
+                    self._did_publish_grads[module] = True
+
+        def bias_hook(grad):
+            if self._did_publish_grads[module]:
+                return
+            else:
+                grad_cache['bias'] = grad
+                if not has_bias or grad_cache['weight'] is not None:
+                    self.new_gradients(module, (grad_cache['weight'], grad_cache['bias']))
+                    self._did_publish_grads[module] = True
+
+        if has_bias:
+            module.bias.register_hook(bias_hook)
+        module.weight.register_hook(weight_hook)
 
     def add_modules(self, module, recursive=True, depth=-1):
         '''Add modules to supervise. If the module has ``weight`` and/or ``bias`` members, updates
@@ -130,15 +179,15 @@ class Exporter(object):
                     Payload
         '''
         self._check_model()
+        try:
+            # TODO: Can I save the NamedModule instead of having to searh for it?
+            index = next(i for i, m in enumerate(self._modules) if m.module == module)
+        except StopIteration:
+            raise RuntimeError(f'Received message for unknown module {module.name}')
+        msg = TrainingMessage(seq=self._global_step, tag=None, kind=kind,
+                                module=self._modules[index], step=self._train_step,
+                                epoch=self._epoch, payload=data)
         for sub in self._subscribers:
-            try:
-                # TODO: Can I save the NamedModule instead of having to searh for it?
-                index = next(i for i, m in enumerate(self._modules) if m.module == module)
-            except StopIteration:
-                raise RuntimeError(f'Received message for unknown module {module.name}')
-            msg = TrainingMessage(seq=self._global_step, tag=None, kind=kind,
-                                  module=self._modules[index], step=self._train_step,
-                                  epoch=self._epoch, payload=data)
             sub.receive_message(msg)
 
     def train(self, train=True):
@@ -204,26 +253,19 @@ class Exporter(object):
             self._bias_cache[module] = torch.tensor(module.bias)
         self.export('activations', module, out_)
 
-    def new_gradients(self, module, in_, out_):
+    def new_gradients(self, module, gradients):
         '''Callback for newly arriving gradients. Registered as a hook to the tracked modules.
         Will trigger export of all new gradient data.
 
         Parameters
         ----------
         module  :   torch.nn.Module
-        in_ :   torch.Tensor
-                Dunno what this is
-        out_    :   torch.Tensor
-                    The new activations
+        gradients    :   tuple(torch.Tensor, torch.Tensor)
+                        The gradients w.r.t weight and bias.
         '''
-        if not self._is_training:
-            return
-        if isinstance(out_, tuple):
-            if len(out_) > 1:
-                raise RuntimeError(f'Not sure what to do with tuple gradients.')
-            else:
-                out_, = out_
-        self.export('gradients', module, out_)
+        # For some reason, the grad hooks get called twice per step, so only export the first time
+        self.export('weight_gradients', module, gradients[0])
+        self.export('bias_gradients', module, gradients[1])
 
     def set_model(self, model):
         '''Set the model for direct access for some metrics.
@@ -272,6 +314,8 @@ class Exporter(object):
                           step=self._train_step, epoch=self._epoch)
         for sub in self._subscribers:
             sub.receive_message(msg)
+
+        self._did_publish_grads.clear()
 
     def epoch_finished(self):
         '''Increase the epoch counter and reset the batch counter.'''

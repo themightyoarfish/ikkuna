@@ -89,13 +89,15 @@ name (e.g. <code class="docutils literal notranslate"><span class="pre">alexnet<
 </table>
 <dl class="method">
 <dt id="ikkuna.utils.module_tree.ModuleTree.preorder">
-<code class="descname">preorder</code><span class="sig-paren">(</span><em>depth=-1</em>, <em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.module_tree.ModuleTree.preorder" title="Permalink to this definition">¶</a></dt>
+<code class="descname">preorder</code><span class="sig-paren">(</span><em>depth=-1</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.module_tree.ModuleTree.preorder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Traverse the tree in preorder.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Yields:</th><td class="field-body"><em>ikkuna.utils.NamedModule</em> – Tuple of name, module and parent module</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>depth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Depth to which to traverse the tree. -1 means infinite depth.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><em>ikkuna.utils.NamedModule</em> – Tuple of name, module and parent module</td>
 </tr>
 </tbody>
 </table>
@@ -108,9 +110,9 @@ name (e.g. <code class="docutils literal notranslate"><span class="pre">alexnet<
 <span id="ikkuna-utils-named-module-module"></span><h2>ikkuna.utils.named_module module<a class="headerlink" href="#module-ikkuna.utils.named_module" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="ikkuna.utils.named_module.NamedModule">
-<em class="property">class </em><code class="descclassname">ikkuna.utils.named_module.</code><code class="descname">NamedModule</code><span class="sig-paren">(</span><em>module</em>, <em>name</em>, <em>parent</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.named_module.NamedModule" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ikkuna.utils.named_module.</code><code class="descname">NamedModule</code><span class="sig-paren">(</span><em>module</em>, <em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.named_module.NamedModule" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
-<p>Create new instance of NamedModule(module, name, parent)</p>
+<p>Create new instance of NamedModule(module, name)</p>
 <dl class="method">
 <dt id="ikkuna.utils.named_module.NamedModule._asdict">
 <code class="descname">_asdict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.named_module.NamedModule._asdict" title="Permalink to this definition">¶</a></dt>
@@ -119,7 +121,7 @@ name (e.g. <code class="docutils literal notranslate"><span class="pre">alexnet<
 
 <dl class="attribute">
 <dt id="ikkuna.utils.named_module.NamedModule._fields">
-<code class="descname">_fields</code><em class="property"> = ('module', 'name', 'parent')</em><a class="headerlink" href="#ikkuna.utils.named_module.NamedModule._fields" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_fields</code><em class="property"> = ('module', 'name')</em><a class="headerlink" href="#ikkuna.utils.named_module.NamedModule._fields" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="classmethod">
@@ -136,7 +138,7 @@ name (e.g. <code class="docutils literal notranslate"><span class="pre">alexnet<
 
 <dl class="attribute">
 <dt id="ikkuna.utils.named_module.NamedModule._source">
-<code class="descname">_source</code><em class="property"> = &quot;from builtins import property as _property, tuple as _tuple\nfrom operator import itemgetter as _itemgetter\nfrom collections import OrderedDict\n\nclass NamedModule(tuple):\n    'NamedModule(module, name, parent)'\n\n    __slots__ = ()\n\n    _fields = ('module', 'name', 'parent')\n\n    def __new__(_cls, module, name, parent):\n        'Create new instance of NamedModule(module, name, parent)'\n        return _tuple.__new__(_cls, (module, name, parent))\n\n    &#64;classmethod\n    def _make(cls, iterable, new=tuple.__new__, len=len):\n        'Make a new NamedModule object from a sequence or iterable'\n        result = new(cls, iterable)\n        if len(result) != 3:\n            raise TypeError('Expected 3 arguments, got %d' % len(result))\n        return result\n\n    def _replace(_self, **kwds):\n        'Return a new NamedModule object replacing specified fields with new values'\n        result = _self._make(map(kwds.pop, ('module', 'name', 'parent'), _self))\n        if kwds:\n            raise ValueError('Got unexpected field names: %r' % list(kwds))\n        return result\n\n    def __repr__(self):\n        'Return a nicely formatted representation string'\n        return self.__class__.__name__ + '(module=%r, name=%r, parent=%r)' % self\n\n    def _asdict(self):\n        'Return a new OrderedDict which maps field names to their values.'\n        return OrderedDict(zip(self._fields, self))\n\n    def __getnewargs__(self):\n        'Return self as a plain tuple.  Used by copy and pickle.'\n        return tuple(self)\n\n    module = _property(_itemgetter(0), doc='Alias for field number 0')\n\n    name = _property(_itemgetter(1), doc='Alias for field number 1')\n\n    parent = _property(_itemgetter(2), doc='Alias for field number 2')\n\n&quot;</em><a class="headerlink" href="#ikkuna.utils.named_module.NamedModule._source" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_source</code><em class="property"> = &quot;from builtins import property as _property, tuple as _tuple\nfrom operator import itemgetter as _itemgetter\nfrom collections import OrderedDict\n\nclass NamedModule(tuple):\n    'NamedModule(module, name)'\n\n    __slots__ = ()\n\n    _fields = ('module', 'name')\n\n    def __new__(_cls, module, name):\n        'Create new instance of NamedModule(module, name)'\n        return _tuple.__new__(_cls, (module, name))\n\n    &#64;classmethod\n    def _make(cls, iterable, new=tuple.__new__, len=len):\n        'Make a new NamedModule object from a sequence or iterable'\n        result = new(cls, iterable)\n        if len(result) != 2:\n            raise TypeError('Expected 2 arguments, got %d' % len(result))\n        return result\n\n    def _replace(_self, **kwds):\n        'Return a new NamedModule object replacing specified fields with new values'\n        result = _self._make(map(kwds.pop, ('module', 'name'), _self))\n        if kwds:\n            raise ValueError('Got unexpected field names: %r' % list(kwds))\n        return result\n\n    def __repr__(self):\n        'Return a nicely formatted representation string'\n        return self.__class__.__name__ + '(module=%r, name=%r)' % self\n\n    def _asdict(self):\n        'Return a new OrderedDict which maps field names to their values.'\n        return OrderedDict(zip(self._fields, self))\n\n    def __getnewargs__(self):\n        'Return self as a plain tuple.  Used by copy and pickle.'\n        return tuple(self)\n\n    module = _property(_itemgetter(0), doc='Alias for field number 0')\n\n    name = _property(_itemgetter(1), doc='Alias for field number 1')\n\n&quot;</em><a class="headerlink" href="#ikkuna.utils.named_module.NamedModule._source" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -149,12 +151,6 @@ name (e.g. <code class="docutils literal notranslate"><span class="pre">alexnet<
 <dt id="ikkuna.utils.named_module.NamedModule.name">
 <code class="descname">name</code><a class="headerlink" href="#ikkuna.utils.named_module.NamedModule.name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 1</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.utils.named_module.NamedModule.parent">
-<code class="descname">parent</code><a class="headerlink" href="#ikkuna.utils.named_module.NamedModule.parent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 2</p>
 </dd></dl>
 
 </dd></dl>
@@ -318,13 +314,15 @@ name (e.g. <code class="docutils literal notranslate"><span class="pre">alexnet<
 </table>
 <dl class="method">
 <dt id="ikkuna.utils.ModuleTree.preorder">
-<code class="descname">preorder</code><span class="sig-paren">(</span><em>depth=-1</em>, <em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.ModuleTree.preorder" title="Permalink to this definition">¶</a></dt>
+<code class="descname">preorder</code><span class="sig-paren">(</span><em>depth=-1</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.ModuleTree.preorder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Traverse the tree in preorder.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Yields:</th><td class="field-body"><em>ikkuna.utils.NamedModule</em> – Tuple of name, module and parent module</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>depth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Depth to which to traverse the tree. -1 means infinite depth.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><em>ikkuna.utils.NamedModule</em> – Tuple of name, module and parent module</td>
 </tr>
 </tbody>
 </table>
@@ -334,9 +332,9 @@ name (e.g. <code class="docutils literal notranslate"><span class="pre">alexnet<
 
 <dl class="class">
 <dt id="ikkuna.utils.NamedModule">
-<em class="property">class </em><code class="descclassname">ikkuna.utils.</code><code class="descname">NamedModule</code><span class="sig-paren">(</span><em>module</em>, <em>name</em>, <em>parent</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.NamedModule" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ikkuna.utils.</code><code class="descname">NamedModule</code><span class="sig-paren">(</span><em>module</em>, <em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.NamedModule" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
-<p>Create new instance of NamedModule(module, name, parent)</p>
+<p>Create new instance of NamedModule(module, name)</p>
 <dl class="method">
 <dt id="ikkuna.utils.NamedModule._asdict">
 <code class="descname">_asdict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.utils.NamedModule._asdict" title="Permalink to this definition">¶</a></dt>
@@ -345,7 +343,7 @@ name (e.g. <code class="docutils literal notranslate"><span class="pre">alexnet<
 
 <dl class="attribute">
 <dt id="ikkuna.utils.NamedModule._fields">
-<code class="descname">_fields</code><em class="property"> = ('module', 'name', 'parent')</em><a class="headerlink" href="#ikkuna.utils.NamedModule._fields" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_fields</code><em class="property"> = ('module', 'name')</em><a class="headerlink" href="#ikkuna.utils.NamedModule._fields" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="classmethod">
@@ -362,7 +360,7 @@ name (e.g. <code class="docutils literal notranslate"><span class="pre">alexnet<
 
 <dl class="attribute">
 <dt id="ikkuna.utils.NamedModule._source">
-<code class="descname">_source</code><em class="property"> = &quot;from builtins import property as _property, tuple as _tuple\nfrom operator import itemgetter as _itemgetter\nfrom collections import OrderedDict\n\nclass NamedModule(tuple):\n    'NamedModule(module, name, parent)'\n\n    __slots__ = ()\n\n    _fields = ('module', 'name', 'parent')\n\n    def __new__(_cls, module, name, parent):\n        'Create new instance of NamedModule(module, name, parent)'\n        return _tuple.__new__(_cls, (module, name, parent))\n\n    &#64;classmethod\n    def _make(cls, iterable, new=tuple.__new__, len=len):\n        'Make a new NamedModule object from a sequence or iterable'\n        result = new(cls, iterable)\n        if len(result) != 3:\n            raise TypeError('Expected 3 arguments, got %d' % len(result))\n        return result\n\n    def _replace(_self, **kwds):\n        'Return a new NamedModule object replacing specified fields with new values'\n        result = _self._make(map(kwds.pop, ('module', 'name', 'parent'), _self))\n        if kwds:\n            raise ValueError('Got unexpected field names: %r' % list(kwds))\n        return result\n\n    def __repr__(self):\n        'Return a nicely formatted representation string'\n        return self.__class__.__name__ + '(module=%r, name=%r, parent=%r)' % self\n\n    def _asdict(self):\n        'Return a new OrderedDict which maps field names to their values.'\n        return OrderedDict(zip(self._fields, self))\n\n    def __getnewargs__(self):\n        'Return self as a plain tuple.  Used by copy and pickle.'\n        return tuple(self)\n\n    module = _property(_itemgetter(0), doc='Alias for field number 0')\n\n    name = _property(_itemgetter(1), doc='Alias for field number 1')\n\n    parent = _property(_itemgetter(2), doc='Alias for field number 2')\n\n&quot;</em><a class="headerlink" href="#ikkuna.utils.NamedModule._source" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_source</code><em class="property"> = &quot;from builtins import property as _property, tuple as _tuple\nfrom operator import itemgetter as _itemgetter\nfrom collections import OrderedDict\n\nclass NamedModule(tuple):\n    'NamedModule(module, name)'\n\n    __slots__ = ()\n\n    _fields = ('module', 'name')\n\n    def __new__(_cls, module, name):\n        'Create new instance of NamedModule(module, name)'\n        return _tuple.__new__(_cls, (module, name))\n\n    &#64;classmethod\n    def _make(cls, iterable, new=tuple.__new__, len=len):\n        'Make a new NamedModule object from a sequence or iterable'\n        result = new(cls, iterable)\n        if len(result) != 2:\n            raise TypeError('Expected 2 arguments, got %d' % len(result))\n        return result\n\n    def _replace(_self, **kwds):\n        'Return a new NamedModule object replacing specified fields with new values'\n        result = _self._make(map(kwds.pop, ('module', 'name'), _self))\n        if kwds:\n            raise ValueError('Got unexpected field names: %r' % list(kwds))\n        return result\n\n    def __repr__(self):\n        'Return a nicely formatted representation string'\n        return self.__class__.__name__ + '(module=%r, name=%r)' % self\n\n    def _asdict(self):\n        'Return a new OrderedDict which maps field names to their values.'\n        return OrderedDict(zip(self._fields, self))\n\n    def __getnewargs__(self):\n        'Return self as a plain tuple.  Used by copy and pickle.'\n        return tuple(self)\n\n    module = _property(_itemgetter(0), doc='Alias for field number 0')\n\n    name = _property(_itemgetter(1), doc='Alias for field number 1')\n\n&quot;</em><a class="headerlink" href="#ikkuna.utils.NamedModule._source" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -375,12 +373,6 @@ name (e.g. <code class="docutils literal notranslate"><span class="pre">alexnet<
 <dt id="ikkuna.utils.NamedModule.name">
 <code class="descname">name</code><a class="headerlink" href="#ikkuna.utils.NamedModule.name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 1</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.utils.NamedModule.parent">
-<code class="descname">parent</code><a class="headerlink" href="#ikkuna.utils.NamedModule.parent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 2</p>
 </dd></dl>
 
 </dd></dl>
