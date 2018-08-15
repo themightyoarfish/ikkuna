@@ -6,9 +6,7 @@ class TrainAccuracySubscriber(PlotSubscriber):
 
     def __init__(self, tag=None, subsample=1, ylims=None, backend='tb'):
         '''
-        Parameters
-        ----------
-        see :class:`~ikkuna.export.subscriber.PlotSubscriber`
+        For parameters see :class:`~ikkuna.export.subscriber.PlotSubscriber`
         '''
         subscription = SynchronizedSubscription(self, ['network_output', 'input_labels'], tag,
                                                 subsample)

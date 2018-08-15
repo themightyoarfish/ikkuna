@@ -489,7 +489,7 @@ which kinds were received in this round.</p>
 <span id="ikkuna-export-subscriber-test-accuracy-module"></span><h2>ikkuna.export.subscriber.test_accuracy module<a class="headerlink" href="#module-ikkuna.export.subscriber.test_accuracy" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="ikkuna.export.subscriber.test_accuracy.TestAccuracySubscriber">
-<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.test_accuracy.</code><code class="descname">TestAccuracySubscriber</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>forward_fn</em>, <em>frequency=100</em>, <em>ylims=None</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.test_accuracy.TestAccuracySubscriber" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.test_accuracy.</code><code class="descname">TestAccuracySubscriber</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>forward_fn</em>, <em>batch_size</em>, <em>frequency=100</em>, <em>ylims=None</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.test_accuracy.TestAccuracySubscriber" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ikkuna.export.subscriber.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.subscriber.PlotSubscriber</span></code></a></p>
 <p>Subscriber which can compute the accuracy on a given data set (generally the test/validation
 set).</p>
@@ -523,8 +523,11 @@ set).</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>dataset_meta</strong> (<a class="reference internal" href="train.html#train.DatasetMeta" title="train.DatasetMeta"><em>train.DatasetMeta</em></a>) – Test dataset</li>
-<li><strong>forward_fn</strong> (<em>function</em>) – Bound version of <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.forward" title="(in PyTorch vmaster (0.5.0a0+ce8e8fe ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.forward()</span></code></a>. This could be obtained
+<li><strong>forward_fn</strong> (<em>function</em>) – Bound version of <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.forward" title="(in PyTorch vmaster (0.5.0a0+0f05f5f ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.forward()</span></code></a>. This could be obtained
 from the <a class="reference internal" href="train.html#train.Trainer.model" title="train.Trainer.model"><code class="xref py py-attr docutils literal notranslate"><span class="pre">train.Trainer.model</span></code></a> property.</li>
+<li><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Batch size to use for pushing the test data through the model. This doesn’t
+have to be the training batch size, but must be selected so that the forward
+pass fits into memory.</li>
 <li><strong>frequency</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Inverse of the frequency with which to compute the accuracy</li>
 </ul>
 </td>
@@ -580,7 +583,7 @@ Subscriber is not interested in actual training artifacts, or
 <em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.train_accuracy.</code><code class="descname">TrainAccuracySubscriber</code><span class="sig-paren">(</span><em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.train_accuracy.TrainAccuracySubscriber" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ikkuna.export.subscriber.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.subscriber.PlotSubscriber</span></code></a></p>
 <p><a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a> which computes the batch accuracy.</p>
-<p>:param see <a class="reference internal" href="#ikkuna.export.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotSubscriber</span></code></a>:</p>
+<p>For parameters see <a class="reference internal" href="#ikkuna.export.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotSubscriber</span></code></a></p>
 <dl class="attribute">
 <dt id="ikkuna.export.subscriber.train_accuracy.TrainAccuracySubscriber._abc_cache">
 <code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.train_accuracy.TrainAccuracySubscriber._abc_cache" title="Permalink to this definition">¶</a></dt>
@@ -1061,7 +1064,7 @@ merely in the singular values.</p>
 
 <dl class="class">
 <dt id="ikkuna.export.subscriber.TestAccuracySubscriber">
-<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">TestAccuracySubscriber</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>forward_fn</em>, <em>frequency=100</em>, <em>ylims=None</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.TestAccuracySubscriber" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">TestAccuracySubscriber</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>forward_fn</em>, <em>batch_size</em>, <em>frequency=100</em>, <em>ylims=None</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.TestAccuracySubscriber" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ikkuna.export.subscriber.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.subscriber.PlotSubscriber</span></code></a></p>
 <p>Subscriber which can compute the accuracy on a given data set (generally the test/validation
 set).</p>
@@ -1095,8 +1098,11 @@ set).</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>dataset_meta</strong> (<a class="reference internal" href="train.html#train.DatasetMeta" title="train.DatasetMeta"><em>train.DatasetMeta</em></a>) – Test dataset</li>
-<li><strong>forward_fn</strong> (<em>function</em>) – Bound version of <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.forward" title="(in PyTorch vmaster (0.5.0a0+ce8e8fe ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.forward()</span></code></a>. This could be obtained
+<li><strong>forward_fn</strong> (<em>function</em>) – Bound version of <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.forward" title="(in PyTorch vmaster (0.5.0a0+0f05f5f ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.forward()</span></code></a>. This could be obtained
 from the <a class="reference internal" href="train.html#train.Trainer.model" title="train.Trainer.model"><code class="xref py py-attr docutils literal notranslate"><span class="pre">train.Trainer.model</span></code></a> property.</li>
+<li><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Batch size to use for pushing the test data through the model. This doesn’t
+have to be the training batch size, but must be selected so that the forward
+pass fits into memory.</li>
 <li><strong>frequency</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Inverse of the frequency with which to compute the accuracy</li>
 </ul>
 </td>
@@ -1149,7 +1155,7 @@ Subscriber is not interested in actual training artifacts, or
 <em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">TrainAccuracySubscriber</code><span class="sig-paren">(</span><em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.subscriber.TrainAccuracySubscriber" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ikkuna.export.subscriber.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.subscriber.PlotSubscriber</span></code></a></p>
 <p><a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a> which computes the batch accuracy.</p>
-<p>:param see <a class="reference internal" href="#ikkuna.export.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotSubscriber</span></code></a>:</p>
+<p>For parameters see <a class="reference internal" href="#ikkuna.export.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotSubscriber</span></code></a></p>
 <dl class="attribute">
 <dt id="ikkuna.export.subscriber.TrainAccuracySubscriber._abc_cache">
 <code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.TrainAccuracySubscriber._abc_cache" title="Permalink to this definition">¶</a></dt>
