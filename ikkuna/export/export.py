@@ -65,9 +65,13 @@ class Exporter(object):
         self._bias_cache        = {}
         self._subscribers       = set()
         self._model             = None
-        self._train_step        = 0
         self._epoch             = 0
-        self._global_step       = 0
+        # for gradient and activation to have the same step number, we need to increase it before
+        # propagation or after backpropagation. but we don't know when the backprop finishes, while
+        # we do know when the forward prop starts. So we step before and thus initialize the
+        # counters with -1 to start at 0
+        self._train_step        = -1
+        self._global_step       = -1
         self._is_training       = True
         self._did_publish_grads = defaultdict(bool)
 
@@ -266,9 +270,9 @@ class Exporter(object):
         if not self._is_training:
             return
         if self._train_step == 0:
-            msg_epoch = TrainingMessage(seq=self._global_step, tag=None, kind='epoch_started',
+            msg_epoch = MetaMessage(seq=self._global_step, tag=None, kind='epoch_started',
                                         step=self._train_step, epoch=self._epoch)
-            msg_batch = TrainingMessage(seq=self._global_step, tag=None, kind='batch_started',
+            msg_batch = MetaMessage(seq=self._global_step, tag=None, kind='batch_started',
                                         step=self._train_step, epoch=self._epoch)
             for sub in self._subscribers:
                 sub.receive_message(msg_epoch)
