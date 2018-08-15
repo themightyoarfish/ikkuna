@@ -271,9 +271,9 @@ class Exporter(object):
             return
         if self._train_step == 0:
             msg_epoch = MetaMessage(seq=self._global_step, tag=None, kind='epoch_started',
-                                        step=self._train_step, epoch=self._epoch)
+                                    step=self._train_step, epoch=self._epoch)
             msg_batch = MetaMessage(seq=self._global_step, tag=None, kind='batch_started',
-                                        step=self._train_step, epoch=self._epoch)
+                                    step=self._train_step, epoch=self._epoch)
             for sub in self._subscribers:
                 sub.receive_message(msg_epoch)
                 sub.receive_message(msg_batch)
@@ -335,7 +335,6 @@ class Exporter(object):
         forward_fn = model.forward
 
         def new_forward_fn(this, *args, should_train=True):
-            self.new_input(*args)
             # In order for accuracy subscribers to not need the model access, we add a secret
             # parameter which they can use to temporarily set the training to False and have it
             # revert automatically. TODO: Check if this is inefficient
@@ -344,6 +343,7 @@ class Exporter(object):
             if this.training:
                 # we need to step before forward pass, else act and grads get different steps
                 self.step()
+            self.new_input(*args)               # do this after stepping
             ret = forward_fn(*args)             # do forward pass w/o messages spawning
             this.train(was_training)            # restore previous state
             return ret
