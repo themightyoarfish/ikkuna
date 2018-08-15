@@ -308,7 +308,8 @@ class Exporter(object):
         '''
         # For some reason, the grad hooks get called twice per step, so only export the first time
         self.export('weight_gradients', module, gradients[0])
-        self.export('bias_gradients', module, gradients[1])
+        if gradients[1] is not None:
+            self.export('bias_gradients', module, gradients[1])
 
     def set_model(self, model):
         '''Set the model for direct access for some metrics.
