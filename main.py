@@ -30,7 +30,7 @@ from torchvision.transforms import ToTensor, Compose
 #######################
 from train import Trainer, DatasetMeta
 from ikkuna.export.subscriber import (RatioSubscriber, HistogramSubscriber, SpectralNormSubscriber,
-                                      AccuracySubscriber)
+                                      TestAccuracySubscriber, TrainAccuracySubscriber)
 
 SEED = 1234
 random.seed(SEED)
@@ -126,30 +126,35 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
     trainer.add_model(model_str)
     trainer.optimize(name=optimizer)
 
+    subsample = kwargs['subsample']
+    backend   = kwargs['visualisation']
+
     if kwargs['spectral_norm']:
         spectral_norm_subscriber = SpectralNormSubscriber('weights',
-                                                          ylims=kwargs['ylims'],
-                                                          subsample=kwargs['subsample'],
-                                                          backend=kwargs['visualisation']
-                                                          )
+                                                          subsample=subsample,
+                                                          backend=backend)
         trainer.add_subscriber(spectral_norm_subscriber)
 
     if kwargs['test_accuracy']:
-        test_accuracy_subscriber = AccuracySubscriber(dataset_test, trainer.model.forward,
-                                                      frequency=trainer.batches_per_epoch)
+        test_accuracy_subscriber = TestAccuracySubscriber(dataset_test, trainer.model.forward,
+                                                          frequency=trainer.batches_per_epoch)
         trainer.add_subscriber(test_accuracy_subscriber)
+
+    if kwargs['train_accuracy']:
+        train_accuracy_subscriber = TrainAccuracySubscriber(subsample=subsample,
+                                                            backend=backend)
+        trainer.add_subscriber(train_accuracy_subscriber)
 
     if kwargs['ratio']:
         for kind1, kind2 in kwargs['ratio']:
             ratio_subscriber = RatioSubscriber([kind1, kind2],
-                                               subsample=kwargs['subsample'],
-                                               ylims=kwargs.get('ylims'),
-                                               backend=kwargs['visualisation'])
+                                               subsample=subsample,
+                                               backend=backend)
             trainer.add_subscriber(ratio_subscriber)
 
     if kwargs['histogram']:
         for kind in kwargs['histogram']:
-            histogram_subscriber = HistogramSubscriber([kind], backend=kwargs['visualisation'])
+            histogram_subscriber = HistogramSubscriber([kind], backend=backend)
             trainer.add_subscriber(histogram_subscriber)
 
     batches_per_epoch = trainer.batches_per_epoch
@@ -207,8 +212,8 @@ def get_parser():
                         'average for stability (currently unused)')
     parser.add_argument('-s', '--subsample', type=int, default=1,
                         help='Number of batches to ignore between updates')
-    parser.add_argument('-y', '--ylims', nargs=2, type=int, default=None,
-                        help='Y-axis limits for plots')
+    # parser.add_argument('-y', '--ylims', nargs=2, type=int, default=None,
+    #                     help='Y-axis limits for plots')
     parser.add_argument('-v', '--visualisation', type=str, choices=['tb', 'mpl'], default='tb',
                         help='Visualisation backend to use.')
     parser.add_argument('-V', '--verbose', action='store_true', help='Print training progress')
@@ -220,6 +225,8 @@ def get_parser():
                         help='Use ratio subscriber(s)')
     parser.add_argument('--test-accuracy', action='store_true',
                         help='Use test set accuracy subscriber')
+    parser.add_argument('--train-accuracy', action='store_true',
+                        help='Use train accuracy subscriber')
     return parser
 
 
