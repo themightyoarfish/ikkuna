@@ -27,13 +27,13 @@ class Backend(abc.ABC):
         self._title = title
 
     @abc.abstractmethod
-    def add_data(self, module, datum, step):
+    def add_data(self, module_name, datum, step):
         '''Display scalar data (i.e. a line plot)
 
         Parameters
         ----------
-        module  :   ikkuna.utils.NamedModule
-                    Module which emitted the data
+        module_name  :  str
+                        Name of module which emitted the data
         datum   :   torch.Tensor
                     Payload
         step    :   int
@@ -42,13 +42,13 @@ class Backend(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def add_histogram(self, module, datum, step):
+    def add_histogram(self, module_name, datum, step):
         '''Display histogram data (i.e. a line plot)
 
         Parameters
         ----------
-        module  :   ikkuna.utils.NamedModule
-                    Module which emitted the data
+        module_name  :  str
+                        Name of module which emitted the data
         datum   :   torch.Tensor
                     Payload, not the histogram itself
         step    :   int
@@ -283,7 +283,7 @@ class MPLBackend(Backend):
                 axis = axis.ax      # TODO: make less ugly
             axis.change_geometry(h, w, i + 1)
 
-    def add_histogram(self, module, datum, step):
+    def add_histogram(self, module_name, datum, step):
 
         if not self._figure:
             # first time? initialise
@@ -291,43 +291,43 @@ class MPLBackend(Backend):
             self._figure.suptitle(self.title)
             self._axes = {}
 
-        if module not in self._axes:
-            # haven't seen this module before? make new plot for it
+        if module_name not in self._axes:
+            # haven't seen this module_name before? make new plot for it
             nplots = len(self._axes)
-            self._axes[module] = UpdatableHistogram(self._figure, subplot_conf=(nplots + 1, 1, 1),
-                                                    title=module.name)
+            self._axes[module_name] = UpdatableHistogram(self._figure, subplot_conf=(nplots + 1, 1, 1),
+                                                    title=module_name)
 
             self._reflow_plots()
 
-        self._buffer[module].append(datum)
+        self._buffer[module_name].append(datum)
 
-        if len(self._buffer[module]) == self._buffer_lim:   # buffer full
-            self._axes[module].add_data(self._buffer[module])
-            self._axes[module].replot()
-            self._buffer[module] = []
+        if len(self._buffer[module_name]) == self._buffer_lim:   # buffer full
+            self._axes[module_name].add_data(self._buffer[module_name])
+            self._axes[module_name].replot()
+            self._buffer[module_name] = []
 
             self._figure.canvas.draw()
             self._figure.canvas.flush_events()
             self._figure.show()
 
-    def add_data(self, module, datum, step):
+    def add_data(self, module_name, datum, step):
 
         if not self._figure:
             self._figure, self._ax = plt.subplots()
             self._plots            = {}
             self._prepare_axis(self._ax)
 
-        if module not in self._plots:
+        if module_name not in self._plots:
             # empty plot so we can simply set the data later
-            self._plots[module] = self._ax.plot([], [], label=f'{module}')[0]
+            self._plots[module_name] = self._ax.plot([], [], label=f'{module_name}')[0]
 
-        xdata = self._plots[module].get_xdata()
-        ydata = self._plots[module].get_ydata()
+        xdata = self._plots[module_name].get_xdata()
+        ydata = self._plots[module_name].get_ydata()
         xdata = np.append(xdata, 1 if len(xdata) == 0 else xdata[-1] + 1)
         ydata = np.append(ydata, datum)
 
-        self._plots[module].set_xdata(xdata)
-        self._plots[module].set_ydata(ydata)
+        self._plots[module_name].set_xdata(xdata)
+        self._plots[module_name].set_ydata(ydata)
         self._ax.legend(ncol=2)
 
         if self._redraw_counter % 50 == 0:      # TODO: Make modulus a parameter
@@ -358,9 +358,9 @@ class TBBackend(Backend):
         super().__init__(kwargs.get('title'))
         self._writer = SummaryWriter()
 
-    def add_data(self, module, datum, step):
+    def add_data(self, module_name, datum, step):
         # Unfortunately, xlabels, ylabels and plot titles are not supported
-        self._writer.add_scalars(f'{self.title}', {module: datum}, global_step=step)
+        self._writer.add_scalars(f'{self.title}', {module_name: datum}, global_step=step)
 
-    def add_histogram(self, module, datum, step):
-        self._writer.add_histogram(f'{self.title}: {module.name}', datum, global_step=step, bins=50)
+    def add_histogram(self, module_name, datum, step):
+        self._writer.add_histogram(f'{self.title}: {module_name}', datum, global_step=step, bins=50)
