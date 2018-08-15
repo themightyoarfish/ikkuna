@@ -14,6 +14,7 @@ class SpectralNormSubscriber(PlotSubscriber):
                     Message kind to compute spectral norm on. Doesn't make sense with kinds of
                     non-matrix type.
 
+
         For other parameters, see :class:`~ikkuna.export.subscriber.PlotSubscriber`
         '''
         if not isinstance(kind, str):

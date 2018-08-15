@@ -51,9 +51,9 @@ class ModuleTree(object):
             if name is None or re.match(NUMBER_REGEX, name):
                 name = module.__class__.__name__.lower()
 
-        self._module = module
-        self._name = name
-        self._children = []
+        self._module       = module
+        self._name         = name
+        self._children     = []
         self._type_counter = defaultdict(int)
 
         if recursive:
@@ -77,8 +77,13 @@ class ModuleTree(object):
                                           )
                     self._type_counter[child.__class__] += 1
 
-    def preorder(self, depth=-1, parent=None):
+    def preorder(self, depth=-1):
         '''Traverse the tree in preorder.
+
+        Parameters
+        ----------
+        depth   :   int
+                    Depth to which to traverse the tree. -1 means infinite depth.
 
         Yields
         ------
@@ -89,16 +94,12 @@ class ModuleTree(object):
         # circular import
         from ikkuna.utils import NamedModule
 
-        parent = parent or self._module
-        if not self._children:
-            yield NamedModule(name=self._name, module=self._module, parent=parent)
+        if depth == 0 or not self._children:
+            yield NamedModule(name=self._name, module=self._module)
+        elif depth > 0:
+            depth -= 1
+            for child in self._children:
+                yield from child.preorder(depth)
         else:
-            if depth == 0:
-                yield NamedModule(name=self._name, module=self._module, parent=parent)
-            elif depth > 0:
-                depth -= 1
-                for child in self._children:
-                    yield from child.preorder(depth, parent=parent)
-            else:
-                for child in self._children:
-                    yield from child.preorder()
+            for child in self._children:
+                yield from child.preorder(depth=-1)

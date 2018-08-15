@@ -95,10 +95,52 @@ which will then be returned as-is, but be registered in the process.</p>
 <dl class="attribute">
 <dt id="ikkuna.export.export.Exporter._bias_cache">
 <code class="descname">_bias_cache</code><a class="headerlink" href="#ikkuna.export.export.Exporter._bias_cache" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict</em></p>
+<dd><p><em>dict</em> – see <code class="docutils literal notranslate"><span class="pre">_weight_cache</span></code></p>
 </dd></dl>
 
-<p>Create a new <a class="reference internal" href="#ikkuna.export.export.Exporter" title="ikkuna.export.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a>.</p>
+<dl class="attribute">
+<dt id="ikkuna.export.export.Exporter._subscribers">
+<code class="descname">_subscribers</code><a class="headerlink" href="#ikkuna.export.export.Exporter._subscribers" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>set(ikkuna.export.subscriber.Subscriber)</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.export.Exporter._model">
+<code class="descname">_model</code><a class="headerlink" href="#ikkuna.export.export.Exporter._model" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>torch.nn.Module</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.export.Exporter._train_step">
+<code class="descname">_train_step</code><a class="headerlink" href="#ikkuna.export.export.Exporter._train_step" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Current batch index</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.export.Exporter._global_step">
+<code class="descname">_global_step</code><a class="headerlink" href="#ikkuna.export.export.Exporter._global_step" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Global step accross all epochs</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.export.Exporter._epoch">
+<code class="descname">_epoch</code><a class="headerlink" href="#ikkuna.export.export.Exporter._epoch" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Current epoch</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.export.Exporter._is_training">
+<code class="descname">_is_training</code><a class="headerlink" href="#ikkuna.export.export.Exporter._is_training" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> – Flag enabling/disabling some messages during testing</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.export.Exporter._did_publish_grads">
+<code class="descname">_did_publish_grads</code><a class="headerlink" href="#ikkuna.export.export.Exporter._did_publish_grads" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>defaultdict(bool)</em> – Record for whether gradients have already been published at this train
+step.  This is necessary since tensor hooks are called mutliple times.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="ikkuna.export.export.Exporter._add_module_by_name">
 <code class="descname">_add_module_by_name</code><span class="sig-paren">(</span><em>named_module</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter._add_module_by_name" title="Permalink to this definition">¶</a></dt>
@@ -179,7 +221,7 @@ Will trigger export of all new activation and weight/bias data.</p>
 
 <dl class="method">
 <dt id="ikkuna.export.export.Exporter.new_gradients">
-<code class="descname">new_gradients</code><span class="sig-paren">(</span><em>module</em>, <em>in_</em>, <em>out_</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.new_gradients" title="Permalink to this definition">¶</a></dt>
+<code class="descname">new_gradients</code><span class="sig-paren">(</span><em>module</em>, <em>gradients</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.new_gradients" title="Permalink to this definition">¶</a></dt>
 <dd><p>Callback for newly arriving gradients. Registered as a hook to the tracked modules.
 Will trigger export of all new gradient data.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -188,8 +230,7 @@ Will trigger export of all new gradient data.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+329d901 ))"><em>torch.nn.Module</em></a>) – </li>
-<li><strong>in</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+329d901 ))"><em>torch.Tensor</em></a>) – Dunno what this is</li>
-<li><strong>out</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+329d901 ))"><em>torch.Tensor</em></a>) – The new activations</li>
+<li><strong>gradients</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+329d901 ))"><em>torch.Tensor</em></a><em>, </em><a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+329d901 ))"><em>torch.Tensor</em></a><em>)</em>) – The gradients w.r.t weight and bias.</li>
 </ul>
 </td>
 </tr>
@@ -421,7 +462,7 @@ received.</td>
 <dl class="method">
 <dt id="ikkuna.export.messages.ModuleData.complete">
 <code class="descname">complete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.ModuleData.complete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check i all expected messages have been received. This means the message can be released
+<dd><p>Check if all expected messages have been received. This means the bundle can be released
 to subscribers.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -534,10 +575,52 @@ which will then be returned as-is, but be registered in the process.</p>
 <dl class="attribute">
 <dt id="ikkuna.export.Exporter._bias_cache">
 <code class="descname">_bias_cache</code><a class="headerlink" href="#ikkuna.export.Exporter._bias_cache" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict</em></p>
+<dd><p><em>dict</em> – see <code class="docutils literal notranslate"><span class="pre">_weight_cache</span></code></p>
 </dd></dl>
 
-<p>Create a new <a class="reference internal" href="#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a>.</p>
+<dl class="attribute">
+<dt id="ikkuna.export.Exporter._subscribers">
+<code class="descname">_subscribers</code><a class="headerlink" href="#ikkuna.export.Exporter._subscribers" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>set(ikkuna.export.subscriber.Subscriber)</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.Exporter._model">
+<code class="descname">_model</code><a class="headerlink" href="#ikkuna.export.Exporter._model" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>torch.nn.Module</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.Exporter._train_step">
+<code class="descname">_train_step</code><a class="headerlink" href="#ikkuna.export.Exporter._train_step" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Current batch index</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.Exporter._global_step">
+<code class="descname">_global_step</code><a class="headerlink" href="#ikkuna.export.Exporter._global_step" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Global step accross all epochs</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.Exporter._epoch">
+<code class="descname">_epoch</code><a class="headerlink" href="#ikkuna.export.Exporter._epoch" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Current epoch</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.Exporter._is_training">
+<code class="descname">_is_training</code><a class="headerlink" href="#ikkuna.export.Exporter._is_training" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> – Flag enabling/disabling some messages during testing</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.Exporter._did_publish_grads">
+<code class="descname">_did_publish_grads</code><a class="headerlink" href="#ikkuna.export.Exporter._did_publish_grads" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>defaultdict(bool)</em> – Record for whether gradients have already been published at this train
+step.  This is necessary since tensor hooks are called mutliple times.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="ikkuna.export.Exporter._add_module_by_name">
 <code class="descname">_add_module_by_name</code><span class="sig-paren">(</span><em>named_module</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter._add_module_by_name" title="Permalink to this definition">¶</a></dt>
@@ -618,7 +701,7 @@ Will trigger export of all new activation and weight/bias data.</p>
 
 <dl class="method">
 <dt id="ikkuna.export.Exporter.new_gradients">
-<code class="descname">new_gradients</code><span class="sig-paren">(</span><em>module</em>, <em>in_</em>, <em>out_</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter.new_gradients" title="Permalink to this definition">¶</a></dt>
+<code class="descname">new_gradients</code><span class="sig-paren">(</span><em>module</em>, <em>gradients</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter.new_gradients" title="Permalink to this definition">¶</a></dt>
 <dd><p>Callback for newly arriving gradients. Registered as a hook to the tracked modules.
 Will trigger export of all new gradient data.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -627,8 +710,7 @@ Will trigger export of all new gradient data.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+329d901 ))"><em>torch.nn.Module</em></a>) – </li>
-<li><strong>in</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+329d901 ))"><em>torch.Tensor</em></a>) – Dunno what this is</li>
-<li><strong>out</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+329d901 ))"><em>torch.Tensor</em></a>) – The new activations</li>
+<li><strong>gradients</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+329d901 ))"><em>torch.Tensor</em></a><em>, </em><a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+329d901 ))"><em>torch.Tensor</em></a><em>)</em>) – The gradients w.r.t weight and bias.</li>
 </ul>
 </td>
 </tr>

@@ -4,7 +4,8 @@ meta_kinds = {
 }
 
 data_kinds = {
-    'weights', 'weight_updates', 'biases', 'bias_updates', 'activations', 'gradients',
+    'weights', 'weight_gradients', 'weight_updates', 'biases', 'bias_gradients', 'bias_updates',
+    'activations',
 }
 
 allowed_kinds = set.union(meta_kinds, data_kinds)
