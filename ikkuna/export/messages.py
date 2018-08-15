@@ -160,7 +160,7 @@ class TrainingMessage(Message):
 
     @property
     def key(self):
-        return self.module
+        return self.module.name
 
 
 class MessageBundle(object):
