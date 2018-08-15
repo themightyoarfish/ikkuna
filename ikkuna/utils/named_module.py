@@ -1,3 +1,6 @@
 from collections import namedtuple
 
-NamedModule = namedtuple('NamedModule', ['module', 'name'])
+
+class NamedModule(namedtuple('NamedModule', ['module', 'name'])):
+    def __str__(self):
+        return self.name
