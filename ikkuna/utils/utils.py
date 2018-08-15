@@ -102,6 +102,43 @@ def initialize_model(module, bias_val=0.01):
         raise ValueError(f'Don\'t know how to initialize {module.__class__.__name__}')
 
 
+import subprocess
+
+
+def get_memory_stats(mode='total', unit='mb'):
+    '''Get the total|used|free gpu memory.
+
+    Parameters
+    ----------
+    mode    :   str
+                One of ``'total'``, ``'used'`` or ``'free'``
+
+    Returns
+    -------
+    dict
+        Keys are device ids as integers.
+        Values are memory usage as integers in MB.
+    '''
+    if mode not in ['total', 'used', 'free']:
+        raise ValueError
+
+    units = ['b', 'kb', 'mb', 'gb']
+    factors = [1024 ** i for i in range(len(units))]
+    if unit not in units:
+        raise ValueError(f'Unknown unit "{unit}"')
+
+    memory = subprocess.check_output(
+        [
+            'nvidia-smi', f'--query-gpu=memory.{mode}',
+            '--format=csv,nounits,noheader'
+        ], encoding='utf-8')
+    # Convert lines into a dictionary
+    index = units.index(unit)
+    # nvidia-smi gives mb, so go back to b and then up to the selected unit
+    size = [int(x) * factors[2] / factors[index] for x in memory.strip().split('\n')]
+    return dict(zip(range(len(size)), size))
+
+
 ####################################################################################################
 #                                           NUMBA stuffs                                           #
 ####################################################################################################
