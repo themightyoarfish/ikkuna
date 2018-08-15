@@ -1,6 +1,6 @@
 meta_kinds = {
     'batch_started', 'batch_finished', 'epoch_started', 'epoch_finished', 'input_data',
-    'input_labels'
+    'input_labels', 'network_output'
 }
 
 data_kinds = {
@@ -78,6 +78,18 @@ class Message(object):
 
 
 class MetaMessage(Message):
+    '''A message with meta information not tied to any specific module. Can still carry tensor data,
+    if necessary.
+
+    Attributes
+    ----------
+    data    :   torch.Tensor, tuple or None
+                Optional data. Can be used e.g. for input to the network, labels or network output
+    '''
+    def __init__(self, tag, seq, step, epoch, kind, data=None):
+        super().__init__(tag, seq, step, epoch, kind)
+        self._data = data
+
     @Message.kind.setter
     def kind(self, value):
         if value not in meta_kinds:
@@ -85,14 +97,15 @@ class MetaMessage(Message):
         else:
             self._kind = value
 
+    @property
+    def data(self):
+        return self._data
+
 
 class TrainingMessage(Message):
     '''
     These messages are assembled
     into :class:`ModuleData` objects in the :class:`~ikkuna.export.subscriber.Subscription`.
-
-    module  :   ikkuna.utils.NamedModule
-    payload :   torch.Tensor
     '''
     def __init__(self, tag, seq, step, epoch, kind, module, payload):
         super().__init__(tag, seq, step, epoch, kind)
