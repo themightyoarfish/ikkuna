@@ -8,7 +8,7 @@ This module contains the base definition for subscriber functionality. The
 import abc
 from collections import defaultdict
 from ikkuna.visualization import TBBackend, MPLBackend
-from ikkuna.export.messages import ModuleData, TrainingMessage
+from ikkuna.export.messages import MessageBundle, TrainingMessage
 
 
 class Subscription(object):
@@ -23,7 +23,7 @@ class Subscription(object):
     counter    :   dict(ikkuna.utils.NamedModule or str, int)
                     Number of times the subscriber was called for each module label or meta data
                     identifier. Since one :class:`ikkuna.export.subscriber.Subscriber` is associated
-                    with only one configuration of :class:`ikkuna.export.messages.ModuleData`, this
+                    with only one configuration of :class:`ikkuna.export.messages.MessageBundle`, this
                     will enable proper subsampling of message streams.
     kinds   :   list(str)
                 List of string identifiers for different message kinds. These are all the
@@ -67,7 +67,7 @@ class Subscription(object):
         message    :   ikkuna.export.messages.Message
         '''
         if isinstance(message, TrainingMessage):
-            data = ModuleData(message.module, message.kind)
+            data = MessageBundle(message.module, message.kind)
             data.add_message(message)
             self._subscriber.process_data(data)
         else:
@@ -100,7 +100,7 @@ class SynchronizedSubscription(Subscription):
     def __init__(self, subscriber, kinds, tag=None, subsample=1):
         super().__init__(subscriber, kinds, tag, subsample)
         self._current_seq = None
-        self._modules     = {}
+        self._identifiers     = {}
         self._step        = None
 
     def _new_round(self, seq):
@@ -115,13 +115,25 @@ class SynchronizedSubscription(Subscription):
         Raises
         ------
         RuntimeError
-            If not all desired kinds have been received yet in the current round
+            If not all desired kinds have been received for all identifiers yet in the current round
         '''
-        for bundle in self._modules.values():
+        for bundle in self._identifiers.values():
             if not bundle.complete():
-                raise ValueError(f'Bundle for module {bundle._module} not yet complete.')
+                raise RuntimeError(f'Bundle for module {bundle._module} not yet complete.')
         self._current_seq = seq
-        self._modules     = {}
+        self._identifiers     = {}
+
+    def _publish_complete(self):
+        delete_these = []
+        # any full? publish
+        for identifier, message_bundle in self._identifiers.items():
+            if message_bundle.complete():
+                self._subscriber.process_data(message_bundle)
+                delete_these.append(identifier)
+
+        # purge published data
+        for identifier in delete_these:
+            del self._identifiers[identifier]
 
     def _handle_message(self, message):
         '''Start a new round if a new sequence number is seen.'''
@@ -130,24 +142,13 @@ class SynchronizedSubscription(Subscription):
         if self._current_seq is None or self._current_seq != message.seq:
             self._new_round(message.seq)
 
-        if isinstance(message, TrainingMessage):
-            # module not seen -> init data
-            module = message.module
-            if module not in self._modules:
-                self._modules[module] = ModuleData(module, self.kinds)
-            self._modules[module].add_message(message)
+        # module not seen -> init data
+        key = message.key
+        if key not in self._identifiers:
+            self._identifiers[key] = MessageBundle(key, self.kinds)
+        self._identifiers[key].add_message(message)
 
-            delete_these = []
-            # any full? publish
-            for module, data in self._modules.items():
-                if data.complete():
-                    self._subscriber.process_data(data)
-                    delete_these.append(module)
-
-            for module in delete_these:
-                del self._modules[module]
-        else:
-            self._subscriber.process_meta(message)
+        self._publish_complete()
 
 
 class Subscriber(abc.ABC):
@@ -181,12 +182,12 @@ class Subscriber(abc.ABC):
     def process_meta(self, message):
         self._metric(message)
 
-    def process_data(self, module_data):
-        '''Callback for processing a :class:`~ikkuna.export.messages.ModuleData` object.
+    def process_data(self, message_bundle):
+        '''Callback for processing a :class:`~ikkuna.export.messages.MessageBundle` object.
 
         Parameters
         ----------
-        module_data    :   ikkuna.export.messages.ModuleData
+        message_bundle    :   ikkuna.export.messages.MessageBundle
                             The exact nature of this package is determined by the
                             :class:`ikkuna.export.subscriber.Subscription` attached to this
                             :class:`ikkuna.export.subscriber.Subscriber`.
@@ -194,13 +195,13 @@ class Subscriber(abc.ABC):
         Raises
         ------
         ValueError
-            If the received :class:`~ikkuna.export.messages.ModuleData` object is not
-            :meth:`~ikkuna.export.messages.ModuleData.complete()`
+            If the received :class:`~ikkuna.export.messages.MessageBundle` object is not
+            :meth:`~ikkuna.export.messages.MessageBundle.complete()`
         '''
-        if not module_data.complete():
-            raise ValueError(f'Data received for "{module_data._module}" is not complete.')
+        if not message_bundle.complete():
+            raise ValueError(f'Data received for "{message_bundle._module}" is not complete.')
 
-        self._metric(module_data)
+        self._metric(message_bundle)
 
 class PlotSubscriber(Subscriber):
     '''Base class for subscribers that output scalar or histogram values per time and module

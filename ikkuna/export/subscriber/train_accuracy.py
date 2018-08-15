@@ -9,7 +9,8 @@ class TrainAccuracySubscriber(PlotSubscriber):
         ----------
         see :class:`~ikkuna.export.subscriber.PlotSubscriber`
         '''
-        subscription = SynchronizedSubscription(self, ['activations', 'labels'], tag, subsample)
+        subscription = SynchronizedSubscription(self, ['network_output', 'input_labels'], tag,
+                                                subsample)
 
         title  = f'Train batch accuracy'
         xlabel = 'Step'
@@ -18,5 +19,5 @@ class TrainAccuracySubscriber(PlotSubscriber):
                          {'title': title, 'xlabel': xlabel, 'ylims': ylims, 'ylabel': ylabel},
                          tag=tag, backend=backend)
 
-    def _metric(self, module_data):
-        pass
+    def _metric(self, message_bundle):
+        __import__('ipdb').set_trace()

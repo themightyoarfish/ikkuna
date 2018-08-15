@@ -1,3 +1,4 @@
+import abc
 meta_kinds = {
     'batch_started', 'batch_finished', 'epoch_started', 'epoch_finished', 'input_data',
     'input_labels', 'network_output'
@@ -11,7 +12,7 @@ data_kinds = {
 allowed_kinds = set.union(meta_kinds, data_kinds)
 
 
-class Message(object):
+class Message(abc.ABC):
     '''
     Base class for messages emitted from the :class:`~ikkuna.export.Exporter`.
 
@@ -27,6 +28,11 @@ class Message(object):
                 Current epoch number
     kind    :   str
                 Message kind
+    key :   object
+            A key used for grouping messages into :class:`MessageBundle` s
+    data    :   torch.Tensor, tuple(torch.Tensor) or None
+                This field is optional for :class:`MetaMessage`, but mandatory for
+                :class:`TrainingMessage`
     '''
     def __init__(self, tag, seq, step, epoch, kind):
         self._tag  = tag
@@ -34,6 +40,7 @@ class Message(object):
         self.step  = step
         self.epoch = epoch
         self.kind  = kind
+        self._data = None
 
     @property
     def tag(self):
@@ -76,6 +83,14 @@ class Message(object):
         else:
             self._kind = value
 
+    @property
+    def data(self):
+        return self._data
+
+    @abc.abstractproperty
+    def key(self):
+        pass
+
     def __str__(self):
         return (f'<{self.__class__.__name__}: seq={self.seq}, '
                 f'step={self.step}, epoch={self.epoch}, kind={self.kind}>')
@@ -108,24 +123,33 @@ class MetaMessage(Message):
     def data(self):
         return self._data
 
+    @property
+    def key(self):
+        return 'META'
+
 
 class TrainingMessage(Message):
     '''
-    These messages are assembled
-    into :class:`ModuleData` objects in the :class:`~ikkuna.export.subscriber.Subscription`.
+    These messages are assembled into :class:`MessageBundle` objects in the
+    :class:`~ikkuna.export.subscriber.Subscription`.
+
+    Attributes
+    ----------
+    module  :   torch.nn.Module
+                Module emitting this data
+    data :   torch.Tensor
+                Data emitted from the module
     '''
-    def __init__(self, tag, seq, step, epoch, kind, module, payload):
+    def __init__(self, tag, seq, step, epoch, kind, module, data):
         super().__init__(tag, seq, step, epoch, kind)
         self._module  = module
-        self._payload = payload
+        if data is None:
+            raise ValueError('Data cannot be `None` for `TrainingMessage`')
+        self._data = data
 
     @property
     def module(self):
         return self._module
-
-    @property
-    def payload(self):
-        return self._payload
 
     @Message.kind.setter
     def kind(self, value):
@@ -134,24 +158,34 @@ class TrainingMessage(Message):
         else:
             self._kind = value
 
+    @property
+    def key(self):
+        return self.module
 
-class ModuleData(object):
 
-    '''Data object for holding a set of artifacts for a module at one point during training.
-    This data type can be used to buffer different kinds and check whether all expected kinds have
-    been received for a module.
+class MessageBundle(object):
+
+    '''Data object for holding a set of artifacts for a module (or meta information) at one point
+    during training. This data type can be used to buffer different kinds and check whether all
+    expected kinds have been received for a module or meta information.
+
+    .. note::
+
+        This docstring doesn't make sense yet.
+
 
     Attributes
     ----------
-    _module :   str
-                Name of the layer
+    _identifier :   str
+                    A string denoting the common aspect of the collected messages (besides the
+                    step).  This can be the module name or a string such as ``META`` or other
+                    denoting these are messages which do not belong to a module.
     _expected_kinds :   list(str)
                         The expected kinds of messages per iteration
     _data   :   dict(str, torch.Tensor)
                 The tensors received for each kind
     _seq    :   int
-                Global sequence number of this class (incremented whenever a :class:`ModuleData` is
-                created)
+                Global sequence number of this class
     _step   :   int
                 Sequence number (training step) of the received messages (should match across all
                 msgs in one iteration)
@@ -160,20 +194,21 @@ class ModuleData(object):
                 iteration)
     '''
 
-    def __init__(self, module, kinds):
+    def __init__(self, identifier, kinds):
         if isinstance(kinds, str):
             # this has bitten me before. base `Subscription`s don't use multiple kinds
             kinds = [kinds]
-        self._module         = module
+        self._identifier     = identifier
         self._expected_kinds = kinds
+        self._received       = {kind: False for kind in kinds}
         self._data           = {kind: None for kind in kinds}
         self._seq            = None
         self._step           = None
         self._epoch          = None
 
     @property
-    def module(self):
-        return self._module
+    def identifier(self):
+        return self._identifier
 
     @property
     def expected_kinds(self):
@@ -202,24 +237,22 @@ class ModuleData(object):
         -------
         bool
         '''
-        # check if any _data entry is still None
-        if all(map(lambda k: k in meta_kinds, self._expected_kinds)):
-            # only meta kinds -> don't wait for payload
-            return True
-        else:
-            return all(map(lambda val: val is not None, self._data.values()))
+        return all(self._received.values())
 
     def _check_message(self, message):
-        '''Check consistency of sequence number, step and epoch or set if not set yet
+        '''Check consistency of sequence number, step and epoch or set if not set yet. Check
+        consistency of identifier and check for duplication.
 
         Parameters
         ----------
-        message :   ikkuna.export.messages.TrainingMessage
+        message :   ikkuna.export.messages.Message
 
         Raises
         ------
         ValueError
-            If ``message.(seq|step|epoch)`` does not match the current ``(seq|step|epoch)``
+            If ``message.(seq|step|epoch|identifier)`` does not match the current
+            ``(seq|step|epoch|identifier)`` or in case a messageof ``message.kind`` has already been
+            received
         '''
         ############
         #  seqnum  #
@@ -251,6 +284,18 @@ class ModuleData(object):
             raise ValueError(f'Attempting to add message from epoch {message.epoch} to bundle with '
                              'initial epoch {self._epoch}')
 
+        ################
+        #  Identifier  #
+        ################
+        if self._identifier != message.key:
+            raise ValueError(f'Unexpected identifier "{message.key}" (expected "{self._identifier}")')
+
+        #################
+        #  Duplication  #
+        #################
+        if self._received[message.kind]:
+            raise ValueError(f'Got duplicate value for kind "{message.kind}".')
+
     def add_message(self, message):
         '''Add a new message to this object. Will fail if the new messsage does not have the same
         sequence number and epoch.
@@ -262,32 +307,29 @@ class ModuleData(object):
         Raises
         ------
         ValueError
-            If the message is for a different module (layer) or a message of this kind was already
-            received.
+            see :meth:`~MessageBundle._check_message()`
         '''
         self._check_message(message)
 
-        if self._module != message.module:
-            raise ValueError(f'Unexpected module "{message.module}" (expected "{self._module}")')
+        self._received[message.kind] = True
 
-        if self._data[message.kind] is not None:
-            raise ValueError(f'Got duplicate value for kind "{message.kind}".')
-
-        self._data[message.kind] = message.payload
+        if message.data is not None:
+            self._data[message.kind] = message.data
 
     def __getattr__(self, name):
         '''Override to mimick a property for each kind of message in this data (e.g.
-        ``module_data.activations`` instead of ``module_data.data['activations']``)'''
+        ``message_bundle.activations`` instead of ``message_bundle.data['activations']``)
+        '''
         if name in self._expected_kinds:
             return self._data[name]
         else:
             return self.__getattribute__(name)
 
     def __str__(self):
-        mod   = self._module
+        mod   = self._identifier
         step  = self._step
         kinds = list(self._data.keys())
-        return f'<ModuleData: module={mod}, kinds={kinds}, step={step}>'
+        return f'<MessageBundle: identifier={mod}, kinds={kinds}, step={step}>'
 
     def __repr__(self):
         return str(self)

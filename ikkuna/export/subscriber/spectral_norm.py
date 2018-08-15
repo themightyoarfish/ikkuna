@@ -29,15 +29,15 @@ class SpectralNormSubscriber(PlotSubscriber):
                          tag=tag, backend=backend)
         self.u = dict()
 
-    def _metric(self, module_data):
+    def _metric(self, message_bundle):
         '''The spectral norm computation is taken from the `Pytorch implementation of spectral norm
         <https://pytorch.org/docs/master/_modules/torch/nn/utils/spectral_norm.html>`_. It's
         possible to use SVD instead, but we are not interested in the full matrix decomposition,
         merely in the singular values.'''
 
-        module    = module_data.module.name
+        module    = message_bundle.module.name
         # get and reshape the weight tensor to 2d
-        weights   = module_data.data[self._subscription.kinds[0]]
+        weights   = message_bundle.data[self._subscription.kinds[0]]
         height    = weights.size(0)
         weights2d = weights.reshape(height, -1)
 
@@ -53,4 +53,4 @@ class SpectralNormSubscriber(PlotSubscriber):
 
         norm = torch.dot(self.u[module], torch.matmul(weights2d, v)).item()
 
-        self._backend.add_data(module, norm, module_data.seq)
+        self._backend.add_data(module, norm, message_bundle.seq)

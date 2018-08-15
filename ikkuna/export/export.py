@@ -196,7 +196,7 @@ class Exporter(object):
             raise RuntimeError(f'Received message for unknown module {module.name}')
         msg = TrainingMessage(seq=self._global_step, tag=None, kind=kind,
                               module=self._modules[index], step=self._train_step,
-                              epoch=self._epoch, payload=data)
+                              epoch=self._epoch, data=data)
         for sub in self._subscribers:
             sub.receive_message(msg)
 

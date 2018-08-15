@@ -34,22 +34,19 @@ class RatioSubscriber(PlotSubscriber):
         else:
             self._metric_postprocess = lambda x: x
 
-    def _metric(self, module_data):
+    def _metric(self, message_bundle):
         '''The ratio between the two kinds is computed over the subset of not-NaN values and added
         to the record.'''
 
-        module  = module_data.module.name
+        module_name  = message_bundle.identifier
 
-        dividend = module_data.data[self._subscription.kinds[0]]
-        divisor  = module_data.data[self._subscription.kinds[1]]
+        dividend = message_bundle.data[self._subscription.kinds[0]]
+        divisor  = message_bundle.data[self._subscription.kinds[1]]
 
         ######################################################################################
         #  We need to see how many NaNs we have and compute the mean only over the non-nans  #
         ######################################################################################
-        try:
-            ratio_tensor = self._metric_postprocess(dividend.div(divisor))
-        except:
-            __import__('ipdb').set_trace()
+        ratio_tensor = self._metric_postprocess(dividend.div(divisor))
         n            = float(divisor.numel())
         nan_tensor   = torch.isnan(ratio_tensor)
         n_nans       = nan_tensor.sum().to(torch.float32)
@@ -60,6 +57,6 @@ class RatioSubscriber(PlotSubscriber):
         ratio = (ratio_sum / (n - n_nans)).item()
 
         if np.isnan(ratio):
-            raise ValueError(f'NaN value ratio for {module}')
+            raise ValueError(f'NaN value ratio for {module_name}')
 
-        self._backend.add_data(module, ratio, module_data.seq)
+        self._backend.add_data(module_name, ratio, message_bundle.seq)

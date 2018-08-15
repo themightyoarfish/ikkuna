@@ -20,8 +20,8 @@ class HistogramSubscriber(PlotSubscriber):
         super().__init__(subscription, {'title': title, 'ylabel': ylabel}, tag=tag, backend=backend)
         self._buffer = defaultdict(list)
 
-    def _metric(self, module_data):
+    def _metric(self, message_bundle):
 
-        module = module_data._module
-        data   = module_data.data[self._subscription.kinds[0]]
-        self._backend.add_histogram(module, data, module_data.seq)
+        module_name = message_bundle.identifier
+        data   = message_bundle.data[self._subscription.kinds[0]]
+        self._backend.add_histogram(module_name, data, message_bundle.seq)
