@@ -2,7 +2,7 @@ from ikkuna.export.subscriber import PlotSubscriber, Subscription
 from torch.utils.data import DataLoader
 
 
-class AccuracySubscriber(PlotSubscriber):
+class TestAccuracySubscriber(PlotSubscriber):
     '''
     Subscriber which can compute the accuracy on a given data set (generally the test/validation
     set).

@@ -2,9 +2,9 @@ from .subscriber import Subscriber, Subscription, SynchronizedSubscription, Plot
 from .histogram import HistogramSubscriber
 from .ratio import RatioSubscriber
 from .spectral_norm import SpectralNormSubscriber
-from .accuracy import AccuracySubscriber
+from .test_accuracy import TestAccuracySubscriber
 from .train_accuracy import TrainAccuracySubscriber
 
 __all__ = ['Subscriber', 'Subscription', 'SynchronizedSubscription', 'PlotSubscriber',
-           'HistogramSubscriber', 'RatioSubscriber', 'SpectralNormSubscriber', 'AccuracySubscriber',
+           'HistogramSubscriber', 'RatioSubscriber', 'SpectralNormSubscriber', 'TestAccuracySubscriber',
            'TrainAccuracySubscriber']
