@@ -50,7 +50,7 @@ class Message(object):
     @step.setter
     def step(self, value):
         if value < 0:
-            raise ValueError
+            raise ValueError('Step cannot be negative.')
         else:
             self._step = value
 
