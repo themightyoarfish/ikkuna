@@ -76,6 +76,13 @@ class Message(object):
         else:
             self._kind = value
 
+    def __str__(self):
+        return (f'<{self.__class__.__name__}: seq={self.seq}, '
+                f'step={self.step}, epoch={self.epoch}, kind={self.kind}>')
+
+    def __repr__(self):
+        return str(self)
+
 
 class MetaMessage(Message):
     '''A message with meta information not tied to any specific module. Can still carry tensor data,
