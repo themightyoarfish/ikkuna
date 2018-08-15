@@ -20,11 +20,11 @@ class Subscription(object):
                 Tag for filtering the processed messages
     _subscriber :   ikkuna.export.subscriber.Subscriber
                     The subscriber associated with the subscription
-    counter    :   dict(ikkuna.utils.NamedModule or str, int)
-                    Number of times the subscriber was called for each module label or meta data
-                    identifier. Since one :class:`ikkuna.export.subscriber.Subscriber` is associated
-                    with only one configuration of :class:`ikkuna.export.messages.MessageBundle`, this
-                    will enable proper subsampling of message streams.
+    counter :   dict(ikkuna.utils.NamedModule or str, int)
+                Number of times the subscriber was called for each module label or meta data
+                identifier. Since one :class:`ikkuna.export.subscriber.Subscriber` is associated
+                with only one configuration of :class:`ikkuna.export.messages.MessageBundle`, this
+                will enable proper subsampling of message streams.
     kinds   :   list(str)
                 List of string identifiers for different message kinds. These are all the
                 message kinds the subscriber wishes to receive
@@ -67,7 +67,7 @@ class Subscription(object):
         message    :   ikkuna.export.messages.Message
         '''
         if isinstance(message, TrainingMessage):
-            data = MessageBundle(message.module, message.kind)
+            data = MessageBundle(message.module.name, message.kind)
             data.add_message(message)
             self._subscriber.process_data(data)
         else:
@@ -202,6 +202,7 @@ class Subscriber(abc.ABC):
             raise ValueError(f'Data received for "{message_bundle._module}" is not complete.')
 
         self._metric(message_bundle)
+
 
 class PlotSubscriber(Subscriber):
     '''Base class for subscribers that output scalar or histogram values per time and module
