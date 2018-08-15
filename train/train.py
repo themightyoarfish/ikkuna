@@ -70,6 +70,7 @@ class Trainer:
         print(f'Number of classes: {self._num_classes}')
         print(f'Data shape: {self._shape}')
         self._exporter = Exporter()
+        self._exporter.set_loss(self._loss_function)
 
     @property
     def current_batch(self):
@@ -129,11 +130,11 @@ class Trainer:
         # do this before each epoch
         self._model.train(True)
 
-        X, Y = self._next_X, self._next_Y
+        X, Y         = self._next_X, self._next_Y
         data, labels = X.cuda(async=True), Y.cuda(async=True)
         self._optimizer.zero_grad()
-        output = self._model(data)
-        loss   = self._loss_function(output, labels)
+        output       = self._model(data)
+        loss         = self._loss_function(output, labels)
         loss.backward()
         self._optimizer.step()
 

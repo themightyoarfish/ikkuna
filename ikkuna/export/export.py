@@ -1,4 +1,3 @@
-import sys
 import torch
 from collections import defaultdict
 
@@ -22,7 +21,8 @@ class Exporter(object):
             nn.ReLU()
         ])
 
-    Modules will be tracked recursive unless specified otherwise, meaning the following is possible:
+    Modules will be tracked recursively unless specified otherwise, meaning the following is
+    possible:
 
     .. code-block:: python
 
@@ -32,6 +32,9 @@ class Exporter(object):
 
     No further changes to the model code are necessary, but for a call to
     :meth:`~Exporter.set_model()` to have the :class:`Exporter` wire up the appropriate callbacks.
+
+    As a final step :meth:`~Exporter.set_loss()` should be called with the loss function so that
+    labels can be extracted during training.
 
     Attributes
     ----------
@@ -88,8 +91,7 @@ class Exporter(object):
         self._modules.append(named_module)
         module.register_forward_hook(self.new_activations)
 
-
-        has_bias = hasattr(module, 'bias') and module.bias is not None
+        has_bias   = hasattr(module, 'bias') and module.bias is not None
         has_weight = hasattr(module, 'weight') and module.weight is not None
         if not has_weight and not has_bias:
             return
@@ -100,6 +102,10 @@ class Exporter(object):
         # cache weight and bias gradients and only call new_gradients when both are received
         grad_cache = {'weight': None, 'bias': None}
 
+        # the hooks will check whether both weight and bias have been received and if so, trigger
+        # publication. If the module has no bias, then ``None`` is published for the bias component.
+        # They also check whether we grads were already published at this train step and do nothing
+        # in that case.
         def weight_hook(grad):
             if self._did_publish_grads[module]:
                 return
@@ -185,8 +191,8 @@ class Exporter(object):
         except StopIteration:
             raise RuntimeError(f'Received message for unknown module {module.name}')
         msg = TrainingMessage(seq=self._global_step, tag=None, kind=kind,
-                                module=self._modules[index], step=self._train_step,
-                                epoch=self._epoch, payload=data)
+                              module=self._modules[index], step=self._train_step,
+                              epoch=self._epoch, payload=data)
         for sub in self._subscribers:
             sub.receive_message(msg)
 
@@ -211,6 +217,39 @@ class Exporter(object):
             pass
         else:
             self.publish(module, kind, data)
+
+    def new_input(self, *args):
+        '''Callback for new training input to the network.
+
+        Parameters
+        ----------
+        *args   :   tuple
+                    Network inputs
+        '''
+        if len(args) == 1:
+            input_data = args[0]
+        else:
+            input_data = args
+        msg_input = MetaMessage(seq=self._global_step, tag=None, kind='input_data',
+                                step=self._train_step, epoch=self._epoch, data=input_data)
+        for sub in self._subscribers:
+            sub.receive_message(msg_input)
+
+    def new_output_and_labels(self, network_output, labels):
+        '''Callback for final network output.
+
+        Parameters
+        ----------
+        data    :   torch.Tensor
+                    The final layer's output
+        '''
+        msg_output = MetaMessage(seq=self._global_step, tag=None, kind='network_output',
+                                 step=self._train_step, epoch=self._epoch, data=network_output)
+        msg_labels = MetaMessage(seq=self._global_step, tag=None, kind='input_labels',
+                                 step=self._train_step, epoch=self._epoch, data=labels)
+        for sub in self._subscribers:
+            sub.receive_message(msg_output)
+            sub.receive_message(msg_labels)
 
     def new_activations(self, module, in_, out_):
         '''Callback for newly arriving activations. Registered as a hook to the tracked modules.
@@ -292,6 +331,7 @@ class Exporter(object):
         forward_fn = model.forward
 
         def new_forward_fn(this, *args, should_train=True):
+            self.new_input(*args)
             # In order for accuracy subscribers to not need the model access, we add a secret
             # parameter which they can use to temporarily set the training to False and have it
             # revert automatically. TODO: Check if this is inefficient
@@ -304,6 +344,20 @@ class Exporter(object):
             this.train(was_training)            # restore previous state
             return ret
         model.forward = MethodType(new_forward_fn, model)
+
+    def set_loss(self, loss_function):
+        '''Add hook to loss function to extract labels.
+
+        Parameters
+        ----------
+        loss_function   :   torch.nn._Loss
+        '''
+
+        def hook(mod, output_and_labels, loss):
+            network_output, labels = output_and_labels
+            self.new_output_and_labels(network_output, labels)
+
+        loss_function.register_forward_hook(hook)
 
     def step(self):
         '''Increase batch counter (per epoch) and the global step counter.'''
