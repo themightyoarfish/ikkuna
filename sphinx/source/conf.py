@@ -180,7 +180,8 @@ nitpick_ignore = [('py:mod', 'torchvision.datasets'),
                   ('py:class', 'Module'),
                   # This happens when inheriting from Sequential
                   ('py:class', 'torch.nn.modules.container.Sequential'),
-                  ('py:class', 'function')
+                  ('py:class', 'function'),
+                  ('py:class', 'torch.nn._Loss')
                   ]
 
 autoclass_content = 'both'
