@@ -51,7 +51,7 @@ def create_optimizer(model, name, **kwargs):
     Raises
     ------
     ValueError
-        If superflous ``kwargs`` are passed.
+        If superfluous ``kwargs`` are passed.
 
     '''
     import torch

@@ -45,7 +45,8 @@ extensions = [
     'sphinx.ext.githubpages',
     # 'sphinx_autodoc_typehints',   # currently unpippable May 07, 2018
     'sphinx.ext.napoleon',
-    'sphinxarg.ext'
+    'sphinxarg.ext',
+    'sphinx.ext.viewcode'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -185,3 +186,4 @@ nitpick_ignore = [('py:mod', 'torchvision.datasets'),
                   ]
 
 autoclass_content = 'both'
+autodoc_member_order = 'bysource'

@@ -59,7 +59,7 @@
 <span id="ikkuna-export-export-module"></span><h2>ikkuna.export.export module<a class="headerlink" href="#module-ikkuna.export.export" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="ikkuna.export.export.Exporter">
-<em class="property">class </em><code class="descclassname">ikkuna.export.export.</code><code class="descname">Exporter</code><span class="sig-paren">(</span><em>depth</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ikkuna.export.export.</code><code class="descname">Exporter</code><span class="sig-paren">(</span><em>depth</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class for managing publishing of data from model code.</p>
 <p>An <a class="reference internal" href="#ikkuna.export.export.Exporter" title="ikkuna.export.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> is used in the model code by either explicitly registering modules for
@@ -158,33 +158,43 @@ step.  This is necessary since tensor hooks are called mutliple times.</p>
 <dd><p><em>int</em> – Depth to which to traverse the module tree</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ikkuna.export.export.Exporter._add_module_by_name">
-<code class="descname">_add_module_by_name</code><span class="sig-paren">(</span><em>named_module</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter._add_module_by_name" title="Permalink to this definition">¶</a></dt>
+<dl class="attribute">
+<dt id="ikkuna.export.export.Exporter.modules">
+<code class="descname">modules</code><a class="headerlink" href="#ikkuna.export.export.Exporter.modules" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.export.Exporter.named_modules">
+<code class="descname">named_modules</code><a class="headerlink" href="#ikkuna.export.export.Exporter.named_modules" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="ikkuna.export.export.Exporter._check_model">
-<code class="descname">_check_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter._check_model" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_check_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter._check_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter._check_model" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.export.export.Exporter._freeze_module">
-<code class="descname">_freeze_module</code><span class="sig-paren">(</span><em>named_module</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter._freeze_module" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convenience method for freezing training for a module.</p>
+<dt id="ikkuna.export.export.Exporter.subscribe">
+<code class="descname">subscribe</code><span class="sig-paren">(</span><em>subscriber</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.subscribe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.subscribe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a subscriber.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>named_module</strong> (<a class="reference internal" href="ikkuna.utils.html#ikkuna.utils.NamedModule" title="ikkuna.utils.NamedModule"><em>ikkuna.utils.NamedModule</em></a>) – Module to freeze</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>subscription</strong> (<a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><em>ikkuna.export.subscriber.Subscriber</em></a>) – Subscriber to register</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
+<dt id="ikkuna.export.export.Exporter._add_module_by_name">
+<code class="descname">_add_module_by_name</code><span class="sig-paren">(</span><em>named_module</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter._add_module_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter._add_module_by_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="ikkuna.export.export.Exporter.add_modules">
-<code class="descname">add_modules</code><span class="sig-paren">(</span><em>module</em>, <em>recursive=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.add_modules" title="Permalink to this definition">¶</a></dt>
+<code class="descname">add_modules</code><span class="sig-paren">(</span><em>module</em>, <em>recursive=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.add_modules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.add_modules" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add modules to supervise. If the module has <code class="docutils literal notranslate"><span class="pre">weight</span></code> and/or <code class="docutils literal notranslate"><span class="pre">bias</span></code> members, updates
 to those will be tracked.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -206,24 +216,87 @@ to those will be tracked.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.export.export.Exporter.epoch_finished">
-<code class="descname">epoch_finished</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.epoch_finished" title="Permalink to this definition">¶</a></dt>
-<dd><p>Increase the epoch counter and reset the batch counter.</p>
+<dt id="ikkuna.export.export.Exporter.publish_meta">
+<code class="descname">publish_meta</code><span class="sig-paren">(</span><em>kind</em>, <em>data=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.publish_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.publish_meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Publish an update of type <a class="reference internal" href="#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetaMessage</span></code></a> to all
+registered subscribers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Kind of message</li>
+<li><strong>data</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.Tensor</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – Payload, if necessary</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="ikkuna.export.export.Exporter.modules">
-<code class="descname">modules</code><a class="headerlink" href="#ikkuna.export.export.Exporter.modules" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="method">
+<dt id="ikkuna.export.export.Exporter.publish_training">
+<code class="descname">publish_training</code><span class="sig-paren">(</span><em>kind</em>, <em>module</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.publish_training"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.publish_training" title="Permalink to this definition">¶</a></dt>
+<dd><p>Publish an update of type <a class="reference internal" href="#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingMessage</span></code></a> to all
+registered subscribers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Kind of message</li>
+<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.nn.Module</em></a>) – The module in question</li>
+<li><strong>data</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.Tensor</em></a>) – Payload</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
-<dl class="attribute">
-<dt id="ikkuna.export.export.Exporter.named_modules">
-<code class="descname">named_modules</code><a class="headerlink" href="#ikkuna.export.export.Exporter.named_modules" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="method">
+<dt id="ikkuna.export.export.Exporter.train">
+<code class="descname">train</code><span class="sig-paren">(</span><em>train=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Switch to training mode. This will ensure all data is published.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.export.Exporter.test">
+<code class="descname">test</code><span class="sig-paren">(</span><em>test=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Switch to testing mode. This will turn off all publishing.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.export.Exporter.new_input">
+<code class="descname">new_input</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.new_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.new_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback for new training input to the network.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>*args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a>) – Network inputs</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.export.Exporter.new_output_and_labels">
+<code class="descname">new_output_and_labels</code><span class="sig-paren">(</span><em>network_output</em>, <em>labels</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.new_output_and_labels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.new_output_and_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback for final network output.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.Tensor</em></a>) – The final layer’s output</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ikkuna.export.export.Exporter.new_activations">
-<code class="descname">new_activations</code><span class="sig-paren">(</span><em>module</em>, <em>in_</em>, <em>out_</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.new_activations" title="Permalink to this definition">¶</a></dt>
+<code class="descname">new_activations</code><span class="sig-paren">(</span><em>module</em>, <em>in_</em>, <em>out_</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.new_activations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.new_activations" title="Permalink to this definition">¶</a></dt>
 <dd><p>Callback for newly arriving activations. Registered as a hook to the tracked modules.
 Will trigger export of all new activation and weight/bias data.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -243,7 +316,7 @@ Will trigger export of all new activation and weight/bias data.</p>
 
 <dl class="method">
 <dt id="ikkuna.export.export.Exporter.new_gradients">
-<code class="descname">new_gradients</code><span class="sig-paren">(</span><em>module</em>, <em>gradients</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.new_gradients" title="Permalink to this definition">¶</a></dt>
+<code class="descname">new_gradients</code><span class="sig-paren">(</span><em>module</em>, <em>gradients</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.new_gradients"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.new_gradients" title="Permalink to this definition">¶</a></dt>
 <dd><p>Callback for newly arriving gradients. Registered as a hook to the tracked modules.
 Will trigger export of all new gradient data.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -261,89 +334,8 @@ Will trigger export of all new gradient data.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.export.export.Exporter.new_input">
-<code class="descname">new_input</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.new_input" title="Permalink to this definition">¶</a></dt>
-<dd><p>Callback for new training input to the network.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>*args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a>) – Network inputs</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.export.Exporter.new_output_and_labels">
-<code class="descname">new_output_and_labels</code><span class="sig-paren">(</span><em>network_output</em>, <em>labels</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.new_output_and_labels" title="Permalink to this definition">¶</a></dt>
-<dd><p>Callback for final network output.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.Tensor</em></a>) – The final layer’s output</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.export.Exporter.publish_meta">
-<code class="descname">publish_meta</code><span class="sig-paren">(</span><em>kind</em>, <em>data=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.publish_meta" title="Permalink to this definition">¶</a></dt>
-<dd><p>Publish an update of type <a class="reference internal" href="#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetaMessage</span></code></a> to all
-registered subscribers.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Kind of message</li>
-<li><strong>data</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.Tensor</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – Payload, if necessary</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.export.Exporter.publish_training">
-<code class="descname">publish_training</code><span class="sig-paren">(</span><em>kind</em>, <em>module</em>, <em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.publish_training" title="Permalink to this definition">¶</a></dt>
-<dd><p>Publish an update of type <a class="reference internal" href="#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingMessage</span></code></a> to all
-registered subscribers.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Kind of message</li>
-<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.nn.Module</em></a>) – The module in question</li>
-<li><strong>data</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.Tensor</em></a>) – Payload</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.export.Exporter.set_loss">
-<code class="descname">set_loss</code><span class="sig-paren">(</span><em>loss_function</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.set_loss" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add hook to loss function to extract labels.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>loss_function</strong> (<em>torch.nn._Loss</em>) – </td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
 <dt id="ikkuna.export.export.Exporter.set_model">
-<code class="descname">set_model</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.set_model" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_model</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.set_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.set_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the model for direct access for some metrics.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -356,35 +348,43 @@ registered subscribers.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.export.export.Exporter.step">
-<code class="descname">step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Increase batch counter (per epoch) and the global step counter.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.export.Exporter.subscribe">
-<code class="descname">subscribe</code><span class="sig-paren">(</span><em>subscriber</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.subscribe" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a subscriber.</p>
+<dt id="ikkuna.export.export.Exporter.set_loss">
+<code class="descname">set_loss</code><span class="sig-paren">(</span><em>loss_function</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.set_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.set_loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add hook to loss function to extract labels.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>subscription</strong> (<a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><em>ikkuna.export.subscriber.Subscriber</em></a>) – Subscriber to register</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>loss_function</strong> (<em>torch.nn._Loss</em>) – </td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.export.export.Exporter.test">
-<code class="descname">test</code><span class="sig-paren">(</span><em>test=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.test" title="Permalink to this definition">¶</a></dt>
-<dd><p>Switch to testing mode. This will turn off all publishing.</p>
+<dt id="ikkuna.export.export.Exporter.step">
+<code class="descname">step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increase batch counter (per epoch) and the global step counter.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.export.export.Exporter.train">
-<code class="descname">train</code><span class="sig-paren">(</span><em>train=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.train" title="Permalink to this definition">¶</a></dt>
-<dd><p>Switch to training mode. This will ensure all data is published.</p>
+<dt id="ikkuna.export.export.Exporter._freeze_module">
+<code class="descname">_freeze_module</code><span class="sig-paren">(</span><em>named_module</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter._freeze_module"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter._freeze_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience method for freezing training for a module.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>named_module</strong> (<a class="reference internal" href="ikkuna.utils.html#ikkuna.utils.NamedModule" title="ikkuna.utils.NamedModule"><em>ikkuna.utils.NamedModule</em></a>) – Module to freeze</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.export.Exporter.epoch_finished">
+<code class="descname">epoch_finished</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.epoch_finished"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.epoch_finished" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increase the epoch counter and reset the batch counter.</p>
 </dd></dl>
 
 </dd></dl>
@@ -394,7 +394,7 @@ registered subscribers.</p>
 <span id="ikkuna-export-messages-module"></span><h2>ikkuna.export.messages module<a class="headerlink" href="#module-ikkuna.export.messages" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="ikkuna.export.messages.Message">
-<em class="property">class </em><code class="descclassname">ikkuna.export.messages.</code><code class="descname">Message</code><span class="sig-paren">(</span><em>tag</em>, <em>seq</em>, <em>step</em>, <em>epoch</em>, <em>kind</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.Message" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ikkuna.export.messages.</code><code class="descname">Message</code><span class="sig-paren">(</span><em>tag</em>, <em>seq</em>, <em>step</em>, <em>epoch</em>, <em>kind</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/messages.html#Message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.messages.Message" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
 <p>Base class for messages emitted from the <a class="reference internal" href="#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a>.</p>
 <dl class="attribute">
@@ -441,6 +441,41 @@ registered subscribers.</p>
 </dd></dl>
 
 <dl class="attribute">
+<dt>
+<code class="descname">tag</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">seq</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">step</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">epoch</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">kind</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">data</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">key</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
 <dt id="ikkuna.export.messages.Message._abc_cache">
 <code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.messages.Message._abc_cache" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -460,46 +495,115 @@ registered subscribers.</p>
 <code class="descname">_abc_registry</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.messages.Message._abc_registry" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+</dd></dl>
+
+<dl class="class">
+<dt id="ikkuna.export.messages.MetaMessage">
+<em class="property">class </em><code class="descclassname">ikkuna.export.messages.</code><code class="descname">MetaMessage</code><span class="sig-paren">(</span><em>tag</em>, <em>seq</em>, <em>step</em>, <em>epoch</em>, <em>kind</em>, <em>data=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/messages.html#MetaMessage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.messages.MetaMessage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.Message</span></code></a></p>
+<p>A message with meta information not tied to any specific module. Can still carry tensor data,
+if necessary.</p>
+<dl class="attribute">
+<dt id="ikkuna.export.messages.MetaMessage.data">
+<code class="descname">data</code><a class="headerlink" href="#ikkuna.export.messages.MetaMessage.data" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>torch.Tensor, tuple or None</em> – Optional data. Can be used e.g. for input to the network, labels or network output</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.MetaMessage.kind">
+<code class="descname">kind</code><a class="headerlink" href="#ikkuna.export.messages.MetaMessage.kind" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="attribute">
 <dt>
 <code class="descname">data</code></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt>
-<code class="descname">epoch</code></dt>
+<dt id="ikkuna.export.messages.MetaMessage.key">
+<code class="descname">key</code><a class="headerlink" href="#ikkuna.export.messages.MetaMessage.key" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt>
-<code class="descname">key</code></dt>
+<dt id="ikkuna.export.messages.MetaMessage._abc_cache">
+<code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.messages.MetaMessage._abc_cache" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt>
-<code class="descname">kind</code></dt>
+<dt id="ikkuna.export.messages.MetaMessage._abc_negative_cache">
+<code class="descname">_abc_negative_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.messages.MetaMessage._abc_negative_cache" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt>
-<code class="descname">seq</code></dt>
+<dt id="ikkuna.export.messages.MetaMessage._abc_negative_cache_version">
+<code class="descname">_abc_negative_cache_version</code><em class="property"> = 191</em><a class="headerlink" href="#ikkuna.export.messages.MetaMessage._abc_negative_cache_version" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt>
-<code class="descname">step</code></dt>
+<dt id="ikkuna.export.messages.MetaMessage._abc_registry">
+<code class="descname">_abc_registry</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.messages.MetaMessage._abc_registry" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ikkuna.export.messages.TrainingMessage">
+<em class="property">class </em><code class="descclassname">ikkuna.export.messages.</code><code class="descname">TrainingMessage</code><span class="sig-paren">(</span><em>tag</em>, <em>seq</em>, <em>step</em>, <em>epoch</em>, <em>kind</em>, <em>module</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/messages.html#TrainingMessage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.messages.TrainingMessage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.Message</span></code></a></p>
+<p>These messages are assembled into <a class="reference internal" href="#ikkuna.export.messages.MessageBundle" title="ikkuna.export.messages.MessageBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageBundle</span></code></a> objects in the
+<a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscription" title="ikkuna.export.subscriber.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscription</span></code></a>.</p>
+<dl class="attribute">
+<dt id="ikkuna.export.messages.TrainingMessage.module">
+<code class="descname">module</code><a class="headerlink" href="#ikkuna.export.messages.TrainingMessage.module" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>torch.nn.Module</em> – Module emitting this data</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.TrainingMessage.data">
+<code class="descname">data</code><a class="headerlink" href="#ikkuna.export.messages.TrainingMessage.data" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>torch.Tensor</em> – Data emitted from the module</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt>
-<code class="descname">tag</code></dt>
+<code class="descname">module</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.TrainingMessage.kind">
+<code class="descname">kind</code><a class="headerlink" href="#ikkuna.export.messages.TrainingMessage.kind" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.TrainingMessage.key">
+<code class="descname">key</code><a class="headerlink" href="#ikkuna.export.messages.TrainingMessage.key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.TrainingMessage._abc_cache">
+<code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.messages.TrainingMessage._abc_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.TrainingMessage._abc_negative_cache">
+<code class="descname">_abc_negative_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.messages.TrainingMessage._abc_negative_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.TrainingMessage._abc_negative_cache_version">
+<code class="descname">_abc_negative_cache_version</code><em class="property"> = 191</em><a class="headerlink" href="#ikkuna.export.messages.TrainingMessage._abc_negative_cache_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.TrainingMessage._abc_registry">
+<code class="descname">_abc_registry</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.messages.TrainingMessage._abc_registry" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="class">
 <dt id="ikkuna.export.messages.MessageBundle">
-<em class="property">class </em><code class="descclassname">ikkuna.export.messages.</code><code class="descname">MessageBundle</code><span class="sig-paren">(</span><em>identifier</em>, <em>kinds</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.MessageBundle" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ikkuna.export.messages.</code><code class="descname">MessageBundle</code><span class="sig-paren">(</span><em>identifier</em>, <em>kinds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/messages.html#MessageBundle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.messages.MessageBundle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Data object for holding a set of artifacts for a module (or meta information) at one point
 during training. This data type can be used to buffer different kinds and check whether all
@@ -561,9 +665,56 @@ name or <cite>‘META’</cite> for a collection of meta messages.</li>
 </tr>
 </tbody>
 </table>
+<dl class="attribute">
+<dt id="ikkuna.export.messages.MessageBundle.identifier">
+<code class="descname">identifier</code><a class="headerlink" href="#ikkuna.export.messages.MessageBundle.identifier" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.MessageBundle.expected_kinds">
+<code class="descname">expected_kinds</code><a class="headerlink" href="#ikkuna.export.messages.MessageBundle.expected_kinds" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.MessageBundle.data">
+<code class="descname">data</code><a class="headerlink" href="#ikkuna.export.messages.MessageBundle.data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.MessageBundle.seq">
+<code class="descname">seq</code><a class="headerlink" href="#ikkuna.export.messages.MessageBundle.seq" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.messages.MessageBundle.step">
+<code class="descname">step</code><a class="headerlink" href="#ikkuna.export.messages.MessageBundle.step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.messages.MessageBundle.epoch">
+<code class="descname">epoch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/messages.html#MessageBundle.epoch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.messages.MessageBundle.epoch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.messages.MessageBundle.complete">
+<code class="descname">complete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/messages.html#MessageBundle.complete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.messages.MessageBundle.complete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if all expected messages have been received. This means the bundle can be released
+to subscribers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="ikkuna.export.messages.MessageBundle._check_message">
-<code class="descname">_check_message</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.MessageBundle._check_message" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_check_message</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/messages.html#MessageBundle._check_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.messages.MessageBundle._check_message" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check consistency of sequence number, step and epoch or set if not set yet. Check
 consistency of identifier and check for duplication.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -582,7 +733,7 @@ received</td>
 
 <dl class="method">
 <dt id="ikkuna.export.messages.MessageBundle.add_message">
-<code class="descname">add_message</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.MessageBundle.add_message" title="Permalink to this definition">¶</a></dt>
+<code class="descname">add_message</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/messages.html#MessageBundle.add_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.messages.MessageBundle.add_message" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a new message to this object. Will fail if the new messsage does not have the same
 sequence number and epoch.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -597,157 +748,6 @@ sequence number and epoch.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="ikkuna.export.messages.MessageBundle.complete">
-<code class="descname">complete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.MessageBundle.complete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if all expected messages have been received. This means the bundle can be released
-to subscribers.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.messages.MessageBundle.data">
-<code class="descname">data</code><a class="headerlink" href="#ikkuna.export.messages.MessageBundle.data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.messages.MessageBundle.epoch">
-<code class="descname">epoch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.MessageBundle.epoch" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.messages.MessageBundle.expected_kinds">
-<code class="descname">expected_kinds</code><a class="headerlink" href="#ikkuna.export.messages.MessageBundle.expected_kinds" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.messages.MessageBundle.identifier">
-<code class="descname">identifier</code><a class="headerlink" href="#ikkuna.export.messages.MessageBundle.identifier" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.messages.MessageBundle.seq">
-<code class="descname">seq</code><a class="headerlink" href="#ikkuna.export.messages.MessageBundle.seq" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.messages.MessageBundle.step">
-<code class="descname">step</code><a class="headerlink" href="#ikkuna.export.messages.MessageBundle.step" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="ikkuna.export.messages.MetaMessage">
-<em class="property">class </em><code class="descclassname">ikkuna.export.messages.</code><code class="descname">MetaMessage</code><span class="sig-paren">(</span><em>tag</em>, <em>seq</em>, <em>step</em>, <em>epoch</em>, <em>kind</em>, <em>data=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.MetaMessage" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.Message</span></code></a></p>
-<p>A message with meta information not tied to any specific module. Can still carry tensor data,
-if necessary.</p>
-<dl class="attribute">
-<dt id="ikkuna.export.messages.MetaMessage.data">
-<code class="descname">data</code><a class="headerlink" href="#ikkuna.export.messages.MetaMessage.data" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>torch.Tensor, tuple or None</em> – Optional data. Can be used e.g. for input to the network, labels or network output</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.messages.MetaMessage._abc_cache">
-<code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.messages.MetaMessage._abc_cache" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.messages.MetaMessage._abc_negative_cache">
-<code class="descname">_abc_negative_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.messages.MetaMessage._abc_negative_cache" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.messages.MetaMessage._abc_negative_cache_version">
-<code class="descname">_abc_negative_cache_version</code><em class="property"> = 191</em><a class="headerlink" href="#ikkuna.export.messages.MetaMessage._abc_negative_cache_version" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.messages.MetaMessage._abc_registry">
-<code class="descname">_abc_registry</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.messages.MetaMessage._abc_registry" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="descname">data</code></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.messages.MetaMessage.key">
-<code class="descname">key</code><a class="headerlink" href="#ikkuna.export.messages.MetaMessage.key" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.messages.MetaMessage.kind">
-<code class="descname">kind</code><a class="headerlink" href="#ikkuna.export.messages.MetaMessage.kind" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="ikkuna.export.messages.TrainingMessage">
-<em class="property">class </em><code class="descclassname">ikkuna.export.messages.</code><code class="descname">TrainingMessage</code><span class="sig-paren">(</span><em>tag</em>, <em>seq</em>, <em>step</em>, <em>epoch</em>, <em>kind</em>, <em>module</em>, <em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.messages.TrainingMessage" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.messages.Message</span></code></a></p>
-<p>These messages are assembled into <a class="reference internal" href="#ikkuna.export.messages.MessageBundle" title="ikkuna.export.messages.MessageBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageBundle</span></code></a> objects in the
-<a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscription" title="ikkuna.export.subscriber.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscription</span></code></a>.</p>
-<dl class="attribute">
-<dt id="ikkuna.export.messages.TrainingMessage.module">
-<code class="descname">module</code><a class="headerlink" href="#ikkuna.export.messages.TrainingMessage.module" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>torch.nn.Module</em> – Module emitting this data</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.messages.TrainingMessage.data">
-<code class="descname">data</code><a class="headerlink" href="#ikkuna.export.messages.TrainingMessage.data" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>torch.Tensor</em> – Data emitted from the module</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.messages.TrainingMessage._abc_cache">
-<code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.messages.TrainingMessage._abc_cache" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.messages.TrainingMessage._abc_negative_cache">
-<code class="descname">_abc_negative_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.messages.TrainingMessage._abc_negative_cache" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.messages.TrainingMessage._abc_negative_cache_version">
-<code class="descname">_abc_negative_cache_version</code><em class="property"> = 191</em><a class="headerlink" href="#ikkuna.export.messages.TrainingMessage._abc_negative_cache_version" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.messages.TrainingMessage._abc_registry">
-<code class="descname">_abc_registry</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.messages.TrainingMessage._abc_registry" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.messages.TrainingMessage.key">
-<code class="descname">key</code><a class="headerlink" href="#ikkuna.export.messages.TrainingMessage.key" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.messages.TrainingMessage.kind">
-<code class="descname">kind</code><a class="headerlink" href="#ikkuna.export.messages.TrainingMessage.kind" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="descname">module</code></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 </div>
@@ -755,7 +755,7 @@ if necessary.</p>
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ikkuna.export" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="ikkuna.export.Exporter">
-<em class="property">class </em><code class="descclassname">ikkuna.export.</code><code class="descname">Exporter</code><span class="sig-paren">(</span><em>depth</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ikkuna.export.</code><code class="descname">Exporter</code><span class="sig-paren">(</span><em>depth</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.Exporter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class for managing publishing of data from model code.</p>
 <p>An <a class="reference internal" href="#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> is used in the model code by either explicitly registering modules for
@@ -854,33 +854,43 @@ step.  This is necessary since tensor hooks are called mutliple times.</p>
 <dd><p><em>int</em> – Depth to which to traverse the module tree</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ikkuna.export.Exporter._add_module_by_name">
-<code class="descname">_add_module_by_name</code><span class="sig-paren">(</span><em>named_module</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter._add_module_by_name" title="Permalink to this definition">¶</a></dt>
+<dl class="attribute">
+<dt id="ikkuna.export.Exporter.modules">
+<code class="descname">modules</code><a class="headerlink" href="#ikkuna.export.Exporter.modules" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.Exporter.named_modules">
+<code class="descname">named_modules</code><a class="headerlink" href="#ikkuna.export.Exporter.named_modules" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="ikkuna.export.Exporter._check_model">
-<code class="descname">_check_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter._check_model" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_check_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter._check_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.Exporter._check_model" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.export.Exporter._freeze_module">
-<code class="descname">_freeze_module</code><span class="sig-paren">(</span><em>named_module</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter._freeze_module" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convenience method for freezing training for a module.</p>
+<dt id="ikkuna.export.Exporter.subscribe">
+<code class="descname">subscribe</code><span class="sig-paren">(</span><em>subscriber</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.subscribe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.Exporter.subscribe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a subscriber.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>named_module</strong> (<a class="reference internal" href="ikkuna.utils.html#ikkuna.utils.NamedModule" title="ikkuna.utils.NamedModule"><em>ikkuna.utils.NamedModule</em></a>) – Module to freeze</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>subscription</strong> (<a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><em>ikkuna.export.subscriber.Subscriber</em></a>) – Subscriber to register</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
+<dt id="ikkuna.export.Exporter._add_module_by_name">
+<code class="descname">_add_module_by_name</code><span class="sig-paren">(</span><em>named_module</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter._add_module_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.Exporter._add_module_by_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="ikkuna.export.Exporter.add_modules">
-<code class="descname">add_modules</code><span class="sig-paren">(</span><em>module</em>, <em>recursive=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter.add_modules" title="Permalink to this definition">¶</a></dt>
+<code class="descname">add_modules</code><span class="sig-paren">(</span><em>module</em>, <em>recursive=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.add_modules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.Exporter.add_modules" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add modules to supervise. If the module has <code class="docutils literal notranslate"><span class="pre">weight</span></code> and/or <code class="docutils literal notranslate"><span class="pre">bias</span></code> members, updates
 to those will be tracked.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -902,24 +912,87 @@ to those will be tracked.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.export.Exporter.epoch_finished">
-<code class="descname">epoch_finished</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter.epoch_finished" title="Permalink to this definition">¶</a></dt>
-<dd><p>Increase the epoch counter and reset the batch counter.</p>
+<dt id="ikkuna.export.Exporter.publish_meta">
+<code class="descname">publish_meta</code><span class="sig-paren">(</span><em>kind</em>, <em>data=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.publish_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.Exporter.publish_meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Publish an update of type <a class="reference internal" href="#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetaMessage</span></code></a> to all
+registered subscribers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Kind of message</li>
+<li><strong>data</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.Tensor</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – Payload, if necessary</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="ikkuna.export.Exporter.modules">
-<code class="descname">modules</code><a class="headerlink" href="#ikkuna.export.Exporter.modules" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="method">
+<dt id="ikkuna.export.Exporter.publish_training">
+<code class="descname">publish_training</code><span class="sig-paren">(</span><em>kind</em>, <em>module</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.publish_training"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.Exporter.publish_training" title="Permalink to this definition">¶</a></dt>
+<dd><p>Publish an update of type <a class="reference internal" href="#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingMessage</span></code></a> to all
+registered subscribers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Kind of message</li>
+<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.nn.Module</em></a>) – The module in question</li>
+<li><strong>data</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.Tensor</em></a>) – Payload</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
-<dl class="attribute">
-<dt id="ikkuna.export.Exporter.named_modules">
-<code class="descname">named_modules</code><a class="headerlink" href="#ikkuna.export.Exporter.named_modules" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="method">
+<dt id="ikkuna.export.Exporter.train">
+<code class="descname">train</code><span class="sig-paren">(</span><em>train=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.Exporter.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Switch to training mode. This will ensure all data is published.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.Exporter.test">
+<code class="descname">test</code><span class="sig-paren">(</span><em>test=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.Exporter.test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Switch to testing mode. This will turn off all publishing.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.Exporter.new_input">
+<code class="descname">new_input</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.new_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.Exporter.new_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback for new training input to the network.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>*args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a>) – Network inputs</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.Exporter.new_output_and_labels">
+<code class="descname">new_output_and_labels</code><span class="sig-paren">(</span><em>network_output</em>, <em>labels</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.new_output_and_labels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.Exporter.new_output_and_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback for final network output.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.Tensor</em></a>) – The final layer’s output</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ikkuna.export.Exporter.new_activations">
-<code class="descname">new_activations</code><span class="sig-paren">(</span><em>module</em>, <em>in_</em>, <em>out_</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter.new_activations" title="Permalink to this definition">¶</a></dt>
+<code class="descname">new_activations</code><span class="sig-paren">(</span><em>module</em>, <em>in_</em>, <em>out_</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.new_activations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.Exporter.new_activations" title="Permalink to this definition">¶</a></dt>
 <dd><p>Callback for newly arriving activations. Registered as a hook to the tracked modules.
 Will trigger export of all new activation and weight/bias data.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -939,7 +1012,7 @@ Will trigger export of all new activation and weight/bias data.</p>
 
 <dl class="method">
 <dt id="ikkuna.export.Exporter.new_gradients">
-<code class="descname">new_gradients</code><span class="sig-paren">(</span><em>module</em>, <em>gradients</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter.new_gradients" title="Permalink to this definition">¶</a></dt>
+<code class="descname">new_gradients</code><span class="sig-paren">(</span><em>module</em>, <em>gradients</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.new_gradients"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.Exporter.new_gradients" title="Permalink to this definition">¶</a></dt>
 <dd><p>Callback for newly arriving gradients. Registered as a hook to the tracked modules.
 Will trigger export of all new gradient data.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -957,89 +1030,8 @@ Will trigger export of all new gradient data.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.export.Exporter.new_input">
-<code class="descname">new_input</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter.new_input" title="Permalink to this definition">¶</a></dt>
-<dd><p>Callback for new training input to the network.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>*args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a>) – Network inputs</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.Exporter.new_output_and_labels">
-<code class="descname">new_output_and_labels</code><span class="sig-paren">(</span><em>network_output</em>, <em>labels</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter.new_output_and_labels" title="Permalink to this definition">¶</a></dt>
-<dd><p>Callback for final network output.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.Tensor</em></a>) – The final layer’s output</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.Exporter.publish_meta">
-<code class="descname">publish_meta</code><span class="sig-paren">(</span><em>kind</em>, <em>data=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter.publish_meta" title="Permalink to this definition">¶</a></dt>
-<dd><p>Publish an update of type <a class="reference internal" href="#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetaMessage</span></code></a> to all
-registered subscribers.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Kind of message</li>
-<li><strong>data</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.Tensor</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – Payload, if necessary</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.Exporter.publish_training">
-<code class="descname">publish_training</code><span class="sig-paren">(</span><em>kind</em>, <em>module</em>, <em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter.publish_training" title="Permalink to this definition">¶</a></dt>
-<dd><p>Publish an update of type <a class="reference internal" href="#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingMessage</span></code></a> to all
-registered subscribers.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Kind of message</li>
-<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.nn.Module</em></a>) – The module in question</li>
-<li><strong>data</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.Tensor</em></a>) – Payload</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.Exporter.set_loss">
-<code class="descname">set_loss</code><span class="sig-paren">(</span><em>loss_function</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter.set_loss" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add hook to loss function to extract labels.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>loss_function</strong> (<em>torch.nn._Loss</em>) – </td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
 <dt id="ikkuna.export.Exporter.set_model">
-<code class="descname">set_model</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter.set_model" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_model</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.set_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.Exporter.set_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the model for direct access for some metrics.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1052,35 +1044,43 @@ registered subscribers.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.export.Exporter.step">
-<code class="descname">step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter.step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Increase batch counter (per epoch) and the global step counter.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.Exporter.subscribe">
-<code class="descname">subscribe</code><span class="sig-paren">(</span><em>subscriber</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter.subscribe" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a subscriber.</p>
+<dt id="ikkuna.export.Exporter.set_loss">
+<code class="descname">set_loss</code><span class="sig-paren">(</span><em>loss_function</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.set_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.Exporter.set_loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add hook to loss function to extract labels.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>subscription</strong> (<a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><em>ikkuna.export.subscriber.Subscriber</em></a>) – Subscriber to register</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>loss_function</strong> (<em>torch.nn._Loss</em>) – </td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.export.Exporter.test">
-<code class="descname">test</code><span class="sig-paren">(</span><em>test=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter.test" title="Permalink to this definition">¶</a></dt>
-<dd><p>Switch to testing mode. This will turn off all publishing.</p>
+<dt id="ikkuna.export.Exporter.step">
+<code class="descname">step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.Exporter.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increase batch counter (per epoch) and the global step counter.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.export.Exporter.train">
-<code class="descname">train</code><span class="sig-paren">(</span><em>train=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter.train" title="Permalink to this definition">¶</a></dt>
-<dd><p>Switch to training mode. This will ensure all data is published.</p>
+<dt id="ikkuna.export.Exporter._freeze_module">
+<code class="descname">_freeze_module</code><span class="sig-paren">(</span><em>named_module</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter._freeze_module"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.Exporter._freeze_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience method for freezing training for a module.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>named_module</strong> (<a class="reference internal" href="ikkuna.utils.html#ikkuna.utils.NamedModule" title="ikkuna.utils.NamedModule"><em>ikkuna.utils.NamedModule</em></a>) – Module to freeze</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.Exporter.epoch_finished">
+<code class="descname">epoch_finished</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.epoch_finished"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.Exporter.epoch_finished" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increase the epoch counter and reset the batch counter.</p>
 </dd></dl>
 
 </dd></dl>

@@ -41,7 +41,7 @@
 <span id="ikkuna-visualization-backend-module"></span><h2>ikkuna.visualization.backend module<a class="headerlink" href="#module-ikkuna.visualization.backend" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="ikkuna.visualization.backend.Backend">
-<em class="property">class </em><code class="descclassname">ikkuna.visualization.backend.</code><code class="descname">Backend</code><span class="sig-paren">(</span><em>title</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.visualization.backend.Backend" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ikkuna.visualization.backend.</code><code class="descname">Backend</code><span class="sig-paren">(</span><em>title</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/visualization/backend.html#Backend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.visualization.backend.Backend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
 <p>Base class for visualiation backends. <a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a> s use
 this class to dispatch their metrics to have them visualised.</p>
@@ -59,29 +59,9 @@ this class to dispatch their metrics to have them visualised.</p>
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt id="ikkuna.visualization.backend.Backend._abc_cache">
-<code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.visualization.backend.Backend._abc_cache" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.visualization.backend.Backend._abc_negative_cache">
-<code class="descname">_abc_negative_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.visualization.backend.Backend._abc_negative_cache" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.visualization.backend.Backend._abc_negative_cache_version">
-<code class="descname">_abc_negative_cache_version</code><em class="property"> = 197</em><a class="headerlink" href="#ikkuna.visualization.backend.Backend._abc_negative_cache_version" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.visualization.backend.Backend._abc_registry">
-<code class="descname">_abc_registry</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.visualization.backend.Backend._abc_registry" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="method">
 <dt id="ikkuna.visualization.backend.Backend.add_data">
-<code class="descname">add_data</code><span class="sig-paren">(</span><em>module_name</em>, <em>datum</em>, <em>step</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.visualization.backend.Backend.add_data" title="Permalink to this definition">¶</a></dt>
+<code class="descname">add_data</code><span class="sig-paren">(</span><em>module_name</em>, <em>datum</em>, <em>step</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/visualization/backend.html#Backend.add_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.visualization.backend.Backend.add_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Display scalar data (i.e. a line plot)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -100,7 +80,7 @@ this class to dispatch their metrics to have them visualised.</p>
 
 <dl class="method">
 <dt id="ikkuna.visualization.backend.Backend.add_histogram">
-<code class="descname">add_histogram</code><span class="sig-paren">(</span><em>module_name</em>, <em>datum</em>, <em>step</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.visualization.backend.Backend.add_histogram" title="Permalink to this definition">¶</a></dt>
+<code class="descname">add_histogram</code><span class="sig-paren">(</span><em>module_name</em>, <em>datum</em>, <em>step</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/visualization/backend.html#Backend.add_histogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.visualization.backend.Backend.add_histogram" title="Permalink to this definition">¶</a></dt>
 <dd><p>Display histogram data (i.e. a line plot)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -122,242 +102,31 @@ this class to dispatch their metrics to have them visualised.</p>
 <code class="descname">title</code></dt>
 <dd></dd></dl>
 
-</dd></dl>
-
-<dl class="class">
-<dt id="ikkuna.visualization.backend.MPLBackend">
-<em class="property">class </em><code class="descclassname">ikkuna.visualization.backend.</code><code class="descname">MPLBackend</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ikkuna.visualization.backend.Backend" title="ikkuna.visualization.backend.Backend"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.visualization.backend.Backend</span></code></a></p>
-<p>Matplotlib backend (use in Jupyter with <code class="docutils literal notranslate"><span class="pre">%matplotlib</span> <span class="pre">inline</span></code> or via X-forwarding over ssh
-[barely useable])</p>
 <dl class="attribute">
-<dt id="ikkuna.visualization.backend.MPLBackend._xlabel">
-<code class="descname">_xlabel</code><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._xlabel" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – X axis label for line plots</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.visualization.backend.MPLBackend._ylabel">
-<code class="descname">_ylabel</code><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._ylabel" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – Y axis label for line plots</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.visualization.backend.MPLBackend._ylims">
-<code class="descname">_ylims</code><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._ylims" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>tuple</em> – Limits of the y axis for line plots</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.visualization.backend.MPLBackend._redraw_counter">
-<code class="descname">_redraw_counter</code><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._redraw_counter" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – Number of datapoints to consume before redrawing the figure</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.visualization.backend.MPLBackend._plots">
-<code class="descname">_plots</code><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._plots" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict</em> – module-plot mapping</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.visualization.backend.MPLBackend._axes">
-<code class="descname">_axes</code><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._axes" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict</em> – module-UpdatableHistogram mapping (this should be refactored)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.visualization.backend.MPLBackend._buffer">
-<code class="descname">_buffer</code><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._buffer" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict</em> – Per-module buffer of tensors for more reliable histograms</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.visualization.backend.MPLBackend._buffer_lim">
-<code class="descname">_buffer_lim</code><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._buffer_lim" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – Size of the buffer</p>
-</dd></dl>
-
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>xlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – </li>
-<li><strong>ylabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – </li>
-<li><strong>ylims</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a>) – </li>
-<li><strong>buffer_lim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Buffer size for more reliable histograms</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="ikkuna.visualization.backend.MPLBackend._abc_cache">
-<code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._abc_cache" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.visualization.backend.Backend._abc_cache">
+<code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.visualization.backend.Backend._abc_cache" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="ikkuna.visualization.backend.MPLBackend._abc_negative_cache">
-<code class="descname">_abc_negative_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._abc_negative_cache" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.visualization.backend.Backend._abc_negative_cache">
+<code class="descname">_abc_negative_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.visualization.backend.Backend._abc_negative_cache" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="ikkuna.visualization.backend.MPLBackend._abc_negative_cache_version">
-<code class="descname">_abc_negative_cache_version</code><em class="property"> = 197</em><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._abc_negative_cache_version" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.visualization.backend.Backend._abc_negative_cache_version">
+<code class="descname">_abc_negative_cache_version</code><em class="property"> = 197</em><a class="headerlink" href="#ikkuna.visualization.backend.Backend._abc_negative_cache_version" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="ikkuna.visualization.backend.MPLBackend._abc_registry">
-<code class="descname">_abc_registry</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._abc_registry" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.visualization.backend.Backend._abc_registry">
+<code class="descname">_abc_registry</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.visualization.backend.Backend._abc_registry" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.visualization.backend.MPLBackend._prepare_axis">
-<code class="descname">_prepare_axis</code><span class="sig-paren">(</span><em>ax</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._prepare_axis" title="Permalink to this definition">¶</a></dt>
-<dd><p>Prepare the line plot axis with labels and scaling.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.visualization.backend.MPLBackend._reflow_plots">
-<code class="descname">_reflow_plots</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._reflow_plots" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reqorganize the histogram subplots into a rectangular shape. For now, the sublots are
-arranged on a grid twice as high as it is wide, since vertical space is often in
-abundance.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This does not recompute the plots</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.visualization.backend.MPLBackend.add_data">
-<code class="descname">add_data</code><span class="sig-paren">(</span><em>module_name</em>, <em>datum</em>, <em>step</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend.add_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Display scalar data (i.e. a line plot)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of module which emitted the data</li>
-<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.Tensor</em></a>) – Payload</li>
-<li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.visualization.backend.MPLBackend.add_histogram">
-<code class="descname">add_histogram</code><span class="sig-paren">(</span><em>module_name</em>, <em>datum</em>, <em>step</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend.add_histogram" title="Permalink to this definition">¶</a></dt>
-<dd><p>Display histogram data (i.e. a line plot)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of module which emitted the data</li>
-<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.Tensor</em></a>) – Payload, not the histogram itself</li>
-<li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.visualization.backend.MPLBackend.title">
-<code class="descname">title</code><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend.title" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.visualization.backend.MPLBackend.xlabel">
-<code class="descname">xlabel</code><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend.xlabel" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.visualization.backend.MPLBackend.ylabel">
-<code class="descname">ylabel</code><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend.ylabel" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="ikkuna.visualization.backend.TBBackend">
-<em class="property">class </em><code class="descclassname">ikkuna.visualization.backend.</code><code class="descname">TBBackend</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.visualization.backend.TBBackend" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ikkuna.visualization.backend.Backend" title="ikkuna.visualization.backend.Backend"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.visualization.backend.Backend</span></code></a></p>
-<p>Tensorboard backend.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Whitespace and punctuation in the <code class="docutils literal notranslate"><span class="pre">title</span></code> will be replaced
-with underscores due to the fact that it becomes part of a file name.</p>
-</div>
-<dl class="attribute">
-<dt id="ikkuna.visualization.backend.TBBackend._abc_cache">
-<code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.visualization.backend.TBBackend._abc_cache" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.visualization.backend.TBBackend._abc_negative_cache">
-<code class="descname">_abc_negative_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.visualization.backend.TBBackend._abc_negative_cache" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.visualization.backend.TBBackend._abc_negative_cache_version">
-<code class="descname">_abc_negative_cache_version</code><em class="property"> = 197</em><a class="headerlink" href="#ikkuna.visualization.backend.TBBackend._abc_negative_cache_version" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.visualization.backend.TBBackend._abc_registry">
-<code class="descname">_abc_registry</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.visualization.backend.TBBackend._abc_registry" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.visualization.backend.TBBackend.add_data">
-<code class="descname">add_data</code><span class="sig-paren">(</span><em>module_name</em>, <em>datum</em>, <em>step</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.visualization.backend.TBBackend.add_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Display scalar data (i.e. a line plot)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of module which emitted the data</li>
-<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.Tensor</em></a>) – Payload</li>
-<li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.visualization.backend.TBBackend.add_histogram">
-<code class="descname">add_histogram</code><span class="sig-paren">(</span><em>module_name</em>, <em>datum</em>, <em>step</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.visualization.backend.TBBackend.add_histogram" title="Permalink to this definition">¶</a></dt>
-<dd><p>Display histogram data (i.e. a line plot)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of module which emitted the data</li>
-<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.Tensor</em></a>) – Payload, not the histogram itself</li>
-<li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
 
 </dd></dl>
 
 <dl class="class">
 <dt id="ikkuna.visualization.backend.UpdatableHistogram">
-<em class="property">class </em><code class="descclassname">ikkuna.visualization.backend.</code><code class="descname">UpdatableHistogram</code><span class="sig-paren">(</span><em>figure</em>, <em>subplot_conf=111</em>, <em>title=''</em>, <em>max_hists=10</em>, <em>basecolor=(0.7803921568627451</em>, <em>0.25098039215686274</em>, <em>0.09411764705882353)</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.visualization.backend.UpdatableHistogram" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ikkuna.visualization.backend.</code><code class="descname">UpdatableHistogram</code><span class="sig-paren">(</span><em>figure</em>, <em>subplot_conf=111</em>, <em>title=''</em>, <em>max_hists=10</em>, <em>basecolor=(0.7803921568627451</em>, <em>0.25098039215686274</em>, <em>0.09411764705882353)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/visualization/backend.html#UpdatableHistogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.visualization.backend.UpdatableHistogram" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A utility class to wrap a single histogram subplot of a figure which can display up to a
 number of histograms. New data displaces old one. This emulates tensorboard histogram traces
@@ -433,14 +202,36 @@ with matplotlib.</p>
 </table>
 <dl class="method">
 <dt id="ikkuna.visualization.backend.UpdatableHistogram._prepare_plot">
-<code class="descname">_prepare_plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.visualization.backend.UpdatableHistogram._prepare_plot" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_prepare_plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/visualization/backend.html#UpdatableHistogram._prepare_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.visualization.backend.UpdatableHistogram._prepare_plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prepare the axes object for (re)plotting. This removes all unnecessary elements and
 assigns labels.</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="ikkuna.visualization.backend.UpdatableHistogram.figure">
+<code class="descname">figure</code><a class="headerlink" href="#ikkuna.visualization.backend.UpdatableHistogram.figure" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.visualization.backend.UpdatableHistogram.ax">
+<code class="descname">ax</code><a class="headerlink" href="#ikkuna.visualization.backend.UpdatableHistogram.ax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.visualization.backend.UpdatableHistogram.replot">
+<code class="descname">replot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/visualization/backend.html#UpdatableHistogram.replot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.visualization.backend.UpdatableHistogram.replot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recompute all visible plots. This will remove all current plots and simply replot
+<code class="docutils literal notranslate"><span class="pre">self._hists</span></code>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This is not an inefficient way to update the plot; the proper ways to do this is to
+simply move all current histograms one step backwards, unless the x axis changes.</p>
+</div>
+</dd></dl>
+
 <dl class="method">
 <dt id="ikkuna.visualization.backend.UpdatableHistogram.add_data">
-<code class="descname">add_data</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.visualization.backend.UpdatableHistogram.add_data" title="Permalink to this definition">¶</a></dt>
+<code class="descname">add_data</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/visualization/backend.html#UpdatableHistogram.add_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.visualization.backend.UpdatableHistogram.add_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add data for a new histogram. Currently, the number of bins is fixed at 50. Old data is
 deleted.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -453,26 +244,235 @@ deleted.</p>
 </table>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="class">
+<dt id="ikkuna.visualization.backend.MPLBackend">
+<em class="property">class </em><code class="descclassname">ikkuna.visualization.backend.</code><code class="descname">MPLBackend</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/visualization/backend.html#MPLBackend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ikkuna.visualization.backend.Backend" title="ikkuna.visualization.backend.Backend"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.visualization.backend.Backend</span></code></a></p>
+<p>Matplotlib backend (use in Jupyter with <code class="docutils literal notranslate"><span class="pre">%matplotlib</span> <span class="pre">inline</span></code> or via X-forwarding over ssh
+[barely useable])</p>
 <dl class="attribute">
-<dt id="ikkuna.visualization.backend.UpdatableHistogram.ax">
-<code class="descname">ax</code><a class="headerlink" href="#ikkuna.visualization.backend.UpdatableHistogram.ax" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.visualization.backend.MPLBackend._xlabel">
+<code class="descname">_xlabel</code><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._xlabel" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – X axis label for line plots</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.visualization.backend.MPLBackend._ylabel">
+<code class="descname">_ylabel</code><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._ylabel" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – Y axis label for line plots</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.visualization.backend.MPLBackend._ylims">
+<code class="descname">_ylims</code><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._ylims" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>tuple</em> – Limits of the y axis for line plots</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.visualization.backend.MPLBackend._redraw_counter">
+<code class="descname">_redraw_counter</code><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._redraw_counter" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Number of datapoints to consume before redrawing the figure</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.visualization.backend.MPLBackend._plots">
+<code class="descname">_plots</code><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._plots" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em> – module-plot mapping</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.visualization.backend.MPLBackend._axes">
+<code class="descname">_axes</code><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._axes" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em> – module-UpdatableHistogram mapping (this should be refactored)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.visualization.backend.MPLBackend._buffer">
+<code class="descname">_buffer</code><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._buffer" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em> – Per-module buffer of tensors for more reliable histograms</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.visualization.backend.MPLBackend._buffer_lim">
+<code class="descname">_buffer_lim</code><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._buffer_lim" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Size of the buffer</p>
+</dd></dl>
+
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>xlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – </li>
+<li><strong>ylabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – </li>
+<li><strong>ylims</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a>) – </li>
+<li><strong>buffer_lim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Buffer size for more reliable histograms</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="ikkuna.visualization.backend.MPLBackend._prepare_axis">
+<code class="descname">_prepare_axis</code><span class="sig-paren">(</span><em>ax</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/visualization/backend.html#MPLBackend._prepare_axis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._prepare_axis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepare the line plot axis with labels and scaling.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.visualization.backend.MPLBackend.title">
+<code class="descname">title</code><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend.title" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="ikkuna.visualization.backend.UpdatableHistogram.figure">
-<code class="descname">figure</code><a class="headerlink" href="#ikkuna.visualization.backend.UpdatableHistogram.figure" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.visualization.backend.MPLBackend.xlabel">
+<code class="descname">xlabel</code><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend.xlabel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.visualization.backend.MPLBackend.ylabel">
+<code class="descname">ylabel</code><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend.ylabel" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.visualization.backend.UpdatableHistogram.replot">
-<code class="descname">replot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.visualization.backend.UpdatableHistogram.replot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Recompute all visible plots. This will remove all current plots and simply replot
-<code class="docutils literal notranslate"><span class="pre">self._hists</span></code>.</p>
+<dt id="ikkuna.visualization.backend.MPLBackend._reflow_plots">
+<code class="descname">_reflow_plots</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/visualization/backend.html#MPLBackend._reflow_plots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._reflow_plots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reqorganize the histogram subplots into a rectangular shape. For now, the sublots are
+arranged on a grid twice as high as it is wide, since vertical space is often in
+abundance.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">This is not an inefficient way to update the plot; the proper ways to do this is to
-simply move all current histograms one step backwards, unless the x axis changes.</p>
+<p class="last">This does not recompute the plots</p>
 </div>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.visualization.backend.MPLBackend.add_histogram">
+<code class="descname">add_histogram</code><span class="sig-paren">(</span><em>module_name</em>, <em>datum</em>, <em>step</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/visualization/backend.html#MPLBackend.add_histogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend.add_histogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display histogram data (i.e. a line plot)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of module which emitted the data</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.Tensor</em></a>) – Payload, not the histogram itself</li>
+<li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.visualization.backend.MPLBackend.add_data">
+<code class="descname">add_data</code><span class="sig-paren">(</span><em>module_name</em>, <em>datum</em>, <em>step</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/visualization/backend.html#MPLBackend.add_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend.add_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display scalar data (i.e. a line plot)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of module which emitted the data</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.Tensor</em></a>) – Payload</li>
+<li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.visualization.backend.MPLBackend._abc_cache">
+<code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._abc_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.visualization.backend.MPLBackend._abc_negative_cache">
+<code class="descname">_abc_negative_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._abc_negative_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.visualization.backend.MPLBackend._abc_negative_cache_version">
+<code class="descname">_abc_negative_cache_version</code><em class="property"> = 197</em><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._abc_negative_cache_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.visualization.backend.MPLBackend._abc_registry">
+<code class="descname">_abc_registry</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.visualization.backend.MPLBackend._abc_registry" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ikkuna.visualization.backend.TBBackend">
+<em class="property">class </em><code class="descclassname">ikkuna.visualization.backend.</code><code class="descname">TBBackend</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/visualization/backend.html#TBBackend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.visualization.backend.TBBackend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ikkuna.visualization.backend.Backend" title="ikkuna.visualization.backend.Backend"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.visualization.backend.Backend</span></code></a></p>
+<p>Tensorboard backend.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Whitespace and punctuation in the <code class="docutils literal notranslate"><span class="pre">title</span></code> will be replaced
+with underscores due to the fact that it becomes part of a file name.</p>
+</div>
+<dl class="attribute">
+<dt id="ikkuna.visualization.backend.TBBackend._abc_cache">
+<code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.visualization.backend.TBBackend._abc_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.visualization.backend.TBBackend._abc_negative_cache">
+<code class="descname">_abc_negative_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.visualization.backend.TBBackend._abc_negative_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.visualization.backend.TBBackend._abc_negative_cache_version">
+<code class="descname">_abc_negative_cache_version</code><em class="property"> = 197</em><a class="headerlink" href="#ikkuna.visualization.backend.TBBackend._abc_negative_cache_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.visualization.backend.TBBackend._abc_registry">
+<code class="descname">_abc_registry</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.visualization.backend.TBBackend._abc_registry" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.visualization.backend.TBBackend.add_data">
+<code class="descname">add_data</code><span class="sig-paren">(</span><em>module_name</em>, <em>datum</em>, <em>step</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/visualization/backend.html#TBBackend.add_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.visualization.backend.TBBackend.add_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display scalar data (i.e. a line plot)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of module which emitted the data</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.Tensor</em></a>) – Payload</li>
+<li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.visualization.backend.TBBackend.add_histogram">
+<code class="descname">add_histogram</code><span class="sig-paren">(</span><em>module_name</em>, <em>datum</em>, <em>step</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/visualization/backend.html#TBBackend.add_histogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.visualization.backend.TBBackend.add_histogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display histogram data (i.e. a line plot)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of module which emitted the data</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.Tensor</em></a>) – Payload, not the histogram itself</li>
+<li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
