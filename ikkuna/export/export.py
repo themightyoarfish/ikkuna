@@ -381,16 +381,27 @@ class Exporter(object):
 
         self._did_publish_grads.clear()
 
-    def epoch_finished(self):
-        '''Increase the epoch counter and reset the batch counter.'''
-        modules = self.named_modules
-        module = modules[min(self._epoch, len(modules)-1)]
-        if module not in self._frozen:
-            self._frozen.add(module)
-            print(f'Freezing {module.name}')
-            for p in module.module.parameters():
+    def _freeze_module(self, named_module):
+        '''Convenience method for freezing training for a module.
+
+        Parameters
+        ----------
+        named_module    :   ikkuna.utils.NamedModule
+                            Module to freeze
+        '''
+
+        def freeze(mod):
+            for p in mod.parameters():
                 p.requires_grad = False
 
+        if named_module not in self._frozen:
+            self._frozen.add(named_module)
+            print(f'Freezing {named_module.name}')
+            named_module.module.apply(freeze)
+
+    def epoch_finished(self):
+        '''Increase the epoch counter and reset the batch counter.'''
+
         self.publish_meta('epoch_finished')
-        self._epoch      += 1
+        self._epoch     += 1
         self._train_step = 0

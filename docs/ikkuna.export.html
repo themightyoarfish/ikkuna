@@ -169,6 +169,20 @@ step.  This is necessary since tensor hooks are called mutliple times.</p>
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="ikkuna.export.export.Exporter._freeze_module">
+<code class="descname">_freeze_module</code><span class="sig-paren">(</span><em>named_module</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter._freeze_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience method for freezing training for a module.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>named_module</strong> (<a class="reference internal" href="ikkuna.utils.html#ikkuna.utils.NamedModule" title="ikkuna.utils.NamedModule"><em>ikkuna.utils.NamedModule</em></a>) – Module to freeze</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="ikkuna.export.export.Exporter.add_modules">
 <code class="descname">add_modules</code><span class="sig-paren">(</span><em>module</em>, <em>recursive=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.add_modules" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add modules to supervise. If the module has <code class="docutils literal notranslate"><span class="pre">weight</span></code> and/or <code class="docutils literal notranslate"><span class="pre">bias</span></code> members, updates
@@ -849,6 +863,20 @@ step.  This is necessary since tensor hooks are called mutliple times.</p>
 <dt id="ikkuna.export.Exporter._check_model">
 <code class="descname">_check_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter._check_model" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.Exporter._freeze_module">
+<code class="descname">_freeze_module</code><span class="sig-paren">(</span><em>named_module</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter._freeze_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience method for freezing training for a module.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>named_module</strong> (<a class="reference internal" href="ikkuna.utils.html#ikkuna.utils.NamedModule" title="ikkuna.utils.NamedModule"><em>ikkuna.utils.NamedModule</em></a>) – Module to freeze</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ikkuna.export.Exporter.add_modules">
