@@ -51,3 +51,12 @@ ikkuna.export.subscriber.train\_accuracy module
     :members:
     :undoc-members:
     :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: ikkuna.export.subscriber
+    :members:
+    :undoc-members:
+    :show-inheritance:

@@ -79,6 +79,7 @@
 <li><a class="reference internal" href="#module-ikkuna.utils.module_tree">ikkuna.utils.module_tree module</a></li>
 <li><a class="reference internal" href="#module-ikkuna.utils.named_module">ikkuna.utils.named_module module</a></li>
 <li><a class="reference internal" href="#module-ikkuna.utils.utils">ikkuna.utils.utils module</a></li>
+<li><a class="reference internal" href="#module-ikkuna.utils">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -135,7 +136,7 @@
 </div>
 <div class="section" id="module-ikkuna.utils.module_tree">
 <span id="ikkuna-utils-module-tree-module"></span><h2>ikkuna.utils.module_tree module<a class="headerlink" href="#module-ikkuna.utils.module_tree" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="module-module_tree"></span><p>This module defines the <code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleTree</span></code> class for easily traversing a module hierarchy in order
+<span class="target" id="module-module_tree"></span><p>This module defines the <a class="reference internal" href="#ikkuna.utils.ModuleTree" title="ikkuna.utils.ModuleTree"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleTree</span></code></a> class for easily traversing a module hierarchy in order
 to generate unique hierarchical names for all involved modules to be used as dictinary keys.</p>
 <dl class="class">
 <dt id="ikkuna.utils.module_tree.ModuleTree">
@@ -175,12 +176,12 @@ the same sequential module.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+c6facc2 ))"><em>torch.nn.Module</em></a>) – </li>
+<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+00f2731 ))"><em>torch.nn.Module</em></a>) – </li>
 <li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – If no name is given, one will be generated. If <code class="docutils literal notranslate"><span class="pre">drop_name</span> <span class="pre">==</span> <span class="pre">True</span></code>, this
 parameter is ignored</li>
 <li><strong>drop_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Ignore the given name and set it to <code class="docutils literal notranslate"><span class="pre">''</span></code>. Useful for dropping the root
 name (e.g. <code class="docutils literal notranslate"><span class="pre">alexnet</span></code>) lest it appear in every child name.</li>
-<li><strong>recursive</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Add all <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.named_children" title="(in PyTorch vmaster (0.5.0a0+c6facc2 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.named_children()</span></code></a> as children to this tree</li>
+<li><strong>recursive</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Add all <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.named_children" title="(in PyTorch vmaster (0.5.0a0+00f2731 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.named_children()</span></code></a> as children to this tree</li>
 </ul>
 </td>
 </tr>
@@ -237,7 +238,7 @@ name (e.g. <code class="docutils literal notranslate"><span class="pre">alexnet<
 <dl class="function">
 <dt id="ikkuna.utils.utils.available_optimizers">
 <code class="descclassname">ikkuna.utils.utils.</code><code class="descname">available_optimizers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/utils/utils.html#available_optimizers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.utils.available_optimizers" title="Permalink to this definition">¶</a></dt>
-<dd><p>List names of all available torch optimizers form <a class="reference external" href="https://pytorch.org/docs/master/optim.html#module-torch.optim" title="(in PyTorch vmaster (0.5.0a0+c6facc2 ))"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torch.optim</span></code></a>.</p>
+<dd><p>List names of all available torch optimizers form <a class="reference external" href="https://pytorch.org/docs/master/optim.html#module-torch.optim" title="(in PyTorch vmaster (0.5.0a0+00f2731 ))"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torch.optim</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -260,7 +261,7 @@ with <code class="docutils literal notranslate"><span class="pre">requires_grad<
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>model</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+c6facc2 ))"><em>torch.nn.Module</em></a>) – </li>
+<li><strong>model</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+00f2731 ))"><em>torch.nn.Module</em></a>) – </li>
 <li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the optimizer</li>
 <li><strong>kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – All arguments which should be passed to the optimizer.</li>
 </ul>
@@ -284,13 +285,13 @@ skip if not present.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+c6facc2 ))"><em>torch.nn.Module</em></a>) – The model</li>
+<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+00f2731 ))"><em>torch.nn.Module</em></a>) – The model</li>
 <li><strong>bias_val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Constant for biases (should be small and positive)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If <code class="docutils literal notranslate"><span class="pre">module</span></code> is not one of the known models (currently <code class="xref py py-class docutils literal notranslate"><span class="pre">AlexNetMini</span></code>
-and <code class="xref py py-class docutils literal notranslate"><span class="pre">DenseNet</span></code>)</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If <code class="docutils literal notranslate"><span class="pre">module</span></code> is not one of the known models (currently <a class="reference internal" href="models.html#models.AlexNetMini" title="models.AlexNetMini"><code class="xref py py-class docutils literal notranslate"><span class="pre">AlexNetMini</span></code></a>
+and <a class="reference internal" href="models.html#models.DenseNet" title="models.DenseNet"><code class="xref py py-class docutils literal notranslate"><span class="pre">DenseNet</span></code></a>)</p>
 </td>
 </tr>
 </tbody>
@@ -341,6 +342,163 @@ Values are memory usage as integers in MB.</td>
 <dt id="ikkuna.utils.utils.tensor_to_numba">
 <code class="descclassname">ikkuna.utils.utils.</code><code class="descname">tensor_to_numba</code><span class="sig-paren">(</span><em>tensor</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/utils/utils.html#tensor_to_numba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.utils.tensor_to_numba" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+</div>
+<div class="section" id="module-ikkuna.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ikkuna.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ikkuna.utils.ModuleTree">
+<em class="property">class </em><code class="descclassname">ikkuna.utils.</code><code class="descname">ModuleTree</code><span class="sig-paren">(</span><em>module</em>, <em>name=None</em>, <em>drop_name=True</em>, <em>recursive=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/utils/module_tree.html#ModuleTree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.ModuleTree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="attribute">
+<dt id="ikkuna.utils.ModuleTree._module">
+<code class="descname">_module</code><a class="headerlink" href="#ikkuna.utils.ModuleTree._module" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>torch.nn.Module</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.utils.ModuleTree._name">
+<code class="descname">_name</code><a class="headerlink" href="#ikkuna.utils.ModuleTree._name" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – Hierarchical name for this module</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.utils.ModuleTree._children">
+<code class="descname">_children</code><a class="headerlink" href="#ikkuna.utils.ModuleTree._children" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list(ModuleTree)</em> – Children of this module. Can be empty.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.utils.ModuleTree._type_counter">
+<code class="descname">_type_counter</code><a class="headerlink" href="#ikkuna.utils.ModuleTree._type_counter" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict(int)</em> – Dict for keeping track of number of child modules of each class. Used for
+disambiguating e.g. different successive conv layers which are children of
+the same sequential module.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.utils.ModuleTree.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>module</em>, <em>name=None</em>, <em>drop_name=True</em>, <em>recursive=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/utils/module_tree.html#ModuleTree.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.ModuleTree.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+00f2731 ))"><em>torch.nn.Module</em></a>) – </li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – If no name is given, one will be generated. If <code class="docutils literal notranslate"><span class="pre">drop_name</span> <span class="pre">==</span> <span class="pre">True</span></code>, this
+parameter is ignored</li>
+<li><strong>drop_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Ignore the given name and set it to <code class="docutils literal notranslate"><span class="pre">''</span></code>. Useful for dropping the root
+name (e.g. <code class="docutils literal notranslate"><span class="pre">alexnet</span></code>) lest it appear in every child name.</li>
+<li><strong>recursive</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Add all <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.named_children" title="(in PyTorch vmaster (0.5.0a0+00f2731 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.named_children()</span></code></a> as children to this tree</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.utils.ModuleTree.preorder">
+<code class="descname">preorder</code><span class="sig-paren">(</span><em>depth=-1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/utils/module_tree.html#ModuleTree.preorder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.ModuleTree.preorder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Traverse the tree in preorder.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>depth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Depth to which to traverse the tree. -1 means infinite depth.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><em>ikkuna.utils.NamedModule</em> – Tuple of name, module and parent module</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ikkuna.utils.NamedModule">
+<em class="property">class </em><code class="descclassname">ikkuna.utils.</code><code class="descname">NamedModule</code><a class="reference internal" href="_modules/ikkuna/utils/named_module.html#NamedModule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.NamedModule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ikkuna.utils.named_module.NamedModule" title="ikkuna.utils.named_module.NamedModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.utils.named_module.NamedModule</span></code></a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ikkuna.utils.make_fill_polygons">
+<code class="descclassname">ikkuna.utils.</code><code class="descname">make_fill_polygons</code><span class="sig-paren">(</span><em>xs</em>, <em>ys</em>, <em>zs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/utils/utils.html#make_fill_polygons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.make_fill_polygons" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a set of polygons to fill the space below a line in 3d.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://matplotlib.org/api/_as_gen/mpl_toolkits.mplot3d.art3d.Poly3DCollection.html#mpl_toolkits.mplot3d.art3d.Poly3DCollection" title="(in Matplotlib v2.2.3)">mpl_toolkits.mplot3d.art3d.Poly3DCollection</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ikkuna.utils.available_optimizers">
+<code class="descclassname">ikkuna.utils.</code><code class="descname">available_optimizers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/utils/utils.html#available_optimizers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.available_optimizers" title="Permalink to this definition">¶</a></dt>
+<dd><p>List names of all available torch optimizers form <a class="reference external" href="https://pytorch.org/docs/master/optim.html#module-torch.optim" title="(in PyTorch vmaster (0.5.0a0+00f2731 ))"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torch.optim</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of all optimizer names.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>(<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a>)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ikkuna.utils.create_optimizer">
+<code class="descclassname">ikkuna.utils.</code><code class="descname">create_optimizer</code><span class="sig-paren">(</span><em>model</em>, <em>name</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/utils/utils.html#create_optimizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.create_optimizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an optimizer for <code class="docutils literal notranslate"><span class="pre">model</span></code> s parameters. Will disregard all params
+with <code class="docutils literal notranslate"><span class="pre">requires_grad</span> <span class="pre">==</span> <span class="pre">False</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+00f2731 ))"><em>torch.nn.Module</em></a>) – </li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the optimizer</li>
+<li><strong>kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – All arguments which should be passed to the optimizer.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If superfluous <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> are passed.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ikkuna.utils.initialize_model">
+<code class="descclassname">ikkuna.utils.</code><code class="descname">initialize_model</code><span class="sig-paren">(</span><em>module</em>, <em>bias_val=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/utils/utils.html#initialize_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.initialize_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform weight initialization on <cite>module</cite>. This is somewhat hacky since
+it assumes the presence of <cite>weight</cite> and/or <cite>bias</cite> fields on the module. Will
+skip if not present.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+00f2731 ))"><em>torch.nn.Module</em></a>) – The model</li>
+<li><strong>bias_val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Constant for biases (should be small and positive)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If <code class="docutils literal notranslate"><span class="pre">module</span></code> is not one of the known models (currently <a class="reference internal" href="models.html#models.AlexNetMini" title="models.AlexNetMini"><code class="xref py py-class docutils literal notranslate"><span class="pre">AlexNetMini</span></code></a>
+and <a class="reference internal" href="models.html#models.DenseNet" title="models.DenseNet"><code class="xref py py-class docutils literal notranslate"><span class="pre">DenseNet</span></code></a>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 </div>
