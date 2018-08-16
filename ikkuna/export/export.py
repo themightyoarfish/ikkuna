@@ -30,11 +30,14 @@ class Exporter(object):
         e.add_modules(extremely_complex_model)
         # e will now track all layers of extremely_complex_model
 
-    No further changes to the model code are necessary, but for a call to
-    :meth:`~Exporter.set_model()` to have the :class:`Exporter` wire up the appropriate callbacks.
+    Three further changes to the training code are necessary
 
-    As a final step :meth:`~Exporter.set_loss()` should be called with the loss function so that
-    labels can be extracted during training.
+        #. :meth:`~Exporter.set_model()` to have the :class:`Exporter` wire up the appropriate
+           callbacks.
+        #. :meth:`~Exporter.set_loss()` should be called with the loss function so that
+           labels can be extracted during training.
+        #. :meth:`~Exporter.epoch_finished()` should be called if any
+           :class:`~ikkuna.export.subscriber.Subscriber` s rely on the ``'epoch_finished'`` signal
 
     Attributes
     ----------
@@ -78,6 +81,7 @@ class Exporter(object):
         self._is_training       = True
         self._did_publish_grads = defaultdict(bool)
         self._depth             = depth
+        self._frozen            = set()
 
     @property
     def modules(self):
@@ -379,6 +383,14 @@ class Exporter(object):
 
     def epoch_finished(self):
         '''Increase the epoch counter and reset the batch counter.'''
+        modules = self.named_modules
+        module = modules[min(self._epoch, len(modules)-1)]
+        if module not in self._frozen:
+            self._frozen.add(module)
+            print(f'Freezing {module.name}')
+            for p in module.module.parameters():
+                p.requires_grad = False
+
         self.publish_meta('epoch_finished')
         self._epoch      += 1
         self._train_step = 0

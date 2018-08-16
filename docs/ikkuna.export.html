@@ -80,10 +80,17 @@ possible:</p>
 <span class="c1"># e will now track all layers of extremely_complex_model</span>
 </pre></div>
 </div>
-<p>No further changes to the model code are necessary, but for a call to
-<a class="reference internal" href="#ikkuna.export.export.Exporter.set_model" title="ikkuna.export.export.Exporter.set_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_model()</span></code></a> to have the <a class="reference internal" href="#ikkuna.export.export.Exporter" title="ikkuna.export.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> wire up the appropriate callbacks.</p>
-<p>As a final step <a class="reference internal" href="#ikkuna.export.export.Exporter.set_loss" title="ikkuna.export.export.Exporter.set_loss"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_loss()</span></code></a> should be called with the loss function so that
-labels can be extracted during training.</p>
+<p>Three further changes to the training code are necessary</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><a class="reference internal" href="#ikkuna.export.export.Exporter.set_model" title="ikkuna.export.export.Exporter.set_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_model()</span></code></a> to have the <a class="reference internal" href="#ikkuna.export.export.Exporter" title="ikkuna.export.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> wire up the appropriate
+callbacks.</li>
+<li><a class="reference internal" href="#ikkuna.export.export.Exporter.set_loss" title="ikkuna.export.export.Exporter.set_loss"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_loss()</span></code></a> should be called with the loss function so that
+labels can be extracted during training.</li>
+<li><a class="reference internal" href="#ikkuna.export.export.Exporter.epoch_finished" title="ikkuna.export.export.Exporter.epoch_finished"><code class="xref py py-meth docutils literal notranslate"><span class="pre">epoch_finished()</span></code></a> should be called if any
+<a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a> s rely on the <code class="docutils literal notranslate"><span class="pre">'epoch_finished'</span></code> signal</li>
+</ol>
+</div></blockquote>
 <dl class="attribute">
 <dt id="ikkuna.export.export.Exporter._modules">
 <code class="descname">_modules</code><a class="headerlink" href="#ikkuna.export.export.Exporter._modules" title="Permalink to this definition">¶</a></dt>
@@ -190,6 +197,16 @@ to those will be tracked.</p>
 <dd><p>Increase the epoch counter and reset the batch counter.</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="ikkuna.export.export.Exporter.modules">
+<code class="descname">modules</code><a class="headerlink" href="#ikkuna.export.export.Exporter.modules" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.export.Exporter.named_modules">
+<code class="descname">named_modules</code><a class="headerlink" href="#ikkuna.export.export.Exporter.named_modules" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="ikkuna.export.export.Exporter.new_activations">
 <code class="descname">new_activations</code><span class="sig-paren">(</span><em>module</em>, <em>in_</em>, <em>out_</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.new_activations" title="Permalink to this definition">¶</a></dt>
@@ -286,8 +303,8 @@ registered subscribers.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Kind of message</li>
 <li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.nn.Module</em></a>) – The module in question</li>
-<li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Kind of subscriber to notify</li>
 <li><strong>data</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.Tensor</em></a>) – Payload</li>
 </ul>
 </td>
@@ -347,12 +364,14 @@ registered subscribers.</p>
 <dl class="method">
 <dt id="ikkuna.export.export.Exporter.test">
 <code class="descname">test</code><span class="sig-paren">(</span><em>test=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.test" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Switch to testing mode. This will turn off all publishing.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="ikkuna.export.export.Exporter.train">
 <code class="descname">train</code><span class="sig-paren">(</span><em>train=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.export.Exporter.train" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Switch to training mode. This will ensure all data is published.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -743,10 +762,17 @@ possible:</p>
 <span class="c1"># e will now track all layers of extremely_complex_model</span>
 </pre></div>
 </div>
-<p>No further changes to the model code are necessary, but for a call to
-<a class="reference internal" href="#ikkuna.export.Exporter.set_model" title="ikkuna.export.Exporter.set_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_model()</span></code></a> to have the <a class="reference internal" href="#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> wire up the appropriate callbacks.</p>
-<p>As a final step <a class="reference internal" href="#ikkuna.export.Exporter.set_loss" title="ikkuna.export.Exporter.set_loss"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_loss()</span></code></a> should be called with the loss function so that
-labels can be extracted during training.</p>
+<p>Three further changes to the training code are necessary</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><a class="reference internal" href="#ikkuna.export.Exporter.set_model" title="ikkuna.export.Exporter.set_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_model()</span></code></a> to have the <a class="reference internal" href="#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> wire up the appropriate
+callbacks.</li>
+<li><a class="reference internal" href="#ikkuna.export.Exporter.set_loss" title="ikkuna.export.Exporter.set_loss"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_loss()</span></code></a> should be called with the loss function so that
+labels can be extracted during training.</li>
+<li><a class="reference internal" href="#ikkuna.export.Exporter.epoch_finished" title="ikkuna.export.Exporter.epoch_finished"><code class="xref py py-meth docutils literal notranslate"><span class="pre">epoch_finished()</span></code></a> should be called if any
+<a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a> s rely on the <code class="docutils literal notranslate"><span class="pre">'epoch_finished'</span></code> signal</li>
+</ol>
+</div></blockquote>
 <dl class="attribute">
 <dt id="ikkuna.export.Exporter._modules">
 <code class="descname">_modules</code><a class="headerlink" href="#ikkuna.export.Exporter._modules" title="Permalink to this definition">¶</a></dt>
@@ -853,6 +879,16 @@ to those will be tracked.</p>
 <dd><p>Increase the epoch counter and reset the batch counter.</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="ikkuna.export.Exporter.modules">
+<code class="descname">modules</code><a class="headerlink" href="#ikkuna.export.Exporter.modules" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ikkuna.export.Exporter.named_modules">
+<code class="descname">named_modules</code><a class="headerlink" href="#ikkuna.export.Exporter.named_modules" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="ikkuna.export.Exporter.new_activations">
 <code class="descname">new_activations</code><span class="sig-paren">(</span><em>module</em>, <em>in_</em>, <em>out_</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter.new_activations" title="Permalink to this definition">¶</a></dt>
@@ -949,8 +985,8 @@ registered subscribers.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Kind of message</li>
 <li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.nn.Module</em></a>) – The module in question</li>
-<li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Kind of subscriber to notify</li>
 <li><strong>data</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><em>torch.Tensor</em></a>) – Payload</li>
 </ul>
 </td>
@@ -1010,12 +1046,14 @@ registered subscribers.</p>
 <dl class="method">
 <dt id="ikkuna.export.Exporter.test">
 <code class="descname">test</code><span class="sig-paren">(</span><em>test=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter.test" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Switch to testing mode. This will turn off all publishing.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="ikkuna.export.Exporter.train">
 <code class="descname">train</code><span class="sig-paren">(</span><em>train=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.export.Exporter.train" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Switch to training mode. This will ensure all data is published.</p>
+</dd></dl>
 
 </dd></dl>
 
