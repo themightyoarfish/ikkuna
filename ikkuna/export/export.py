@@ -180,8 +180,53 @@ class Exporter(object):
         self.add_modules(module, recursive)
         return module
 
-    def publish(self, module, kind, data):
-        '''Publish an update to all registered subscribers.
+    def publish_meta(self, kind, data=None):
+        '''Publish an update of type :class:`~ikkuna.export.messages.MetaMessage` to all
+        registered subscribers.
+
+        Parameters
+        ----------
+        kind    :   str
+                    Kind of message
+        data    :   torch.Tensor or None
+                    Payload, if necessary
+        '''
+        self._check_model()
+        msg = MetaMessage(seq=self._global_step, tag=None, kind=kind, step=self._train_step,
+                          epoch=self._epoch, data=data)
+        for sub in self._subscribers:
+            sub.receive_message(msg)
+
+
+    def publish_training(self, kind, module, data):
+        '''Publish an update of type :class:`~ikkuna.export.messages.TrainingMessage` to all
+        registered subscribers.
+
+        Parameters
+        ----------
+        kind    :   str
+                    Kind of message
+        module  :   torch.nn.Module
+                    The module in question
+        data    :   torch.Tensor
+                    Payload
+        '''
+        self._check_model()
+        try:
+            # TODO: Can I save the NamedModule instead of having to searh for it?
+            index = next(i for i, m in enumerate(self._modules) if m.module == module)
+        except StopIteration:
+            raise RuntimeError(f'Received message for unknown module {module.name}')
+        msg = TrainingMessage(seq=self._global_step, tag=None, kind=kind,
+                              module=self._modules[index], step=self._train_step,
+                              epoch=self._epoch, data=data)
+        for sub in self._subscribers:
+            sub.receive_message(msg)
+
+
+    def publish_training(self, kind, module, data):
+        '''Publish an update of type :class:`~ikkuna.export.messages.TrainingMessage` to all
+        registered subscribers.
 
         Parameters
         ----------
@@ -210,22 +255,6 @@ class Exporter(object):
     def test(self, test=True):
         self.train(not test)
 
-    def export(self, kind, module, data):
-        '''Publish new data to any subscribers.
-
-        Parameters
-        ----------
-        kind    :   str
-                    Kind of subscription
-        module  :   torch.nn.Module
-        data    :   torch.Tensor
-                    Payload to publish
-        '''
-        if len(self._subscribers) == 0:
-            pass
-        else:
-            self.publish(module, kind, data)
-
     def new_input(self, *args):
         '''Callback for new training input to the network.
 
@@ -238,10 +267,8 @@ class Exporter(object):
             input_data = args[0]
         else:
             input_data = args
-        msg_input = MetaMessage(seq=self._global_step, tag=None, kind='input_data',
-                                step=self._train_step, epoch=self._epoch, data=input_data)
-        for sub in self._subscribers:
-            sub.receive_message(msg_input)
+
+        self.publish_meta('input_data', input_data)
 
     def new_output_and_labels(self, network_output, labels):
         '''Callback for final network output.
@@ -251,13 +278,8 @@ class Exporter(object):
         data    :   torch.Tensor
                     The final layer's output
         '''
-        msg_output = MetaMessage(seq=self._global_step, tag=None, kind='network_output',
-                                 step=self._train_step, epoch=self._epoch, data=network_output)
-        msg_labels = MetaMessage(seq=self._global_step, tag=None, kind='input_labels',
-                                 step=self._train_step, epoch=self._epoch, data=labels)
-        for sub in self._subscribers:
-            sub.receive_message(msg_output)
-            sub.receive_message(msg_labels)
+        self.publish_meta('network_output', network_output)
+        self.publish_meta('input_labels', labels)
 
     def new_activations(self, module, in_, out_):
         '''Callback for newly arriving activations. Registered as a hook to the tracked modules.
@@ -274,31 +296,28 @@ class Exporter(object):
         if not self._is_training:
             return
         if self._train_step == 0:
-            msg_epoch = MetaMessage(seq=self._global_step, tag=None, kind='epoch_started',
-                                    step=self._train_step, epoch=self._epoch)
-            msg_batch = MetaMessage(seq=self._global_step, tag=None, kind='batch_started',
-                                    step=self._train_step, epoch=self._epoch)
-            for sub in self._subscribers:
-                sub.receive_message(msg_epoch)
-                sub.receive_message(msg_batch)
+            self.publish_meta('epoch_started')
+            self.publish_meta('batch_started')
 
         if hasattr(module, 'weight'):
             if module in self._weight_cache:
-                self.export('weight_updates', module, module.weight - self._weight_cache[module])
+                self.publish_training('weight_updates', module, module.weight -
+                                      self._weight_cache[module])
             else:
-                self.export('weight_updates', module, torch.zeros_like(module.weight))
-            self.export('weights', module, module.weight)
+                self.publish_training('weight_updates', module, torch.zeros_like(module.weight))
+            self.publish_training('weights', module, module.weight)
             self._weight_cache[module] = torch.tensor(module.weight)
         if hasattr(module, 'bias') and module.bias is not None:   # bias can be present, but be None
-            # in the first train step, there can be no updates, so we just publish zeros, otherwise
-            # clients would error out since they don't receive the expected messages
+            # in the first train step, there can be no updates, so we just publish_training zeros,
+            # otherwise clients would error out since they don't receive the expected messages
             if module in self._bias_cache:
-                self.export('bias_updates', module, module.bias - self._bias_cache[module])
+                self.publish_training('bias_updates', module,
+                                      module.bias - self._bias_cache[module])
             else:
-                self.export('bias_updates', module, torch.zeros_like(module.bias))
-            self.export('biases', module, module.bias)
+                self.publish_training('bias_updates', module, torch.zeros_like(module.bias))
+            self.publish_training('biases', module, module.bias)
             self._bias_cache[module] = torch.tensor(module.bias)
-        self.export('activations', module, out_)
+        self.publish_training('activations', module, out_)
 
     def new_gradients(self, module, gradients):
         '''Callback for newly arriving gradients. Registered as a hook to the tracked modules.
@@ -311,9 +330,10 @@ class Exporter(object):
                         The gradients w.r.t weight and bias.
         '''
         # For some reason, the grad hooks get called twice per step, so only export the first time
-        self.export('weight_gradients', module, gradients[0])
+        self.publish_training('weight_gradients', module, gradients[0])
+
         if gradients[1] is not None:
-            self.export('bias_gradients', module, gradients[1])
+            self.publish_training('bias_gradients', module, gradients[1])
 
     def set_model(self, model):
         '''Set the model for direct access for some metrics.
@@ -373,18 +393,12 @@ class Exporter(object):
         self._train_step  += 1
         self._global_step += 1
 
-        msg = MetaMessage(seq=self._global_step, tag=None, kind='batch_finished',
-                          step=self._train_step, epoch=self._epoch)
-        for sub in self._subscribers:
-            sub.receive_message(msg)
+        self.publish_meta('batch_finished')
 
         self._did_publish_grads.clear()
 
     def epoch_finished(self):
         '''Increase the epoch counter and reset the batch counter.'''
-        msg = MetaMessage(seq=self._global_step, tag=None, kind='epoch_finished',
-                          step=self._train_step, epoch=self._epoch)
-        for sub in self._subscribers:
-            sub.receive_message(msg)
+        self.publish_meta('epoch_finished')
         self._epoch      += 1
         self._train_step = 0
