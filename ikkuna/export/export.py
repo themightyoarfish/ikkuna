@@ -63,7 +63,7 @@ class Exporter(object):
     '''
 
     def __init__(self, depth):
-        self._modules           = []
+        self._modules           = {}
         self._weight_cache      = {}     # potential memory hog
         self._bias_cache        = {}
         self._subscribers       = set()
@@ -78,6 +78,14 @@ class Exporter(object):
         self._is_training       = True
         self._did_publish_grads = defaultdict(bool)
         self._depth             = depth
+
+    @property
+    def modules(self):
+        return list(self._modules.keys())
+
+    @property
+    def named_modules(self):
+        return list(self._modules.values())
 
     def _check_model(self):
         if not self._model:
@@ -95,8 +103,8 @@ class Exporter(object):
         self._subscribers.add(subscriber)
 
     def _add_module_by_name(self, named_module):
-        module = named_module.module
-        self._modules.append(named_module)
+        module                = named_module.module
+        self._modules[module] = named_module
         module.register_forward_hook(self.new_activations)
 
         has_bias   = hasattr(module, 'bias') and module.bias is not None
@@ -197,7 +205,6 @@ class Exporter(object):
         for sub in self._subscribers:
             sub.receive_message(msg)
 
-
     def publish_training(self, kind, module, data):
         '''Publish an update of type :class:`~ikkuna.export.messages.TrainingMessage` to all
         registered subscribers.
@@ -212,47 +219,20 @@ class Exporter(object):
                     Payload
         '''
         self._check_model()
-        try:
-            # TODO: Can I save the NamedModule instead of having to searh for it?
-            index = next(i for i, m in enumerate(self._modules) if m.module == module)
-        except StopIteration:
-            raise RuntimeError(f'Received message for unknown module {module.name}')
-        msg = TrainingMessage(seq=self._global_step, tag=None, kind=kind,
-                              module=self._modules[index], step=self._train_step,
-                              epoch=self._epoch, data=data)
-        for sub in self._subscribers:
-            sub.receive_message(msg)
 
-
-    def publish_training(self, kind, module, data):
-        '''Publish an update of type :class:`~ikkuna.export.messages.TrainingMessage` to all
-        registered subscribers.
-
-        Parameters
-        ----------
-        module  :   torch.nn.Module
-                    The module in question
-        kind    :   str
-                    Kind of subscriber to notify
-        data    :   torch.Tensor
-                    Payload
-        '''
-        self._check_model()
-        try:
-            # TODO: Can I save the NamedModule instead of having to searh for it?
-            index = next(i for i, m in enumerate(self._modules) if m.module == module)
-        except StopIteration:
-            raise RuntimeError(f'Received message for unknown module {module.name}')
-        msg = TrainingMessage(seq=self._global_step, tag=None, kind=kind,
-                              module=self._modules[index], step=self._train_step,
-                              epoch=self._epoch, data=data)
+        named_module = self._modules[module]
+        msg          = TrainingMessage(seq=self._global_step, tag=None, kind=kind,
+                                       module=named_module, step=self._train_step,
+                                       epoch=self._epoch, data=data)
         for sub in self._subscribers:
             sub.receive_message(msg)
 
     def train(self, train=True):
+        '''Switch to training mode. This will ensure all data is published.'''
         self._is_training = train
 
     def test(self, test=True):
+        '''Switch to testing mode. This will turn off all publishing.'''
         self.train(not test)
 
     def new_input(self, *args):
