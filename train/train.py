@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import models
 from torch.utils.data import DataLoader
 from ikkuna.utils import create_optimizer, initialize_model
 from ikkuna.export import Exporter
@@ -10,6 +9,7 @@ from collections import namedtuple
 class DatasetMeta(namedtuple('DatasetMeta', ['dataset', 'num_classes', 'shape'])):
     @property
     def size(self):
+        '''int: Number of examples in the dataset'''
         return self.shape[0]
 
 
@@ -31,9 +31,7 @@ class Trainer:
                         Loss function instance for training
     _dataloader :   torch.utils.data.DataLoader
                     loader for the training dataset
-    _model  :   torch.nn.Module
     _optimizer  : torch.optim.Optimizer
-    _exporter   :   ikkuna.export.Exporter
     '''
 
     def __init__(self, dataset_meta, **kwargs):
@@ -76,24 +74,35 @@ class Trainer:
 
     @property
     def current_batch(self):
+        '''int: 0-based batch index'''
         return self._batch_counter
 
     @property
     def batches_per_epoch(self):
+        '''int: number of batches in an epoch (assuming only full batches, I think)'''
         return self._batches_per_epoch
 
     @property
     def model(self):
+        '''torch.nn.Module: Model'''
         return self._model
 
     @property
     def exporter(self):
+        '''ikkuna.export.Exporter: Exporter used during training'''
         return self._exporter
 
-    def add_subscriber(self, subscription):
-        self._exporter.subscribe(subscription)
+    def add_subscriber(self, subscriber):
+        '''Add a subscriber.
 
-    def optimize(self, **kwargs):
+        Parameters
+        ----------
+        subscriber  :   ikkuna.export.subscriber.Subscriber
+
+        '''
+        self._exporter.subscribe(subscriber)
+
+    def optimize(self, name='Adam', **kwargs):
         '''Set the optimizer.
 
         Parameters
@@ -103,12 +112,11 @@ class Trainer:
         **kwargs
             All other kwargs are forwarded to the optimizer constructor
         '''
-        name = kwargs.pop('name', 'Adam')
         self._optimizer = create_optimizer(self._model, name, **kwargs)
         print(f'Using {self._optimizer.__class__.__name__} optimizer')
 
     def add_model(self, model_str):
-        '''Set the model to train.
+        '''Set the model to train. This method will attempt to load from :mod:`models`.
 
         .. warning::
             Currently, the function automatically calls :meth:`torch.nn.Module.cuda()` and hence a
@@ -119,6 +127,7 @@ class Trainer:
         model_str   :   str
                         Name of the model (must exist in :mod:`models`)
         '''
+        import models
         Model = getattr(models, model_str)
         self._model = Model(self._shape[1:], num_classes=self._num_classes, exporter=self._exporter)
         initialize_model(self._model)

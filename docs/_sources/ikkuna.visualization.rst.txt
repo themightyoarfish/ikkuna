@@ -11,12 +11,3 @@ ikkuna.visualization.backend module
     :members:
     :undoc-members:
     :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: ikkuna.visualization
-    :members:
-    :undoc-members:
-    :show-inheritance:

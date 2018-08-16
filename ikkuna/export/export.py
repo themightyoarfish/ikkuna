@@ -85,13 +85,17 @@ class Exporter(object):
 
     @property
     def modules(self):
+        '''list(torch.nn.Module) - Modules tracked by this :class:`Exporter`'''
         return list(self._modules.keys())
 
     @property
     def named_modules(self):
+        '''list(ikkuna.utils.NamedModule) - Named modules tracked by this :class:`Exporter`'''
         return list(self._modules.values())
 
     def _check_model(self):
+        '''Check if a model is set, issue a warning otherwise. Some things may still work and not
+        crash (???).'''
         if not self._model:
             import warnings
             warnings.warn('Warning: No model set. This will either do nothing or crash.')
@@ -107,6 +111,12 @@ class Exporter(object):
         self._subscribers.add(subscriber)
 
     def _add_module_by_name(self, named_module):
+        '''Register a module with a name attached.
+
+        Parameters
+        ----------
+        named_module    :   ikkuna.utils.NamedModule
+        '''
         module                = named_module.module
         self._modules[module] = named_module
         module.register_forward_hook(self.new_activations)

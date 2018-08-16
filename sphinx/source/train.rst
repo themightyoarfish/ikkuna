@@ -11,12 +11,3 @@ train.train module
     :members:
     :undoc-members:
     :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: train
-    :members:
-    :undoc-members:
-    :show-inheritance:

@@ -26,12 +26,3 @@ ikkuna.export.messages module
     :members:
     :undoc-members:
     :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: ikkuna.export
-    :members:
-    :undoc-members:
-    :show-inheritance:

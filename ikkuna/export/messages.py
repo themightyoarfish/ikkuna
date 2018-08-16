@@ -1,39 +1,33 @@
+'''
+.. data:: META_KINDS
+
+    Message kinds which are not tied to any specific module.
+
+.. data:: DATA_KINDS
+
+    Message kinds which are tied to a specific module and always carry data
+
+.. data:: ALLOWED_KINDS
+
+    Simply the union of ``META_KINDS`` and ``DATA_KINDS``
+'''
+
 import abc
-meta_kinds = {
+META_KINDS = {
     'batch_started', 'batch_finished', 'epoch_started', 'epoch_finished', 'input_data',
     'input_labels', 'network_output'
 }
 
-data_kinds = {
+DATA_KINDS = {
     'weights', 'weight_gradients', 'weight_updates', 'biases', 'bias_gradients', 'bias_updates',
     'activations',
 }
 
-allowed_kinds = set.union(meta_kinds, data_kinds)
+ALLOWED_KINDS = set.union(META_KINDS, DATA_KINDS)
 
 
 class Message(abc.ABC):
-    '''
-    Base class for messages emitted from the :class:`~ikkuna.export.Exporter`.
-
-    Attributes
-    ----------
-    tag :   str
-            The tag associated with this message
-    seq :   int
-            Global sequence number. This counter should not reset after each epoch.
-    step    :   int
-                Epoch-local sequence number (the current batch index)
-    epoch   :   int
-                Current epoch number
-    kind    :   str
-                Message kind
-    key :   object
-            A key used for grouping messages into :class:`MessageBundle` s
-    data    :   torch.Tensor, tuple(torch.Tensor) or None
-                This field is optional for :class:`MetaMessage`, but mandatory for
-                :class:`TrainingMessage`
-    '''
+    '''Base class for messages emitted from the :class:`~ikkuna.export.Exporter`.'''
     def __init__(self, tag, seq, step, epoch, kind):
         self._tag  = tag
         self._seq  = seq
@@ -44,14 +38,17 @@ class Message(abc.ABC):
 
     @property
     def tag(self):
+        ''' str: The tag associated with this message '''
         return self._tag
 
     @property
     def seq(self):
+        '''int: Global sequence number. This counter should not reset after each epoch.'''
         return self._seq
 
     @property
     def step(self):
+        '''int: Epoch-local sequence number (the current batch index)'''
         return self._step
 
     @step.setter
@@ -63,6 +60,7 @@ class Message(abc.ABC):
 
     @property
     def epoch(self):
+        '''int: Current epoch number'''
         return self._epoch
 
     @epoch.setter
@@ -74,21 +72,25 @@ class Message(abc.ABC):
 
     @property
     def kind(self):
+        '''str: Message kind'''
         return self._kind
 
     @kind.setter
     def kind(self, value):
-        if value not in allowed_kinds:
+        if value not in ALLOWED_KINDS:
             raise ValueError(f'Invalid message kind "{value}"')
         else:
             self._kind = value
 
     @property
     def data(self):
+        '''torch.Tensor, tuple(torch.Tensor) or None:  This field is optional for
+        :class:`MetaMessage`, but mandatory for :class:`TrainingMessage`'''
         return self._data
 
     @abc.abstractproperty
     def key(self):
+        '''object: A key used for grouping messages into :class:`MessageBundle` s'''
         pass
 
     def __str__(self):
@@ -101,26 +103,22 @@ class Message(abc.ABC):
 
 class MetaMessage(Message):
     '''A message with meta information not tied to any specific module. Can still carry tensor data,
-    if necessary.
-
-    Attributes
-    ----------
-    data    :   torch.Tensor, tuple or None
-                Optional data. Can be used e.g. for input to the network, labels or network output
-    '''
+    if necessary.'''
     def __init__(self, tag, seq, step, epoch, kind, data=None):
         super().__init__(tag, seq, step, epoch, kind)
         self._data = data
 
     @Message.kind.setter
     def kind(self, value):
-        if value not in meta_kinds:
+        if value not in META_KINDS:
             raise ValueError(f'Invalid message kind "{value}"')
         else:
             self._kind = value
 
     @property
     def data(self):
+        '''torch.Tensor, tuple or None: Optional data. Can be used e.g. for input to the network,
+        labels or network output'''
         return self._data
 
     @property
@@ -129,17 +127,9 @@ class MetaMessage(Message):
 
 
 class TrainingMessage(Message):
-    '''
-    These messages are assembled into :class:`MessageBundle` objects in the
-    :class:`~ikkuna.export.subscriber.Subscription`.
+    '''These messages are assembled into :class:`MessageBundle` objects in the
+    :class:`~ikkuna.export.subscriber.Subscription`.'''
 
-    Attributes
-    ----------
-    module  :   torch.nn.Module
-                Module emitting this data
-    data :   torch.Tensor
-                Data emitted from the module
-    '''
     def __init__(self, tag, seq, step, epoch, kind, module, data):
         super().__init__(tag, seq, step, epoch, kind)
         self._module  = module
@@ -149,11 +139,12 @@ class TrainingMessage(Message):
 
     @property
     def module(self):
+        '''torch.nn.Module: Module emitting this data'''
         return self._module
 
     @Message.kind.setter
     def kind(self, value):
-        if value not in data_kinds:
+        if value not in DATA_KINDS:
             raise ValueError(f'Invalid message kind "{value}"')
         else:
             self._kind = value
@@ -173,27 +164,7 @@ class MessageBundle(object):
 
         This docstring doesn't make sense yet.
 
-
-    Attributes
-    ----------
-    _identifier :   str
-                    A string denoting the common aspect of the collected messages (besides the
-                    step).  This can be the module name or a string such as ``META`` or other
-                    denoting these are messages which do not belong to a module.
-    _expected_kinds :   list(str)
-                        The expected kinds of messages per iteration
-    _data   :   dict(str, torch.Tensor)
-                The tensors received for each kind
-    _seq    :   int
-                Global sequence number of this class
-    _step   :   int
-                Sequence number (training step) of the received messages (should match across all
-                msgs in one iteration)
-    _epoch  :   int
-                Epoch of the received messages (should match across all msgs in one
-                iteration)
     '''
-
     def __init__(self, identifier, kinds):
         '''
         Parameters
@@ -217,25 +188,34 @@ class MessageBundle(object):
 
     @property
     def identifier(self):
+        ''' str: A string denoting the common aspect of the collected messages (besides the step).
+        This can be the module name or a string such as ``META`` or other  denoting these are
+        messages which do not belong to a module.'''
         return self._identifier
 
     @property
     def expected_kinds(self):
+        '''list(str): The expected kinds of messages per iteration '''
         return self._expected_kinds
 
     @property
     def data(self):
+        '''dict(str, torch.Tensor): The tensors received for each kind'''
         return self._data
 
     @property
     def seq(self):
+        '''int: Global sequence number of this class'''
         return self._seq
 
     @property
     def step(self):
+        '''int: Sequence number (training step) of the received messages (should match across all
+        msgs in one iteration)'''
         return self._step
 
     def epoch(self):
+        '''int: Epoch of the received messages (should match across all msgs in one iteration)'''
         return self._epoch
 
     def complete(self):
@@ -260,8 +240,8 @@ class MessageBundle(object):
         ------
         ValueError
             If ``message.(seq|step|epoch|identifier)`` does not match the current
-            ``(seq|step|epoch|identifier)`` or in case a messageof ``message.kind`` has already been
-            received
+            ``(seq|step|epoch|identifier)`` or in case a message of ``message.kind`` has already
+            been received
         '''
         ############
         #  seqnum  #

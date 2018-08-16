@@ -108,7 +108,6 @@
   <h1>Source code for train.train</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
-<span class="kn">import</span> <span class="nn">models</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">DataLoader</span>
 <span class="kn">from</span> <span class="nn">ikkuna.utils</span> <span class="k">import</span> <span class="n">create_optimizer</span><span class="p">,</span> <span class="n">initialize_model</span>
 <span class="kn">from</span> <span class="nn">ikkuna.export</span> <span class="k">import</span> <span class="n">Exporter</span>
@@ -118,6 +117,7 @@
 <div class="viewcode-block" id="DatasetMeta"><a class="viewcode-back" href="../../train.html#train.train.DatasetMeta">[docs]</a><span class="k">class</span> <span class="nc">DatasetMeta</span><span class="p">(</span><span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;DatasetMeta&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;dataset&#39;</span><span class="p">,</span> <span class="s1">&#39;num_classes&#39;</span><span class="p">,</span> <span class="s1">&#39;shape&#39;</span><span class="p">])):</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;int: Number of examples in the dataset&#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
 
@@ -139,9 +139,7 @@
 <span class="sd">                        Loss function instance for training</span>
 <span class="sd">    _dataloader :   torch.utils.data.DataLoader</span>
 <span class="sd">                    loader for the training dataset</span>
-<span class="sd">    _model  :   torch.nn.Module</span>
 <span class="sd">    _optimizer  : torch.optim.Optimizer</span>
-<span class="sd">    _exporter   :   ikkuna.export.Exporter</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
 <div class="viewcode-block" id="Trainer.__init__"><a class="viewcode-back" href="../../train.html#train.train.Trainer.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset_meta</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -184,24 +182,35 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">current_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;int: 0-based batch index&#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_counter</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">batches_per_epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;int: number of batches in an epoch (assuming only full batches, I think)&#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batches_per_epoch</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;torch.nn.Module: Model&#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">exporter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;ikkuna.export.Exporter: Exporter used during training&#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exporter</span>
 
-<div class="viewcode-block" id="Trainer.add_subscriber"><a class="viewcode-back" href="../../train.html#train.train.Trainer.add_subscriber">[docs]</a>    <span class="k">def</span> <span class="nf">add_subscriber</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscription</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_exporter</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">subscription</span><span class="p">)</span></div>
+<div class="viewcode-block" id="Trainer.add_subscriber"><a class="viewcode-back" href="../../train.html#train.train.Trainer.add_subscriber">[docs]</a>    <span class="k">def</span> <span class="nf">add_subscriber</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscriber</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Add a subscriber.</span>
 
-<div class="viewcode-block" id="Trainer.optimize"><a class="viewcode-back" href="../../train.html#train.train.Trainer.optimize">[docs]</a>    <span class="k">def</span> <span class="nf">optimize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        subscriber  :   ikkuna.export.subscriber.Subscriber</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exporter</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">subscriber</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Trainer.optimize"><a class="viewcode-back" href="../../train.html#train.train.Trainer.optimize">[docs]</a>    <span class="k">def</span> <span class="nf">optimize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Adam&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Set the optimizer.</span>
 
 <span class="sd">        Parameters</span>
@@ -211,12 +220,11 @@
 <span class="sd">        **kwargs</span>
 <span class="sd">            All other kwargs are forwarded to the optimizer constructor</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;Adam&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span> <span class="o">=</span> <span class="n">create_optimizer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Using </span><span class="si">{self._optimizer.__class__.__name__}</span><span class="s1"> optimizer&#39;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Trainer.add_model"><a class="viewcode-back" href="../../train.html#train.train.Trainer.add_model">[docs]</a>    <span class="k">def</span> <span class="nf">add_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_str</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;Set the model to train.</span>
+        <span class="sd">&#39;&#39;&#39;Set the model to train. This method will attempt to load from :mod:`models`.</span>
 
 <span class="sd">        .. warning::</span>
 <span class="sd">            Currently, the function automatically calls :meth:`torch.nn.Module.cuda()` and hence a</span>
@@ -227,6 +235,7 @@
 <span class="sd">        model_str   :   str</span>
 <span class="sd">                        Name of the model (must exist in :mod:`models`)</span>
 <span class="sd">        &#39;&#39;&#39;</span>
+        <span class="kn">import</span> <span class="nn">models</span>
         <span class="n">Model</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_str</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">num_classes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_classes</span><span class="p">,</span> <span class="n">exporter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_exporter</span><span class="p">)</span>
         <span class="n">initialize_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">)</span>
