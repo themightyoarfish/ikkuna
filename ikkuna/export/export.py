@@ -57,9 +57,12 @@ class Exporter(object):
     _did_publish_grads  :   defaultdict(bool)
                             Record for whether gradients have already been published at this train
                             step.  This is necessary since tensor hooks are called mutliple times.
+    _depth  :   int
+                Depth to which to traverse the module tree
+
     '''
 
-    def __init__(self):
+    def __init__(self, depth):
         self._modules           = []
         self._weight_cache      = {}     # potential memory hog
         self._bias_cache        = {}
@@ -74,6 +77,7 @@ class Exporter(object):
         self._global_step       = -1
         self._is_training       = True
         self._did_publish_grads = defaultdict(bool)
+        self._depth             = depth
 
     def _check_model(self):
         if not self._model:
@@ -132,7 +136,7 @@ class Exporter(object):
             module.bias.register_hook(bias_hook)
         module.weight.register_hook(weight_hook)
 
-    def add_modules(self, module, recursive=True, depth=-1):
+    def add_modules(self, module, recursive=True):
         '''Add modules to supervise. If the module has ``weight`` and/or ``bias`` members, updates
         to those will be tracked.
 
@@ -155,13 +159,13 @@ class Exporter(object):
 
         if isinstance(module, torch.nn.Module):
             module_tree = ModuleTree(module, name=name, recursive=recursive, drop_name=recursive)
-            for named_module in module_tree.preorder(depth):
+            for named_module in module_tree.preorder(depth=self._depth):
                 module, name = named_module
                 self._add_module_by_name(named_module)
         else:
             raise ValueError(f'Don\'t know how to handle {module.__class__.__name__}')
 
-    def __call__(self, module, recursive=True, depth=-1):
+    def __call__(self, module, recursive=True):
         '''Shorthand for :meth:`~Exporter.add_modules()` which returns its input unmodified.
 
         Parameters
@@ -173,7 +177,7 @@ class Exporter(object):
         torch.nn.Module
             The input ``module``
         '''
-        self.add_modules(module, recursive, depth)
+        self.add_modules(module, recursive)
         return module
 
     def publish(self, module, kind, data):

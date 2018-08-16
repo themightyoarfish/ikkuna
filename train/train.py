@@ -48,6 +48,8 @@ class Trainer:
         batch_size  :   int
         loss   :    function
                     Defaults to torch.nn.CrossEntropyLoss
+        depth   :   int
+                    Depth to which to traverse the module tree
         '''
         ############################################################################################
         #                                  Acquire parameters                                      #
@@ -69,7 +71,7 @@ class Trainer:
 
         print(f'Number of classes: {self._num_classes}')
         print(f'Data shape: {self._shape}')
-        self._exporter = Exporter()
+        self._exporter = Exporter(kwargs.get('depth', -1))
         self._exporter.set_loss(self._loss_function)
 
     @property

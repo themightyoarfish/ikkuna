@@ -32,12 +32,13 @@ from train import Trainer, DatasetMeta
 from ikkuna.export.subscriber import (RatioSubscriber, HistogramSubscriber, SpectralNormSubscriber,
                                       TestAccuracySubscriber, TrainAccuracySubscriber)
 
+# Manually seeding everything does not work completely on the GPU
 SEED = 1234
 random.seed(SEED)
 torch.manual_seed(SEED)
 torch.cuda.manual_seed_all(SEED)
 np.random.seed(SEED)
-os.environ['PYTHONHASHSEED'] = '0'
+os.environ['PYTHONHASHSEED'] = str(SEED)
 
 
 def _load_dataset(name):
@@ -52,7 +53,7 @@ def _load_dataset(name):
     Returns
     -------
     tuple
-        2 :class:`train.DatasetMeta` s are returned, one for train and one test set
+        2 :class:`~train.DatasetMeta` s are returned, one for train and one test set
     '''
     transforms = Compose([ToTensor()])
     try:
@@ -122,7 +123,7 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
 
     dataset_train, dataset_test = _load_dataset(dataset_str)
 
-    trainer = Trainer(dataset_train, batch_size=batch_size)
+    trainer = Trainer(dataset_train, batch_size=batch_size, depth=kwargs['depth'])
     trainer.add_model(model_str)
     trainer.optimize(name=optimizer)
 
@@ -161,26 +162,34 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
     batches_per_epoch = trainer.batches_per_epoch
     print(f'Batches per epoch: {batches_per_epoch}')
 
-    cum_time  = 0
-    n_batches = 0
+    if kwargs['verbose']:
+        cum_time  = 0
+        n_batches = 0
+
     for e in range(epochs):
         for batch_idx in range(batches_per_epoch):
 
-            t0 = time.time()
-            trainer.train_batch()
-            t1 = time.time()
+            if kwargs['verbose']:
+                t0 = time.time()
 
-            n_batches += 1
-            cum_time += t1 - t0
+            trainer.train_batch()
 
             if kwargs['verbose']:
+                t1 = time.time()
+
+                n_batches += 1
+                cum_time  += t1 - t0
+
                 print(f'\repoch {e:>5d}/{epochs-1:<5d} '
                       f'| batch {batch_idx:>5d}/{batches_per_epoch-1:<5d} '
                       f'| {1. / (cum_time / n_batches):<3.1f} b/s', end='')
 
-            if batch_idx % 20 == 0:
-                cum_time = 0
-                n_batches = 0
+                if batch_idx % 20 == 0:
+                    cum_time = 0
+                    n_batches = 0
+
+    if kwargs['verbose']:
+        print('')
 
 
 def get_parser():
@@ -228,6 +237,7 @@ def get_parser():
                         help='Use test set accuracy subscriber')
     parser.add_argument('--train-accuracy', action='store_true',
                         help='Use train accuracy subscriber')
+    parser.add_argument('--depth', type=int, default=-1, help='Depth to which to add modules')
     return parser
 
 
