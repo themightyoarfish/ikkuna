@@ -195,6 +195,15 @@ class MessageBundle(object):
     '''
 
     def __init__(self, identifier, kinds):
+        '''
+        Parameters
+        ----------
+        identifier  :   str
+                        String to uniquely identify the bundle. Will usually be either the module
+                        name or `'META'` for a collection of meta messages.
+        kinds   :   list
+                    Message kinds contained in this bundle
+        '''
         if isinstance(kinds, str):
             # this has bitten me before. base `Subscription`s don't use multiple kinds
             kinds = [kinds]
@@ -302,7 +311,7 @@ class MessageBundle(object):
 
         Parameters
         ----------
-        message :   ikkuna.export.messages.TrainingMessage
+        message :   ikkuna.export.messages.Message
 
         Raises
         ------
