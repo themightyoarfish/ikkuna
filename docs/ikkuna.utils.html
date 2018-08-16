@@ -71,7 +71,10 @@ disambiguating e.g. different successive conv layers which are children of
 the same sequential module.</p>
 </dd></dl>
 
-<table class="docutils field-list" frame="void" rules="none">
+<dl class="method">
+<dt id="ikkuna.utils.module_tree.ModuleTree.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>module</em>, <em>name=None</em>, <em>drop_name=True</em>, <em>recursive=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/utils/module_tree.html#ModuleTree.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.module_tree.ModuleTree.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
@@ -87,6 +90,8 @@ name (e.g. <code class="docutils literal notranslate"><span class="pre">alexnet<
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
 <dl class="method">
 <dt id="ikkuna.utils.module_tree.ModuleTree.preorder">
 <code class="descname">preorder</code><span class="sig-paren">(</span><em>depth=-1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/utils/module_tree.html#ModuleTree.preorder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.module_tree.ModuleTree.preorder" title="Permalink to this definition">¶</a></dt>
@@ -112,7 +117,6 @@ name (e.g. <code class="docutils literal notranslate"><span class="pre">alexnet<
 <dt id="ikkuna.utils.named_module.NamedModule">
 <em class="property">class </em><code class="descclassname">ikkuna.utils.named_module.</code><code class="descname">NamedModule</code><a class="reference internal" href="_modules/ikkuna/utils/named_module.html#NamedModule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.named_module.NamedModule" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ikkuna.utils.named_module.NamedModule" title="ikkuna.utils.named_module.NamedModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.utils.named_module.NamedModule</span></code></a></p>
-<p>Create new instance of NamedModule(module, name)</p>
 </dd></dl>
 
 </div>
@@ -166,7 +170,7 @@ with <code class="docutils literal notranslate"><span class="pre">requires_grad<
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If superflous <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> are passed.</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If superfluous <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> are passed.</p>
 </td>
 </tr>
 </tbody>
@@ -275,7 +279,10 @@ disambiguating e.g. different successive conv layers which are children of
 the same sequential module.</p>
 </dd></dl>
 
-<table class="docutils field-list" frame="void" rules="none">
+<dl class="method">
+<dt id="ikkuna.utils.ModuleTree.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>module</em>, <em>name=None</em>, <em>drop_name=True</em>, <em>recursive=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/utils/module_tree.html#ModuleTree.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.ModuleTree.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
@@ -291,6 +298,8 @@ name (e.g. <code class="docutils literal notranslate"><span class="pre">alexnet<
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
 <dl class="method">
 <dt id="ikkuna.utils.ModuleTree.preorder">
 <code class="descname">preorder</code><span class="sig-paren">(</span><em>depth=-1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/utils/module_tree.html#ModuleTree.preorder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.ModuleTree.preorder" title="Permalink to this definition">¶</a></dt>
@@ -313,7 +322,6 @@ name (e.g. <code class="docutils literal notranslate"><span class="pre">alexnet<
 <dt id="ikkuna.utils.NamedModule">
 <em class="property">class </em><code class="descclassname">ikkuna.utils.</code><code class="descname">NamedModule</code><a class="reference internal" href="_modules/ikkuna/utils/named_module.html#NamedModule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.NamedModule" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ikkuna.utils.named_module.NamedModule" title="ikkuna.utils.named_module.NamedModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.utils.named_module.NamedModule</span></code></a></p>
-<p>Create new instance of NamedModule(module, name)</p>
 </dd></dl>
 
 <dl class="function">
@@ -364,7 +372,7 @@ with <code class="docutils literal notranslate"><span class="pre">requires_grad<
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If superflous <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> are passed.</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If superfluous <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> are passed.</p>
 </td>
 </tr>
 </tbody>

@@ -42,7 +42,6 @@
 <dt id="train.train.DatasetMeta">
 <em class="property">class </em><code class="descclassname">train.train.</code><code class="descname">DatasetMeta</code><a class="reference internal" href="_modules/train/train.html#DatasetMeta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.train.DatasetMeta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#train.train.DatasetMeta" title="train.train.DatasetMeta"><code class="xref py py-class docutils literal notranslate"><span class="pre">train.train.DatasetMeta</span></code></a></p>
-<p>Create new instance of DatasetMeta(dataset, num_classes, shape)</p>
 <dl class="attribute">
 <dt id="train.train.DatasetMeta.size">
 <code class="descname">size</code><a class="headerlink" href="#train.train.DatasetMeta.size" title="Permalink to this definition">¶</a></dt>
@@ -110,7 +109,10 @@ dataset.</p>
 <dd><p><em>ikkuna.export.Exporter</em></p>
 </dd></dl>
 
-<p>Create a new Trainer. Handlers, model and optimizer are left uninitialised and must be
+<dl class="method">
+<dt id="train.train.Trainer.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/train/train.html#Trainer.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.train.Trainer.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new Trainer. Handlers, model and optimizer are left uninitialised and must be
 set with <a class="reference internal" href="#train.Trainer.add_subscriber" title="train.Trainer.add_subscriber"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_subscriber()</span></code></a>, <a class="reference internal" href="#train.Trainer.add_model" title="train.Trainer.add_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_model()</span></code></a> and
 <a class="reference internal" href="#train.Trainer.optimize" title="train.Trainer.optimize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">optimize()</span></code></a> before calling <a class="reference internal" href="#train.Trainer.train_batch" title="train.Trainer.train_batch"><code class="xref py py-meth docutils literal notranslate"><span class="pre">train_batch()</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -127,6 +129,8 @@ set with <a class="reference internal" href="#train.Trainer.add_subscriber" titl
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="train.train.Trainer.current_batch">
 <code class="descname">current_batch</code><a class="headerlink" href="#train.train.Trainer.current_batch" title="Permalink to this definition">¶</a></dt>
@@ -261,7 +265,10 @@ dataset.</p>
 <dd><p><em>ikkuna.export.Exporter</em></p>
 </dd></dl>
 
-<p>Create a new Trainer. Handlers, model and optimizer are left uninitialised and must be
+<dl class="method">
+<dt id="train.Trainer.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/train/train.html#Trainer.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.Trainer.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new Trainer. Handlers, model and optimizer are left uninitialised and must be
 set with <a class="reference internal" href="#train.Trainer.add_subscriber" title="train.Trainer.add_subscriber"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_subscriber()</span></code></a>, <a class="reference internal" href="#train.Trainer.add_model" title="train.Trainer.add_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_model()</span></code></a> and
 <a class="reference internal" href="#train.Trainer.optimize" title="train.Trainer.optimize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">optimize()</span></code></a> before calling <a class="reference internal" href="#train.Trainer.train_batch" title="train.Trainer.train_batch"><code class="xref py py-meth docutils literal notranslate"><span class="pre">train_batch()</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -278,6 +285,8 @@ set with <a class="reference internal" href="#train.Trainer.add_subscriber" titl
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="train.Trainer.current_batch">
 <code class="descname">current_batch</code><a class="headerlink" href="#train.Trainer.current_batch" title="Permalink to this definition">¶</a></dt>
@@ -353,7 +362,6 @@ restart at the beginning.</p>
 <dt id="train.DatasetMeta">
 <em class="property">class </em><code class="descclassname">train.</code><code class="descname">DatasetMeta</code><a class="reference internal" href="_modules/train/train.html#DatasetMeta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.DatasetMeta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#train.train.DatasetMeta" title="train.train.DatasetMeta"><code class="xref py py-class docutils literal notranslate"><span class="pre">train.train.DatasetMeta</span></code></a></p>
-<p>Create new instance of DatasetMeta(dataset, num_classes, shape)</p>
 <dl class="attribute">
 <dt id="train.DatasetMeta.size">
 <code class="descname">size</code><a class="headerlink" href="#train.DatasetMeta.size" title="Permalink to this definition">¶</a></dt>

@@ -216,6 +216,23 @@ to those will be tracked.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="ikkuna.export.export.Exporter.__call__">
+<code class="descname">__call__</code><span class="sig-paren">(</span><em>module</em>, <em>recursive=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shorthand for <a class="reference internal" href="#ikkuna.export.export.Exporter.add_modules" title="ikkuna.export.export.Exporter.add_modules"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_modules()</span></code></a> which returns its input unmodified.</p>
+<p>:param see <a class="reference internal" href="#ikkuna.export.export.Exporter.add_modules" title="ikkuna.export.export.Exporter.add_modules"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Exporter.add_modules()</span></code></a>:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The input <code class="docutils literal notranslate"><span class="pre">module</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))">torch.nn.Module</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="ikkuna.export.export.Exporter.publish_meta">
 <code class="descname">publish_meta</code><span class="sig-paren">(</span><em>kind</em>, <em>data=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.publish_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.export.Exporter.publish_meta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Publish an update of type <a class="reference internal" href="#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetaMessage</span></code></a> to all
@@ -652,7 +669,10 @@ msgs in one iteration)</p>
 iteration)</p>
 </dd></dl>
 
-<table class="docutils field-list" frame="void" rules="none">
+<dl class="method">
+<dt id="ikkuna.export.messages.MessageBundle.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>identifier</em>, <em>kinds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/messages.html#MessageBundle.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.messages.MessageBundle.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
@@ -665,6 +685,8 @@ name or <cite>‘META’</cite> for a collection of meta messages.</li>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="ikkuna.export.messages.MessageBundle.identifier">
 <code class="descname">identifier</code><a class="headerlink" href="#ikkuna.export.messages.MessageBundle.identifier" title="Permalink to this definition">¶</a></dt>
@@ -746,6 +768,13 @@ sequence number and epoch.</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.messages.MessageBundle.__getattr__">
+<code class="descname">__getattr__</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/messages.html#MessageBundle.__getattr__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.messages.MessageBundle.__getattr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override to mimick a property for each kind of message in this data (e.g.
+<code class="docutils literal notranslate"><span class="pre">message_bundle.activations</span></code> instead of <code class="docutils literal notranslate"><span class="pre">message_bundle.data['activations']</span></code>)</p>
 </dd></dl>
 
 </dd></dl>
@@ -906,6 +935,23 @@ to those will be tracked.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If <code class="docutils literal notranslate"><span class="pre">module</span></code> is neither a tuple, nor a (subclass of) <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
 </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.Exporter.__call__">
+<code class="descname">__call__</code><span class="sig-paren">(</span><em>module</em>, <em>recursive=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.Exporter.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shorthand for <a class="reference internal" href="#ikkuna.export.Exporter.add_modules" title="ikkuna.export.Exporter.add_modules"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_modules()</span></code></a> which returns its input unmodified.</p>
+<p>:param see <a class="reference internal" href="#ikkuna.export.Exporter.add_modules" title="ikkuna.export.Exporter.add_modules"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Exporter.add_modules()</span></code></a>:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The input <code class="docutils literal notranslate"><span class="pre">module</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+238b4b9 ))">torch.nn.Module</a></td>
 </tr>
 </tbody>
 </table>

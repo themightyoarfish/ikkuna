@@ -104,7 +104,10 @@ quantities.  The dividend will be the first element of the
 <a class="reference internal" href="#ikkuna.export.subscriber.Subscription.kinds" title="ikkuna.export.subscriber.Subscription.kinds"><code class="xref py py-attr docutils literal notranslate"><span class="pre">kinds</span></code></a> property, the divisor the second.
 Therefore it is vital to pass the message kinds to the
 <a class="reference internal" href="#ikkuna.export.subscriber.Subscription" title="ikkuna.export.subscriber.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscription</span></code></a> object in the correct order.</p>
-<table class="docutils field-list" frame="void" rules="none">
+<dl class="method">
+<dt id="ikkuna.export.subscriber.ratio.RatioSubscriber.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>kinds</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em>, <em>absolute=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/ratio.html#RatioSubscriber.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.ratio.RatioSubscriber.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
@@ -112,6 +115,8 @@ Therefore it is vital to pass the message kinds to the
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="ikkuna.export.subscriber.ratio.RatioSubscriber._abc_cache">
 <code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.ratio.RatioSubscriber._abc_cache" title="Permalink to this definition">¶</a></dt>
@@ -148,7 +153,10 @@ to the record.</p>
 <dt id="ikkuna.export.subscriber.spectral_norm.SpectralNormSubscriber">
 <em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.spectral_norm.</code><code class="descname">SpectralNormSubscriber</code><span class="sig-paren">(</span><em>kind</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/spectral_norm.html#SpectralNormSubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.spectral_norm.SpectralNormSubscriber" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ikkuna.export.subscriber.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.subscriber.PlotSubscriber</span></code></a></p>
-<table class="docutils field-list" frame="void" rules="none">
+<dl class="method">
+<dt id="ikkuna.export.subscriber.spectral_norm.SpectralNormSubscriber.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>kind</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/spectral_norm.html#SpectralNormSubscriber.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.spectral_norm.SpectralNormSubscriber.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
@@ -158,6 +166,8 @@ non-matrix type.</td>
 </tbody>
 </table>
 <p>For other parameters, see <a class="reference internal" href="#ikkuna.export.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotSubscriber</span></code></a></p>
+</dd></dl>
+
 <dl class="method">
 <dt id="ikkuna.export.subscriber.spectral_norm.SpectralNormSubscriber._metric">
 <code class="descname">_metric</code><span class="sig-paren">(</span><em>message_bundle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/spectral_norm.html#SpectralNormSubscriber._metric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.spectral_norm.SpectralNormSubscriber._metric" title="Permalink to this definition">¶</a></dt>
@@ -233,7 +243,10 @@ message kinds the subscriber wishes to receive</p>
 message will be processed.</p>
 </dd></dl>
 
-<table class="docutils field-list" frame="void" rules="none">
+<dl class="method">
+<dt id="ikkuna.export.subscriber.subscriber.Subscription.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>subscriber</em>, <em>kinds</em>, <em>tag=None</em>, <em>subsample=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/subscriber.html#Subscription.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.Subscription.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
@@ -246,6 +259,8 @@ relayed</li>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
 <dl class="attribute">
 <dt>
 <code class="descname">counter</code></dt>
@@ -430,7 +445,10 @@ Subscriber is not interested in actual training artifacts, or
 full-sized (no smaller last batch)</p>
 </dd></dl>
 
-<table class="docutils field-list" frame="void" rules="none">
+<dl class="method">
+<dt id="ikkuna.export.subscriber.subscriber.PlotSubscriber.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>subscription</em>, <em>plot_config</em>, <em>tag=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/subscriber.html#PlotSubscriber.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.PlotSubscriber.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
@@ -438,6 +456,8 @@ full-sized (no smaller last batch)</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="ikkuna.export.subscriber.subscriber.PlotSubscriber.backend">
 <code class="descname">backend</code><a class="headerlink" href="#ikkuna.export.subscriber.subscriber.PlotSubscriber.backend" title="Permalink to this definition">¶</a></dt>
@@ -517,7 +537,10 @@ set).</p>
 <dd><p><em>function</em> – Bound method on the model to push data through and get predictions</p>
 </dd></dl>
 
-<table class="docutils field-list" frame="void" rules="none">
+<dl class="method">
+<dt id="ikkuna.export.subscriber.test_accuracy.TestAccuracySubscriber.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>forward_fn</em>, <em>batch_size</em>, <em>frequency=100</em>, <em>ylims=None</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/test_accuracy.html#TestAccuracySubscriber.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.test_accuracy.TestAccuracySubscriber.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
@@ -534,6 +557,8 @@ pass fits into memory.</li>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
 <dl class="method">
 <dt id="ikkuna.export.subscriber.test_accuracy.TestAccuracySubscriber._metric">
 <code class="descname">_metric</code><span class="sig-paren">(</span><em>message_or_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/test_accuracy.html#TestAccuracySubscriber._metric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.test_accuracy.TestAccuracySubscriber._metric" title="Permalink to this definition">¶</a></dt>
@@ -583,7 +608,12 @@ Subscriber is not interested in actual training artifacts, or
 <em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.train_accuracy.</code><code class="descname">TrainAccuracySubscriber</code><span class="sig-paren">(</span><em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/train_accuracy.html#TrainAccuracySubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.train_accuracy.TrainAccuracySubscriber" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ikkuna.export.subscriber.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.subscriber.PlotSubscriber</span></code></a></p>
 <p><a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a> which computes the batch accuracy.</p>
-<p>For parameters see <a class="reference internal" href="#ikkuna.export.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotSubscriber</span></code></a></p>
+<dl class="method">
+<dt id="ikkuna.export.subscriber.train_accuracy.TrainAccuracySubscriber.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/train_accuracy.html#TrainAccuracySubscriber.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.train_accuracy.TrainAccuracySubscriber.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>For parameters see <a class="reference internal" href="#ikkuna.export.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotSubscriber</span></code></a></p>
+</dd></dl>
+
 <dl class="method">
 <dt id="ikkuna.export.subscriber.train_accuracy.TrainAccuracySubscriber._metric">
 <code class="descname">_metric</code><span class="sig-paren">(</span><em>message_bundle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/train_accuracy.html#TrainAccuracySubscriber._metric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.train_accuracy.TrainAccuracySubscriber._metric" title="Permalink to this definition">¶</a></dt>
@@ -744,7 +774,10 @@ message kinds the subscriber wishes to receive</p>
 message will be processed.</p>
 </dd></dl>
 
-<table class="docutils field-list" frame="void" rules="none">
+<dl class="method">
+<dt id="ikkuna.export.subscriber.Subscription.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>subscriber</em>, <em>kinds</em>, <em>tag=None</em>, <em>subsample=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/subscriber.html#Subscription.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.Subscription.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
@@ -757,6 +790,8 @@ relayed</li>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
 <dl class="attribute">
 <dt>
 <code class="descname">counter</code></dt>
@@ -865,7 +900,10 @@ which kinds were received in this round.</p>
 full-sized (no smaller last batch)</p>
 </dd></dl>
 
-<table class="docutils field-list" frame="void" rules="none">
+<dl class="method">
+<dt id="ikkuna.export.subscriber.PlotSubscriber.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>subscription</em>, <em>plot_config</em>, <em>tag=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/subscriber.html#PlotSubscriber.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.PlotSubscriber.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
@@ -873,6 +911,8 @@ full-sized (no smaller last batch)</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="ikkuna.export.subscriber.PlotSubscriber.backend">
 <code class="descname">backend</code><a class="headerlink" href="#ikkuna.export.subscriber.PlotSubscriber.backend" title="Permalink to this definition">¶</a></dt>
@@ -981,7 +1021,10 @@ quantities.  The dividend will be the first element of the
 <a class="reference internal" href="#ikkuna.export.subscriber.Subscription.kinds" title="ikkuna.export.subscriber.Subscription.kinds"><code class="xref py py-attr docutils literal notranslate"><span class="pre">kinds</span></code></a> property, the divisor the second.
 Therefore it is vital to pass the message kinds to the
 <a class="reference internal" href="#ikkuna.export.subscriber.Subscription" title="ikkuna.export.subscriber.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscription</span></code></a> object in the correct order.</p>
-<table class="docutils field-list" frame="void" rules="none">
+<dl class="method">
+<dt id="ikkuna.export.subscriber.RatioSubscriber.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>kinds</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em>, <em>absolute=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/ratio.html#RatioSubscriber.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.RatioSubscriber.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
@@ -989,6 +1032,8 @@ Therefore it is vital to pass the message kinds to the
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="ikkuna.export.subscriber.RatioSubscriber._abc_cache">
 <code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#ikkuna.export.subscriber.RatioSubscriber._abc_cache" title="Permalink to this definition">¶</a></dt>
@@ -1022,7 +1067,10 @@ to the record.</p>
 <dt id="ikkuna.export.subscriber.SpectralNormSubscriber">
 <em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">SpectralNormSubscriber</code><span class="sig-paren">(</span><em>kind</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/spectral_norm.html#SpectralNormSubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.SpectralNormSubscriber" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ikkuna.export.subscriber.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.subscriber.PlotSubscriber</span></code></a></p>
-<table class="docutils field-list" frame="void" rules="none">
+<dl class="method">
+<dt id="ikkuna.export.subscriber.SpectralNormSubscriber.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>kind</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/spectral_norm.html#SpectralNormSubscriber.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.SpectralNormSubscriber.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
@@ -1032,6 +1080,8 @@ non-matrix type.</td>
 </tbody>
 </table>
 <p>For other parameters, see <a class="reference internal" href="#ikkuna.export.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotSubscriber</span></code></a></p>
+</dd></dl>
+
 <dl class="method">
 <dt id="ikkuna.export.subscriber.SpectralNormSubscriber._metric">
 <code class="descname">_metric</code><span class="sig-paren">(</span><em>message_bundle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/spectral_norm.html#SpectralNormSubscriber._metric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.SpectralNormSubscriber._metric" title="Permalink to this definition">¶</a></dt>
@@ -1092,7 +1142,10 @@ set).</p>
 <dd><p><em>function</em> – Bound method on the model to push data through and get predictions</p>
 </dd></dl>
 
-<table class="docutils field-list" frame="void" rules="none">
+<dl class="method">
+<dt id="ikkuna.export.subscriber.TestAccuracySubscriber.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>forward_fn</em>, <em>batch_size</em>, <em>frequency=100</em>, <em>ylims=None</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/test_accuracy.html#TestAccuracySubscriber.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.TestAccuracySubscriber.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
@@ -1109,6 +1162,8 @@ pass fits into memory.</li>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
 <dl class="method">
 <dt id="ikkuna.export.subscriber.TestAccuracySubscriber._metric">
 <code class="descname">_metric</code><span class="sig-paren">(</span><em>message_or_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/test_accuracy.html#TestAccuracySubscriber._metric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.TestAccuracySubscriber._metric" title="Permalink to this definition">¶</a></dt>
@@ -1155,7 +1210,12 @@ Subscriber is not interested in actual training artifacts, or
 <em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">TrainAccuracySubscriber</code><span class="sig-paren">(</span><em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/train_accuracy.html#TrainAccuracySubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.TrainAccuracySubscriber" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ikkuna.export.subscriber.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.export.subscriber.subscriber.PlotSubscriber</span></code></a></p>
 <p><a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a> which computes the batch accuracy.</p>
-<p>For parameters see <a class="reference internal" href="#ikkuna.export.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotSubscriber</span></code></a></p>
+<dl class="method">
+<dt id="ikkuna.export.subscriber.TrainAccuracySubscriber.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/train_accuracy.html#TrainAccuracySubscriber.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.TrainAccuracySubscriber.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>For parameters see <a class="reference internal" href="#ikkuna.export.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotSubscriber</span></code></a></p>
+</dd></dl>
+
 <dl class="method">
 <dt id="ikkuna.export.subscriber.TrainAccuracySubscriber._metric">
 <code class="descname">_metric</code><span class="sig-paren">(</span><em>message_bundle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/train_accuracy.html#TrainAccuracySubscriber._metric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.TrainAccuracySubscriber._metric" title="Permalink to this definition">¶</a></dt>
