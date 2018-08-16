@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>train.train &#8212; ikkuna 0 documentation</title>
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html"><span><img src="../../_static/logo.png"></span>
+          ikkuna</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide.html">User Guide</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ikkuna.html">ikkuna package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html">models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../train.html">train package</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <h1>Source code for train.train</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">models</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">ikkuna.utils</span> <span class="k">import</span> <span class="n">create_optimizer</span><span class="p">,</span> <span class="n">initialize_model</span>
+<span class="kn">from</span> <span class="nn">ikkuna.export</span> <span class="k">import</span> <span class="n">Exporter</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
+
+
+<div class="viewcode-block" id="DatasetMeta"><a class="viewcode-back" href="../../train.html#train.train.DatasetMeta">[docs]</a><span class="k">class</span> <span class="nc">DatasetMeta</span><span class="p">(</span><span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;DatasetMeta&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;dataset&#39;</span><span class="p">,</span> <span class="s1">&#39;num_classes&#39;</span><span class="p">,</span> <span class="s1">&#39;shape&#39;</span><span class="p">])):</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Trainer"><a class="viewcode-back" href="../../train.html#train.train.Trainer">[docs]</a><span class="k">class</span> <span class="nc">Trainer</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;Class to bundle all logic and parameters that go into training a model on some</span>
+<span class="sd">    dataset.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    _dataset :  Dataset</span>
+<span class="sd">                The dataset used for training</span>
+<span class="sd">    _num_classes    :   int</span>
+<span class="sd">                        Number of target categories (inferred)</span>
+<span class="sd">    _shape  :   list</span>
+<span class="sd">                Shape of the input data (N, H, W, C)</span>
+<span class="sd">    _batch_size :   int</span>
+<span class="sd">                    Training batch size</span>
+<span class="sd">    _loss_function  :   torch.nn._Loss</span>
+<span class="sd">                        Loss function instance for training</span>
+<span class="sd">    _dataloader :   torch.utils.data.DataLoader</span>
+<span class="sd">                    loader for the training dataset</span>
+<span class="sd">    _model  :   torch.nn.Module</span>
+<span class="sd">    _optimizer  : torch.optim.Optimizer</span>
+<span class="sd">    _exporter   :   ikkuna.export.Exporter</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="Trainer.__init__"><a class="viewcode-back" href="../../train.html#train.train.Trainer.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset_meta</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Create a new Trainer. Handlers, model and optimizer are left uninitialised and must be</span>
+<span class="sd">        set with :meth:`~train.Trainer.add_subscriber()`, :meth:`~train.Trainer.add_model()` and</span>
+<span class="sd">        :meth:`~train.Trainer.optimize()` before calling :meth:`~train.Trainer.train_batch()`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dataset_meta    :   train.DatasetMeta</span>
+<span class="sd">                            Train data, obtained via :func:`main._load_dataset()`</span>
+<span class="sd">        batch_size  :   int</span>
+<span class="sd">        loss   :    function</span>
+<span class="sd">                    Defaults to torch.nn.CrossEntropyLoss</span>
+<span class="sd">        depth   :   int</span>
+<span class="sd">                    Depth to which to traverse the module tree</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">############################################################################################</span>
+        <span class="c1">#                                  Acquire parameters                                      #</span>
+        <span class="c1">############################################################################################</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_classes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span> <span class="o">=</span> <span class="n">dataset_meta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span>        <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;batch_size&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_loss_function</span>     <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;loss&#39;</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">())</span>
+        <span class="n">sampler</span>                 <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">RandomSampler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dataloader</span>        <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span><span class="p">,</span>
+                                             <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span> <span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_iter</span>         <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataloader</span><span class="p">)</span>
+        <span class="n">N_train</span>                 <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_batches_per_epoch</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">N_train</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_batch_counter</span>     <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># we use these to peek one step ahead in the data iterator to know an epoch has ended</span>
+        <span class="c1"># already in the epoch&#39;s final iteration, not at the beginning of the next one</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_next_X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_Y</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_iter</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Number of classes: </span><span class="si">{self._num_classes}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Data shape: </span><span class="si">{self._shape}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exporter</span> <span class="o">=</span> <span class="n">Exporter</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;depth&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exporter</span><span class="o">.</span><span class="n">set_loss</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_function</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">current_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_counter</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">batches_per_epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batches_per_epoch</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">exporter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exporter</span>
+
+<div class="viewcode-block" id="Trainer.add_subscriber"><a class="viewcode-back" href="../../train.html#train.train.Trainer.add_subscriber">[docs]</a>    <span class="k">def</span> <span class="nf">add_subscriber</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscription</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exporter</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">subscription</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Trainer.optimize"><a class="viewcode-back" href="../../train.html#train.train.Trainer.optimize">[docs]</a>    <span class="k">def</span> <span class="nf">optimize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Set the optimizer.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name    :   str</span>
+<span class="sd">                    Name of the optimizer (must exist in :mod:`torch.optim`)</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            All other kwargs are forwarded to the optimizer constructor</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;Adam&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span> <span class="o">=</span> <span class="n">create_optimizer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Using </span><span class="si">{self._optimizer.__class__.__name__}</span><span class="s1"> optimizer&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Trainer.add_model"><a class="viewcode-back" href="../../train.html#train.train.Trainer.add_model">[docs]</a>    <span class="k">def</span> <span class="nf">add_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_str</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Set the model to train.</span>
+
+<span class="sd">        .. warning::</span>
+<span class="sd">            Currently, the function automatically calls :meth:`torch.nn.Module.cuda()` and hence a</span>
+<span class="sd">            GPU is necessary.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_str   :   str</span>
+<span class="sd">                        Name of the model (must exist in :mod:`models`)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">Model</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_str</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">num_classes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_classes</span><span class="p">,</span> <span class="n">exporter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_exporter</span><span class="p">)</span>
+        <span class="n">initialize_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Trainer.train_batch"><a class="viewcode-back" href="../../train.html#train.train.Trainer.train_batch">[docs]</a>    <span class="k">def</span> <span class="nf">train_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Run through 1 batch in the training set. The iterator will wrap around and</span>
+<span class="sd">        restart at the beginning.&#39;&#39;&#39;</span>
+
+        <span class="c1"># to be safe, enable batch-norm, dropout, and the like. Could be changed externally, so</span>
+        <span class="c1"># do this before each epoch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">X</span><span class="p">,</span> <span class="n">Y</span>         <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_Y</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="k">async</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">Y</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="k">async</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">output</span>       <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">loss</span>         <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_function</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_next_X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_Y</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_iter</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_exporter</span><span class="o">.</span><span class="n">epoch_finished</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_batch_counter</span>        <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data_iter</span>            <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataloader</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_next_X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_Y</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_iter</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_batch_counter</span> <span class="o">+=</span> <span class="mi">1</span></div></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, Rasmus Diederichsen.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

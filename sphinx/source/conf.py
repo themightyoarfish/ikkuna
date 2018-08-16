@@ -16,6 +16,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../../'))
+import sphinx_bootstrap_theme
 
 # -- Project information -----------------------------------------------------
 
@@ -82,18 +83,23 @@ pygments_style = 'sphinx'
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+html_theme = 'bootstrap'
+html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-# html_theme_options = {}
+html_theme_options = {
+    'navbar_class': 'navbar navbar-inverse',
+    'bootswatch_theme': 'flatly'
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+html_logo = html_static_path[0] + '/logo.png'
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
@@ -173,7 +179,6 @@ intersphinx_mapping = {'python': ('https://docs.python.org/', None),
                        'torch': ('https://pytorch.org/docs/master/', None),
                        'torchvision': ('https://pytorch.org/docs/master/', None)}
 
-autodoc_default_flags = ['private-members']
 nitpick_ignore = [('py:mod', 'torchvision.datasets'),
                   ('py:meth', 'torchvision.models.alexnet'),
                   # These two occur when inheriting from Module. Dunno why.
