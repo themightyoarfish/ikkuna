@@ -35,22 +35,22 @@ class SpectralNormSubscriber(PlotSubscriber):
         possible to use SVD instead, but we are not interested in the full matrix decomposition,
         merely in the singular values.'''
 
-        module    = message_bundle.module.name
+        module_name = message_bundle.identifier
         # get and reshape the weight tensor to 2d
-        weights   = message_bundle.data[self._subscription.kinds[0]]
-        height    = weights.size(0)
-        weights2d = weights.reshape(height, -1)
+        weights     = message_bundle.data[self._subscription.kinds[0]]
+        height      = weights.size(0)
+        weights2d   = weights.reshape(height, -1)
 
         # buffer for power iteration (don't know what the mahematical purpose is)
-        if module not in self.u:
-            self.u[module] = normalize(weights2d.new_empty(height).normal_(0, 1), dim=0)
+        if module_name not in self.u:
+            self.u[module_name] = normalize(weights2d.new_empty(height).normal_(0, 1), dim=0)
 
         # estimate singular values
         with torch.no_grad():
             for _ in range(3):      # TODO: Make niter parameter
-                v = normalize(torch.matmul(weights2d.t(), self.u[module]), dim=0)
-                self.u[module] = normalize(torch.matmul(weights2d, v), dim=0)
+                v = normalize(torch.matmul(weights2d.t(), self.u[module_name]), dim=0)
+                self.u[module_name] = normalize(torch.matmul(weights2d, v), dim=0)
 
-        norm = torch.dot(self.u[module], torch.matmul(weights2d, v)).item()
+        norm = torch.dot(self.u[module_name], torch.matmul(weights2d, v)).item()
 
-        self._backend.add_data(module, norm, message_bundle.seq)
+        self._backend.add_data(module_name, norm, message_bundle.seq)
