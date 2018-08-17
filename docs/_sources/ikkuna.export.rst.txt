@@ -8,6 +8,14 @@ Subpackages
 
     ikkuna.export.subscriber
 
+Module contents
+---------------
+
+.. automodule:: ikkuna.export
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -23,15 +31,6 @@ ikkuna.export.messages module
 -----------------------------
 
 .. automodule:: ikkuna.export.messages
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: ikkuna.export
     :members:
     :undoc-members:
     :show-inheritance:

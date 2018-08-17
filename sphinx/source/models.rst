@@ -1,6 +1,14 @@
 models package
 ==============
 
+Module contents
+---------------
+
+.. automodule:: models
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -16,15 +24,6 @@ models.densenet module
 ----------------------
 
 .. automodule:: models.densenet
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: models
     :members:
     :undoc-members:
     :show-inheritance:

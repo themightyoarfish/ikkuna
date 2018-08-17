@@ -75,10 +75,10 @@
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
 <li><a class="reference internal" href="#">models package</a><ul>
+<li><a class="reference internal" href="#module-models">Module contents</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-models.alexnet">models.alexnet module</a></li>
 <li><a class="reference internal" href="#module-models.densenet">models.densenet module</a></li>
-<li><a class="reference internal" href="#module-models">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -130,6 +130,99 @@
       
   <div class="section" id="models-package">
 <h1>models package<a class="headerlink" href="#models-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-models">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-models" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="models.AlexNetMini">
+<em class="property">class </em><code class="descclassname">models.</code><code class="descname">AlexNetMini</code><span class="sig-paren">(</span><em>input_shape</em>, <em>num_classes=1000</em>, <em>exporter=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/alexnet.html#AlexNetMini"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.AlexNetMini" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Reduced AlexNet (basically just a few conv layers with relu and
+max-pooling) which attempts to adapt to arbitrary input sizes, provided they are large enough to
+survive the strides and conv cutoffs.</p>
+<dl class="attribute">
+<dt id="models.AlexNetMini.features">
+<code class="descname">features</code><a class="headerlink" href="#models.AlexNetMini.features" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>torch.nn.Module</em> – Convolutional module, extracting features from the input</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="models.AlexNetMini.classifier">
+<code class="descname">classifier</code><a class="headerlink" href="#models.AlexNetMini.classifier" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>torch.nn.Module</em> – Classifier with relu and dropout</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="models.AlexNetMini.H_out">
+<code class="descname">H_out</code><a class="headerlink" href="#models.AlexNetMini.H_out" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Output height of the classifier</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="models.AlexNetMini.W_out">
+<code class="descname">W_out</code><a class="headerlink" href="#models.AlexNetMini.W_out" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Output width of the classifier</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="models.AlexNetMini.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/alexnet.html#AlexNetMini.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.AlexNetMini.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="models.DenseNet">
+<em class="property">class </em><code class="descclassname">models.</code><code class="descname">DenseNet</code><span class="sig-paren">(</span><em>input_shape</em>, <em>growth_rate=12</em>, <em>block_config=(16</em>, <em>16</em>, <em>16)</em>, <em>compression=0.5</em>, <em>num_init_features=24</em>, <em>bn_size=4</em>, <em>drop_rate=0</em>, <em>num_classes=10</em>, <em>small_inputs=True</em>, <em>efficient=False</em>, <em>exporter=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/densenet.html#DenseNet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.DenseNet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Densenet-BC model class, based on
+<cite>“Densely Connected Convolutional Networks” &lt;https://arxiv.org/pdf/1608.06993.pdf&gt;</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>growth_rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – how many filters to add each layer (<code class="docutils literal notranslate"><span class="pre">k</span></code> in paper)</li>
+<li><strong>block_config</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>)</em>) – 3 or 4 ints,  how many layers in each pooling block</li>
+<li><strong>num_init_features</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – the number of filters to learn in the first convolution layer</li>
+<li><strong>bn_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – multiplicative factor for number of bottle neck layers (i.e. <code class="docutils literal notranslate"><span class="pre">bn_size</span></code> * <code class="docutils literal notranslate"><span class="pre">k</span></code>
+features in the bottleneck layer)</li>
+<li><strong>drop_rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – dropout rate after each dense layer</li>
+<li><strong>num_classes</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – number of classification classes</li>
+<li><strong>small_inputs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – set to True if images are <code class="docutils literal notranslate"><span class="pre">32x32</span></code> (e.g. CIFAR). Otherwise assumes images
+are larger.</li>
+<li><strong>efficient</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to use checkpointing. Much more memory efficient, but slower.</li>
+<li><strong>exporter</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><em>ikkuna.export.Exporter</em></a>) – Optional exporter to use for monitoring</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="models.DenseNet.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/densenet.html#DenseNet.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.DenseNet.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -218,99 +311,6 @@ are larger.</li>
 <dl class="method">
 <dt id="models.densenet.DenseNet.forward">
 <code class="descname">forward</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/densenet.html#DenseNet.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.densenet.DenseNet.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Defines the computation performed at every call.</p>
-<p>Should be overridden by all subclasses.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Although the recipe for forward pass needs to be defined within
-this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
-instead of this since the former takes care of running the
-registered hooks while the latter silently ignores them.</p>
-</div>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-models">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-models" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="models.AlexNetMini">
-<em class="property">class </em><code class="descclassname">models.</code><code class="descname">AlexNetMini</code><span class="sig-paren">(</span><em>input_shape</em>, <em>num_classes=1000</em>, <em>exporter=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/alexnet.html#AlexNetMini"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.AlexNetMini" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
-<p>Reduced AlexNet (basically just a few conv layers with relu and
-max-pooling) which attempts to adapt to arbitrary input sizes, provided they are large enough to
-survive the strides and conv cutoffs.</p>
-<dl class="attribute">
-<dt id="models.AlexNetMini.features">
-<code class="descname">features</code><a class="headerlink" href="#models.AlexNetMini.features" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>torch.nn.Module</em> – Convolutional module, extracting features from the input</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="models.AlexNetMini.classifier">
-<code class="descname">classifier</code><a class="headerlink" href="#models.AlexNetMini.classifier" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>torch.nn.Module</em> – Classifier with relu and dropout</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="models.AlexNetMini.H_out">
-<code class="descname">H_out</code><a class="headerlink" href="#models.AlexNetMini.H_out" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – Output height of the classifier</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="models.AlexNetMini.W_out">
-<code class="descname">W_out</code><a class="headerlink" href="#models.AlexNetMini.W_out" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – Output width of the classifier</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="models.AlexNetMini.forward">
-<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/alexnet.html#AlexNetMini.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.AlexNetMini.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Defines the computation performed at every call.</p>
-<p>Should be overridden by all subclasses.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Although the recipe for forward pass needs to be defined within
-this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
-instead of this since the former takes care of running the
-registered hooks while the latter silently ignores them.</p>
-</div>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="models.DenseNet">
-<em class="property">class </em><code class="descclassname">models.</code><code class="descname">DenseNet</code><span class="sig-paren">(</span><em>input_shape</em>, <em>growth_rate=12</em>, <em>block_config=(16</em>, <em>16</em>, <em>16)</em>, <em>compression=0.5</em>, <em>num_init_features=24</em>, <em>bn_size=4</em>, <em>drop_rate=0</em>, <em>num_classes=10</em>, <em>small_inputs=True</em>, <em>efficient=False</em>, <em>exporter=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/densenet.html#DenseNet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.DenseNet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
-<p>Densenet-BC model class, based on
-<cite>“Densely Connected Convolutional Networks” &lt;https://arxiv.org/pdf/1608.06993.pdf&gt;</cite></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>growth_rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – how many filters to add each layer (<code class="docutils literal notranslate"><span class="pre">k</span></code> in paper)</li>
-<li><strong>block_config</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>)</em>) – 3 or 4 ints,  how many layers in each pooling block</li>
-<li><strong>num_init_features</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – the number of filters to learn in the first convolution layer</li>
-<li><strong>bn_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – multiplicative factor for number of bottle neck layers (i.e. <code class="docutils literal notranslate"><span class="pre">bn_size</span></code> * <code class="docutils literal notranslate"><span class="pre">k</span></code>
-features in the bottleneck layer)</li>
-<li><strong>drop_rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – dropout rate after each dense layer</li>
-<li><strong>num_classes</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – number of classification classes</li>
-<li><strong>small_inputs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – set to True if images are <code class="docutils literal notranslate"><span class="pre">32x32</span></code> (e.g. CIFAR). Otherwise assumes images
-are larger.</li>
-<li><strong>efficient</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to use checkpointing. Much more memory efficient, but slower.</li>
-<li><strong>exporter</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><em>ikkuna.export.Exporter</em></a>) – Optional exporter to use for monitoring</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="models.DenseNet.forward">
-<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/densenet.html#DenseNet.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.DenseNet.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines the computation performed at every call.</p>
 <p>Should be overridden by all subclasses.</p>
 <div class="admonition note">

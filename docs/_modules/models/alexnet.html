@@ -116,7 +116,7 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 
 
-<div class="viewcode-block" id="AlexNetMini"><a class="viewcode-back" href="../../models.html#models.alexnet.AlexNetMini">[docs]</a><span class="k">class</span> <span class="nc">AlexNetMini</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>     <span class="c1"># Pytorch Sphinx-doc is buggy here</span>
+<div class="viewcode-block" id="AlexNetMini"><a class="viewcode-back" href="../../models.html#models.AlexNetMini">[docs]</a><span class="k">class</span> <span class="nc">AlexNetMini</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>     <span class="c1"># Pytorch Sphinx-doc is buggy here</span>
     <span class="sd">&#39;&#39;&#39;Reduced AlexNet (basically just a few conv layers with relu and</span>
 <span class="sd">    max-pooling) which attempts to adapt to arbitrary input sizes, provided they are large enough to</span>
 <span class="sd">    survive the strides and conv cutoffs.</span>
@@ -166,7 +166,7 @@
 
         <span class="n">e</span><span class="o">.</span><span class="n">add_modules</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-<div class="viewcode-block" id="AlexNetMini.forward"><a class="viewcode-back" href="../../models.html#models.alexnet.AlexNetMini.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="AlexNetMini.forward"><a class="viewcode-back" href="../../models.html#models.AlexNetMini.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">192</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">H_out</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">W_out</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">classifier</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>

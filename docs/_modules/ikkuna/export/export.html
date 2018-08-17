@@ -113,7 +113,7 @@
 <span class="kn">from</span> <span class="nn">ikkuna.utils</span> <span class="k">import</span> <span class="n">ModuleTree</span>
 
 
-<div class="viewcode-block" id="Exporter"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.export.Exporter">[docs]</a><span class="k">class</span> <span class="nc">Exporter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Exporter"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter">[docs]</a><span class="k">class</span> <span class="nc">Exporter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Class for managing publishing of data from model code.</span>
 
 <span class="sd">    An :class:`Exporter` is used in the model code by either explicitly registering modules for</span>
@@ -201,14 +201,14 @@
         <span class="sd">&#39;&#39;&#39;list(ikkuna.utils.NamedModule) - Named modules tracked by this :class:`Exporter`&#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_modules</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
-<div class="viewcode-block" id="Exporter._check_model"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.export.Exporter._check_model">[docs]</a>    <span class="k">def</span> <span class="nf">_check_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Exporter._check_model"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter._check_model">[docs]</a>    <span class="k">def</span> <span class="nf">_check_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Check if a model is set, issue a warning otherwise. Some things may still work and not</span>
 <span class="sd">        crash (???).&#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">:</span>
             <span class="kn">import</span> <span class="nn">warnings</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Warning: No model set. This will either do nothing or crash.&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Exporter.subscribe"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.export.Exporter.subscribe">[docs]</a>    <span class="k">def</span> <span class="nf">subscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscriber</span><span class="p">):</span>
+<div class="viewcode-block" id="Exporter.subscribe"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.subscribe">[docs]</a>    <span class="k">def</span> <span class="nf">subscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscriber</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Add a subscriber.</span>
 
 <span class="sd">        Parameters</span>
@@ -218,7 +218,7 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subscribers</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">subscriber</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Exporter._add_module_by_name"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.export.Exporter._add_module_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">_add_module_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">named_module</span><span class="p">):</span>
+<div class="viewcode-block" id="Exporter._add_module_by_name"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter._add_module_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">_add_module_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">named_module</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Register a module with a name attached.</span>
 
 <span class="sd">        Parameters</span>
@@ -266,7 +266,7 @@
             <span class="n">module</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">register_hook</span><span class="p">(</span><span class="n">bias_hook</span><span class="p">)</span>
         <span class="n">module</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">register_hook</span><span class="p">(</span><span class="n">weight_hook</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Exporter.add_modules"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.export.Exporter.add_modules">[docs]</a>    <span class="k">def</span> <span class="nf">add_modules</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="Exporter.add_modules"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.add_modules">[docs]</a>    <span class="k">def</span> <span class="nf">add_modules</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Add modules to supervise. If the module has ``weight`` and/or ``bias`` members, updates</span>
 <span class="sd">        to those will be tracked.</span>
 
@@ -295,7 +295,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Don</span><span class="se">\&#39;</span><span class="s1">t know how to handle </span><span class="si">{module.__class__.__name__}</span><span class="s1">&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Exporter.__call__"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.export.Exporter.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="Exporter.__call__"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Shorthand for :meth:`~Exporter.add_modules()` which returns its input unmodified.</span>
 
 <span class="sd">        Parameters</span>
@@ -310,7 +310,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">add_modules</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">recursive</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">module</span></div>
 
-<div class="viewcode-block" id="Exporter.publish_meta"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.export.Exporter.publish_meta">[docs]</a>    <span class="k">def</span> <span class="nf">publish_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Exporter.publish_meta"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.publish_meta">[docs]</a>    <span class="k">def</span> <span class="nf">publish_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Publish an update of type :class:`~ikkuna.export.messages.MetaMessage` to all</span>
 <span class="sd">        registered subscribers.</span>
 
@@ -327,7 +327,7 @@
         <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subscribers</span><span class="p">:</span>
             <span class="n">sub</span><span class="o">.</span><span class="n">receive_message</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Exporter.publish_training"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.export.Exporter.publish_training">[docs]</a>    <span class="k">def</span> <span class="nf">publish_training</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="Exporter.publish_training"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.publish_training">[docs]</a>    <span class="k">def</span> <span class="nf">publish_training</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Publish an update of type :class:`~ikkuna.export.messages.TrainingMessage` to all</span>
 <span class="sd">        registered subscribers.</span>
 
@@ -349,15 +349,15 @@
         <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subscribers</span><span class="p">:</span>
             <span class="n">sub</span><span class="o">.</span><span class="n">receive_message</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Exporter.train"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.export.Exporter.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="Exporter.train"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Switch to training mode. This will ensure all data is published.&#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_training</span> <span class="o">=</span> <span class="n">train</span></div>
 
-<div class="viewcode-block" id="Exporter.test"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.export.Exporter.test">[docs]</a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="Exporter.test"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.test">[docs]</a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Switch to testing mode. This will turn off all publishing.&#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="ow">not</span> <span class="n">test</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Exporter.new_input"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.export.Exporter.new_input">[docs]</a>    <span class="k">def</span> <span class="nf">new_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="Exporter.new_input"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.new_input">[docs]</a>    <span class="k">def</span> <span class="nf">new_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Callback for new training input to the network.</span>
 
 <span class="sd">        Parameters</span>
@@ -372,7 +372,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">publish_meta</span><span class="p">(</span><span class="s1">&#39;input_data&#39;</span><span class="p">,</span> <span class="n">input_data</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Exporter.new_output_and_labels"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.export.Exporter.new_output_and_labels">[docs]</a>    <span class="k">def</span> <span class="nf">new_output_and_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">network_output</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+<div class="viewcode-block" id="Exporter.new_output_and_labels"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.new_output_and_labels">[docs]</a>    <span class="k">def</span> <span class="nf">new_output_and_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">network_output</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Callback for final network output.</span>
 
 <span class="sd">        Parameters</span>
@@ -383,7 +383,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">publish_meta</span><span class="p">(</span><span class="s1">&#39;network_output&#39;</span><span class="p">,</span> <span class="n">network_output</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">publish_meta</span><span class="p">(</span><span class="s1">&#39;input_labels&#39;</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Exporter.new_activations"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.export.Exporter.new_activations">[docs]</a>    <span class="k">def</span> <span class="nf">new_activations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">in_</span><span class="p">,</span> <span class="n">out_</span><span class="p">):</span>
+<div class="viewcode-block" id="Exporter.new_activations"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.new_activations">[docs]</a>    <span class="k">def</span> <span class="nf">new_activations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">in_</span><span class="p">,</span> <span class="n">out_</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Callback for newly arriving activations. Registered as a hook to the tracked modules.</span>
 <span class="sd">        Will trigger export of all new activation and weight/bias data.</span>
 
@@ -421,7 +421,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_bias_cache</span><span class="p">[</span><span class="n">module</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">bias</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">publish_training</span><span class="p">(</span><span class="s1">&#39;activations&#39;</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">out_</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Exporter.new_gradients"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.export.Exporter.new_gradients">[docs]</a>    <span class="k">def</span> <span class="nf">new_gradients</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">gradients</span><span class="p">):</span>
+<div class="viewcode-block" id="Exporter.new_gradients"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.new_gradients">[docs]</a>    <span class="k">def</span> <span class="nf">new_gradients</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">gradients</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Callback for newly arriving gradients. Registered as a hook to the tracked modules.</span>
 <span class="sd">        Will trigger export of all new gradient data.</span>
 
@@ -437,7 +437,7 @@
         <span class="k">if</span> <span class="n">gradients</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">publish_training</span><span class="p">(</span><span class="s1">&#39;bias_gradients&#39;</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">gradients</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="Exporter.set_model"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.export.Exporter.set_model">[docs]</a>    <span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+<div class="viewcode-block" id="Exporter.set_model"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.set_model">[docs]</a>    <span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Set the model for direct access for some metrics.</span>
 
 <span class="sd">        Parameters</span>
@@ -476,7 +476,7 @@
             <span class="k">return</span> <span class="n">ret</span>
         <span class="n">model</span><span class="o">.</span><span class="n">forward</span> <span class="o">=</span> <span class="n">MethodType</span><span class="p">(</span><span class="n">new_forward_fn</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Exporter.set_loss"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.export.Exporter.set_loss">[docs]</a>    <span class="k">def</span> <span class="nf">set_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss_function</span><span class="p">):</span>
+<div class="viewcode-block" id="Exporter.set_loss"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.set_loss">[docs]</a>    <span class="k">def</span> <span class="nf">set_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss_function</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Add hook to loss function to extract labels.</span>
 
 <span class="sd">        Parameters</span>
@@ -490,7 +490,7 @@
 
         <span class="n">loss_function</span><span class="o">.</span><span class="n">register_forward_hook</span><span class="p">(</span><span class="n">hook</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Exporter.step"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.export.Exporter.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Exporter.step"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Increase batch counter (per epoch) and the global step counter.&#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span>  <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -499,7 +499,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_did_publish_grads</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Exporter._freeze_module"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.export.Exporter._freeze_module">[docs]</a>    <span class="k">def</span> <span class="nf">_freeze_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">named_module</span><span class="p">):</span>
+<div class="viewcode-block" id="Exporter._freeze_module"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter._freeze_module">[docs]</a>    <span class="k">def</span> <span class="nf">_freeze_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">named_module</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Convenience method for freezing training for a module.</span>
 
 <span class="sd">        Parameters</span>
@@ -517,7 +517,7 @@
             <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Freezing </span><span class="si">{named_module.name}</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="n">named_module</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">freeze</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Exporter.epoch_finished"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.export.Exporter.epoch_finished">[docs]</a>    <span class="k">def</span> <span class="nf">epoch_finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Exporter.epoch_finished"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.epoch_finished">[docs]</a>    <span class="k">def</span> <span class="nf">epoch_finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Increase the epoch counter and reset the batch counter.&#39;&#39;&#39;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">publish_meta</span><span class="p">(</span><span class="s1">&#39;epoch_finished&#39;</span><span class="p">)</span>

@@ -110,7 +110,7 @@
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">DataLoader</span>
 
 
-<div class="viewcode-block" id="TestAccuracySubscriber"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.test_accuracy.TestAccuracySubscriber">[docs]</a><span class="k">class</span> <span class="nc">TestAccuracySubscriber</span><span class="p">(</span><span class="n">PlotSubscriber</span><span class="p">):</span>
+<div class="viewcode-block" id="TestAccuracySubscriber"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.TestAccuracySubscriber">[docs]</a><span class="k">class</span> <span class="nc">TestAccuracySubscriber</span><span class="p">(</span><span class="n">PlotSubscriber</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Subscriber which can compute the accuracy on a given data set (generally the test/validation</span>
 <span class="sd">    set).</span>
@@ -127,7 +127,7 @@
 <span class="sd">                    Bound method on the model to push data through and get predictions</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-<div class="viewcode-block" id="TestAccuracySubscriber.__init__"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.test_accuracy.TestAccuracySubscriber.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset_meta</span><span class="p">,</span> <span class="n">forward_fn</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">ylims</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<div class="viewcode-block" id="TestAccuracySubscriber.__init__"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.TestAccuracySubscriber.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset_meta</span><span class="p">,</span> <span class="n">forward_fn</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">ylims</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                  <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;tb&#39;</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parameters</span>

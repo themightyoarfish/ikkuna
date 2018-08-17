@@ -1,6 +1,14 @@
 ikkuna.utils package
 ====================
 
+Module contents
+---------------
+
+.. automodule:: ikkuna.utils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -28,11 +36,3 @@ ikkuna.utils.utils module
     :undoc-members:
     :show-inheritance:
 
-
-Module contents
----------------
-
-.. automodule:: ikkuna.utils
-    :members:
-    :undoc-members:
-    :show-inheritance:

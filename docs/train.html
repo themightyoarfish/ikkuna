@@ -74,9 +74,9 @@
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
 <li><a class="reference internal" href="#">train package</a><ul>
+<li><a class="reference internal" href="#module-train">Module contents</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-train.train">train.train module</a></li>
-<li><a class="reference internal" href="#module-train">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -124,6 +124,175 @@
       
   <div class="section" id="train-package">
 <h1>train package<a class="headerlink" href="#train-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-train">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-train" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="train.Trainer">
+<em class="property">class </em><code class="descclassname">train.</code><code class="descname">Trainer</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/train/train.html#Trainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.Trainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class to bundle all logic and parameters that go into training a model on some
+dataset.</p>
+<dl class="attribute">
+<dt id="train.Trainer._dataset">
+<code class="descname">_dataset</code><a class="headerlink" href="#train.Trainer._dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Dataset</em> – The dataset used for training</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="train.Trainer._num_classes">
+<code class="descname">_num_classes</code><a class="headerlink" href="#train.Trainer._num_classes" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Number of target categories (inferred)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="train.Trainer._shape">
+<code class="descname">_shape</code><a class="headerlink" href="#train.Trainer._shape" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> – Shape of the input data (N, H, W, C)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="train.Trainer._batch_size">
+<code class="descname">_batch_size</code><a class="headerlink" href="#train.Trainer._batch_size" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Training batch size</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="train.Trainer._loss_function">
+<code class="descname">_loss_function</code><a class="headerlink" href="#train.Trainer._loss_function" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>torch.nn._Loss</em> – Loss function instance for training</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="train.Trainer._dataloader">
+<code class="descname">_dataloader</code><a class="headerlink" href="#train.Trainer._dataloader" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>torch.utils.data.DataLoader</em> – loader for the training dataset</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="train.Trainer._optimizer">
+<code class="descname">_optimizer</code><a class="headerlink" href="#train.Trainer._optimizer" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>torch.optim.Optimizer</em></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="train.Trainer.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/train/train.html#Trainer.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.Trainer.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new Trainer. Handlers, model and optimizer are left uninitialised and must be
+set with <a class="reference internal" href="#train.Trainer.add_subscriber" title="train.Trainer.add_subscriber"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_subscriber()</span></code></a>, <a class="reference internal" href="#train.Trainer.add_model" title="train.Trainer.add_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_model()</span></code></a> and
+<a class="reference internal" href="#train.Trainer.optimize" title="train.Trainer.optimize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">optimize()</span></code></a> before calling <a class="reference internal" href="#train.Trainer.train_batch" title="train.Trainer.train_batch"><code class="xref py py-meth docutils literal notranslate"><span class="pre">train_batch()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dataset_meta</strong> (<a class="reference internal" href="#train.DatasetMeta" title="train.DatasetMeta"><em>train.DatasetMeta</em></a>) – Train data, obtained via <a class="reference internal" href="main.html#main._load_dataset" title="main._load_dataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">main._load_dataset()</span></code></a></li>
+<li><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – </li>
+<li><strong>loss</strong> (<em>function</em>) – Defaults to torch.nn.CrossEntropyLoss</li>
+<li><strong>depth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Depth to which to traverse the module tree</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="train.Trainer.current_batch">
+<code class="descname">current_batch</code><a class="headerlink" href="#train.Trainer.current_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – 0-based batch index</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="train.Trainer.batches_per_epoch">
+<code class="descname">batches_per_epoch</code><a class="headerlink" href="#train.Trainer.batches_per_epoch" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – number of batches in an epoch (assuming only full batches, I think)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="train.Trainer.model">
+<code class="descname">model</code><a class="headerlink" href="#train.Trainer.model" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>torch.nn.Module</em> – Model</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="train.Trainer.exporter">
+<code class="descname">exporter</code><a class="headerlink" href="#train.Trainer.exporter" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>ikkuna.export.Exporter</em> – Exporter used during training</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="train.Trainer.add_subscriber">
+<code class="descname">add_subscriber</code><span class="sig-paren">(</span><em>subscriber</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/train/train.html#Trainer.add_subscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.Trainer.add_subscriber" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a subscriber.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>subscriber</strong> (<a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><em>ikkuna.export.subscriber.Subscriber</em></a>) – </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="train.Trainer.optimize">
+<code class="descname">optimize</code><span class="sig-paren">(</span><em>name='Adam'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/train/train.html#Trainer.optimize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.Trainer.optimize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the optimizer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the optimizer (must exist in <a class="reference external" href="https://pytorch.org/docs/master/optim.html#module-torch.optim" title="(in PyTorch vmaster (0.5.0a0+0aefb9f ))"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torch.optim</span></code></a>)</li>
+<li><strong>**kwargs</strong> – All other kwargs are forwarded to the optimizer constructor</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="train.Trainer.add_model">
+<code class="descname">add_model</code><span class="sig-paren">(</span><em>model_str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/train/train.html#Trainer.add_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.Trainer.add_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the model to train. This method will attempt to load from <a class="reference internal" href="models.html#module-models" title="models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">models</span></code></a>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Currently, the function automatically calls <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.cuda" title="(in PyTorch vmaster (0.5.0a0+0aefb9f ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.cuda()</span></code></a> and hence a
+GPU is necessary.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the model (must exist in <a class="reference internal" href="models.html#module-models" title="models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">models</span></code></a>)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="train.Trainer.train_batch">
+<code class="descname">train_batch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/train/train.html#Trainer.train_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.Trainer.train_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run through 1 batch in the training set. The iterator will wrap around and
+restart at the beginning.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="train.DatasetMeta">
+<em class="property">class </em><code class="descclassname">train.</code><code class="descname">DatasetMeta</code><a class="reference internal" href="_modules/train/train.html#DatasetMeta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.DatasetMeta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#train.train.DatasetMeta" title="train.train.DatasetMeta"><code class="xref py py-class docutils literal notranslate"><span class="pre">train.train.DatasetMeta</span></code></a></p>
+<dl class="attribute">
+<dt id="train.DatasetMeta.size">
+<code class="descname">size</code><a class="headerlink" href="#train.DatasetMeta.size" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Number of examples in the dataset</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -258,7 +427,7 @@ set with <a class="reference internal" href="#train.Trainer.add_subscriber" titl
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the optimizer (must exist in <a class="reference external" href="https://pytorch.org/docs/master/optim.html#module-torch.optim" title="(in PyTorch vmaster (0.5.0a0+00f2731 ))"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torch.optim</span></code></a>)</li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the optimizer (must exist in <a class="reference external" href="https://pytorch.org/docs/master/optim.html#module-torch.optim" title="(in PyTorch vmaster (0.5.0a0+0aefb9f ))"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torch.optim</span></code></a>)</li>
 <li><strong>**kwargs</strong> – All other kwargs are forwarded to the optimizer constructor</li>
 </ul>
 </td>
@@ -273,7 +442,7 @@ set with <a class="reference internal" href="#train.Trainer.add_subscriber" titl
 <dd><p>Set the model to train. This method will attempt to load from <a class="reference internal" href="models.html#module-models" title="models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">models</span></code></a>.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">Currently, the function automatically calls <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.cuda" title="(in PyTorch vmaster (0.5.0a0+00f2731 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.cuda()</span></code></a> and hence a
+<p class="last">Currently, the function automatically calls <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.cuda" title="(in PyTorch vmaster (0.5.0a0+0aefb9f ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.cuda()</span></code></a> and hence a
 GPU is necessary.</p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
@@ -291,175 +460,6 @@ GPU is necessary.</p>
 <code class="descname">train_batch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/train/train.html#Trainer.train_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.train.Trainer.train_batch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run through 1 batch in the training set. The iterator will wrap around and
 restart at the beginning.</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-train">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-train" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="train.Trainer">
-<em class="property">class </em><code class="descclassname">train.</code><code class="descname">Trainer</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/train/train.html#Trainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.Trainer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Class to bundle all logic and parameters that go into training a model on some
-dataset.</p>
-<dl class="attribute">
-<dt id="train.Trainer._dataset">
-<code class="descname">_dataset</code><a class="headerlink" href="#train.Trainer._dataset" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>Dataset</em> – The dataset used for training</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="train.Trainer._num_classes">
-<code class="descname">_num_classes</code><a class="headerlink" href="#train.Trainer._num_classes" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – Number of target categories (inferred)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="train.Trainer._shape">
-<code class="descname">_shape</code><a class="headerlink" href="#train.Trainer._shape" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list</em> – Shape of the input data (N, H, W, C)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="train.Trainer._batch_size">
-<code class="descname">_batch_size</code><a class="headerlink" href="#train.Trainer._batch_size" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – Training batch size</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="train.Trainer._loss_function">
-<code class="descname">_loss_function</code><a class="headerlink" href="#train.Trainer._loss_function" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>torch.nn._Loss</em> – Loss function instance for training</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="train.Trainer._dataloader">
-<code class="descname">_dataloader</code><a class="headerlink" href="#train.Trainer._dataloader" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>torch.utils.data.DataLoader</em> – loader for the training dataset</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="train.Trainer._optimizer">
-<code class="descname">_optimizer</code><a class="headerlink" href="#train.Trainer._optimizer" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>torch.optim.Optimizer</em></p>
-</dd></dl>
-
-<dl class="method">
-<dt id="train.Trainer.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/train/train.html#Trainer.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.Trainer.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a new Trainer. Handlers, model and optimizer are left uninitialised and must be
-set with <a class="reference internal" href="#train.Trainer.add_subscriber" title="train.Trainer.add_subscriber"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_subscriber()</span></code></a>, <a class="reference internal" href="#train.Trainer.add_model" title="train.Trainer.add_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_model()</span></code></a> and
-<a class="reference internal" href="#train.Trainer.optimize" title="train.Trainer.optimize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">optimize()</span></code></a> before calling <a class="reference internal" href="#train.Trainer.train_batch" title="train.Trainer.train_batch"><code class="xref py py-meth docutils literal notranslate"><span class="pre">train_batch()</span></code></a>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>dataset_meta</strong> (<a class="reference internal" href="#train.DatasetMeta" title="train.DatasetMeta"><em>train.DatasetMeta</em></a>) – Train data, obtained via <a class="reference internal" href="main.html#main._load_dataset" title="main._load_dataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">main._load_dataset()</span></code></a></li>
-<li><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – </li>
-<li><strong>loss</strong> (<em>function</em>) – Defaults to torch.nn.CrossEntropyLoss</li>
-<li><strong>depth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Depth to which to traverse the module tree</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="train.Trainer.current_batch">
-<code class="descname">current_batch</code><a class="headerlink" href="#train.Trainer.current_batch" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – 0-based batch index</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="train.Trainer.batches_per_epoch">
-<code class="descname">batches_per_epoch</code><a class="headerlink" href="#train.Trainer.batches_per_epoch" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – number of batches in an epoch (assuming only full batches, I think)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="train.Trainer.model">
-<code class="descname">model</code><a class="headerlink" href="#train.Trainer.model" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>torch.nn.Module</em> – Model</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="train.Trainer.exporter">
-<code class="descname">exporter</code><a class="headerlink" href="#train.Trainer.exporter" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>ikkuna.export.Exporter</em> – Exporter used during training</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="train.Trainer.add_subscriber">
-<code class="descname">add_subscriber</code><span class="sig-paren">(</span><em>subscriber</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/train/train.html#Trainer.add_subscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.Trainer.add_subscriber" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a subscriber.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>subscriber</strong> (<a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><em>ikkuna.export.subscriber.Subscriber</em></a>) – </td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="train.Trainer.optimize">
-<code class="descname">optimize</code><span class="sig-paren">(</span><em>name='Adam'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/train/train.html#Trainer.optimize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.Trainer.optimize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the optimizer.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the optimizer (must exist in <a class="reference external" href="https://pytorch.org/docs/master/optim.html#module-torch.optim" title="(in PyTorch vmaster (0.5.0a0+00f2731 ))"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torch.optim</span></code></a>)</li>
-<li><strong>**kwargs</strong> – All other kwargs are forwarded to the optimizer constructor</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="train.Trainer.add_model">
-<code class="descname">add_model</code><span class="sig-paren">(</span><em>model_str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/train/train.html#Trainer.add_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.Trainer.add_model" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the model to train. This method will attempt to load from <a class="reference internal" href="models.html#module-models" title="models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">models</span></code></a>.</p>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">Currently, the function automatically calls <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.cuda" title="(in PyTorch vmaster (0.5.0a0+00f2731 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.cuda()</span></code></a> and hence a
-GPU is necessary.</p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the model (must exist in <a class="reference internal" href="models.html#module-models" title="models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">models</span></code></a>)</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="train.Trainer.train_batch">
-<code class="descname">train_batch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/train/train.html#Trainer.train_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.Trainer.train_batch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run through 1 batch in the training set. The iterator will wrap around and
-restart at the beginning.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="train.DatasetMeta">
-<em class="property">class </em><code class="descclassname">train.</code><code class="descname">DatasetMeta</code><a class="reference internal" href="_modules/train/train.html#DatasetMeta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.DatasetMeta" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#train.train.DatasetMeta" title="train.train.DatasetMeta"><code class="xref py py-class docutils literal notranslate"><span class="pre">train.train.DatasetMeta</span></code></a></p>
-<dl class="attribute">
-<dt id="train.DatasetMeta.size">
-<code class="descname">size</code><a class="headerlink" href="#train.DatasetMeta.size" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – Number of examples in the dataset</p>
 </dd></dl>
 
 </dd></dl>

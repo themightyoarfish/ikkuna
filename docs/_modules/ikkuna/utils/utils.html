@@ -106,7 +106,7 @@
     <div class="col-md-12 content">
       
   <h1>Source code for ikkuna.utils.utils</h1><div class="highlight"><pre>
-<div class="viewcode-block" id="make_fill_polygons"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.utils.make_fill_polygons">[docs]</a><span></span><span class="k">def</span> <span class="nf">make_fill_polygons</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">zs</span><span class="p">):</span>
+<div class="viewcode-block" id="make_fill_polygons"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.make_fill_polygons">[docs]</a><span></span><span class="k">def</span> <span class="nf">make_fill_polygons</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">zs</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Make a set of polygons to fill the space below a line in 3d.</span>
 
 <span class="sd">    Returns</span>
@@ -125,7 +125,7 @@
     <span class="k">return</span> <span class="n">poly3dCollection</span></div>
 
 
-<div class="viewcode-block" id="available_optimizers"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.utils.available_optimizers">[docs]</a><span class="k">def</span> <span class="nf">available_optimizers</span><span class="p">():</span>
+<div class="viewcode-block" id="available_optimizers"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.available_optimizers">[docs]</a><span class="k">def</span> <span class="nf">available_optimizers</span><span class="p">():</span>
     <span class="sd">&#39;&#39;&#39;List names of all available torch optimizers form :py:mod:`torch.optim`.</span>
 
 <span class="sd">    Returns</span>
@@ -144,7 +144,7 @@
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">available_optimizers</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="create_optimizer"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.utils.create_optimizer">[docs]</a><span class="k">def</span> <span class="nf">create_optimizer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="create_optimizer"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.create_optimizer">[docs]</a><span class="k">def</span> <span class="nf">create_optimizer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Create an optimizer for ``model`` s parameters. Will disregard all params</span>
 <span class="sd">    with ``requires_grad == False``.</span>
 
@@ -170,7 +170,7 @@
     <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="p">,</span> <span class="n">name</span><span class="p">)(</span><span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="initialize_model"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.utils.initialize_model">[docs]</a><span class="k">def</span> <span class="nf">initialize_model</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">bias_val</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+<div class="viewcode-block" id="initialize_model"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.initialize_model">[docs]</a><span class="k">def</span> <span class="nf">initialize_model</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">bias_val</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Perform weight initialization on `module`. This is somewhat hacky since</span>
 <span class="sd">    it assumes the presence of `weight` and/or `bias` fields on the module. Will</span>
 <span class="sd">    skip if not present.</span>
@@ -213,7 +213,7 @@
 <span class="kn">import</span> <span class="nn">subprocess</span>
 
 
-<div class="viewcode-block" id="get_memory_stats"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.utils.get_memory_stats">[docs]</a><span class="k">def</span> <span class="nf">get_memory_stats</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;total&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;mb&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="get_memory_stats"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.get_memory_stats">[docs]</a><span class="k">def</span> <span class="nf">get_memory_stats</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;total&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;mb&#39;</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Get the total|used|free gpu memory.</span>
 
 <span class="sd">    Parameters</span>
@@ -259,7 +259,7 @@
 <span class="c1">###################</span>
 <span class="c1">#  GPU histogram  #</span>
 <span class="c1">###################</span>
-<div class="viewcode-block" id="compute_bin"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.utils.compute_bin">[docs]</a><span class="nd">@numba</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="viewcode-block" id="compute_bin"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.compute_bin">[docs]</a><span class="nd">@numba</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">compute_bin</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">):</span>
     <span class="c1"># special case to mirror NumPy behavior for last bin</span>
     <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="n">xmax</span><span class="p">:</span>
@@ -310,7 +310,7 @@
     <span class="n">cuda</span><span class="o">.</span><span class="n">atomic</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">min_max_array</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">local_max</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="dtype_min_max"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.utils.dtype_min_max">[docs]</a><span class="k">def</span> <span class="nf">dtype_min_max</span><span class="p">(</span><span class="n">dtype</span><span class="p">):</span>
+<div class="viewcode-block" id="dtype_min_max"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.dtype_min_max">[docs]</a><span class="k">def</span> <span class="nf">dtype_min_max</span><span class="p">(</span><span class="n">dtype</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Get the min and max value for a numeric dtype&#39;&#39;&#39;</span>
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>
         <span class="n">info</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
@@ -319,7 +319,7 @@
     <span class="k">return</span> <span class="n">info</span><span class="o">.</span><span class="n">min</span><span class="p">,</span> <span class="n">info</span><span class="o">.</span><span class="n">max</span></div>
 
 
-<div class="viewcode-block" id="numba_gpu_histogram"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.utils.numba_gpu_histogram">[docs]</a><span class="k">def</span> <span class="nf">numba_gpu_histogram</span><span class="p">(</span><span class="n">a_gpu</span><span class="p">,</span> <span class="n">bins</span><span class="p">):</span>
+<div class="viewcode-block" id="numba_gpu_histogram"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.numba_gpu_histogram">[docs]</a><span class="k">def</span> <span class="nf">numba_gpu_histogram</span><span class="p">(</span><span class="n">a_gpu</span><span class="p">,</span> <span class="n">bins</span><span class="p">):</span>
 
     <span class="c1"># Find min and max value in array</span>
     <span class="n">dtype_min</span><span class="p">,</span> <span class="n">dtype_max</span> <span class="o">=</span> <span class="n">dtype_min_max</span><span class="p">(</span><span class="n">a_gpu</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
@@ -344,7 +344,7 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 
 
-<div class="viewcode-block" id="typestr"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.utils.typestr">[docs]</a><span class="k">def</span> <span class="nf">typestr</span><span class="p">(</span><span class="n">tensor</span><span class="p">):</span>
+<div class="viewcode-block" id="typestr"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.typestr">[docs]</a><span class="k">def</span> <span class="nf">typestr</span><span class="p">(</span><span class="n">tensor</span><span class="p">):</span>
     <span class="n">endianness</span> <span class="o">=</span> <span class="s1">&#39;&lt;&#39;</span> <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">byteorder</span> <span class="o">==</span> <span class="s1">&#39;little&#39;</span> <span class="k">else</span> <span class="s1">&#39;&gt;&#39;</span>
     <span class="n">types</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">:</span> <span class="s1">&#39;f4&#39;</span><span class="p">,</span>
@@ -365,7 +365,7 @@
     <span class="k">return</span> <span class="n">endianness</span> <span class="o">+</span> <span class="n">types</span><span class="p">[</span><span class="n">tensor</span><span class="o">.</span><span class="n">dtype</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="tensor_to_numba"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.utils.tensor_to_numba">[docs]</a><span class="k">def</span> <span class="nf">tensor_to_numba</span><span class="p">(</span><span class="n">tensor</span><span class="p">):</span>
+<div class="viewcode-block" id="tensor_to_numba"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.tensor_to_numba">[docs]</a><span class="k">def</span> <span class="nf">tensor_to_numba</span><span class="p">(</span><span class="n">tensor</span><span class="p">):</span>
     <span class="n">cai_dict</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span>
         <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">tensor</span><span class="o">.</span><span class="n">data_ptr</span><span class="p">(),</span> <span class="kc">True</span><span class="p">),</span>

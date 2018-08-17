@@ -1,6 +1,14 @@
 ikkuna.export.subscriber package
 ================================
 
+Module contents
+---------------
+
+.. automodule:: ikkuna.export.subscriber
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -52,11 +60,3 @@ ikkuna.export.subscriber.train\_accuracy module
     :undoc-members:
     :show-inheritance:
 
-
-Module contents
----------------
-
-.. automodule:: ikkuna.export.subscriber
-    :members:
-    :undoc-members:
-    :show-inheritance:
