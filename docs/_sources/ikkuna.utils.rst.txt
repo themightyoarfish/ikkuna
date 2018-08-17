@@ -28,6 +28,14 @@ ikkuna.utils.named\_module module
     :undoc-members:
     :show-inheritance:
 
+ikkuna.utils.numba
+--------------------------------
+
+.. automodule:: ikkuna.utils.numba
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 ikkuna.utils.utils module
 -------------------------
 

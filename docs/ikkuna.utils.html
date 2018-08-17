@@ -78,6 +78,7 @@
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-ikkuna.utils.module_tree">ikkuna.utils.module_tree module</a></li>
 <li><a class="reference internal" href="#module-ikkuna.utils.named_module">ikkuna.utils.named_module module</a></li>
+<li><a class="reference internal" href="#module-ikkuna.utils.numba">ikkuna.utils.numba</a></li>
 <li><a class="reference internal" href="#module-ikkuna.utils.utils">ikkuna.utils.utils module</a></li>
 </ul>
 </li>
@@ -373,6 +374,49 @@ name (e.g. <code class="docutils literal notranslate"><span class="pre">alexnet<
 </dd></dl>
 
 </div>
+<div class="section" id="module-ikkuna.utils.numba">
+<span id="ikkuna-utils-numba"></span><h2>ikkuna.utils.numba<a class="headerlink" href="#module-ikkuna.utils.numba" title="Permalink to this headline">¶</a></h2>
+<p>This module contains functionality for numba-torch interoperability. This isn’t used in the
+library but may be useful in the future. Documentation is spotty.</p>
+<dl class="attribute">
+<dt id="ikkuna.utils.numba.compute_bin">
+<code class="descclassname">ikkuna.utils.numba.</code><code class="descname">compute_bin</code><a class="reference internal" href="_modules/ikkuna/utils/numba.html#compute_bin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.numba.compute_bin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the bins for histogram computation</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ikkuna.utils.numba.dtype_min_max">
+<code class="descclassname">ikkuna.utils.numba.</code><code class="descname">dtype_min_max</code><span class="sig-paren">(</span><em>dtype</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/utils/numba.html#dtype_min_max"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.numba.dtype_min_max" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the min and max value for a numeric dtype</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ikkuna.utils.numba.numba_gpu_histogram">
+<code class="descclassname">ikkuna.utils.numba.</code><code class="descname">numba_gpu_histogram</code><span class="sig-paren">(</span><em>a_gpu</em>, <em>bins</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/utils/numba.html#numba_gpu_histogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.numba.numba_gpu_histogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute a histogram on a numba device array.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ikkuna.utils.numba.typestr">
+<code class="descclassname">ikkuna.utils.numba.</code><code class="descname">typestr</code><span class="sig-paren">(</span><em>tensor</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/utils/numba.html#typestr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.numba.typestr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ikkuna.utils.numba.tensor_to_numba">
+<code class="descclassname">ikkuna.utils.numba.</code><code class="descname">tensor_to_numba</code><span class="sig-paren">(</span><em>tensor</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/utils/numba.html#tensor_to_numba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.numba.tensor_to_numba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a tensor to a numba device array. The tensor will share the underlying CUDA storage
+This works by setting the <code class="docutils literal notranslate"><span class="pre">__cuda_array_interface__</span></code> attribute on the tensor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tensor</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+5122250 ))"><em>torch.Tensor</em></a>) – </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 <div class="section" id="module-ikkuna.utils.utils">
 <span id="ikkuna-utils-utils-module"></span><h2>ikkuna.utils.utils module<a class="headerlink" href="#module-ikkuna.utils.utils" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
@@ -472,32 +516,6 @@ Values are memory usage as integers in MB.</td>
 </tbody>
 </table>
 </dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.utils.utils.compute_bin">
-<code class="descclassname">ikkuna.utils.utils.</code><code class="descname">compute_bin</code><a class="reference internal" href="_modules/ikkuna/utils/utils.html#compute_bin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.utils.compute_bin" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="ikkuna.utils.utils.dtype_min_max">
-<code class="descclassname">ikkuna.utils.utils.</code><code class="descname">dtype_min_max</code><span class="sig-paren">(</span><em>dtype</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/utils/utils.html#dtype_min_max"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.utils.dtype_min_max" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the min and max value for a numeric dtype</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="ikkuna.utils.utils.numba_gpu_histogram">
-<code class="descclassname">ikkuna.utils.utils.</code><code class="descname">numba_gpu_histogram</code><span class="sig-paren">(</span><em>a_gpu</em>, <em>bins</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/utils/utils.html#numba_gpu_histogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.utils.numba_gpu_histogram" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="ikkuna.utils.utils.typestr">
-<code class="descclassname">ikkuna.utils.utils.</code><code class="descname">typestr</code><span class="sig-paren">(</span><em>tensor</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/utils/utils.html#typestr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.utils.typestr" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="ikkuna.utils.utils.tensor_to_numba">
-<code class="descclassname">ikkuna.utils.utils.</code><code class="descname">tensor_to_numba</code><span class="sig-paren">(</span><em>tensor</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/utils/utils.html#tensor_to_numba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.utils.tensor_to_numba" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </div>
 </div>
