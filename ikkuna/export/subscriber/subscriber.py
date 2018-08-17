@@ -66,12 +66,9 @@ class Subscription(object):
         ----------
         message    :   ikkuna.export.messages.Message
         '''
-        if isinstance(message, TrainingMessage):
-            data = MessageBundle(message.module.name, message.kind)
-            data.add_message(message)
-            self._subscriber.process_data(data)
-        else:
-            self._subscriber.process_meta(message)
+        data = MessageBundle(message.key, message.kind)
+        data.add_message(message)
+        self._subscriber.process_message_bundle(data)
 
     def handle_message(self, message):
         '''Callback for receiving an incoming message.
@@ -128,7 +125,7 @@ class SynchronizedSubscription(Subscription):
         # any full? publish
         for identifier, message_bundle in self._identifiers.items():
             if message_bundle.complete():
-                self._subscriber.process_data(message_bundle)
+                self._subscriber.process_message_bundle(message_bundle)
                 delete_these.append(identifier)
 
         # purge published data
@@ -177,13 +174,14 @@ class Subscriber(abc.ABC):
         pass
 
     def receive_message(self, message):
+        '''Process a message received from an :class:`~ikkuna.export.Exporter`.'''
         self._subscription.handle_message(message)
 
-    def process_meta(self, message):
-        self._metric(message)
 
-    def process_data(self, message_bundle):
-        '''Callback for processing a :class:`~ikkuna.export.messages.MessageBundle` object.
+    def process_message_bundle(self, message_bundle):
+        '''Callback for processing a :class:`~ikkuna.export.messages.MessageBundle` object with
+        :class:`~ikkuna.export.messages.TrainingMessage` s or
+        :class:`~ikkuna.export.messages.TrainingMessage` s in it.
 
         Parameters
         ----------
@@ -238,6 +236,7 @@ class PlotSubscriber(Subscriber):
 
     @property
     def backend(self):
+        '''ikkuna.visualisation.Backend: The backend to use for plotting'''
         return self._backend
 
     @abc.abstractmethod
