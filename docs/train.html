@@ -18,7 +18,7 @@
     <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="models package" href="models.html" />
+    <link rel="prev" title="main module" href="main.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -58,7 +58,6 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="ikkuna.html">ikkuna package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="main.html">main module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="models.html">models package</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">train package</a></li>
 </ul>
 </ul>
@@ -88,7 +87,7 @@
               
                 
   <li>
-    <a href="models.html" title="Previous Chapter: models package"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; models package</span>
+    <a href="main.html" title="Previous Chapter: main module"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; main module</span>
     </a>
   </li>
               
@@ -255,7 +254,7 @@ set with <a class="reference internal" href="#train.Trainer.add_subscriber" titl
 <dl class="method">
 <dt id="train.Trainer.add_model">
 <code class="descname">add_model</code><span class="sig-paren">(</span><em>model_str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/train/train.html#Trainer.add_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.Trainer.add_model" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the model to train. This method will attempt to load from <a class="reference internal" href="models.html#module-models" title="models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">models</span></code></a>.</p>
+<dd><p>Set the model to train. This method will attempt to load from <a class="reference internal" href="ikkuna.models.html#module-ikkuna.models" title="ikkuna.models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ikkuna.models</span></code></a>.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">Currently, the function automatically calls <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.cuda" title="(in PyTorch vmaster (0.5.0a0+5122250 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.cuda()</span></code></a> and hence a
@@ -265,7 +264,7 @@ GPU is necessary.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the model (must exist in <a class="reference internal" href="models.html#module-models" title="models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">models</span></code></a>)</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the model (must exist in <a class="reference internal" href="ikkuna.models.html#module-ikkuna.models" title="ikkuna.models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ikkuna.models</span></code></a>)</td>
 </tr>
 </tbody>
 </table>
@@ -439,7 +438,7 @@ set with <a class="reference internal" href="#train.Trainer.add_subscriber" titl
 <dl class="method">
 <dt id="train.train.Trainer.add_model">
 <code class="descname">add_model</code><span class="sig-paren">(</span><em>model_str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/train/train.html#Trainer.add_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.train.Trainer.add_model" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the model to train. This method will attempt to load from <a class="reference internal" href="models.html#module-models" title="models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">models</span></code></a>.</p>
+<dd><p>Set the model to train. This method will attempt to load from <a class="reference internal" href="ikkuna.models.html#module-ikkuna.models" title="ikkuna.models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ikkuna.models</span></code></a>.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">Currently, the function automatically calls <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.cuda" title="(in PyTorch vmaster (0.5.0a0+5122250 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.cuda()</span></code></a> and hence a
@@ -449,7 +448,7 @@ GPU is necessary.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the model (must exist in <a class="reference internal" href="models.html#module-models" title="models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">models</span></code></a>)</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the model (must exist in <a class="reference internal" href="ikkuna.models.html#module-ikkuna.models" title="ikkuna.models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ikkuna.models</span></code></a>)</td>
 </tr>
 </tbody>
 </table>

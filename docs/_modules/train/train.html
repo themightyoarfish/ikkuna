@@ -57,7 +57,6 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../ikkuna.html">ikkuna package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../main.html">main module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../models.html">models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../train.html">train package</a></li>
 </ul>
 </ul>
@@ -224,7 +223,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Using </span><span class="si">{self._optimizer.__class__.__name__}</span><span class="s1"> optimizer&#39;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Trainer.add_model"><a class="viewcode-back" href="../../train.html#train.Trainer.add_model">[docs]</a>    <span class="k">def</span> <span class="nf">add_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_str</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;Set the model to train. This method will attempt to load from :mod:`models`.</span>
+        <span class="sd">&#39;&#39;&#39;Set the model to train. This method will attempt to load from :mod:`ikkuna.models`.</span>
 
 <span class="sd">        .. warning::</span>
 <span class="sd">            Currently, the function automatically calls :meth:`torch.nn.Module.cuda()` and hence a</span>
@@ -233,9 +232,9 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        model_str   :   str</span>
-<span class="sd">                        Name of the model (must exist in :mod:`models`)</span>
+<span class="sd">                        Name of the model (must exist in :mod:`ikkuna.models`)</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="kn">import</span> <span class="nn">models</span>
+        <span class="kn">from</span> <span class="nn">ikkuna</span> <span class="k">import</span> <span class="n">models</span>
         <span class="n">Model</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_str</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">num_classes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_classes</span><span class="p">,</span> <span class="n">exporter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_exporter</span><span class="p">)</span>
         <span class="n">initialize_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">)</span>

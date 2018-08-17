@@ -21,7 +21,6 @@ API reference
 
    ikkuna
    main
-   models
    train
 
 

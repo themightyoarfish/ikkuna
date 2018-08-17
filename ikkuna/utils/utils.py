@@ -78,7 +78,7 @@ def initialize_model(module, bias_val=0.01):
     ------
     ValueError
         If ``module`` is not one of the known models (currently :class:`~ikkuna.models.AlexNetMini`
-        and :class:`~models.DenseNet`)
+        and :class:`~ikkuna.models.DenseNet`)
     '''
     from ikkuna import models
     import torch.nn as nn

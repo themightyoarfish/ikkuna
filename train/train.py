@@ -116,7 +116,7 @@ class Trainer:
         print(f'Using {self._optimizer.__class__.__name__} optimizer')
 
     def add_model(self, model_str):
-        '''Set the model to train. This method will attempt to load from :mod:`models`.
+        '''Set the model to train. This method will attempt to load from :mod:`ikkuna.models`.
 
         .. warning::
             Currently, the function automatically calls :meth:`torch.nn.Module.cuda()` and hence a
@@ -125,7 +125,7 @@ class Trainer:
         Parameters
         ----------
         model_str   :   str
-                        Name of the model (must exist in :mod:`models`)
+                        Name of the model (must exist in :mod:`ikkuna.models`)
         '''
         from ikkuna import models
         Model = getattr(models, model_str)

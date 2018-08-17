@@ -57,7 +57,6 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../ikkuna.html">ikkuna package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../main.html">main module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../models.html">models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../train.html">train package</a></li>
 </ul>
 </ul>
@@ -185,10 +184,10 @@
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
 <span class="sd">    ValueError</span>
-<span class="sd">        If ``module`` is not one of the known models (currently :class:`~models.AlexNetMini`</span>
-<span class="sd">        and :class:`~models.DenseNet`)</span>
+<span class="sd">        If ``module`` is not one of the known models (currently :class:`~ikkuna.models.AlexNetMini`</span>
+<span class="sd">        and :class:`~ikkuna.models.DenseNet`)</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="kn">import</span> <span class="nn">models</span>
+    <span class="kn">from</span> <span class="nn">ikkuna</span> <span class="k">import</span> <span class="n">models</span>
     <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">models</span><span class="o">.</span><span class="n">AlexNetMini</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">modules</span><span class="p">():</span>
