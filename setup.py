@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 with open('requirements.txt', mode='r') as f:
-    requirements = f.read.split()
+    requirements = f.read().split()
 
 setup(name='ikkuna',
       version='0.0.1',
@@ -19,6 +19,6 @@ setup(name='ikkuna',
                    'License :: OSI Approved :: MIT License',
                    'Intended Audience :: Developers',
                    ],
-      keyword=['pytorch neural-networks machine-learning'],
+      keyword=['deep-learning pytorch neural-networks machine-learning'],
       packages=['ikkuna'],
       install_requires=requirements)
