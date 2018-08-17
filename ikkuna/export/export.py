@@ -37,7 +37,7 @@ class Exporter(object):
         #. :meth:`~Exporter.set_loss()` should be called with the loss function so that
            labels can be extracted during training.
         #. :meth:`~Exporter.epoch_finished()` should be called if any
-           :class:`~ikkuna.export.subscriber.Subscriber` s rely on the ``'epoch_finished'`` signal
+           :class:`~ikkuna.export.subscriber.Subscriber`\ s rely on the ``'epoch_finished'`` signal
 
     Attributes
     ----------

@@ -8,7 +8,7 @@ from ikkuna.utils import make_fill_polygons
 
 
 class Backend(abc.ABC):
-    '''Base class for visualiation backends. :class:`~ikkuna.export.subscriber.Subscriber` s use
+    '''Base class for visualiation backends. :class:`~ikkuna.export.subscriber.Subscriber`\ s use
     this class to dispatch their metrics to have them visualised.
 
     Attributes

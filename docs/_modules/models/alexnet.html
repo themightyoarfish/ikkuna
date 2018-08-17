@@ -116,7 +116,7 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 
 
-<div class="viewcode-block" id="AlexNetMini"><a class="viewcode-back" href="../../models.html#models.AlexNetMini">[docs]</a><span class="k">class</span> <span class="nc">AlexNetMini</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>     <span class="c1"># Pytorch Sphinx-doc is buggy here</span>
+<div class="viewcode-block" id="AlexNetMini"><a class="viewcode-back" href="../../models.html#models.AlexNetMini">[docs]</a><span class="k">class</span> <span class="nc">AlexNetMini</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>     <span class="c1"># Pytorch Sphinx-doc is buggy here, so use full path</span>
     <span class="sd">&#39;&#39;&#39;Reduced AlexNet (basically just a few conv layers with relu and</span>
 <span class="sd">    max-pooling) which attempts to adapt to arbitrary input sizes, provided they are large enough to</span>
 <span class="sd">    survive the strides and conv cutoffs.</span>
@@ -137,7 +137,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_exporter</span> <span class="o">=</span> <span class="n">e</span> <span class="o">=</span> <span class="n">exporter</span> <span class="ow">or</span> <span class="n">Exporter</span><span class="p">()</span>
         <span class="n">e</span><span class="o">.</span><span class="n">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-        <span class="c1"># if batch dim not present, add 1</span>
+        <span class="c1"># if channel dim not present, add 1</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
             <span class="n">input_shape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">C</span> <span class="o">=</span> <span class="n">input_shape</span>

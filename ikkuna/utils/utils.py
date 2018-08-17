@@ -37,7 +37,7 @@ def available_optimizers():
 
 
 def create_optimizer(model, name, **kwargs):
-    '''Create an optimizer for ``model`` s parameters. Will disregard all params
+    '''Create an optimizer for ``model``\ s parameters. Will disregard all params
     with ``requires_grad == False``.
 
     Parameters

@@ -27,7 +27,11 @@ ALLOWED_KINDS = set.union(META_KINDS, DATA_KINDS)
 
 
 class Message(abc.ABC):
-    '''Base class for messages emitted from the :class:`~ikkuna.export.Exporter`.'''
+    '''Base class for messages emitted from the :class:`~ikkuna.export.Exporter`.
+
+    These messages are assembled into :class:`MessageBundle` objects in the
+    :class:`~ikkuna.export.subscriber.Subscription`.
+    '''
     def __init__(self, tag, seq, step, epoch, kind):
         self._tag  = tag
         self._seq  = seq
@@ -127,8 +131,7 @@ class MetaMessage(Message):
 
 
 class TrainingMessage(Message):
-    '''These messages are assembled into :class:`MessageBundle` objects in the
-    :class:`~ikkuna.export.subscriber.Subscription`.'''
+    '''A message tied to a specific module, with tensor data attached.'''
 
     def __init__(self, tag, seq, step, epoch, kind, module, data):
         super().__init__(tag, seq, step, epoch, kind)

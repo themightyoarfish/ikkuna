@@ -8,7 +8,7 @@ from ikkuna.export import Exporter
 import torch
 
 
-class AlexNetMini(torch.nn.Module):     # Pytorch Sphinx-doc is buggy here
+class AlexNetMini(torch.nn.Module):     # Pytorch Sphinx-doc is buggy here, so use full path
     '''Reduced AlexNet (basically just a few conv layers with relu and
     max-pooling) which attempts to adapt to arbitrary input sizes, provided they are large enough to
     survive the strides and conv cutoffs.
@@ -29,7 +29,7 @@ class AlexNetMini(torch.nn.Module):     # Pytorch Sphinx-doc is buggy here
         self._exporter = e = exporter or Exporter()
         e.set_model(self)
 
-        # if batch dim not present, add 1
+        # if channel dim not present, add 1
         if len(input_shape) == 2:
             input_shape.append(1)
         H, W, C = input_shape

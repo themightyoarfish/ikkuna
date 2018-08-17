@@ -74,7 +74,17 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#">User Guide</a></li>
+<li><a class="reference internal" href="#">User Guide</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#installing">Installing</a></li>
+<li><a class="reference internal" href="#reporting-issues">Reporting Issues</a></li>
+<li><a class="reference internal" href="#quickstart">Quickstart</a></li>
+<li><a class="reference internal" href="#details">Details</a><ul>
+<li><a class="reference internal" href="#creating-a-new-subscriber">Creating a new Subscriber</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </ul>
 </li>
@@ -124,7 +134,282 @@
       
   <div class="section" id="user-guide">
 <h1>User Guide<a class="headerlink" href="#user-guide" title="Permalink to this headline">¶</a></h1>
-<p>TODO</p>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>Ikkuna is a framework for supervising the training of your PyTorch models. It is
+stupidly easy to use. It allows you to code your chosen metric once and then use
+it from any kind of model. It also comes with a few metrics out of the box</p>
+</div>
+<div class="section" id="installing">
+<h2>Installing<a class="headerlink" href="#installing" title="Permalink to this headline">¶</a></h2>
+<p>The package is on PyPi.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install ikkuna
+</pre></div>
+</div>
+<p>Alternatively, run</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install git+https://github.com/Peltarion/ai_ikkuna.git
+</pre></div>
+</div>
+<p>to get the bleeding-edge version.</p>
+</div>
+<div class="section" id="reporting-issues">
+<h2>Reporting Issues<a class="headerlink" href="#reporting-issues" title="Permalink to this headline">¶</a></h2>
+<p>This project is under development and — by virtue of being a thesis project —
+probably unstable and bug-ridden. Therefore, expect to encounter issues.
+For reporting, please use the <a class="reference external" href="https://github.com/Peltarion/ai_ikkuna/issues">issue tracker</a>.</p>
+</div>
+<div class="section" id="quickstart">
+<h2>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h2>
+<p>Using the library is very simple. Assuming you have a PyTorch model given, like
+this ConvNet</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">AlexNetMini</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Reduced AlexNet (basically just a few conv layers with relu and</span>
+<span class="sd">    max-pooling) which attempts to adapt to arbitrary input sizes, provided they are large enough to</span>
+<span class="sd">    survive the strides and conv cutoffs.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ---------</span>
+<span class="sd">    features    :   torch.nn.Module</span>
+<span class="sd">                    Convolutional module, extracting features from the input</span>
+<span class="sd">    classifier  :   torch.nn.Module</span>
+<span class="sd">                    Classifier with relu and dropout</span>
+<span class="sd">    H_out   :   int</span>
+<span class="sd">                Output height of the classifier</span>
+<span class="sd">    W_out   :   int</span>
+<span class="sd">                Output width of the classifier</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AlexNetMini</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># if channel dim not present, add 1</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">input_shape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">C</span> <span class="o">=</span> <span class="n">input_shape</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">features</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">192</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">192</span><span class="p">,</span> <span class="mi">192</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">H_out</span> <span class="o">=</span>  <span class="n">H</span> <span class="o">//</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">W_out</span> <span class="o">=</span>  <span class="n">W</span> <span class="o">//</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classifier</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(),</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">192</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">H_out</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">W_out</span><span class="p">,</span> <span class="mi">2048</span><span class="p">),</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(),</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">2048</span><span class="p">,</span> <span class="mi">2048</span><span class="p">),</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">2048</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">192</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">H_out</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">W_out</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">classifier</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span>
+</pre></div>
+</div>
+<p>For hooking this model up with the framework, you need only add three lines.</p>
+<blockquote>
+<div><ol class="arabic">
+<li><p class="first">Add an <a class="reference internal" href="ikkuna.export.html#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> object to the model, e.g. by
+passing it as a constructor parameter</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">,</span> <span class="n">exporter</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Inform the <a class="reference internal" href="ikkuna.export.html#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> of the model:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">exporter</span><span class="o">.</span><span class="n">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Inform the <a class="reference internal" href="ikkuna.export.html#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> of which layers to track.
+You can pass it the entire model in which case it will track everything
+recursively, or pass it individual modules.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">exporter</span><span class="o">.</span><span class="n">add_modules</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+<span class="c1"># alternatively, only track some layers</span>
+<span class="n">exporter</span><span class="o">.</span><span class="n">add_modules</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For convenience, the following also works</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">features</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+    <span class="n">exporter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">)),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+    <span class="n">exporter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">192</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">2</span><span class="p">)),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">192</span><span class="p">,</span> <span class="mi">192</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Add <a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a>s to the
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a>. They take certain parameters which
+you can look up in the documentation.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># create a Subscriber which publishes the ratio between gradients</span>
+<span class="c1"># and weights (for each layer that has them) as a tensorboard scalar</span>
+<span class="n">ratio_subscriber</span> <span class="o">=</span> <span class="n">RatioSubscriber</span><span class="p">([</span><span class="s1">&#39;gradients&#39;</span><span class="p">,</span> <span class="s1">&#39;weights_&#39;</span><span class="p">],</span>
+                                   <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;tb&#39;</span><span class="p">)</span>
+<span class="n">exporter</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">ratio_subscriber</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</div></blockquote>
+<p>There are two optional steps</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><dl class="first docutils">
+<dt>You should call <a class="reference internal" href="ikkuna.export.html#ikkuna.export.Exporter.epoch_finished" title="ikkuna.export.Exporter.epoch_finished"><code class="xref py py-meth docutils literal notranslate"><span class="pre">epoch_finished()</span></code></a> whenever</dt>
+<dd>you’ve run through the training set once, at least if any of your
+<a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a>s rely on the
+<code class="docutils literal notranslate"><span class="pre">'epoch_finished'</span></code> message or the epoch-local step counter.</dd>
+</dl>
+</li>
+<li>You should inform the Exporter of the loss function in use by calling
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.Exporter.set_loss" title="ikkuna.export.Exporter.set_loss"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_loss()</span></code></a>, if any of your
+<a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a>s need access to the input
+labels or the final output of the network</li>
+</ol>
+</div></blockquote>
+</div>
+<div class="section" id="details">
+<h2>Details<a class="headerlink" href="#details" title="Permalink to this headline">¶</a></h2>
+<p>Ikkuna is a Publisher-Subscriber framework, which means that in this case, a
+central authority publishes data from the training process and relays it to all
+registered subscribers. This central authority is the
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> class. Internally, it replaces some of the
+Model’s methods with wrappers so it can be transparently informed of anything
+interesting happening. It uses PyTorch hooks (see
+<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.register_forward_hook" title="(in PyTorch vmaster (0.5.0a0+5122250 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.register_forward_hook()</span></code></a> and related methods) on the
+<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+5122250 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a>s it is tracking and the <a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+5122250 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a>s
+inside.</p>
+<p>Messages published from the <a class="reference internal" href="ikkuna.export.html#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> come in two types,
+the <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetaMessage</span></code></a> for events which are not tied
+to any specific module and <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingMessage</span></code></a> for
+those that are. All messages have a <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message.kind" title="ikkuna.export.messages.Message.kind"><code class="xref py py-attr docutils literal notranslate"><span class="pre">kind</span></code></a>
+attribute, which is the topic the message is about. For
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetaMessage</span></code></a>s, the following kinds are
+available:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">META_KINDS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;batch_started&#39;</span><span class="p">,</span> <span class="s1">&#39;batch_finished&#39;</span><span class="p">,</span> <span class="s1">&#39;epoch_started&#39;</span><span class="p">,</span> <span class="s1">&#39;epoch_finished&#39;</span><span class="p">,</span> <span class="s1">&#39;input_data&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;input_labels&#39;</span><span class="p">,</span> <span class="s1">&#39;network_output&#39;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Most of these topics do not come with any data attached, but for some, the
+messages <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message.data" title="ikkuna.export.messages.Message.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code></a> attribute will not be
+<code class="docutils literal notranslate"><span class="pre">None</span></code>, but contain <a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+5122250 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a>s.</p>
+<p>For <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingMessage</span></code></a>s, the following
+kinds are available:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">DATA_KINDS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;weights&#39;</span><span class="p">,</span> <span class="s1">&#39;weight_gradients&#39;</span><span class="p">,</span> <span class="s1">&#39;weight_updates&#39;</span><span class="p">,</span> <span class="s1">&#39;biases&#39;</span><span class="p">,</span> <span class="s1">&#39;bias_gradients&#39;</span><span class="p">,</span> <span class="s1">&#39;bias_updates&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;activations&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>These topics always come with data attached and it is an error to attempt
+creating a <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingMessage</span></code></a> without passing data.</p>
+<div class="section" id="creating-a-new-subscriber">
+<h3>Creating a new Subscriber<a class="headerlink" href="#creating-a-new-subscriber" title="Permalink to this headline">¶</a></h3>
+<p>For adding your own metric, you must subclass
+<a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a> or the more specialised
+<a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotSubscriber</span></code></a> if the metric can be displayed
+in a line plot. All you need to do is write an <code class="docutils literal notranslate"><span class="pre">__init__</span></code> method and override
+<a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber._metric" title="ikkuna.export.subscriber.Subscriber._metric"><code class="xref py py-meth docutils literal notranslate"><span class="pre">_metric()</span></code></a>. Your initializer should
+contain at least the following arguments:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kinds</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ylims</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;tb&#39;</span><span class="p">):</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Since you’ll have to create a <a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscription" title="ikkuna.export.subscriber.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscription</span></code></a>
+object which represents the kind of connection to the Publisher.</p>
+<p>A <a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscription" title="ikkuna.export.subscriber.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscription</span></code></a> object contains the
+information about the topic, subsampling (maybe you want to process only every <cite>n</cite>-th
+message) and tagging. Tags can be used to filter messages, but are currently
+unused. A more specialised form is <a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.SynchronizedSubscription" title="ikkuna.export.subscriber.SynchronizedSubscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">SynchronizedSubscription</span></code></a>.
+This subscription takes care of synchronising topics, meaning if your Subscriber
+needs several kinds of messages for each module at each time step, this class
+takes care of only releasing the messages in bundles after all kinds have been
+received for a module.</p>
+<p>The <a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscription" title="ikkuna.export.subscriber.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscription</span></code></a>s will invoke the
+<a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a>s
+<a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber._metric" title="ikkuna.export.subscriber.Subscriber._metric"><code class="xref py py-meth docutils literal notranslate"><span class="pre">_metric()</span></code></a> method with either single
+messages, if no synchronisation is used, or
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MessageBundle" title="ikkuna.export.messages.MessageBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageBundle</span></code></a> objects which contain the data
+for one module and all desired kinds. As an example, consider the
+<a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.ratio.RatioSubscriber" title="ikkuna.export.subscriber.ratio.RatioSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">RatioSubscriber</span></code></a>:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">RatioSubscriber</span><span class="p">(</span><span class="n">PlotSubscriber</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;A :class:`~ikkuna.export.subscriber.Subscriber` which computes the average ratio between two</span>
+<span class="sd">    quantities.  The dividend will be the first element of the</span>
+<span class="sd">    :attr:`~ikkuna.export.subscriber.Subscription.kinds` property, the divisor the second.</span>
+<span class="sd">    Therefore it is vital to pass the message kinds to the</span>
+<span class="sd">    :class:`~ikkuna.export.subscriber.Subscription` object in the correct order.&#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kinds</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ylims</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;tb&#39;</span><span class="p">,</span> <span class="n">absolute</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        absolute :  bool</span>
+<span class="sd">                    Whether to use absolute ratio</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">title</span>        <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{kinds[0]}</span><span class="s1">/</span><span class="si">{kinds[1]}</span><span class="s1"> ratios per layer&#39;</span>
+        <span class="n">ylabel</span>       <span class="o">=</span> <span class="s1">&#39;Ratio&#39;</span>
+        <span class="n">xlabel</span>       <span class="o">=</span> <span class="s1">&#39;Train step&#39;</span>
+        <span class="n">subscription</span> <span class="o">=</span> <span class="n">SynchronizedSubscription</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kinds</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">subsample</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subscription</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
+                                        <span class="s1">&#39;ylabel&#39;</span><span class="p">:</span> <span class="n">ylabel</span><span class="p">,</span>
+                                        <span class="s1">&#39;ylims&#39;</span><span class="p">:</span> <span class="n">ylims</span><span class="p">,</span>
+                                        <span class="s1">&#39;xlabel&#39;</span><span class="p">:</span> <span class="n">xlabel</span><span class="p">},</span>
+                         <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">absolute</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metric_postprocess</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">abs</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metric_postprocess</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
+
+    <span class="k">def</span> <span class="nf">_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_bundle</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;The ratio between the two kinds is computed over the subset of not-NaN values and added</span>
+<span class="sd">        to the record.&#39;&#39;&#39;</span>
+
+        <span class="n">module_name</span>  <span class="o">=</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">identifier</span>
+
+        <span class="n">dividend</span> <span class="o">=</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_subscription</span><span class="o">.</span><span class="n">kinds</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">divisor</span>  <span class="o">=</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_subscription</span><span class="o">.</span><span class="n">kinds</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+
+        <span class="c1">######################################################################################</span>
+        <span class="c1">#  We need to see how many NaNs we have and compute the mean only over the non-nans  #</span>
+        <span class="c1">######################################################################################</span>
+        <span class="n">ratio_tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metric_postprocess</span><span class="p">(</span><span class="n">dividend</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">divisor</span><span class="p">))</span>
+        <span class="n">n</span>            <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">divisor</span><span class="o">.</span><span class="n">numel</span><span class="p">())</span>
+        <span class="n">nan_tensor</span>   <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">ratio_tensor</span><span class="p">)</span>
+        <span class="n">n_nans</span>       <span class="o">=</span> <span class="n">nan_tensor</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n_nans</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ratio_sum</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">nan_tensor</span><span class="p">,</span> <span class="n">ratio_tensor</span><span class="p">,</span> <span class="n">ZERO_TENSOR</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ratio_sum</span> <span class="o">=</span> <span class="n">ratio_tensor</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">ratio</span> <span class="o">=</span> <span class="p">(</span><span class="n">ratio_sum</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">n_nans</span><span class="p">))</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">ratio</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;NaN value ratio for </span><span class="si">{module_name}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">seq</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>As you can see, the <a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a> initialiser
+takes a <code class="docutils literal notranslate"><span class="pre">plot_config</span></code> dictionary to pass along some information to the
+visualisation backend.</p>
+</div>
+</div>
 </div>
 
 
