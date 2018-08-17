@@ -1,0 +1,5 @@
+sphinx_bootstrap_theme>=0.6.5
+matplotlib>=2.2.0
+numpy>=1.15.0
+sphinx>=1.7.5
+tensorboardX
