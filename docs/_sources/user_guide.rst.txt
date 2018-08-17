@@ -22,7 +22,7 @@ Alternatively, run
 
 .. code-block:: shell
 
-    pip install git+https://github.com/Peltarion/ai_ikkuna.git
+    pip install git+https://github.com/Peltarion/ai_ikkuna.git#egg=ikkuna
 
 to get the bleeding-edge version.
 
