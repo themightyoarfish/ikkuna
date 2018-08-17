@@ -75,7 +75,10 @@
       aria-labelledby="dLabelLocalToc"><ul>
 <li><a class="reference internal" href="#">User Guide</a><ul>
 <li><a class="reference internal" href="#introduction">Introduction</a></li>
-<li><a class="reference internal" href="#installing">Installing</a></li>
+<li><a class="reference internal" href="#installing">Installing</a><ul>
+<li><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#reporting-issues">Reporting Issues</a></li>
 <li><a class="reference internal" href="#quickstart">Quickstart</a></li>
 <li><a class="reference internal" href="#details">Details</a><ul>
@@ -141,7 +144,13 @@ it from any kind of model. It also comes with a few metrics out of the box</p>
 </div>
 <div class="section" id="installing">
 <h2>Installing<a class="headerlink" href="#installing" title="Permalink to this headline">¶</a></h2>
-<p>The package is on PyPi.</p>
+<div class="section" id="prerequisites">
+<h3>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h3>
+<p>This package requires you to have PyTorch installed. Unfortunately, the PyPi
+versions always lag behind, so you may have to compile PyTorch yourself. <a class="reference external" href="https://github.com/pytorch/pytorch#installation">Don’t
+worry, it is a straightforward albeit somewhat time-consuming process</a>.</p>
+<p>You will need version at least 0.5.</p>
+<p>Ikkuna can then be installed with <code class="docutils literal notranslate"><span class="pre">pip</span></code></p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install ikkuna
 </pre></div>
 </div>
@@ -150,6 +159,7 @@ it from any kind of model. It also comes with a few metrics out of the box</p>
 </pre></div>
 </div>
 <p>to get the bleeding-edge version.</p>
+</div>
 </div>
 <div class="section" id="reporting-issues">
 <h2>Reporting Issues<a class="headerlink" href="#reporting-issues" title="Permalink to this headline">¶</a></h2>

@@ -11,7 +11,17 @@ it from any kind of model. It also comes with a few metrics out of the box
 Installing
 ----------
 
-The package is on PyPi.
+Prerequisites
+.............
+
+This package requires you to have PyTorch installed. Unfortunately, the PyPi
+versions always lag behind, so you may have to compile PyTorch yourself. `Don't
+worry, it is a straightforward albeit somewhat time-consuming process
+<https://github.com/pytorch/pytorch#installation>`_.
+
+You will need version at least 0.5.
+
+Ikkuna can then be installed with ``pip``
 
 .. code-block:: shell
 
