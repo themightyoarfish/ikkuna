@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from distutils.core import setup
+import setuptools  # noqa
 
 with open('requirements.txt', mode='r') as f:
     requirements = f.read().split()
@@ -19,6 +20,6 @@ setup(name='ikkuna',
                    'License :: OSI Approved :: MIT License',
                    'Intended Audience :: Developers',
                    ],
-      keyword=['deep-learning pytorch neural-networks machine-learning'],
+      keywords=['deep-learning pytorch neural-networks machine-learning'],
       packages=['ikkuna'],
       install_requires=requirements)
