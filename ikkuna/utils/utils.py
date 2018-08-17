@@ -77,10 +77,10 @@ def initialize_model(module, bias_val=0.01):
     Raises
     ------
     ValueError
-        If ``module`` is not one of the known models (currently :class:`~models.AlexNetMini`
+        If ``module`` is not one of the known models (currently :class:`~ikkuna.models.AlexNetMini`
         and :class:`~models.DenseNet`)
     '''
-    import models
+    from ikkuna import models
     import torch.nn as nn
     if isinstance(module, models.AlexNetMini):
         for m in module.modules():

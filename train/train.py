@@ -127,7 +127,7 @@ class Trainer:
         model_str   :   str
                         Name of the model (must exist in :mod:`models`)
         '''
-        import models
+        from ikkuna import models
         Model = getattr(models, model_str)
         self._model = Model(self._shape[1:], num_classes=self._num_classes, exporter=self._exporter)
         initialize_model(self._model)

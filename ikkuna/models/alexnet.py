@@ -1,7 +1,7 @@
 '''
 .. moduleauthor Rasmus Diederichsen
 
-This module defines :py:class:`models.AlexNetMini`, a reduced version of AlexNet. Adapted from
+This module defines :class:`ikkuna.models.AlexNetMini`, a reduced version of AlexNet. Adapted from
 :meth:`torchvision.models.alexnet()`.
 '''
 from ikkuna.export import Exporter
