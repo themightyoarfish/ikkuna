@@ -3,10 +3,14 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 from ikkuna.utils import create_optimizer, initialize_model
 from ikkuna.export import Exporter
-from collections import namedtuple
+from typing import NamedTuple
 
 
-class DatasetMeta(namedtuple('DatasetMeta', ['dataset', 'num_classes', 'shape'])):
+class DatasetMeta(NamedTuple):
+    dataset: object
+    num_classes: int
+    shape: tuple
+
     @property
     def size(self):
         '''int: Number of examples in the dataset'''

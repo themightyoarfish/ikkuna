@@ -1,5 +1,7 @@
-ikkuna package
-==============
+.. contents::
+
+ikkuna
+======
 
 Subpackages
 -----------

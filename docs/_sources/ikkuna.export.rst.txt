@@ -1,14 +1,9 @@
-ikkuna.export package
-=====================
+.. contents::
 
-Subpackages
------------
+ikkuna.export
+=============
 
-.. toctree::
-
-    ikkuna.export.subscriber
-
-Module contents
+Module Contents
 ---------------
 
 .. automodule:: ikkuna.export
@@ -19,18 +14,19 @@ Module contents
 Submodules
 ----------
 
-ikkuna.export.export module
----------------------------
-
-.. automodule:: ikkuna.export.export
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-ikkuna.export.messages module
------------------------------
+ikkuna.export.messages
+......................
 
 .. automodule:: ikkuna.export.messages
     :members:
     :undoc-members:
     :show-inheritance:
+
+Subpackages
+-----------
+
+.. toctree::
+    :maxdepth: 1
+
+    ikkuna.export.subscriber
+

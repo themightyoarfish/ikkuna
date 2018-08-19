@@ -1,21 +1,12 @@
-train package
-=============
+.. contents::
 
-Module contents
+train
+=====
+
+Module Contents
 ---------------
 
 .. automodule:: train
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Submodules
-----------
-
-train.train module
-------------------
-
-.. automodule:: train.train
     :members:
     :undoc-members:
     :show-inheritance:

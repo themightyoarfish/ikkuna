@@ -1,13 +1,12 @@
-ikkuna.visualization package
+.. contents::
+
+ikkuna.visualization
 ============================
 
-Submodules
-----------
+Module contents
+---------------
 
-ikkuna.visualization.backend module
------------------------------------
-
-.. automodule:: ikkuna.visualization.backend
+.. automodule:: ikkuna.visualization
     :members:
     :undoc-members:
     :show-inheritance:

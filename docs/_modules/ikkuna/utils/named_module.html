@@ -55,9 +55,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../user_guide.html">User Guide</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../ikkuna.html">ikkuna package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../main.html">main module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../train.html">train package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ikkuna.html">ikkuna</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">main program</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../train.html">train</a></li>
 </ul>
 </ul>
 </li>
@@ -105,10 +105,14 @@
     <div class="col-md-12 content">
       
   <h1>Source code for ikkuna.utils.named_module</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">NamedTuple</span>
+<span class="kn">import</span> <span class="nn">torch</span>
 
 
-<div class="viewcode-block" id="NamedModule"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.NamedModule">[docs]</a><span class="k">class</span> <span class="nc">NamedModule</span><span class="p">(</span><span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;NamedModule&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;module&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">])):</span>
+<div class="viewcode-block" id="NamedModule"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.NamedModule">[docs]</a><span class="k">class</span> <span class="nc">NamedModule</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+    <span class="n">module</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">f</span><span class="s1">&#39;&lt;NamedModule: </span><span class="si">{self.name}</span><span class="s1">&gt;&#39;</span></div>
 </pre></div>

@@ -1,3 +1,5 @@
+.. contents::
+
 User Guide
 ==========
 
@@ -237,7 +239,7 @@ The :class:`~ikkuna.export.subscriber.Subscription`\ s will invoke the
 messages, if no synchronisation is used, or
 :class:`~ikkuna.export.messages.MessageBundle` objects which contain the data
 for one module and all desired kinds. As an example, consider the
-:class:`~ikkuna.export.subscriber.ratio.RatioSubscriber`:
+:class:`~ikkuna.export.subscriber.RatioSubscriber`:
 
 .. literalinclude:: ../../ikkuna/export/subscriber/ratio.py
     :lines: 9-62

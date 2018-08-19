@@ -55,9 +55,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../user_guide.html">User Guide</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../ikkuna.html">ikkuna package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../main.html">main module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../train.html">train package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ikkuna.html">ikkuna</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">main program</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../train.html">train</a></li>
 </ul>
 </ul>
 </li>
@@ -212,7 +212,7 @@
 <span class="kn">import</span> <span class="nn">subprocess</span>
 
 
-<div class="viewcode-block" id="get_memory_stats"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.get_memory_stats">[docs]</a><span class="k">def</span> <span class="nf">get_memory_stats</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;total&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;mb&#39;</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">get_memory_stats</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;total&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;mb&#39;</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Get the total|used|free gpu memory.</span>
 
 <span class="sd">    Parameters</span>
@@ -243,7 +243,7 @@
     <span class="n">index</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span>
     <span class="c1"># nvidia-smi gives mb, so go back to b and then up to the selected unit</span>
     <span class="n">size</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">factors</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="n">factors</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">memory</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)]</span>
-    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">size</span><span class="p">)),</span> <span class="n">size</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">size</span><span class="p">)),</span> <span class="n">size</span><span class="p">))</span>
 </pre></div>
 
     </div>

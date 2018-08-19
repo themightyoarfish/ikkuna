@@ -150,9 +150,7 @@ class SynchronizedSubscription(Subscription):
 
 class Subscriber(abc.ABC):
     '''Base class for receiving and processing activations, gradients and other stuff into
-    insightful metrics.
-
-    '''
+    insightful metrics.'''
 
     def __init__(self, subscription, tag=None):
         self._subscription  = subscription
