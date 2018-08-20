@@ -137,3 +137,75 @@ def get_memory_stats(mode='total', unit='mb'):
     # nvidia-smi gives mb, so go back to b and then up to the selected unit
     size = [int(x) * factors[2] / factors[index] for x in memory.strip().split('\n')]
     return dict(zip(range(len(size)), size))
+
+
+import torchvision
+from torchvision.transforms import ToTensor, Compose
+import numpy as np
+import torch
+
+
+def load_dataset(name):
+    '''Retrieve a dataset and determine the number of classes. This estimate is
+    obtained from the number of different values in the training labels.
+
+    Parameters
+    ----------
+    name    :   str
+                Dataset name in :mod:`torchvision.datasets`
+
+    Returns
+    -------
+    tuple
+        2 :class:`~train.DatasetMeta` s are returned, one for train and one test set
+    '''
+    from train import DatasetMeta
+    transforms = Compose([ToTensor()])
+    try:
+        dataset_cls   = getattr(torchvision.datasets, name)
+        dataset_train = dataset_cls('/home/share/data',
+                                    download=True,
+                                    train=True,
+                                    transform=transforms
+                                    )
+        dataset_test  = dataset_cls('/home/share/data',
+                                    download=True,
+                                    train=False,
+                                    transform=transforms
+                                    )
+    except AttributeError:
+        raise NameError(f'Dataset {name} unknown.')
+
+    def num_classes(dataset):
+        if dataset.train:
+            _, labels = dataset.train_data, dataset.train_labels  # noqa
+        else:
+            _, labels = dataset.test_data, dataset.test_labels  # noqa
+
+        # infer number of classes from labels. will fail if not all classes occur in labels
+        if isinstance(labels, np.ndarray):
+            return np.unique(labels).size()
+        elif isinstance(labels, list):
+            return len(set(labels))
+        elif isinstance(labels, torch.Tensor):
+            return labels.unique().numel()
+        else:
+            raise ValueError(f'Unexpected label storage {labels.__class__.__name__}')
+
+    def shape(dataset):
+        if dataset.train:
+            data, _ = dataset.train_data, dataset.train_labels  # noqa
+        else:
+            data, _ = dataset.test_data, dataset.test_labels  # noqa
+
+        # if only three dimensions, assume [N, H, W], else [N, H, W, C]
+        N, H, W = data.shape[:3]
+        C = data.shape[-1] if len(data.shape) == 4 else 1
+        return (N, H, W, C)
+
+    meta_train = DatasetMeta(dataset=dataset_train, num_classes=num_classes(dataset_train),
+                             shape=shape(dataset_train))
+    meta_test  = DatasetMeta(dataset=dataset_test, num_classes=num_classes(dataset_test),
+                             shape=shape(dataset_test))
+
+    return meta_train, meta_test

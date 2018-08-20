@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
-from ikkuna.utils import create_optimizer, initialize_model
+from ikkuna.utils import create_optimizer
 from ikkuna.export import Exporter
 from typing import NamedTuple
 
@@ -40,7 +40,7 @@ class Trainer:
 
     def __init__(self, dataset_meta, **kwargs):
         '''Create a new Trainer. Handlers, model and optimizer are left uninitialised and must be
-        set with :meth:`~train.Trainer.add_subscriber()`, :meth:`~train.Trainer.add_model()` and
+        set with :meth:`~train.Trainer.add_subscriber()`, :meth:`~train.Trainer.set_model()` and
         :meth:`~train.Trainer.optimize()` before calling :meth:`~train.Trainer.train_batch()`.
 
         Parameters
@@ -59,13 +59,15 @@ class Trainer:
         self._dataset, self._num_classes, self._shape = dataset_meta
         self._batch_size        = kwargs.pop('batch_size', 1)
         self._loss_function     = kwargs.pop('loss', nn.CrossEntropyLoss())
-        sampler                 = torch.utils.data.sampler.RandomSampler(self._dataset)
         self._dataloader        = DataLoader(self._dataset, batch_size=self._batch_size,
-                                             sampler=sampler, pin_memory=True)
+                                             pin_memory=True, shuffle=True)
         self._data_iter         = iter(self._dataloader)
         N_train                 = self._shape[0]
         self._batches_per_epoch = round(N_train / self._batch_size + 0.5)
         self._batch_counter     = 0
+        self._global_counter    = 0
+        self._epoch             = 0
+        self._lr_schedule       = None
 
         # we use these to peek one step ahead in the data iterator to know an epoch has ended
         # already in the epoch's final iteration, not at the beginning of the next one
@@ -119,8 +121,15 @@ class Trainer:
         self._optimizer = create_optimizer(self._model, name, **kwargs)
         print(f'Using {self._optimizer.__class__.__name__} optimizer')
 
-    def add_model(self, model_str):
-        '''Set the model to train. This method will attempt to load from :mod:`ikkuna.models`.
+    def initialize(self, init):
+        self._model.apply(init)
+
+    def set_schedule(self, Scheduler, *args, **kwargs):
+        self._optimizer = Scheduler(self._optimizer, *args, **kwargs)
+
+    def set_model(self, model_or_str):
+        '''Set the model to train. This method will attempt to load from :mod:`ikkuna.models` if a
+        string is passed.
 
         .. warning::
             Currently, the function automatically calls :meth:`torch.nn.Module.cuda()` and hence a
@@ -128,13 +137,24 @@ class Trainer:
 
         Parameters
         ----------
-        model_str   :   str
-                        Name of the model (must exist in :mod:`ikkuna.models`)
+        model_or_str    :   torch.nn.Module or str
+                            Model or name of the model (must exist in :mod:`ikkuna.models`)
         '''
-        from ikkuna import models
-        Model = getattr(models, model_str)
-        self._model = Model(self._shape[1:], num_classes=self._num_classes, exporter=self._exporter)
-        initialize_model(self._model)
+        if isinstance(model_or_str, str):
+            from ikkuna import models
+            try:
+                if model_or_str.startswith('ResNet'):
+                    model_fn = getattr(models, model_or_str.lower())
+                    self._model = model_fn(exporter=self._exporter)
+                else:
+                    Model = getattr(models, model_or_str)
+                    self._model = Model(self._shape[1:], num_classes=self._num_classes,
+                                        exporter=self._exporter)
+            except AttributeError:
+                raise ValueError(f'Unknown model {model_or_str}')
+        else:
+            self._model = model_or_str
+
         self._model.cuda()
 
     def train_batch(self):
@@ -151,14 +171,20 @@ class Trainer:
         output       = self._model(data)
         loss         = self._loss_function(output, labels)
         loss.backward()
-        self._optimizer.step()
+
+        if self._lr_schedule:
+            self._optimizer.step(epoch=True)
+        else:
+            self._optimizer.step()
 
         try:
             self._next_X, self._next_Y = next(self._data_iter)
         except StopIteration:
             self._exporter.epoch_finished()
             self._batch_counter        = 0
+            self._epoch               += 1
             self._data_iter            = iter(self._dataloader)
             self._next_X, self._next_Y = next(self._data_iter)
 
-        self._batch_counter += 1
+        self._batch_counter  += 1
+        self._global_counter += 1

@@ -22,13 +22,12 @@ import os
 #######################
 import numpy as np
 import torch
-import torchvision
-from torchvision.transforms import ToTensor, Compose
 
 #######################
 #  1st party imports  #
 #######################
-from train import Trainer, DatasetMeta
+from train import Trainer
+from ikkuna.utils import load_dataset
 from ikkuna.export.subscriber import (RatioSubscriber, HistogramSubscriber, SpectralNormSubscriber,
                                       TestAccuracySubscriber, TrainAccuracySubscriber)
 
@@ -39,71 +38,6 @@ torch.manual_seed(SEED)
 torch.cuda.manual_seed_all(SEED)
 np.random.seed(SEED)
 os.environ['PYTHONHASHSEED'] = str(SEED)
-
-
-def _load_dataset(name):
-    '''Retrieve a dataset and determine the number of classes. This estimate is
-    obtained from the number of different values in the training labels.
-
-    Parameters
-    ----------
-    name    :   str
-                Dataset name in :mod:`torchvision.datasets`
-
-    Returns
-    -------
-    tuple
-        2 :class:`~train.DatasetMeta` s are returned, one for train and one test set
-    '''
-    transforms = Compose([ToTensor()])
-    try:
-        dataset_cls   = getattr(torchvision.datasets, name)
-        dataset_train = dataset_cls('/home/share/data',
-                                    download=True,
-                                    train=True,
-                                    transform=transforms
-                                    )
-        dataset_test  = dataset_cls('/home/share/data',
-                                    download=True,
-                                    train=False,
-                                    transform=transforms
-                                    )
-    except AttributeError:
-        raise NameError(f'Dataset {name} unknown.')
-
-    def num_classes(dataset):
-        if dataset.train:
-            _, labels = dataset.train_data, dataset.train_labels  # noqa
-        else:
-            _, labels = dataset.test_data, dataset.test_labels  # noqa
-
-        # infer number of classes from labels. will fail if not all classes occur in labels
-        if isinstance(labels, np.ndarray):
-            return np.unique(labels).size()
-        elif isinstance(labels, list):
-            return len(set(labels))
-        elif isinstance(labels, torch.Tensor):
-            return labels.unique().numel()
-        else:
-            raise ValueError(f'Unexpected label storage {labels.__class__.__name__}')
-
-    def shape(dataset):
-        if dataset.train:
-            data, _ = dataset.train_data, dataset.train_labels  # noqa
-        else:
-            data, _ = dataset.test_data, dataset.test_labels  # noqa
-
-        # if only three dimensions, assume [N, H, W], else [N, H, W, C]
-        N, H, W = data.shape[:3]
-        C = data.shape[-1] if len(data.shape) == 4 else 1
-        return (N, H, W, C)
-
-    meta_train = DatasetMeta(dataset=dataset_train, num_classes=num_classes(dataset_train),
-                             shape=shape(dataset_train))
-    meta_test  = DatasetMeta(dataset=dataset_test, num_classes=num_classes(dataset_test),
-                             shape=shape(dataset_test))
-
-    return meta_train, meta_test
 
 
 def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
@@ -121,10 +55,10 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
                     Name of the optimizer to use
     '''
 
-    dataset_train, dataset_test = _load_dataset(dataset_str)
+    dataset_train, dataset_test = load_dataset(dataset_str)
 
     trainer = Trainer(dataset_train, batch_size=batch_size, depth=kwargs['depth'])
-    trainer.add_model(model_str)
+    trainer.set_model(model_str)
     trainer.optimize(name=optimizer)
 
     subsample = kwargs['subsample']
@@ -210,8 +144,7 @@ def get_parser():
             raise ArgumentTypeError('Values must be passed as val1,val2 (without space)')
 
     parser = ArgumentParser()
-    parser.add_argument('-m', '--model', type=str, choices=['AlexNetMini', 'DenseNet'],
-                        required=True, help='Model class to train')
+    parser.add_argument('-m', '--model', type=str, required=True, help='Model class to train')
     data_choices = ['MNIST', 'FashionMNIST', 'CIFAR10', 'CIFAR100']
     parser.add_argument('-d', '--dataset', type=str, choices=data_choices, required=True,
                         help='Dataset to train on')
