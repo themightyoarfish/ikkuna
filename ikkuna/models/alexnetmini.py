@@ -4,7 +4,6 @@
 This module defines :class:`ikkuna.models.AlexNetMini`, a reduced version of AlexNet. Adapted from
 :meth:`torchvision.models.alexnet()`.
 '''
-from ikkuna.export import Exporter
 import torch
 
 
@@ -26,8 +25,7 @@ class AlexNetMini(torch.nn.Module):     # Pytorch Sphinx-doc is buggy here, so u
     '''
     def __init__(self, input_shape, num_classes=1000, exporter=None):
         super(AlexNetMini, self).__init__()
-        self._exporter = e = exporter or Exporter()
-        e.set_model(self)
+        exporter.set_model(self)
 
         # if channel dim not present, add 1
         if len(input_shape) == 2:
@@ -56,7 +54,7 @@ class AlexNetMini(torch.nn.Module):     # Pytorch Sphinx-doc is buggy here, so u
             torch.nn.Linear(2048, num_classes),
         )
 
-        e.add_modules(self)
+        exporter.add_modules(self)
 
     def forward(self, x):
         x = self.features(x)

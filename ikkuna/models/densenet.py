@@ -9,8 +9,6 @@ import torch.nn.functional as F
 import torch.utils.checkpoint as cp
 from collections import OrderedDict
 
-from ikkuna.export import Exporter
-
 
 def _bn_function_factory(norm, relu, conv):
     def bn_function(*inputs):
@@ -114,10 +112,9 @@ class DenseNet(nn.Module):
         assert 0 < compression <= 1, 'compression of densenet should be between 0 and 1'
         self.avgpool_size = 8 if small_inputs else 7
 
-        self._exporter = e = exporter or Exporter()
-        e.set_model(self)
+        exporter.set_model(self)
 
-        H, W, C = input_shape
+        _, _, C = input_shape
 
         # First convolution
         if small_inputs:
@@ -172,7 +169,7 @@ class DenseNet(nn.Module):
             elif 'classifier' in name and 'bias' in name:
                 param.data.fill_(0)
 
-        self._exporter(self)
+        exporter.add_modules(self)
 
     def forward(self, x):
         features = self.features(x)

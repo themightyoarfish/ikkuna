@@ -160,7 +160,7 @@ For hooking this model up with the framework, you need only add three lines.
 
 There are two optional steps
 
-    #. You should call :meth:`~ikkuna.export.Exporter.epoch_finished()` whenever
+    #.  You should call :meth:`~ikkuna.export.Exporter.epoch_finished()` whenever
         you've run through the training set once, at least if any of your
         :class:`~ikkuna.export.subscriber.Subscriber`\ s rely on the
         ``'epoch_finished'`` message or the epoch-local step counter.
