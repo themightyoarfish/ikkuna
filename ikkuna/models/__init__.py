@@ -1,4 +1,4 @@
 from .densenet import *
-from .alexnet import *
+from .alexnetmini import *
 
 __all__ = ['AlexNetMini', 'DenseNet']
