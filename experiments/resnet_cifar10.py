@@ -27,7 +27,8 @@ train_config = {
 }
 
 
-mean = np.load('./experiments/cifar10_mean.npy')
+if __name__ == '__main__':
+    mean = np.load('./experiments/cifar10_mean.npy')
 
 
 def whiten(img):
