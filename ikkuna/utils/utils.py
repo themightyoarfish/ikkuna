@@ -145,7 +145,7 @@ import numpy as np
 import torch
 
 
-def load_dataset(name, train_transforms=None, test_tranforms=None):
+def load_dataset(name, train_transforms=None, test_transforms=None):
     '''Retrieve a dataset and determine the number of classes. This estimate is
     obtained from the number of different values in the training labels.
 
@@ -160,8 +160,8 @@ def load_dataset(name, train_transforms=None, test_tranforms=None):
         2 :class:`~train.DatasetMeta` s are returned, one for train and one test set
     '''
     from train import DatasetMeta
-    train_transforms = train_transforms or Compose([ToTensor()])
-    test_transforms = test_transforms or Compose([ToTensor()])
+    train_transforms = Compose(train_transforms) if train_transforms else ToTensor()
+    test_transforms  = Compose(test_transforms) if test_transforms else ToTensor()
     try:
         dataset_cls   = getattr(torchvision.datasets, name)
         dataset_train = dataset_cls('/home/share/data',
