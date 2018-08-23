@@ -73,7 +73,8 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
     if kwargs['test_accuracy']:
         test_accuracy_subscriber = TestAccuracySubscriber(dataset_test, trainer.model.forward,
                                                           frequency=trainer.batches_per_epoch,
-                                                          batch_size=batch_size)
+                                                          batch_size=batch_size,
+                                                          backend=backend)
         trainer.add_subscriber(test_accuracy_subscriber)
 
     if kwargs['train_accuracy']:
