@@ -11,6 +11,7 @@ from torchvision.transforms import Lambda, ToTensor
 
 from ikkuna.export.subscriber import (TrainAccuracySubscriber, TestAccuracySubscriber,
                                       SpectralNormSubscriber, RatioSubscriber)
+from ikkuna.export import Exporter
 from ikkuna.utils import load_dataset
 from ikkuna.models import resnet18
 from train import Trainer
@@ -98,9 +99,9 @@ dataset_train, dataset_test = load_dataset('CIFAR10', train_transforms=train_tra
 
 
 def main():
+    exporter = Exporter(depth=-1, module_filter=[torch.nn.Conv2d, torch.nn.Linear])
     trainer = Trainer(dataset_train, batch_size=train_config['batch_size'],
-                      loss=train_config['loss'])
-    exporter = trainer.exporter
+                      loss=train_config['loss'], exporter=exporter)
     model = resnet18(exporter=exporter, num_classes=dataset_train.num_classes)
     trainer.set_model(model)
     trainer.optimize(name=train_config['optimizer'], weight_decay=train_config['weight_decay'],
