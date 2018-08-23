@@ -3,3 +3,4 @@ matplotlib>=2.2.0
 numpy>=1.15.0
 sphinx>=1.7.5
 tensorboardX
+tqdm>=4.24.0
