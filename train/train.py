@@ -38,7 +38,7 @@ class Trainer:
     _optimizer  : torch.optim.Optimizer
     _scheduler  :   schedulers.FunctionScheduler
                     A custom scheduler for learning rate decay (*NOT* a
-                    :class:`torch.optim.lr_schedule._LRScheduler`)
+                    :class:`torch.optim.lr_scheduler._LRScheduler`)
     '''
 
     def __init__(self, dataset_meta, **kwargs):
@@ -49,7 +49,7 @@ class Trainer:
         Parameters
         ----------
         dataset_meta    :   train.DatasetMeta
-                            Train data, obtained via :func:`main._load_dataset()`
+                            Train data, obtained via :func:`ikkuna.utils.load_dataset()`
         batch_size  :   int
         loss   :    function
                     Defaults to torch.nn.CrossEntropyLoss

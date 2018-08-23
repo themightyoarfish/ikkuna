@@ -58,6 +58,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../ikkuna.html">ikkuna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../main.html">main program</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../train.html">train</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../schedulers.html">schedulers module</a></li>
 </ul>
 </ul>
 </li>
@@ -244,6 +245,79 @@
     <span class="c1"># nvidia-smi gives mb, so go back to b and then up to the selected unit</span>
     <span class="n">size</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">factors</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="n">factors</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">memory</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)]</span>
     <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">size</span><span class="p">)),</span> <span class="n">size</span><span class="p">))</span>
+
+
+<span class="kn">import</span> <span class="nn">torchvision</span>
+<span class="kn">from</span> <span class="nn">torchvision.transforms</span> <span class="k">import</span> <span class="n">ToTensor</span><span class="p">,</span> <span class="n">Compose</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+
+
+<div class="viewcode-block" id="load_dataset"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.load_dataset">[docs]</a><span class="k">def</span> <span class="nf">load_dataset</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">train_transforms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">test_transforms</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Retrieve a dataset and determine the number of classes. This estimate is</span>
+<span class="sd">    obtained from the number of different values in the training labels.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name    :   str</span>
+<span class="sd">                Dataset name in :mod:`torchvision.datasets`</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        2 :class:`~train.DatasetMeta` s are returned, one for train and one test set</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">train</span> <span class="k">import</span> <span class="n">DatasetMeta</span>
+    <span class="n">train_transforms</span> <span class="o">=</span> <span class="n">Compose</span><span class="p">(</span><span class="n">train_transforms</span><span class="p">)</span> <span class="k">if</span> <span class="n">train_transforms</span> <span class="k">else</span> <span class="n">ToTensor</span><span class="p">()</span>
+    <span class="n">test_transforms</span>  <span class="o">=</span> <span class="n">Compose</span><span class="p">(</span><span class="n">test_transforms</span><span class="p">)</span> <span class="k">if</span> <span class="n">test_transforms</span> <span class="k">else</span> <span class="n">ToTensor</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">dataset_cls</span>   <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">torchvision</span><span class="o">.</span><span class="n">datasets</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">dataset_train</span> <span class="o">=</span> <span class="n">dataset_cls</span><span class="p">(</span><span class="s1">&#39;/home/share/data&#39;</span><span class="p">,</span>
+                                    <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                    <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                    <span class="n">transform</span><span class="o">=</span><span class="n">train_transforms</span>
+                                    <span class="p">)</span>
+        <span class="n">dataset_test</span>  <span class="o">=</span> <span class="n">dataset_cls</span><span class="p">(</span><span class="s1">&#39;/home/share/data&#39;</span><span class="p">,</span>
+                                    <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                    <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                    <span class="n">transform</span><span class="o">=</span><span class="n">test_transforms</span>
+                                    <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Dataset </span><span class="si">{name}</span><span class="s1"> unknown.&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">num_classes</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">train</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">train_data</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">train_labels</span>  <span class="c1"># noqa</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">test_data</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">test_labels</span>  <span class="c1"># noqa</span>
+
+        <span class="c1"># infer number of classes from labels. will fail if not all classes occur in labels</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">labels</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">labels</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Unexpected label storage </span><span class="si">{labels.__class__.__name__}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">train</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">train_data</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">train_labels</span>  <span class="c1"># noqa</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">test_data</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">test_labels</span>  <span class="c1"># noqa</span>
+
+        <span class="c1"># if only three dimensions, assume [N, H, W], else [N, H, W, C]</span>
+        <span class="n">N</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span> <span class="k">else</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">C</span><span class="p">)</span>
+
+    <span class="n">meta_train</span> <span class="o">=</span> <span class="n">DatasetMeta</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">dataset_train</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">(</span><span class="n">dataset_train</span><span class="p">),</span>
+                             <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">(</span><span class="n">dataset_train</span><span class="p">))</span>
+    <span class="n">meta_test</span>  <span class="o">=</span> <span class="n">DatasetMeta</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">dataset_test</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">(</span><span class="n">dataset_test</span><span class="p">),</span>
+                             <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">(</span><span class="n">dataset_test</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">meta_train</span><span class="p">,</span> <span class="n">meta_test</span></div>
 </pre></div>
 
     </div>

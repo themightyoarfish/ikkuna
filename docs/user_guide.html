@@ -60,6 +60,7 @@
 <li class="toctree-l1"><a class="reference internal" href="ikkuna.html">ikkuna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="main.html">main program</a></li>
 <li class="toctree-l1"><a class="reference internal" href="train.html">train</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schedulers.html">schedulers module</a></li>
 </ul>
 </ul>
 </li>
@@ -296,13 +297,10 @@ you can look up in the documentation.</p>
 <p>There are two optional steps</p>
 <blockquote>
 <div><ol class="arabic simple">
-<li><dl class="first docutils">
-<dt>You should call <a class="reference internal" href="ikkuna.export.html#ikkuna.export.Exporter.epoch_finished" title="ikkuna.export.Exporter.epoch_finished"><code class="xref py py-meth docutils literal notranslate"><span class="pre">epoch_finished()</span></code></a> whenever</dt>
-<dd>you’ve run through the training set once, at least if any of your
+<li>You should call <a class="reference internal" href="ikkuna.export.html#ikkuna.export.Exporter.epoch_finished" title="ikkuna.export.Exporter.epoch_finished"><code class="xref py py-meth docutils literal notranslate"><span class="pre">epoch_finished()</span></code></a> whenever
+you’ve run through the training set once, at least if any of your
 <a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a>s rely on the
-<code class="docutils literal notranslate"><span class="pre">'epoch_finished'</span></code> message or the epoch-local step counter.</dd>
-</dl>
-</li>
+<code class="docutils literal notranslate"><span class="pre">'epoch_finished'</span></code> message or the epoch-local step counter.</li>
 <li>You should inform the Exporter of the loss function in use by calling
 <a class="reference internal" href="ikkuna.export.html#ikkuna.export.Exporter.set_loss" title="ikkuna.export.Exporter.set_loss"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_loss()</span></code></a>, if any of your
 <a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a>s need access to the input
@@ -318,8 +316,8 @@ registered subscribers. This central authority is the
 <a class="reference internal" href="ikkuna.export.html#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> class. Internally, it replaces some of the
 Model’s methods with wrappers so it can be transparently informed of anything
 interesting happening. It uses PyTorch hooks (see
-<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.register_forward_hook" title="(in PyTorch vmaster (0.5.0a0+83066e9 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.register_forward_hook()</span></code></a> and related methods) on the
-<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+83066e9 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a>s it is tracking and the <a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+83066e9 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a>s
+<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.register_forward_hook" title="(in PyTorch vmaster (0.5.0a0+b885dea ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.register_forward_hook()</span></code></a> and related methods) on the
+<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+b885dea ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a>s it is tracking and the <a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+b885dea ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a>s
 inside.</p>
 <p>Messages published from the <a class="reference internal" href="ikkuna.export.html#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> come in two types,
 the <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetaMessage</span></code></a> for events which are not tied
@@ -336,7 +334,7 @@ available:</p>
 </div>
 <p>Most of these topics do not come with any data attached, but for some, the
 messages <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message.data" title="ikkuna.export.messages.Message.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code></a> attribute will not be
-<code class="docutils literal notranslate"><span class="pre">None</span></code>, but contain <a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+83066e9 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a>s.</p>
+<code class="docutils literal notranslate"><span class="pre">None</span></code>, but contain <a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+b885dea ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a>s.</p>
 <p>For <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingMessage</span></code></a>s, the following
 kinds are available:</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">DATA_KINDS</span> <span class="o">=</span> <span class="p">{</span>

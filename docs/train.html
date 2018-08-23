@@ -18,6 +18,7 @@
     <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="schedulers module" href="schedulers.html" />
     <link rel="prev" title="main program" href="main.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
@@ -59,6 +60,7 @@
 <li class="toctree-l1"><a class="reference internal" href="ikkuna.html">ikkuna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="main.html">main program</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">train</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schedulers.html">schedulers module</a></li>
 </ul>
 </ul>
 </li>
@@ -86,6 +88,10 @@
                 
   <li>
     <a href="main.html" title="Previous Chapter: main program"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; main program</span>
+    </a>
+  </li>
+  <li>
+    <a href="schedulers.html" title="Next Chapter: schedulers module"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">schedulers module &raquo;</span>
     </a>
   </li>
               
@@ -180,18 +186,25 @@ dataset.</p>
 <dd><p><em>torch.optim.Optimizer</em></p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="train.Trainer._scheduler">
+<code class="descname">_scheduler</code><a class="headerlink" href="#train.Trainer._scheduler" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>schedulers.FunctionScheduler</em> – A custom scheduler for learning rate decay (<em>NOT</em> a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">torch.optim.lr_scheduler._LRScheduler</span></code>)</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="train.Trainer.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/train/train.html#Trainer.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.Trainer.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new Trainer. Handlers, model and optimizer are left uninitialised and must be
-set with <a class="reference internal" href="#train.Trainer.add_subscriber" title="train.Trainer.add_subscriber"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_subscriber()</span></code></a>, <a class="reference internal" href="#train.Trainer.add_model" title="train.Trainer.add_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_model()</span></code></a> and
+set with <a class="reference internal" href="#train.Trainer.add_subscriber" title="train.Trainer.add_subscriber"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_subscriber()</span></code></a>, <a class="reference internal" href="#train.Trainer.set_model" title="train.Trainer.set_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_model()</span></code></a> and
 <a class="reference internal" href="#train.Trainer.optimize" title="train.Trainer.optimize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">optimize()</span></code></a> before calling <a class="reference internal" href="#train.Trainer.train_batch" title="train.Trainer.train_batch"><code class="xref py py-meth docutils literal notranslate"><span class="pre">train_batch()</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>dataset_meta</strong> (<a class="reference internal" href="#train.DatasetMeta" title="train.DatasetMeta"><em>train.DatasetMeta</em></a>) – Train data, obtained via <a class="reference internal" href="main.html#main._load_dataset" title="main._load_dataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">main._load_dataset()</span></code></a></li>
+<li><strong>dataset_meta</strong> (<a class="reference internal" href="#train.DatasetMeta" title="train.DatasetMeta"><em>train.DatasetMeta</em></a>) – Train data, obtained via <a class="reference internal" href="ikkuna.utils.html#ikkuna.utils.load_dataset" title="ikkuna.utils.load_dataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">ikkuna.utils.load_dataset()</span></code></a></li>
 <li><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – </li>
 <li><strong>loss</strong> (<em>function</em>) – Defaults to torch.nn.CrossEntropyLoss</li>
 <li><strong>depth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Depth to which to traverse the module tree</li>
@@ -226,6 +239,12 @@ set with <a class="reference internal" href="#train.Trainer.add_subscriber" titl
 <dd><p><em>ikkuna.export.Exporter</em> – Exporter used during training</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="train.Trainer.optimizer">
+<code class="descname">optimizer</code><a class="headerlink" href="#train.Trainer.optimizer" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>torch.optim.Optimizer</em> – Optimizer in use, if set</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="train.Trainer.add_subscriber">
 <code class="descname">add_subscriber</code><span class="sig-paren">(</span><em>subscriber</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/train/train.html#Trainer.add_subscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.Trainer.add_subscriber" title="Permalink to this definition">¶</a></dt>
@@ -249,7 +268,7 @@ set with <a class="reference internal" href="#train.Trainer.add_subscriber" titl
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the optimizer (must exist in <a class="reference external" href="https://pytorch.org/docs/master/optim.html#module-torch.optim" title="(in PyTorch vmaster (0.5.0a0+83066e9 ))"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torch.optim</span></code></a>)</li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the optimizer (must exist in <a class="reference external" href="https://pytorch.org/docs/master/optim.html#module-torch.optim" title="(in PyTorch vmaster (0.5.0a0+b885dea ))"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torch.optim</span></code></a>)</li>
 <li><strong>**kwargs</strong> – All other kwargs are forwarded to the optimizer constructor</li>
 </ul>
 </td>
@@ -259,19 +278,53 @@ set with <a class="reference internal" href="#train.Trainer.add_subscriber" titl
 </dd></dl>
 
 <dl class="method">
-<dt id="train.Trainer.add_model">
-<code class="descname">add_model</code><span class="sig-paren">(</span><em>model_str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/train/train.html#Trainer.add_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.Trainer.add_model" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the model to train. This method will attempt to load from <a class="reference internal" href="ikkuna.models.html#module-ikkuna.models" title="ikkuna.models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ikkuna.models</span></code></a>.</p>
+<dt id="train.Trainer.initialize">
+<code class="descname">initialize</code><span class="sig-paren">(</span><em>init</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/train/train.html#Trainer.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.Trainer.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run an initilization funnction on <a class="reference internal" href="#train.Trainer.model" title="train.Trainer.model"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Trainer.model</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>init</strong> (<em>function</em>) – </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="train.Trainer.set_schedule">
+<code class="descname">set_schedule</code><span class="sig-paren">(</span><em>Scheduler</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/train/train.html#Trainer.set_schedule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.Trainer.set_schedule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a scheduler to anneal the learning rate.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>Scheduler</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.7)"><em>type</em></a>) – Class of the Scheduler to use (e.g. <a class="reference internal" href="schedulers.html#schedulers.FunctionScheduler" title="schedulers.FunctionScheduler"><code class="xref py py-class docutils literal notranslate"><span class="pre">schedulers.FunctionScheduler</span></code></a>)</li>
+<li><strong>*args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – Passed to the scheduler constructor</li>
+<li><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Passed to the scheduler constructor</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="train.Trainer.set_model">
+<code class="descname">set_model</code><span class="sig-paren">(</span><em>model_or_str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/train/train.html#Trainer.set_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.Trainer.set_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the model to train. This method will attempt to load from <a class="reference internal" href="ikkuna.models.html#module-ikkuna.models" title="ikkuna.models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ikkuna.models</span></code></a> if a
+string is passed.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">Currently, the function automatically calls <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.cuda" title="(in PyTorch vmaster (0.5.0a0+83066e9 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.cuda()</span></code></a> and hence a
+<p class="last">Currently, the function automatically calls <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.cuda" title="(in PyTorch vmaster (0.5.0a0+b885dea ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.cuda()</span></code></a> and hence a
 GPU is necessary.</p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the model (must exist in <a class="reference internal" href="ikkuna.models.html#module-ikkuna.models" title="ikkuna.models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ikkuna.models</span></code></a>)</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model_or_str</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+b885dea ))"><em>torch.nn.Module</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Model or name of the model (must exist in <a class="reference internal" href="ikkuna.models.html#module-ikkuna.models" title="ikkuna.models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ikkuna.models</span></code></a>)</td>
 </tr>
 </tbody>
 </table>
@@ -288,8 +341,9 @@ restart at the beginning.</p>
 
 <dl class="class">
 <dt id="train.DatasetMeta">
-<em class="property">class </em><code class="descclassname">train.</code><code class="descname">DatasetMeta</code><span class="sig-paren">(</span><em>dataset</em>, <em>num_classes</em>, <em>shape</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/train/train.html#DatasetMeta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.DatasetMeta" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">train.</code><code class="descname">DatasetMeta</code><a class="reference internal" href="_modules/train/train.html#DatasetMeta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.DatasetMeta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
+<p>Class encapsulating a dataset and makes information about it more easily accessible.</p>
 <dl class="attribute">
 <dt id="train.DatasetMeta.dataset">
 <code class="descname">dataset</code><a class="headerlink" href="#train.DatasetMeta.dataset" title="Permalink to this definition">¶</a></dt>

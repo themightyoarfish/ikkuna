@@ -58,6 +58,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../ikkuna.html">ikkuna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../main.html">main program</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../train.html">train</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../schedulers.html">schedulers module</a></li>
 </ul>
 </ul>
 </li>
@@ -105,15 +106,15 @@
     <div class="col-md-12 content">
       
   <h1>Source code for train.train</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span></span><span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">DataLoader</span>
-<span class="kn">from</span> <span class="nn">ikkuna.utils</span> <span class="k">import</span> <span class="n">create_optimizer</span><span class="p">,</span> <span class="n">initialize_model</span>
+<span class="kn">from</span> <span class="nn">ikkuna.utils</span> <span class="k">import</span> <span class="n">create_optimizer</span>
 <span class="kn">from</span> <span class="nn">ikkuna.export</span> <span class="k">import</span> <span class="n">Exporter</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">NamedTuple</span>
 
 
 <div class="viewcode-block" id="DatasetMeta"><a class="viewcode-back" href="../../train.html#train.DatasetMeta">[docs]</a><span class="k">class</span> <span class="nc">DatasetMeta</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Class encapsulating a dataset and makes information about it more easily accessible.&#39;&#39;&#39;</span>
     <span class="n">dataset</span><span class="p">:</span> <span class="nb">object</span>
     <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">shape</span><span class="p">:</span> <span class="nb">tuple</span>
@@ -143,17 +144,20 @@
 <span class="sd">    _dataloader :   torch.utils.data.DataLoader</span>
 <span class="sd">                    loader for the training dataset</span>
 <span class="sd">    _optimizer  : torch.optim.Optimizer</span>
+<span class="sd">    _scheduler  :   schedulers.FunctionScheduler</span>
+<span class="sd">                    A custom scheduler for learning rate decay (*NOT* a</span>
+<span class="sd">                    :class:`torch.optim.lr_scheduler._LRScheduler`)</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
 <div class="viewcode-block" id="Trainer.__init__"><a class="viewcode-back" href="../../train.html#train.Trainer.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset_meta</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Create a new Trainer. Handlers, model and optimizer are left uninitialised and must be</span>
-<span class="sd">        set with :meth:`~train.Trainer.add_subscriber()`, :meth:`~train.Trainer.add_model()` and</span>
+<span class="sd">        set with :meth:`~train.Trainer.add_subscriber()`, :meth:`~train.Trainer.set_model()` and</span>
 <span class="sd">        :meth:`~train.Trainer.optimize()` before calling :meth:`~train.Trainer.train_batch()`.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        dataset_meta    :   train.DatasetMeta</span>
-<span class="sd">                            Train data, obtained via :func:`main._load_dataset()`</span>
+<span class="sd">                            Train data, obtained via :func:`ikkuna.utils.load_dataset()`</span>
 <span class="sd">        batch_size  :   int</span>
 <span class="sd">        loss   :    function</span>
 <span class="sd">                    Defaults to torch.nn.CrossEntropyLoss</span>
@@ -166,13 +170,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_classes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span> <span class="o">=</span> <span class="n">dataset_meta</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span>        <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;batch_size&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_loss_function</span>     <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;loss&#39;</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">())</span>
-        <span class="n">sampler</span>                 <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">RandomSampler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dataloader</span>        <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span><span class="p">,</span>
-                                             <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span> <span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                                             <span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_iter</span>         <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataloader</span><span class="p">)</span>
         <span class="n">N_train</span>                 <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_batches_per_epoch</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">N_train</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_batch_counter</span>     <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_global_counter</span>    <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span>             <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span>         <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># we use these to peek one step ahead in the data iterator to know an epoch has ended</span>
         <span class="c1"># already in the epoch&#39;s final iteration, not at the beginning of the next one</span>
@@ -203,6 +209,11 @@
         <span class="sd">&#39;&#39;&#39;ikkuna.export.Exporter: Exporter used during training&#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exporter</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">optimizer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;torch.optim.Optimizer: Optimizer in use, if set&#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span>
+
 <div class="viewcode-block" id="Trainer.add_subscriber"><a class="viewcode-back" href="../../train.html#train.Trainer.add_subscriber">[docs]</a>    <span class="k">def</span> <span class="nf">add_subscriber</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscriber</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Add a subscriber.</span>
 
@@ -226,8 +237,32 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span> <span class="o">=</span> <span class="n">create_optimizer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Using </span><span class="si">{self._optimizer.__class__.__name__}</span><span class="s1"> optimizer&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Trainer.add_model"><a class="viewcode-back" href="../../train.html#train.Trainer.add_model">[docs]</a>    <span class="k">def</span> <span class="nf">add_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_str</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;Set the model to train. This method will attempt to load from :mod:`ikkuna.models`.</span>
+<div class="viewcode-block" id="Trainer.initialize"><a class="viewcode-back" href="../../train.html#train.Trainer.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Run an initilization funnction on :attr:`Trainer.model`</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        init    :   function</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">init</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Trainer.set_schedule"><a class="viewcode-back" href="../../train.html#train.Trainer.set_schedule">[docs]</a>    <span class="k">def</span> <span class="nf">set_schedule</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Scheduler</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Set a scheduler to anneal the learning rate.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        Scheduler   :   type</span>
+<span class="sd">                        Class of the Scheduler to use (e.g. :class:`schedulers.FunctionScheduler`)</span>
+<span class="sd">        *args   :   list</span>
+<span class="sd">                    Passed to the scheduler constructor</span>
+<span class="sd">        **kwargs    :   dict</span>
+<span class="sd">                        Passed to the scheduler constructor</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span> <span class="o">=</span> <span class="n">Scheduler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Trainer.set_model"><a class="viewcode-back" href="../../train.html#train.Trainer.set_model">[docs]</a>    <span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_or_str</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Set the model to train. This method will attempt to load from :mod:`ikkuna.models` if a</span>
+<span class="sd">        string is passed.</span>
 
 <span class="sd">        .. warning::</span>
 <span class="sd">            Currently, the function automatically calls :meth:`torch.nn.Module.cuda()` and hence a</span>
@@ -235,13 +270,24 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        model_str   :   str</span>
-<span class="sd">                        Name of the model (must exist in :mod:`ikkuna.models`)</span>
+<span class="sd">        model_or_str    :   torch.nn.Module or str</span>
+<span class="sd">                            Model or name of the model (must exist in :mod:`ikkuna.models`)</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="kn">from</span> <span class="nn">ikkuna</span> <span class="k">import</span> <span class="n">models</span>
-        <span class="n">Model</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_str</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">num_classes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_classes</span><span class="p">,</span> <span class="n">exporter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_exporter</span><span class="p">)</span>
-        <span class="n">initialize_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model_or_str</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="kn">from</span> <span class="nn">ikkuna</span> <span class="k">import</span> <span class="n">models</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">model_or_str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;ResNet&#39;</span><span class="p">):</span>
+                    <span class="n">model_fn</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_or_str</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">model_fn</span><span class="p">(</span><span class="n">exporter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_exporter</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">Model</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_or_str</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">num_classes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_classes</span><span class="p">,</span>
+                                        <span class="n">exporter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_exporter</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Unknown model </span><span class="si">{model_or_str}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">model_or_str</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Trainer.train_batch"><a class="viewcode-back" href="../../train.html#train.Trainer.train_batch">[docs]</a>    <span class="k">def</span> <span class="nf">train_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -263,12 +309,19 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_next_X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_Y</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_iter</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">epoch_finished</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_exporter</span><span class="o">.</span><span class="n">epoch_finished</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_batch_counter</span>        <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span>               <span class="o">+=</span> <span class="mi">1</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_data_iter</span>            <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataloader</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_next_X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_Y</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_iter</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">epoch_finished</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_batch_counter</span> <span class="o">+=</span> <span class="mi">1</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_batch_counter</span>  <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_global_counter</span> <span class="o">+=</span> <span class="mi">1</span></div></div>
 </pre></div>
 
     </div>

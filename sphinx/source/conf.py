@@ -188,10 +188,14 @@ nitpick_ignore = [('py:mod', 'torchvision.datasets'),
                   # This happens when inheriting from Sequential
                   ('py:class', 'torch.nn.modules.container.Sequential'),
                   ('py:class', 'function'),
-                  ('py:class', 'torch.nn._Loss')
+                  ('py:class', 'torch.nn._Loss'),
+                  ('py:class', 'torch.optim.lr_scheduler._LRScheduler'),
+                  ('py:meth', 'torch.optim.lr_scheduler._LRScheduler.state_dict'),
+                  ('py:meth', 'torch.optim.lr_scheduler._LRScheduler.load_state_dict'),
                   ]
 
 autodoc_member_order = 'bysource'
+
 
 def setup(app):
     '''
