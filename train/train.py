@@ -1,4 +1,3 @@
-import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 from ikkuna.utils import create_optimizer
@@ -7,6 +6,7 @@ from typing import NamedTuple
 
 
 class DatasetMeta(NamedTuple):
+    '''Class encapsulating a dataset and makes information about it more easily accessible.'''
     dataset: object
     num_classes: int
     shape: tuple
@@ -36,6 +36,9 @@ class Trainer:
     _dataloader :   torch.utils.data.DataLoader
                     loader for the training dataset
     _optimizer  : torch.optim.Optimizer
+    _scheduler  :   schedulers.FunctionScheduler
+                    A custom scheduler for learning rate decay (*NOT* a
+                    :class:`torch.optim.lr_schedule._LRScheduler`)
     '''
 
     def __init__(self, dataset_meta, **kwargs):
@@ -67,7 +70,7 @@ class Trainer:
         self._batch_counter     = 0
         self._global_counter    = 0
         self._epoch             = 0
-        self._lr_schedule       = None
+        self._scheduler         = None
 
         # we use these to peek one step ahead in the data iterator to know an epoch has ended
         # already in the epoch's final iteration, not at the beginning of the next one
@@ -98,6 +101,11 @@ class Trainer:
         '''ikkuna.export.Exporter: Exporter used during training'''
         return self._exporter
 
+    @property
+    def optimizer(self):
+        '''torch.optim.Optimizer: Optimizer in use, if set'''
+        return self._optimizer
+
     def add_subscriber(self, subscriber):
         '''Add a subscriber.
 
@@ -122,10 +130,27 @@ class Trainer:
         print(f'Using {self._optimizer.__class__.__name__} optimizer')
 
     def initialize(self, init):
+        '''Run an initilization funnction on :attr:`Trainer.model`
+
+        Parameters
+        ----------
+        init    :   function
+        '''
         self._model.apply(init)
 
     def set_schedule(self, Scheduler, *args, **kwargs):
-        self._optimizer = Scheduler(self._optimizer, *args, **kwargs)
+        '''Set a scheduler to anneal the learning rate.
+
+        Parameters
+        ----------
+        Scheduler   :   type
+                        Class of the Scheduler to use (e.g. :class:`schedulers.FunctionScheduler`)
+        *args   :   list
+                    Passed to the scheduler constructor
+        **kwargs    :   dict
+                        Passed to the scheduler constructor
+        '''
+        self._scheduler = Scheduler(self._optimizer, *args, **kwargs)
 
     def set_model(self, model_or_str):
         '''Set the model to train. This method will attempt to load from :mod:`ikkuna.models` if a
@@ -171,20 +196,21 @@ class Trainer:
         output       = self._model(data)
         loss         = self._loss_function(output, labels)
         loss.backward()
-
-        if self._lr_schedule:
-            self._optimizer.step(epoch=True)
-        else:
-            self._optimizer.step()
+        self._optimizer.step()
 
         try:
             self._next_X, self._next_Y = next(self._data_iter)
         except StopIteration:
+            if self._scheduler:
+                self._scheduler.step(epoch_finished=True)
             self._exporter.epoch_finished()
             self._batch_counter        = 0
             self._epoch               += 1
             self._data_iter            = iter(self._dataloader)
             self._next_X, self._next_Y = next(self._data_iter)
+        else:
+            if self._scheduler:
+                self._scheduler.step(epoch_finished=False)
 
         self._batch_counter  += 1
         self._global_counter += 1
