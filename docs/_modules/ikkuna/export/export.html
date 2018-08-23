@@ -170,10 +170,12 @@
 <span class="sd">                            step.  This is necessary since tensor hooks are called mutliple times.</span>
 <span class="sd">    _depth  :   int</span>
 <span class="sd">                Depth to which to traverse the module tree</span>
-
+<span class="sd">    _module_filter  :   list(torch.nn.Module)</span>
+<span class="sd">                        Set of modules to capture when calling :meth:`add_modules()`. Everything not</span>
+<span class="sd">                        in this list is ignored</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">module_filter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_modules</span>           <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_weight_cache</span>      <span class="o">=</span> <span class="p">{}</span>     <span class="c1"># potential memory hog</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_bias_cache</span>        <span class="o">=</span> <span class="p">{}</span>
@@ -190,6 +192,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_did_publish_grads</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_depth</span>             <span class="o">=</span> <span class="n">depth</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_frozen</span>            <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_module_filter</span>     <span class="o">=</span> <span class="n">module_filter</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">modules</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -268,7 +271,7 @@
 
 <div class="viewcode-block" id="Exporter.add_modules"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.add_modules">[docs]</a>    <span class="k">def</span> <span class="nf">add_modules</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Add modules to supervise. If the module has ``weight`` and/or ``bias`` members, updates</span>
-<span class="sd">        to those will be tracked.</span>
+<span class="sd">        to those will be tracked. Ignores any module in :attr:`_module_filter`.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -291,7 +294,8 @@
             <span class="n">module_tree</span> <span class="o">=</span> <span class="n">ModuleTree</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="n">recursive</span><span class="p">,</span> <span class="n">drop_name</span><span class="o">=</span><span class="n">recursive</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">named_module</span> <span class="ow">in</span> <span class="n">module_tree</span><span class="o">.</span><span class="n">preorder</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_depth</span><span class="p">):</span>
                 <span class="n">module</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">named_module</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_add_module_by_name</span><span class="p">(</span><span class="n">named_module</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_filter</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">module</span><span class="o">.</span><span class="vm">__class__</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_filter</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_add_module_by_name</span><span class="p">(</span><span class="n">named_module</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Don</span><span class="se">\&#39;</span><span class="s1">t know how to handle </span><span class="si">{module.__class__.__name__}</span><span class="s1">&#39;</span><span class="p">)</span></div>
 
