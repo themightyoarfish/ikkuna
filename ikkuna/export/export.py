@@ -62,10 +62,12 @@ class Exporter(object):
                             step.  This is necessary since tensor hooks are called mutliple times.
     _depth  :   int
                 Depth to which to traverse the module tree
-
+    _module_filter  :   list(torch.nn.Module)
+                        Set of modules to capture when calling :meth:`add_modules()`. Everything not
+                        in this list is ignored
     '''
 
-    def __init__(self, depth):
+    def __init__(self, depth, module_filter=None):
         self._modules           = {}
         self._weight_cache      = {}     # potential memory hog
         self._bias_cache        = {}
@@ -82,6 +84,7 @@ class Exporter(object):
         self._did_publish_grads = defaultdict(bool)
         self._depth             = depth
         self._frozen            = set()
+        self._module_filter     = module_filter
 
     @property
     def modules(self):
@@ -160,7 +163,7 @@ class Exporter(object):
 
     def add_modules(self, module, recursive=True):
         '''Add modules to supervise. If the module has ``weight`` and/or ``bias`` members, updates
-        to those will be tracked.
+        to those will be tracked. Ignores any module in :attr:`_module_filter`.
 
         Parameters
         ----------
@@ -183,7 +186,8 @@ class Exporter(object):
             module_tree = ModuleTree(module, name=name, recursive=recursive, drop_name=recursive)
             for named_module in module_tree.preorder(depth=self._depth):
                 module, name = named_module
-                self._add_module_by_name(named_module)
+                if self._module_filter is None or module.__class__ in self._module_filter:
+                    self._add_module_by_name(named_module)
         else:
             raise ValueError(f'Don\'t know how to handle {module.__class__.__name__}')
 
