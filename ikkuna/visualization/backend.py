@@ -355,8 +355,12 @@ class TBBackend(Backend):
     '''
 
     def __init__(self, **kwargs):
-        super().__init__(kwargs.get('title'))
-        self._writer = SummaryWriter()
+        super().__init__(kwargs.pop('title'))
+        # These Unfortunately cannot be used in tb
+        self.xlabel = kwargs.pop('xlabel')
+        self.ylabel = kwargs.pop('ylabel')
+        self.ylims  = kwargs.pop('ylims')
+        self._writer = SummaryWriter(log_dir=kwargs.pop('log_dir', 'runs'), **kwargs)
 
     def add_data(self, module_name, datum, step):
         # Unfortunately, xlabels, ylabels and plot titles are not supported
