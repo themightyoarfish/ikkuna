@@ -42,7 +42,7 @@ class TestAccuracySubscriber(PlotSubscriber):
         xlabel = 'Train step'
         subscription = Subscription(self, kinds, tag, subsample)
         super().__init__(subscription,
-                         {'title': title, 'ylabel': ylabel, 'ylims': ylims, xlabel: xlabel},
+                         {'title': title, 'ylabel': ylabel, 'ylims': ylims, 'xlabel': xlabel},
                          tag=tag, backend=backend)
 
         self._dataset_meta = dataset_meta
