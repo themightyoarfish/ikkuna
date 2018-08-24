@@ -82,8 +82,10 @@ class Subscription(object):
 
         if message.kind not in self.kinds:
             return
-
-        key = (message.module, message.kind) if isinstance(message, TrainingMessage) else message.kind
+        if isinstance(message, TrainingMessage):
+            key = (message.module, message.kind)
+        else:
+            message.kind
         if self._counter[key] % self._subsample == 0:
             self._handle_message(message)
         self._counter[key] += 1
@@ -97,7 +99,7 @@ class SynchronizedSubscription(Subscription):
     def __init__(self, subscriber, kinds, tag=None, subsample=1):
         super().__init__(subscriber, kinds, tag, subsample)
         self._current_seq = None
-        self._identifiers     = {}
+        self._identifiers = {}
         self._step        = None
 
     def _new_round(self, seq):
@@ -118,7 +120,7 @@ class SynchronizedSubscription(Subscription):
             if not bundle.complete():
                 raise RuntimeError(f'Bundle for module {bundle._module} not yet complete.')
         self._current_seq = seq
-        self._identifiers     = {}
+        self._identifiers = {}
 
     def _publish_complete(self):
         delete_these = []
@@ -153,7 +155,7 @@ class Subscriber(abc.ABC):
     insightful metrics.'''
 
     def __init__(self, subscription, tag=None):
-        self._subscription  = subscription
+        self._subscription = subscription
 
     @abc.abstractmethod
     def _metric(self, message_or_data):
@@ -174,7 +176,6 @@ class Subscriber(abc.ABC):
     def receive_message(self, message):
         '''Process a message received from an :class:`~ikkuna.export.Exporter`.'''
         self._subscription.handle_message(message)
-
 
     def process_message_bundle(self, message_bundle):
         '''Callback for processing a :class:`~ikkuna.export.messages.MessageBundle` object with
@@ -216,7 +217,7 @@ class PlotSubscriber(Subscriber):
                             full-sized (no smaller last batch)
     '''
 
-    def __init__(self, subscription,  plot_config, tag=None, backend='tb'):
+    def __init__(self, subscription, plot_config, tag=None, backend='tb'):
         '''
         Parameters
         ----------
