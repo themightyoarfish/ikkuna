@@ -82,10 +82,11 @@ class Subscription(object):
 
         if message.kind not in self.kinds:
             return
+
         if isinstance(message, TrainingMessage):
             key = (message.module, message.kind)
         else:
-            message.kind
+            key = message.kind
         if self._counter[key] % self._subsample == 0:
             self._handle_message(message)
         self._counter[key] += 1
