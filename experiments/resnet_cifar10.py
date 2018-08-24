@@ -17,6 +17,19 @@ from ikkuna.models import resnet18
 from train import Trainer
 from schedulers import FunctionScheduler
 
+
+def schedule_fn(base_lrs, batch, step, epoch):
+    if step == 32_000:
+        print('Reducing LR by 10')
+        ret = [lr / 10 for lr in base_lrs]
+    elif step == 48_000:
+        print('Reducing LR by 10 again')
+        ret = [lr / 100 for lr in base_lrs]
+    else:
+        ret = base_lrs
+    return ret
+
+
 train_config = {
     'base_lr':       0.1,
     'optimizer':     'SGD',
@@ -25,6 +38,7 @@ train_config = {
     'batch_size':    128,
     'n_iters':       64_000,
     'loss':          torch.nn.CrossEntropyLoss(),
+    'schedule':      schedule_fn,
 }
 
 
@@ -72,18 +86,6 @@ train_transforms = [Lambda(whiten), Lambda(random_flip), Lambda(pad4),
 test_transforms = [Lambda(whiten), ToTensor()]
 
 
-def schedule_fn(base_lrs, batch, step, epoch):
-    if step == 32_000:
-        print('Reducing LR by 10')
-        ret = [lr / 10 for lr in base_lrs]
-    elif step == 48_000:
-        print('Reducing LR by 10 again')
-        ret = [lr / 100 for lr in base_lrs]
-    else:
-        ret = base_lrs
-    return ret
-
-
 def initialize(m):
     # in PyTorch, all modules have a default initialization method, so you only need to override
     # specifics
@@ -107,7 +109,7 @@ def main():
     trainer.optimize(name=train_config['optimizer'], weight_decay=train_config['weight_decay'],
                      momentum=train_config['momentum'], lr=train_config['base_lr'])
     trainer.initialize(initialize)
-    trainer.set_schedule(FunctionScheduler, schedule_fn)
+    trainer.set_schedule(FunctionScheduler, train_config['schedule'])
     trainer.add_subscriber(TrainAccuracySubscriber())
     trainer.add_subscriber(TestAccuracySubscriber(dataset_test, trainer.model.forward,
                                                   frequency=2000,
@@ -121,7 +123,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-# TODO: Compute mean per pixel and subtract
-#       Make scheduler
-#       Make train loop over 64k iterations with random sampling (should be less than 2 epochs?)
