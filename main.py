@@ -22,6 +22,7 @@ import os
 #######################
 import numpy as np
 import torch
+from tqdm import tqdm
 
 #######################
 #  1st party imports  #
@@ -97,35 +98,15 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
     batches_per_epoch = trainer.batches_per_epoch
     print(f'Batches per epoch: {batches_per_epoch}')
 
+    epoch_range = range(epochs)
+    batch_range = range(batches_per_epoch)
     if kwargs['verbose']:
-        cum_time  = 0
-        n_batches = 0
+        epoch_range = tqdm(epoch_range, desc='Epoch')
+        batch_range = tqdm(batch_range, desc='Batch')
 
-    for e in range(epochs):
-        for batch_idx in range(batches_per_epoch):
-
-            if kwargs['verbose']:
-                t0 = time.time()
-
+    for e in epoch_range:
+        for batch_idx in batch_range:
             trainer.train_batch()
-
-            if kwargs['verbose']:
-                t1 = time.time()
-
-                n_batches += 1
-                cum_time  += t1 - t0
-
-                print(f'\repoch {e:>5d}/{epochs-1:<5d} '
-                      f'| batch {batch_idx:>5d}/{batches_per_epoch-1:<5d} '
-                      f'| {1. / (cum_time / n_batches):<3.1f} b/s', end='')
-
-                if batch_idx % 20 == 0:
-                    cum_time = 0
-                    n_batches = 0
-
-    if kwargs['verbose']:
-        print('')
-
 
 def get_parser():
     '''Obtain a configured argument parser. This function is necessary for the sphinx argparse
