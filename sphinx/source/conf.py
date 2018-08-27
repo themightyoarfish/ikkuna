@@ -175,24 +175,28 @@ texinfo_documents = [
 # -- Options for intersphinx extension ---------------------------------------
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'python': ('https://docs.python.org/', None),
-                       'matplotlib': ('https://matplotlib.org/', None),
-                       'torch': ('https://pytorch.org/docs/master/', None),
-                       'torchvision': ('https://pytorch.org/docs/master/', None)}
+intersphinx_mapping = {
+    'python':       ('https://docs.python.org/', None),
+    'matplotlib':   ('https://matplotlib.org/', None),
+    'torch':        ('https://pytorch.org/docs/master/', None),
+    'torchvision':  ('https://pytorch.org/docs/master/', None),
+    'tensorboardX': ('https://tensorboardx.readthedocs.io/en/latest/', None)
+}
 
-nitpick_ignore = [('py:mod', 'torchvision.datasets'),
-                  ('py:meth', 'torchvision.models.alexnet'),
-                  # These two occur when inheriting from Module. Dunno why.
-                  ('py:class', 'torch.nn.modules.module.Module'),
-                  ('py:class', 'Module'),
-                  # This happens when inheriting from Sequential
-                  ('py:class', 'torch.nn.modules.container.Sequential'),
-                  ('py:class', 'function'),
-                  ('py:class', 'torch.nn._Loss'),
-                  ('py:class', 'torch.optim.lr_scheduler._LRScheduler'),
-                  ('py:meth', 'torch.optim.lr_scheduler._LRScheduler.state_dict'),
-                  ('py:meth', 'torch.optim.lr_scheduler._LRScheduler.load_state_dict'),
-                  ]
+nitpick_ignore = [
+    ('py:mod', 'torchvision.datasets'),
+    ('py:meth', 'torchvision.models.alexnet'),
+    # These two occur when inheriting from Module. Dunno why.
+    ('py:class', 'torch.nn.modules.module.Module'),
+    ('py:class', 'Module'),
+    # This happens when inheriting from Sequential
+    ('py:class', 'torch.nn.modules.container.Sequential'),
+    ('py:class', 'function'),
+    ('py:class', 'torch.nn._Loss'),
+    ('py:class', 'torch.optim.lr_scheduler._LRScheduler'),
+    ('py:meth', 'torch.optim.lr_scheduler._LRScheduler.state_dict'),
+    ('py:meth', 'torch.optim.lr_scheduler._LRScheduler.load_state_dict'),
+]
 
 autodoc_member_order = 'bysource'
 

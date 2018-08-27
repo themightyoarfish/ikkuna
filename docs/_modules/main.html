@@ -130,6 +130,7 @@
 <span class="c1">#######################</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span>
 
 <span class="c1">#######################</span>
 <span class="c1">#  1st party imports  #</span>
@@ -205,35 +206,15 @@
     <span class="n">batches_per_epoch</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">batches_per_epoch</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Batches per epoch: </span><span class="si">{batches_per_epoch}</span><span class="s1">&#39;</span><span class="p">)</span>
 
+    <span class="n">epoch_range</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">epochs</span><span class="p">)</span>
+    <span class="n">batch_range</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">batches_per_epoch</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;verbose&#39;</span><span class="p">]:</span>
-        <span class="n">cum_time</span>  <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">n_batches</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">epoch_range</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">epoch_range</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Epoch&#39;</span><span class="p">)</span>
+        <span class="n">batch_range</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">batch_range</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Batch&#39;</span><span class="p">)</span>
 
-    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">epochs</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">batch_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">batches_per_epoch</span><span class="p">):</span>
-
-            <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;verbose&#39;</span><span class="p">]:</span>
-                <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-
-            <span class="n">trainer</span><span class="o">.</span><span class="n">train_batch</span><span class="p">()</span>
-
-            <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;verbose&#39;</span><span class="p">]:</span>
-                <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-
-                <span class="n">n_batches</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="n">cum_time</span>  <span class="o">+=</span> <span class="n">t1</span> <span class="o">-</span> <span class="n">t0</span>
-
-                <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="se">\r</span><span class="s1">epoch </span><span class="si">{e:&gt;5d}</span><span class="s1">/{epochs-1:&lt;5d} &#39;</span>
-                      <span class="n">f</span><span class="s1">&#39;| batch </span><span class="si">{batch_idx:&gt;5d}</span><span class="s1">/{batches_per_epoch-1:&lt;5d} &#39;</span>
-                      <span class="n">f</span><span class="s1">&#39;| {1. / (cum_time / n_batches):&lt;3.1f} b/s&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-
-                <span class="k">if</span> <span class="n">batch_idx</span> <span class="o">%</span> <span class="mi">20</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">cum_time</span> <span class="o">=</span> <span class="mi">0</span>
-                    <span class="n">n_batches</span> <span class="o">=</span> <span class="mi">0</span>
-
-    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;verbose&#39;</span><span class="p">]:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span></div>
-
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">epoch_range</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">batch_idx</span> <span class="ow">in</span> <span class="n">batch_range</span><span class="p">:</span>
+            <span class="n">trainer</span><span class="o">.</span><span class="n">train_batch</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="get_parser"><a class="viewcode-back" href="../main.html#main.get_parser">[docs]</a><span class="k">def</span> <span class="nf">get_parser</span><span class="p">():</span>
     <span class="sd">&#39;&#39;&#39;Obtain a configured argument parser. This function is necessary for the sphinx argparse</span>

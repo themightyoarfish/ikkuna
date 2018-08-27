@@ -58,6 +58,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../ikkuna.html">ikkuna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../main.html">main program</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../train.html">train</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../schedulers.html">schedulers module</a></li>
 </ul>
 </ul>
 </li>
@@ -114,7 +115,9 @@
 <span class="kn">from</span> <span class="nn">ikkuna.utils</span> <span class="k">import</span> <span class="n">make_fill_polygons</span>
 
 
-<div class="viewcode-block" id="Backend"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.backend.Backend">[docs]</a><span class="k">class</span> <span class="nc">Backend</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Backend</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="vm">__module__</span> <span class="o">=</span> <span class="s1">&#39;ikkuna.visualization&#39;</span>     <span class="c1"># hack to get around sphinx bugs w/ inheritance</span>
+
     <span class="sd">&#39;&#39;&#39;Base class for visualiation backends. :class:`~ikkuna.export.subscriber.Subscriber`\ s use</span>
 <span class="sd">    this class to dispatch their metrics to have them visualised.</span>
 
@@ -124,7 +127,7 @@
 <span class="sd">                The figure title</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-<div class="viewcode-block" id="Backend.__init__"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.backend.Backend.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+<div class="viewcode-block" id="Backend.__init__"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.Backend.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -133,7 +136,7 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_title</span> <span class="o">=</span> <span class="n">title</span></div>
 
-<div class="viewcode-block" id="Backend.add_data"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.backend.Backend.add_data">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+<div class="viewcode-block" id="Backend.add_data"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.Backend.add_data">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="k">def</span> <span class="nf">add_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">datum</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Display scalar data (i.e. a line plot)</span>
 
@@ -148,7 +151,7 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Backend.add_histogram"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.backend.Backend.add_histogram">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+<div class="viewcode-block" id="Backend.add_histogram"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.Backend.add_histogram">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="k">def</span> <span class="nf">add_histogram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">datum</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Display histogram data (i.e. a line plot)</span>
 
@@ -165,10 +168,10 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_title</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_title</span>
 
 
-<div class="viewcode-block" id="UpdatableHistogram"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.backend.UpdatableHistogram">[docs]</a><span class="k">class</span> <span class="nc">UpdatableHistogram</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">UpdatableHistogram</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;A utility class to wrap a single histogram subplot of a figure which can display up to a</span>
 <span class="sd">    number of histograms. New data displaces old one. This emulates tensorboard histogram traces</span>
 <span class="sd">    with matplotlib.</span>
@@ -195,7 +198,7 @@
 <span class="sd">                Plot title</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-<div class="viewcode-block" id="UpdatableHistogram.__init__"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.backend.UpdatableHistogram.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">figure</span><span class="p">,</span> <span class="n">subplot_conf</span><span class="o">=</span><span class="mi">111</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">max_hists</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">figure</span><span class="p">,</span> <span class="n">subplot_conf</span><span class="o">=</span><span class="mi">111</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">max_hists</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
                  <span class="n">basecolor</span><span class="o">=</span><span class="p">(</span><span class="mi">199</span><span class="o">/</span><span class="mi">255</span><span class="p">,</span> <span class="mi">64</span><span class="o">/</span><span class="mi">255</span><span class="p">,</span> <span class="mi">24</span><span class="o">/</span><span class="mi">255</span><span class="p">)):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parameters</span>
@@ -220,9 +223,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_hists</span>     <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_title</span>     <span class="o">=</span> <span class="n">title</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_base_r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_g</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_b</span> <span class="o">=</span> <span class="n">basecolor</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_plot</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_plot</span><span class="p">()</span>
 
-<div class="viewcode-block" id="UpdatableHistogram._prepare_plot"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.backend.UpdatableHistogram._prepare_plot">[docs]</a>    <span class="k">def</span> <span class="nf">_prepare_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_prepare_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Prepare the axes object for (re)plotting. This removes all unnecessary elements and</span>
 <span class="sd">        assigns labels.&#39;&#39;&#39;</span>
 
@@ -235,7 +238,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">w_xaxis</span><span class="o">.</span><span class="n">set_pane_color</span><span class="p">(</span><span class="n">transparent</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">w_yaxis</span><span class="o">.</span><span class="n">set_pane_color</span><span class="p">(</span><span class="n">transparent</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">w_zaxis</span><span class="o">.</span><span class="n">set_pane_color</span><span class="p">(</span><span class="n">transparent</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">w_zaxis</span><span class="o">.</span><span class="n">set_pane_color</span><span class="p">(</span><span class="n">transparent</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">figure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -245,14 +248,15 @@
     <span class="k">def</span> <span class="nf">ax</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span>
 
-<div class="viewcode-block" id="UpdatableHistogram.replot"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.backend.UpdatableHistogram.replot">[docs]</a>    <span class="k">def</span> <span class="nf">replot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">replot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Recompute all visible plots. This will remove all current plots and simply replot</span>
 <span class="sd">        ``self._hists``.</span>
 
 <span class="sd">        .. note::</span>
 
-<span class="sd">            This is not an inefficient way to update the plot; the proper ways to do this is to</span>
-<span class="sd">            simply move all current histograms one step backwards, unless the x axis changes.</span>
+<span class="sd">            This is not the most efficient way to update the plot maybe; the proper way to do this</span>
+<span class="sd">            could involve moving all current histograms one step backwards, unless the x axis</span>
+<span class="sd">            changes.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_plot</span><span class="p">()</span>
@@ -273,9 +277,9 @@
             <span class="n">collection</span> <span class="o">=</span> <span class="n">make_fill_polygons</span><span class="p">(</span><span class="n">xpos</span><span class="p">,</span> <span class="n">ypos</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
             <span class="n">collection</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
             <span class="n">collection</span><span class="o">.</span><span class="n">set_edgecolor</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">add_collection3d</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">add_collection3d</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span>
 
-<div class="viewcode-block" id="UpdatableHistogram.add_data"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.backend.UpdatableHistogram.add_data">[docs]</a>    <span class="k">def</span> <span class="nf">add_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">add_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Add data for a new histogram. Currently, the number of bins is fixed at 50. Old data is</span>
 <span class="sd">        deleted.</span>
 
@@ -285,14 +289,14 @@
 <span class="sd">                Arbitrary sequence of tensors to merge for a histogram</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="kn">import</span> <span class="nn">torch</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">X</span>           <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
         <span class="n">hist</span><span class="p">,</span> <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hists</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">hist</span><span class="p">,</span> <span class="n">edges</span><span class="p">))</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hists</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_hists</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_hists</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_hists</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="MPLBackend"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.backend.MPLBackend">[docs]</a><span class="k">class</span> <span class="nc">MPLBackend</span><span class="p">(</span><span class="n">Backend</span><span class="p">):</span>
+<div class="viewcode-block" id="MPLBackend"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.MPLBackend">[docs]</a><span class="k">class</span> <span class="nc">MPLBackend</span><span class="p">(</span><span class="n">Backend</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Matplotlib backend (use in Jupyter with ``%matplotlib inline`` or via X-forwarding over ssh</span>
 <span class="sd">    [barely useable])</span>
 
@@ -316,7 +320,7 @@
 <span class="sd">                    Size of the buffer</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-<div class="viewcode-block" id="MPLBackend.__init__"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.backend.MPLBackend.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="MPLBackend.__init__"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.MPLBackend.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -345,7 +349,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span>      <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_buffer_lim</span>  <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;buffer_size&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MPLBackend._prepare_axis"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.backend.MPLBackend._prepare_axis">[docs]</a>    <span class="k">def</span> <span class="nf">_prepare_axis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">):</span>
+<div class="viewcode-block" id="MPLBackend._prepare_axis"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.MPLBackend._prepare_axis">[docs]</a>    <span class="k">def</span> <span class="nf">_prepare_axis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Prepare the line plot axis with labels and scaling.&#39;&#39;&#39;</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xlabel</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ylabel</span><span class="p">)</span>
@@ -372,7 +376,7 @@
     <span class="k">def</span> <span class="nf">ylabel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ylabel</span> <span class="o">=</span> <span class="n">label</span>
 
-<div class="viewcode-block" id="MPLBackend._reflow_plots"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.backend.MPLBackend._reflow_plots">[docs]</a>    <span class="k">def</span> <span class="nf">_reflow_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MPLBackend._reflow_plots"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.MPLBackend._reflow_plots">[docs]</a>    <span class="k">def</span> <span class="nf">_reflow_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Reqorganize the histogram subplots into a rectangular shape. For now, the sublots are</span>
 <span class="sd">        arranged on a grid twice as high as it is wide, since vertical space is often in</span>
 <span class="sd">        abundance.</span>
@@ -390,7 +394,7 @@
                 <span class="n">axis</span> <span class="o">=</span> <span class="n">axis</span><span class="o">.</span><span class="n">ax</span>      <span class="c1"># TODO: make less ugly</span>
             <span class="n">axis</span><span class="o">.</span><span class="n">change_geometry</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MPLBackend.add_histogram"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.backend.MPLBackend.add_histogram">[docs]</a>    <span class="k">def</span> <span class="nf">add_histogram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">datum</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+<div class="viewcode-block" id="MPLBackend.add_histogram"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.MPLBackend.add_histogram">[docs]</a>    <span class="k">def</span> <span class="nf">add_histogram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">datum</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_figure</span><span class="p">:</span>
             <span class="c1"># first time? initialise</span>
@@ -401,8 +405,9 @@
         <span class="k">if</span> <span class="n">module_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_axes</span><span class="p">:</span>
             <span class="c1"># haven&#39;t seen this module_name before? make new plot for it</span>
             <span class="n">nplots</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_axes</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_axes</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">UpdatableHistogram</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_figure</span><span class="p">,</span> <span class="n">subplot_conf</span><span class="o">=</span><span class="p">(</span><span class="n">nplots</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-                                                    <span class="n">title</span><span class="o">=</span><span class="n">module_name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_axes</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">UpdatableHistogram</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_figure</span><span class="p">,</span>
+                                                         <span class="n">subplot_conf</span><span class="o">=</span><span class="p">(</span><span class="n">nplots</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                                                         <span class="n">title</span><span class="o">=</span><span class="n">module_name</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_reflow_plots</span><span class="p">()</span>
 
@@ -417,7 +422,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_figure</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">flush_events</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_figure</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="MPLBackend.add_data"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.backend.MPLBackend.add_data">[docs]</a>    <span class="k">def</span> <span class="nf">add_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">datum</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+<div class="viewcode-block" id="MPLBackend.add_data"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.MPLBackend.add_data">[docs]</a>    <span class="k">def</span> <span class="nf">add_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">datum</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_figure</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_figure</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
@@ -452,25 +457,56 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_redraw_counter</span> <span class="o">+=</span> <span class="mi">1</span></div></div>
 
 
-<div class="viewcode-block" id="TBBackend"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.backend.TBBackend">[docs]</a><span class="k">class</span> <span class="nc">TBBackend</span><span class="p">(</span><span class="n">Backend</span><span class="p">):</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+
+
+<span class="c1"># use lru cache to generate nwe result only once per experiment run</span>
+<span class="c1"># TODO: remove this hack</span>
+<span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">determine_run_index</span><span class="p">(</span><span class="n">log_dir</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">log_dir</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">subdirs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">log_dir</span><span class="p">)</span>
+        <span class="n">new_index</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">subdirs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_index</span>
+
+
+<div class="viewcode-block" id="TBBackend"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.TBBackend">[docs]</a><span class="k">class</span> <span class="nc">TBBackend</span><span class="p">(</span><span class="n">Backend</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Tensorboard backend.</span>
 
 <span class="sd">    .. note::</span>
 
 <span class="sd">        Whitespace and punctuation in the ``title`` will be replaced</span>
 <span class="sd">        with underscores due to the fact that it becomes part of a file name.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    _writer :   tensorboardX.SummaryWriter</span>
+<span class="sd">    hist_bins   :   int</span>
+<span class="sd">                    Number of bins to use for histograms</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span> <span class="o">=</span> <span class="n">SummaryWriter</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">))</span>
+        <span class="c1"># These Unfortunately cannot be used in tb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xlabel</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;xlabel&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ylabel</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;ylabel&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ylims</span>  <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;ylims&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hist_bins</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;bins&#39;</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+        <span class="n">log_dir</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;log_dir&#39;</span><span class="p">,</span> <span class="s1">&#39;runs&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="TBBackend.add_data"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.backend.TBBackend.add_data">[docs]</a>    <span class="k">def</span> <span class="nf">add_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">datum</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">determine_run_index</span><span class="p">(</span><span class="n">log_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span> <span class="o">=</span> <span class="n">SummaryWriter</span><span class="p">(</span><span class="n">log_dir</span><span class="o">=</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{log_dir}</span><span class="s1">/run</span><span class="si">{index}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TBBackend.add_data"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.TBBackend.add_data">[docs]</a>    <span class="k">def</span> <span class="nf">add_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">datum</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
         <span class="c1"># Unfortunately, xlabels, ylabels and plot titles are not supported</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">add_scalars</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.title}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="p">{</span><span class="n">module_name</span><span class="p">:</span> <span class="n">datum</span><span class="p">},</span> <span class="n">global_step</span><span class="o">=</span><span class="n">step</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="TBBackend.add_histogram"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.backend.TBBackend.add_histogram">[docs]</a>    <span class="k">def</span> <span class="nf">add_histogram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">datum</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">add_histogram</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.title}</span><span class="s1">: </span><span class="si">{module_name}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">datum</span><span class="p">,</span> <span class="n">global_step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span></div></div>
+<div class="viewcode-block" id="TBBackend.add_histogram"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.TBBackend.add_histogram">[docs]</a>    <span class="k">def</span> <span class="nf">add_histogram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">datum</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">add_histogram</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.title}</span><span class="s1">: </span><span class="si">{module_name}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">datum</span><span class="p">,</span> <span class="n">global_step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span>
+                                   <span class="n">bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hist_bins</span><span class="p">)</span></div></div>
 </pre></div>
 
     </div>

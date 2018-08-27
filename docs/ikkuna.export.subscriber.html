@@ -140,9 +140,22 @@
 <span id="module-contents"></span><h2><a class="toc-backref" href="#id2">Module contents</a><a class="headerlink" href="#module-ikkuna.export.subscriber" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="ikkuna.export.subscriber.Subscriber">
-<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">Subscriber</code><span class="sig-paren">(</span><em>subscription</em>, <em>tag=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/subscriber.html#Subscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">Subscriber</code><span class="sig-paren">(</span><em>subscription</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/subscriber.html#Subscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for receiving and processing activations, gradients and other stuff into
 insightful metrics.</p>
+<dl class="method">
+<dt id="ikkuna.export.subscriber.Subscriber.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>subscription</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/subscriber.html#Subscriber.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>subscription</strong> (<a class="reference internal" href="#ikkuna.export.subscriber.Subscription" title="ikkuna.export.subscriber.Subscription"><em>Subscription</em></a>) – </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="ikkuna.export.subscriber.Subscriber._metric">
 <code class="descname">_metric</code><span class="sig-paren">(</span><em>message_or_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/subscriber.html#Subscriber._metric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber._metric" title="Permalink to this definition">¶</a></dt>
@@ -322,41 +335,29 @@ which kinds were received in this round.</p>
 
 <dl class="class">
 <dt id="ikkuna.export.subscriber.PlotSubscriber">
-<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">PlotSubscriber</code><span class="sig-paren">(</span><em>subscription</em>, <em>plot_config</em>, <em>tag=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/subscriber.html#PlotSubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.PlotSubscriber" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">PlotSubscriber</code><span class="sig-paren">(</span><em>subscription</em>, <em>plot_config</em>, <em>backend='tb'</em>, <em>**tbx_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/subscriber.html#PlotSubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.PlotSubscriber" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for subscribers that output scalar or histogram values per time and module</p>
 <dl class="attribute">
-<dt id="ikkuna.export.subscriber.PlotSubscriber._metric_values">
-<code class="descname">_metric_values</code><a class="headerlink" href="#ikkuna.export.subscriber.PlotSubscriber._metric_values" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict(str, list)</em> – Per-module record of the scalar metric values for each batch</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.subscriber.PlotSubscriber._figure">
-<code class="descname">_figure</code><a class="headerlink" href="#ikkuna.export.subscriber.PlotSubscriber._figure" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>plt.Figure</em> – Figure to plot metric values in (will update continuously)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.subscriber.PlotSubscriber._ax">
-<code class="descname">_ax</code><a class="headerlink" href="#ikkuna.export.subscriber.PlotSubscriber._ax" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>plt.AxesSubplot</em> – Axes containing the plots</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ikkuna.export.subscriber.PlotSubscriber._batches_per_epoch">
-<code class="descname">_batches_per_epoch</code><a class="headerlink" href="#ikkuna.export.subscriber.PlotSubscriber._batches_per_epoch" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – Inferred number of batches per epoch. This relies on each epoch being
-full-sized (no smaller last batch)</p>
+<dt id="ikkuna.export.subscriber.PlotSubscriber._backend">
+<code class="descname">_backend</code><a class="headerlink" href="#ikkuna.export.subscriber.PlotSubscriber._backend" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>ikkuna.visualization.Backend</em> – Plotting backend</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="ikkuna.export.subscriber.PlotSubscriber.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>subscription</em>, <em>plot_config</em>, <em>tag=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/subscriber.html#PlotSubscriber.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.PlotSubscriber.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>subscription</em>, <em>plot_config</em>, <em>backend='tb'</em>, <em>**tbx_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/subscriber.html#PlotSubscriber.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.PlotSubscriber.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ylims</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>)</em>) – Optional Y-axis limits</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ylims</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>)</em>) – Optional Y-axis limits</li>
+<li><strong>plot_config</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Configuration parameters for plotting. Relevant keys are <code class="docutils literal notranslate"><span class="pre">title</span></code>,
+<code class="docutils literal notranslate"><span class="pre">xlabel</span></code>, <code class="docutils literal notranslate"><span class="pre">ylabel</span></code> and <code class="docutils literal notranslate"><span class="pre">ylims</span></code>. Which of them are actually used
+depends on the <a class="reference internal" href="ikkuna.visualization.html#ikkuna.visualization.Backend" title="ikkuna.visualization.Backend"><code class="xref py py-class docutils literal notranslate"><span class="pre">Backend</span></code></a></li>
+<li><strong>**tbx_params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Keywords for the <a class="reference external" href="https://tensorboardx.readthedocs.io/en/latest/tensorboard.html#tensorboardX.SummaryWriter" title="(in tensorboardX)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tensorboardX.SummaryWriter</span></code></a></li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -365,7 +366,7 @@ full-sized (no smaller last batch)</p>
 <dl class="attribute">
 <dt id="ikkuna.export.subscriber.PlotSubscriber.backend">
 <code class="descname">backend</code><a class="headerlink" href="#ikkuna.export.subscriber.PlotSubscriber.backend" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>ikkuna.visualisation.Backend</em> – The backend to use for plotting</p>
+<dd><p><em>ikkuna.visualization.Backend</em> – The backend to use for plotting</p>
 </dd></dl>
 
 </dd></dl>
@@ -385,7 +386,7 @@ computes histograms per epoch.  Histograms are non-normalized.</p>
 
 <dl class="class">
 <dt id="ikkuna.export.subscriber.RatioSubscriber">
-<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">RatioSubscriber</code><span class="sig-paren">(</span><em>kinds</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em>, <em>absolute=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/ratio.html#RatioSubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.RatioSubscriber" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">RatioSubscriber</code><span class="sig-paren">(</span><em>kinds</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em>, <em>absolute=True</em>, <em>**tbx_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/ratio.html#RatioSubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.RatioSubscriber" title="Permalink to this definition">¶</a></dt>
 <dd><p>A <a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a> which computes the average ratio between two
 quantities.  The dividend will be the first element of the
 <a class="reference internal" href="#ikkuna.export.subscriber.Subscription.kinds" title="ikkuna.export.subscriber.Subscription.kinds"><code class="xref py py-attr docutils literal notranslate"><span class="pre">kinds</span></code></a> property, the divisor the second.
@@ -393,7 +394,7 @@ Therefore it is vital to pass the message kinds to the
 <a class="reference internal" href="#ikkuna.export.subscriber.Subscription" title="ikkuna.export.subscriber.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscription</span></code></a> object in the correct order.</p>
 <dl class="method">
 <dt id="ikkuna.export.subscriber.RatioSubscriber.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>kinds</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em>, <em>absolute=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/ratio.html#RatioSubscriber.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.RatioSubscriber.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>kinds</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em>, <em>absolute=True</em>, <em>**tbx_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/ratio.html#RatioSubscriber.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.RatioSubscriber.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -415,10 +416,10 @@ to the record.</p>
 
 <dl class="class">
 <dt id="ikkuna.export.subscriber.SpectralNormSubscriber">
-<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">SpectralNormSubscriber</code><span class="sig-paren">(</span><em>kind</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/spectral_norm.html#SpectralNormSubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.SpectralNormSubscriber" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">SpectralNormSubscriber</code><span class="sig-paren">(</span><em>kind</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em>, <em>**tbx_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/spectral_norm.html#SpectralNormSubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.SpectralNormSubscriber" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="ikkuna.export.subscriber.SpectralNormSubscriber.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>kind</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/spectral_norm.html#SpectralNormSubscriber.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.SpectralNormSubscriber.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>kind</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em>, <em>**tbx_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/spectral_norm.html#SpectralNormSubscriber.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.SpectralNormSubscriber.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -443,7 +444,7 @@ merely in the singular values.</p>
 
 <dl class="class">
 <dt id="ikkuna.export.subscriber.TestAccuracySubscriber">
-<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">TestAccuracySubscriber</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>forward_fn</em>, <em>batch_size</em>, <em>frequency=100</em>, <em>ylims=None</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/test_accuracy.html#TestAccuracySubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.TestAccuracySubscriber" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">TestAccuracySubscriber</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>forward_fn</em>, <em>batch_size</em>, <em>frequency=100</em>, <em>ylims=None</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>backend='tb'</em>, <em>**tbx_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/test_accuracy.html#TestAccuracySubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.TestAccuracySubscriber" title="Permalink to this definition">¶</a></dt>
 <dd><p>Subscriber which can compute the accuracy on a given data set (generally the test/validation
 set).</p>
 <dl class="attribute">
@@ -472,14 +473,14 @@ set).</p>
 
 <dl class="method">
 <dt id="ikkuna.export.subscriber.TestAccuracySubscriber.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>forward_fn</em>, <em>batch_size</em>, <em>frequency=100</em>, <em>ylims=None</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/test_accuracy.html#TestAccuracySubscriber.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.TestAccuracySubscriber.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>forward_fn</em>, <em>batch_size</em>, <em>frequency=100</em>, <em>ylims=None</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>backend='tb'</em>, <em>**tbx_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/test_accuracy.html#TestAccuracySubscriber.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.TestAccuracySubscriber.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>dataset_meta</strong> (<a class="reference internal" href="train.html#train.DatasetMeta" title="train.DatasetMeta"><em>train.DatasetMeta</em></a>) – Test dataset</li>
-<li><strong>forward_fn</strong> (<em>function</em>) – Bound version of <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.forward" title="(in PyTorch vmaster (0.5.0a0+fcfb1c1 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.forward()</span></code></a>. This could be obtained
+<li><strong>forward_fn</strong> (<em>function</em>) – Bound version of <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.forward" title="(in PyTorch vmaster (0.5.0a0+c8b246a ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.forward()</span></code></a>. This could be obtained
 from the <a class="reference internal" href="train.html#train.Trainer.model" title="train.Trainer.model"><code class="xref py py-attr docutils literal notranslate"><span class="pre">train.Trainer.model</span></code></a> property.</li>
 <li><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Batch size to use for pushing the test data through the model. This doesn’t
 have to be the training batch size, but must be selected so that the forward
@@ -496,11 +497,11 @@ pass fits into memory.</li>
 
 <dl class="class">
 <dt id="ikkuna.export.subscriber.TrainAccuracySubscriber">
-<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">TrainAccuracySubscriber</code><span class="sig-paren">(</span><em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/train_accuracy.html#TrainAccuracySubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.TrainAccuracySubscriber" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">TrainAccuracySubscriber</code><span class="sig-paren">(</span><em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em>, <em>**tbx_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/train_accuracy.html#TrainAccuracySubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.TrainAccuracySubscriber" title="Permalink to this definition">¶</a></dt>
 <dd><p><a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a> which computes the batch accuracy.</p>
 <dl class="method">
 <dt id="ikkuna.export.subscriber.TrainAccuracySubscriber.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/train_accuracy.html#TrainAccuracySubscriber.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.TrainAccuracySubscriber.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em>, <em>**tbx_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/train_accuracy.html#TrainAccuracySubscriber.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.TrainAccuracySubscriber.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>For parameters see <a class="reference internal" href="#ikkuna.export.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotSubscriber</span></code></a></p>
 </dd></dl>
 
