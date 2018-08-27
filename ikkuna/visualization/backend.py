@@ -8,6 +8,8 @@ from ikkuna.utils import make_fill_polygons
 
 
 class Backend(abc.ABC):
+    __module__ = 'ikkuna.visualization'     # hack to get around sphinx bugs w/ inheritance
+
     '''Base class for visualiation backends. :class:`~ikkuna.export.subscriber.Subscriber`\ s use
     this class to dispatch their metrics to have them visualised.
 
@@ -144,8 +146,9 @@ class UpdatableHistogram(object):
 
         .. note::
 
-            This is not an inefficient way to update the plot; the proper ways to do this is to
-            simply move all current histograms one step backwards, unless the x axis changes.
+            This is not the most efficient way to update the plot maybe; the proper way to do this
+            could involve moving all current histograms one step backwards, unless the x axis
+            changes.
         '''
         self._ax.clear()
         self._prepare_plot()
@@ -178,7 +181,7 @@ class UpdatableHistogram(object):
                 Arbitrary sequence of tensors to merge for a histogram
         '''
         import torch
-        X = torch.cat(X).detach().cpu().numpy()
+        X           = torch.cat(X).detach().cpu().numpy()
         hist, edges = np.histogram(X, bins=50, density=True)
         self._hists.append((hist, edges))
         if len(self._hists) > self._max_hists:
@@ -294,8 +297,9 @@ class MPLBackend(Backend):
         if module_name not in self._axes:
             # haven't seen this module_name before? make new plot for it
             nplots = len(self._axes)
-            self._axes[module_name] = UpdatableHistogram(self._figure, subplot_conf=(nplots + 1, 1, 1),
-                                                    title=module_name)
+            self._axes[module_name] = UpdatableHistogram(self._figure,
+                                                         subplot_conf=(nplots + 1, 1, 1),
+                                                         title=module_name)
 
             self._reflow_plots()
 
@@ -345,6 +349,22 @@ class MPLBackend(Backend):
         self._redraw_counter += 1
 
 
+import functools
+
+
+# use lru cache to generate nwe result only once per experiment run
+# TODO: remove this hack
+@functools.lru_cache(None)
+def determine_run_index(log_dir):
+    import os
+    if not os.path.exists(log_dir):
+        return 0
+    else:
+        subdirs = os.listdir(log_dir)
+        new_index = len(subdirs)
+        return new_index
+
+
 class TBBackend(Backend):
     '''Tensorboard backend.
 
@@ -352,6 +372,12 @@ class TBBackend(Backend):
 
         Whitespace and punctuation in the ``title`` will be replaced
         with underscores due to the fact that it becomes part of a file name.
+
+    Attributes
+    ----------
+    _writer :   tensorboardX.SummaryWriter
+    hist_bins   :   int
+                    Number of bins to use for histograms
     '''
 
     def __init__(self, **kwargs):
@@ -360,11 +386,16 @@ class TBBackend(Backend):
         self.xlabel = kwargs.pop('xlabel')
         self.ylabel = kwargs.pop('ylabel')
         self.ylims  = kwargs.pop('ylims')
-        self._writer = SummaryWriter(log_dir=kwargs.pop('log_dir', 'runs'), **kwargs)
+        self.hist_bins = kwargs.pop('bins', 50)
+        log_dir = kwargs.pop('log_dir', 'runs')
+
+        index = determine_run_index(log_dir)
+        self._writer = SummaryWriter(log_dir=f'{log_dir}/run{index}', **kwargs)
 
     def add_data(self, module_name, datum, step):
         # Unfortunately, xlabels, ylabels and plot titles are not supported
         self._writer.add_scalars(f'{self.title}', {module_name: datum}, global_step=step)
 
     def add_histogram(self, module_name, datum, step):
-        self._writer.add_histogram(f'{self.title}: {module_name}', datum, global_step=step, bins=50)
+        self._writer.add_histogram(f'{self.title}: {module_name}', datum, global_step=step,
+                                   bins=self.hist_bins)
