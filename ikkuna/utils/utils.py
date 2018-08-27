@@ -1,3 +1,15 @@
+def seed_everything(seed=1234):
+    '''Set the seed for :mod:`torch`, :mod:`random`, :mod:`numpy` and :mod:`torch.cuda`, as well as
+    the ``PYTHONHASHSEED`` env var.'''
+    import random, torch, os, numpy as np       # noqa
+    # Manually seeding everything does not work completely on the GPU
+    random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    np.random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+
+
 def make_fill_polygons(xs, ys, zs):
     '''Make a set of polygons to fill the space below a line in 3d.
 

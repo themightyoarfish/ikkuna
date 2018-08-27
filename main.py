@@ -13,15 +13,10 @@ accepts the following arguments:
 #  stdlib imports  #
 ####################
 from argparse import ArgumentParser, ArgumentTypeError
-import time
-import random
-import os
 
 #######################
 #  3rd party imports  #
 #######################
-import numpy as np
-import torch
 from tqdm import tqdm
 
 #######################
@@ -32,13 +27,8 @@ from ikkuna.utils import load_dataset
 from ikkuna.export.subscriber import (RatioSubscriber, HistogramSubscriber, SpectralNormSubscriber,
                                       TestAccuracySubscriber, TrainAccuracySubscriber)
 
-# Manually seeding everything does not work completely on the GPU
-SEED = 1234
-random.seed(SEED)
-torch.manual_seed(SEED)
-torch.cuda.manual_seed_all(SEED)
-np.random.seed(SEED)
-os.environ['PYTHONHASHSEED'] = str(SEED)
+from ikkuna.utils import seed_everything
+seed_everything()
 
 
 def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
@@ -107,6 +97,7 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
     for e in epoch_range:
         for batch_idx in batch_range:
             trainer.train_batch()
+
 
 def get_parser():
     '''Obtain a configured argument parser. This function is necessary for the sphinx argparse
