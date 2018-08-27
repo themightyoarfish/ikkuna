@@ -106,7 +106,19 @@
     <div class="col-md-12 content">
       
   <h1>Source code for ikkuna.utils.utils</h1><div class="highlight"><pre>
-<div class="viewcode-block" id="make_fill_polygons"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.make_fill_polygons">[docs]</a><span></span><span class="k">def</span> <span class="nf">make_fill_polygons</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">zs</span><span class="p">):</span>
+<span></span><span class="k">def</span> <span class="nf">seed_everything</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">1234</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Set the seed for :mod:`torch`, :mod:`random`, :mod:`numpy` and :mod:`torch.cuda`, as well as</span>
+<span class="sd">    the ``PYTHONHASHSEED`` env var.&#39;&#39;&#39;</span>
+    <span class="kn">import</span> <span class="nn">random</span><span class="o">,</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>       <span class="c1"># noqa</span>
+    <span class="c1"># Manually seeding everything does not work completely on the GPU</span>
+    <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">manual_seed_all</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PYTHONHASHSEED&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="make_fill_polygons"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.make_fill_polygons">[docs]</a><span class="k">def</span> <span class="nf">make_fill_polygons</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">zs</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Make a set of polygons to fill the space below a line in 3d.</span>
 
 <span class="sd">    Returns</span>

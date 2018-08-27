@@ -121,15 +121,10 @@
 <span class="c1">#  stdlib imports  #</span>
 <span class="c1">####################</span>
 <span class="kn">from</span> <span class="nn">argparse</span> <span class="k">import</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">ArgumentTypeError</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">import</span> <span class="nn">os</span>
 
 <span class="c1">#######################</span>
 <span class="c1">#  3rd party imports  #</span>
 <span class="c1">#######################</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span>
 
 <span class="c1">#######################</span>
@@ -140,13 +135,8 @@
 <span class="kn">from</span> <span class="nn">ikkuna.export.subscriber</span> <span class="k">import</span> <span class="p">(</span><span class="n">RatioSubscriber</span><span class="p">,</span> <span class="n">HistogramSubscriber</span><span class="p">,</span> <span class="n">SpectralNormSubscriber</span><span class="p">,</span>
                                       <span class="n">TestAccuracySubscriber</span><span class="p">,</span> <span class="n">TrainAccuracySubscriber</span><span class="p">)</span>
 
-<span class="c1"># Manually seeding everything does not work completely on the GPU</span>
-<span class="n">SEED</span> <span class="o">=</span> <span class="mi">1234</span>
-<span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">SEED</span><span class="p">)</span>
-<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">SEED</span><span class="p">)</span>
-<span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">manual_seed_all</span><span class="p">(</span><span class="n">SEED</span><span class="p">)</span>
-<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">SEED</span><span class="p">)</span>
-<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PYTHONHASHSEED&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">SEED</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">ikkuna.utils</span> <span class="k">import</span> <span class="n">seed_everything</span>
+<span class="n">seed_everything</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="_main"><a class="viewcode-back" href="../main.html#main._main">[docs]</a><span class="k">def</span> <span class="nf">_main</span><span class="p">(</span><span class="n">dataset_str</span><span class="p">,</span> <span class="n">model_str</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">epochs</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -215,6 +205,7 @@
     <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">epoch_range</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">batch_idx</span> <span class="ow">in</span> <span class="n">batch_range</span><span class="p">:</span>
             <span class="n">trainer</span><span class="o">.</span><span class="n">train_batch</span><span class="p">()</span></div>
+
 
 <div class="viewcode-block" id="get_parser"><a class="viewcode-back" href="../main.html#main.get_parser">[docs]</a><span class="k">def</span> <span class="nf">get_parser</span><span class="p">():</span>
     <span class="sd">&#39;&#39;&#39;Obtain a configured argument parser. This function is necessary for the sphinx argparse</span>
