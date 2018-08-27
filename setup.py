@@ -7,7 +7,7 @@ with open('requirements.txt', mode='r') as f:
     requirements = f.read().split()
 
 setup(name='ikkuna',
-      version='0.0.1',
+      version='0.0.1.post1',
       description='Ikkuna Neural Network Monitor',
       author='Rasmus Diederichsen',
       author_email='rasmus@peltarion.com',
