@@ -21,5 +21,5 @@ setup(name='ikkuna',
                    'Intended Audience :: Developers',
                    ],
       keywords=['deep-learning pytorch neural-networks machine-learning'],
-      packages=['ikkuna'],
+      packages=setuptools.find_packages('.', include=['ikkuna.*']),
       install_requires=requirements)
