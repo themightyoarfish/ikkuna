@@ -7,7 +7,7 @@ This module contains the base definition for subscriber functionality. The
 '''
 import abc
 from collections import defaultdict
-from ikkuna.visualization import TBBackend, MPLBackend
+import ikkuna.visualization
 from ikkuna.export.messages import MessageBundle, TrainingMessage
 
 
@@ -155,7 +155,12 @@ class Subscriber(abc.ABC):
     '''Base class for receiving and processing activations, gradients and other stuff into
     insightful metrics.'''
 
-    def __init__(self, subscription, tag=None):
+    def __init__(self, subscription):
+        '''
+        Parameters
+        ----------
+        subscription    :   Subscription
+        '''
         self._subscription = subscription
 
     @abc.abstractmethod
@@ -207,36 +212,30 @@ class PlotSubscriber(Subscriber):
 
     Attributes
     ----------
-    _metric_values :    dict(str, list)
-                        Per-module record of the scalar metric values for each batch
-    _figure :   plt.Figure
-                Figure to plot metric values in (will update continuously)
-    _ax     :   plt.AxesSubplot
-                Axes containing the plots
-    _batches_per_epoch  :   int
-                            Inferred number of batches per epoch. This relies on each epoch being
-                            full-sized (no smaller last batch)
+    _backend    :   ikkuna.visualization.Backend
+                    Plotting backend
     '''
 
-    def __init__(self, subscription, plot_config, tag=None, backend='tb'):
+    def __init__(self, subscription, plot_config, backend='tb', **tbx_params):
         '''
         Parameters
         ----------
         ylims   :   tuple(int, int)
                     Optional Y-axis limits
+        plot_config :   dict
+                        Configuration parameters for plotting. Relevant keys are ``title``,
+                        ``xlabel``, ``ylabel`` and ``ylims``. Which of them are actually used
+                        depends on the :class:`~ikkuna.visualization.Backend`
+        **tbx_params    :   dict
+                            Keywords for the :class:`tensorboardX.SummaryWriter`
         '''
-        super().__init__(subscription, tag)
+        super().__init__(subscription)
 
-        if backend not in ('tb', 'mpl'):
-            raise ValueError('Backend must be "tb" or "mpl"')
-        if backend == 'tb':
-            self._backend = TBBackend(**plot_config)
-        else:
-            self._backend = MPLBackend(**plot_config)
+        self._backend = ikkuna.visualization.get_backend(backend, plot_config, **tbx_params)
 
     @property
     def backend(self):
-        '''ikkuna.visualisation.Backend: The backend to use for plotting'''
+        '''ikkuna.visualization.Backend: The backend to use for plotting'''
         return self._backend
 
     @abc.abstractmethod

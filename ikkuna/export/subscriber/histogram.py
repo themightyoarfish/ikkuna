@@ -17,7 +17,7 @@ class HistogramSubscriber(PlotSubscriber):
         subscription = SynchronizedSubscription(self, kinds, tag, subsample)
         title        = f'{kinds[0]} histogram'
         ylabel       = 'Frequency'
-        super().__init__(subscription, {'title': title, 'ylabel': ylabel}, tag=tag, backend=backend)
+        super().__init__(subscription, {'title': title, 'ylabel': ylabel}, backend=backend)
         self._buffer = defaultdict(list)
 
     def _metric(self, message_bundle):

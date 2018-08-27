@@ -13,7 +13,8 @@ class RatioSubscriber(PlotSubscriber):
     Therefore it is vital to pass the message kinds to the
     :class:`~ikkuna.export.subscriber.Subscription` object in the correct order.'''
 
-    def __init__(self, kinds, tag=None, subsample=1, ylims=None, backend='tb', absolute=True):
+    def __init__(self, kinds, tag=None, subsample=1, ylims=None, backend='tb', absolute=True,
+                 **tbx_params):
         '''
         Parameters
         ----------
@@ -28,7 +29,7 @@ class RatioSubscriber(PlotSubscriber):
                                         'ylabel': ylabel,
                                         'ylims': ylims,
                                         'xlabel': xlabel},
-                         tag=tag, backend=backend)
+                         backend=backend, **tbx_params)
         if absolute:
             self._metric_postprocess = torch.abs
         else:

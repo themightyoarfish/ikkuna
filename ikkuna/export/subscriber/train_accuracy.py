@@ -4,7 +4,7 @@ from ikkuna.export.subscriber import PlotSubscriber, SynchronizedSubscription
 class TrainAccuracySubscriber(PlotSubscriber):
     ''':class:`~ikkuna.export.subscriber.Subscriber` which computes the batch accuracy.'''
 
-    def __init__(self, tag=None, subsample=1, ylims=None, backend='tb'):
+    def __init__(self, tag=None, subsample=1, ylims=None, backend='tb', **tbx_params):
         '''
         For parameters see :class:`~ikkuna.export.subscriber.PlotSubscriber`
         '''
@@ -16,7 +16,7 @@ class TrainAccuracySubscriber(PlotSubscriber):
         ylabel = 'Accuracy'
         super().__init__(subscription,
                          {'title': title, 'xlabel': xlabel, 'ylims': ylims, 'ylabel': ylabel},
-                         tag=tag, backend=backend)
+                         backend=backend, **tbx_params)
 
     def _metric(self, message_bundle):
         Y           = message_bundle.data['network_output']

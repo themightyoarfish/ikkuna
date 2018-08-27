@@ -6,7 +6,7 @@ from ikkuna.export.subscriber import PlotSubscriber, Subscription
 
 class SpectralNormSubscriber(PlotSubscriber):
 
-    def __init__(self, kind, tag=None, subsample=1, ylims=None, backend='tb'):
+    def __init__(self, kind, tag=None, subsample=1, ylims=None, backend='tb', **tbx_params):
         '''
         Parameters
         ----------
@@ -26,7 +26,7 @@ class SpectralNormSubscriber(PlotSubscriber):
         ylabel = 'Spectral norm'
         super().__init__(subscription,
                          {'title': title, 'xlabel': xlabel, 'ylims': ylims, 'ylabel': ylabel},
-                         tag=tag, backend=backend)
+                         backend=backend, **tbx_params)
         self.u = dict()
 
     def _metric(self, message_bundle):
