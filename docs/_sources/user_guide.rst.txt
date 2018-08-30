@@ -10,8 +10,8 @@ Ikkuna is a framework for supervising the training of your PyTorch models. It is
 stupidly easy to use. It allows you to code your chosen metric once and then use
 it from any kind of model. It also comes with a few metrics out of the box
 
-Installing
-----------
+Installation
+------------
 
 Prerequisites
 .............
@@ -23,7 +23,18 @@ worry, it is a straightforward albeit somewhat time-consuming process
 
 You will need version at least 0.5.
 
-Ikkuna can then be installed with ``pip``
+.. warning::
+
+    If you install the ``torchvision`` package after installing PyTorch from
+    source, it will overwrite your PyTorch installation with an older version.
+    So if you need it, install it `from source
+    <https://github.com/pytorch/vision#installation>`_  as well or do it before
+    installing PyTorch.
+
+Installing the library
+......................
+
+``ikkuna`` can then be installed with ``pip``
 
 .. code-block:: shell
 
