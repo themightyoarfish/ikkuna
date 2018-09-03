@@ -365,6 +365,21 @@ def determine_run_index(log_dir):
         return new_index
 
 
+prefix = ''
+
+
+def configure_prefix(p):
+    '''Set a prefix to the log directory for Tensorboard.
+
+    Parameters
+    ----------
+    p   :   str
+            Prefix to the directory name. ``_runs`` will be appended by :class:`TBBackend`
+    '''
+    global prefix
+    prefix = p
+
+
 class TBBackend(Backend):
     '''Tensorboard backend.
 
@@ -387,7 +402,7 @@ class TBBackend(Backend):
         self.ylabel = kwargs.pop('ylabel')
         self.ylims  = kwargs.pop('ylims')
         self.hist_bins = kwargs.pop('bins', 50)
-        log_dir = kwargs.pop('log_dir', 'runs')
+        log_dir = prefix + '_' + kwargs.pop('log_dir', 'runs')
 
         index = determine_run_index(log_dir)
         self._writer = SummaryWriter(log_dir=f'{log_dir}/run{index}', **kwargs)

@@ -16,6 +16,8 @@ from ikkuna.utils import load_dataset
 from ikkuna.models import resnet18
 from train import Trainer
 from schedulers import FunctionScheduler
+from ikkuna.visualization import configure_prefix
+configure_prefix('resnet18_cifar10')
 
 
 def schedule_fn(base_lrs, batch, step, epoch):

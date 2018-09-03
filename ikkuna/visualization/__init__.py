@@ -1,6 +1,6 @@
-from .backend import TBBackend, MPLBackend, Backend
+from .backend import TBBackend, MPLBackend, Backend, configure_prefix
 
-__all__ = ['TBBackend', 'MPLBackend', 'Backend']
+__all__ = ['TBBackend', 'MPLBackend', 'Backend', 'configure_prefix']
 
 backend_choices = ('tb', 'mpl')
 
