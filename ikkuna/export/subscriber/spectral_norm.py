@@ -21,7 +21,7 @@ class SpectralNormSubscriber(PlotSubscriber):
             raise ValueError('SpectralNormSubscriber only accepts 1 kind')
         subscription = Subscription(self, [kind], tag, subsample)
 
-        title = f'Spectral norms of {kind} per layer'
+        title = f'Spectral norms of {kind}'
         xlabel = 'Step'
         ylabel = 'Spectral norm'
         super().__init__(subscription,

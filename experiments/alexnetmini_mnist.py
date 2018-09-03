@@ -21,7 +21,7 @@ def schedule_fn(base_lrs, batch, step, epoch):
 
 
 train_config = {
-    'base_lr':      0.01,
+    'base_lr':      0.0001,
     'optimizer':    'SGD',
     'batch_size':   256,
     'n_epochs':     30,

@@ -21,7 +21,7 @@ class RatioSubscriber(PlotSubscriber):
         absolute :  bool
                     Whether to use absolute ratio
         '''
-        title        = f'{kinds[0]}/{kinds[1]} ratios per layer'
+        title        = f'{kinds[0]}/{kinds[1]} ratio'
         ylabel       = 'Ratio'
         xlabel       = 'Train step'
         subscription = SynchronizedSubscription(self, kinds, tag, subsample)
