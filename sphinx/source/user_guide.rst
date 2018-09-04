@@ -258,3 +258,34 @@ for one module and all desired kinds. As an example, consider the
 As you can see, the :class:`~ikkuna.export.subscriber.Subscriber` initialiser
 takes a ``plot_config`` dictionary to pass along some information to the
 visualisation backend.
+
+Installing the Subscriber
+.........................
+If you want your newly defined class to be accessible throughout the current
+Python environment (system-wide, user, conda, virtualenv, whatever), you need to
+create a new project with a ``setup.py`` file like this
+
+
+.. code-block:: python
+
+    #!/usr/bin/env python
+
+    from distutils.core import setup
+    import setuptools
+
+    setup(name='<your package name>',
+        version='<version>',
+        description='<description>',
+        author='<your name',
+        author_email='<your email>',
+        packages=['<package name>'],
+        # ... any other args
+        entry_points={
+            'ikkuna.export.subscriber': [
+                'YourSubscriber = module.file:YourSubscriber',
+            ]
+        })
+
+If you then run ``python setup.py install``, you will be able to import
+``YourSubscriber`` through :mod:`ikkuna.export.subscriber` as if it had been
+shipped with the library.

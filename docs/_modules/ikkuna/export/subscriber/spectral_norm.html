@@ -129,7 +129,7 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;SpectralNormSubscriber only accepts 1 kind&#39;</span><span class="p">)</span>
         <span class="n">subscription</span> <span class="o">=</span> <span class="n">Subscription</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">[</span><span class="n">kind</span><span class="p">],</span> <span class="n">tag</span><span class="p">,</span> <span class="n">subsample</span><span class="p">)</span>
 
-        <span class="n">title</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;Spectral norms of </span><span class="si">{kind}</span><span class="s1"> per layer&#39;</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;Spectral norms of </span><span class="si">{kind}</span><span class="s1">&#39;</span>
         <span class="n">xlabel</span> <span class="o">=</span> <span class="s1">&#39;Step&#39;</span>
         <span class="n">ylabel</span> <span class="o">=</span> <span class="s1">&#39;Spectral norm&#39;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subscription</span><span class="p">,</span>

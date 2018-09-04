@@ -85,6 +85,7 @@
 <li><a class="reference internal" href="#quickstart">Quickstart</a></li>
 <li><a class="reference internal" href="#details">Details</a><ul>
 <li><a class="reference internal" href="#creating-a-new-subscriber">Creating a new Subscriber</a></li>
+<li><a class="reference internal" href="#installing-the-subscriber">Installing the Subscriber</a></li>
 </ul>
 </li>
 </ul>
@@ -150,6 +151,7 @@
 <li><a class="reference internal" href="#quickstart" id="id7">Quickstart</a></li>
 <li><a class="reference internal" href="#details" id="id8">Details</a><ul>
 <li><a class="reference internal" href="#creating-a-new-subscriber" id="id9">Creating a new Subscriber</a></li>
+<li><a class="reference internal" href="#installing-the-subscriber" id="id10">Installing the Subscriber</a></li>
 </ul>
 </li>
 </ul>
@@ -328,8 +330,8 @@ registered subscribers. This central authority is the
 <a class="reference internal" href="ikkuna.export.html#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> class. Internally, it replaces some of the
 Model’s methods with wrappers so it can be transparently informed of anything
 interesting happening. It uses PyTorch hooks (see
-<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.register_forward_hook" title="(in PyTorch vmaster (0.5.0a0+24eb5ad ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.register_forward_hook()</span></code></a> and related methods) on the
-<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+24eb5ad ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a>s it is tracking and the <a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+24eb5ad ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a>s
+<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.register_forward_hook" title="(in PyTorch vmaster (0.5.0a0+0d5e4a2 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.register_forward_hook()</span></code></a> and related methods) on the
+<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (0.5.0a0+0d5e4a2 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a>s it is tracking and the <a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+0d5e4a2 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a>s
 inside.</p>
 <p>Messages published from the <a class="reference internal" href="ikkuna.export.html#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> come in two types,
 the <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetaMessage</span></code></a> for events which are not tied
@@ -346,7 +348,7 @@ available:</p>
 </div>
 <p>Most of these topics do not come with any data attached, but for some, the
 messages <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message.data" title="ikkuna.export.messages.Message.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code></a> attribute will not be
-<code class="docutils literal notranslate"><span class="pre">None</span></code>, but contain <a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+24eb5ad ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a>s.</p>
+<code class="docutils literal notranslate"><span class="pre">None</span></code>, but contain <a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+0d5e4a2 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a>s.</p>
 <p>For <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingMessage</span></code></a>s, the following
 kinds are available:</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">DATA_KINDS</span> <span class="o">=</span> <span class="p">{</span>
@@ -387,7 +389,8 @@ messages, if no synchronisation is used, or
 <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MessageBundle" title="ikkuna.export.messages.MessageBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageBundle</span></code></a> objects which contain the data
 for one module and all desired kinds. As an example, consider the
 <a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.RatioSubscriber" title="ikkuna.export.subscriber.RatioSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">RatioSubscriber</span></code></a>:</p>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">RatioSubscriber</span><span class="p">(</span><span class="n">PlotSubscriber</span><span class="p">):</span>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span>
+<span class="k">class</span> <span class="nc">RatioSubscriber</span><span class="p">(</span><span class="n">PlotSubscriber</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;A :class:`~ikkuna.export.subscriber.Subscriber` which computes the average ratio between two</span>
 <span class="sd">    quantities.  The dividend will be the first element of the</span>
 <span class="sd">    :attr:`~ikkuna.export.subscriber.Subscription.kinds` property, the divisor the second.</span>
@@ -402,7 +405,7 @@ for one module and all desired kinds. As an example, consider the
 <span class="sd">        absolute :  bool</span>
 <span class="sd">                    Whether to use absolute ratio</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">title</span>        <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{kinds[0]}</span><span class="s1">/</span><span class="si">{kinds[1]}</span><span class="s1"> ratios per layer&#39;</span>
+        <span class="n">title</span>        <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{kinds[0]}</span><span class="s1">/</span><span class="si">{kinds[1]}</span><span class="s1"> ratio&#39;</span>
         <span class="n">ylabel</span>       <span class="o">=</span> <span class="s1">&#39;Ratio&#39;</span>
         <span class="n">xlabel</span>       <span class="o">=</span> <span class="s1">&#39;Train step&#39;</span>
         <span class="n">subscription</span> <span class="o">=</span> <span class="n">SynchronizedSubscription</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kinds</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">subsample</span><span class="p">)</span>
@@ -438,14 +441,41 @@ for one module and all desired kinds. As an example, consider the
             <span class="n">ratio_sum</span> <span class="o">=</span> <span class="n">ratio_tensor</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
         <span class="n">ratio</span> <span class="o">=</span> <span class="p">(</span><span class="n">ratio_sum</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">n_nans</span><span class="p">))</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">ratio</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;NaN value ratio for </span><span class="si">{module_name}</span><span class="s1">&#39;</span><span class="p">)</span>
-
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isneginf</span><span class="p">(</span><span class="n">ratio</span><span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;NaN | Inf | -Inf ratio encountered&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>As you can see, the <a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a> initialiser
 takes a <code class="docutils literal notranslate"><span class="pre">plot_config</span></code> dictionary to pass along some information to the
 visualisation backend.</p>
+</div>
+<div class="section" id="installing-the-subscriber">
+<h3><a class="toc-backref" href="#id10">Installing the Subscriber</a><a class="headerlink" href="#installing-the-subscriber" title="Permalink to this headline">¶</a></h3>
+<p>If you want your newly defined class to be accessible throughout the current
+Python environment (system-wide, user, conda, virtualenv, whatever), you need to
+create a new project with a <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> file like this</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="kn">from</span> <span class="nn">distutils.core</span> <span class="kn">import</span> <span class="n">setup</span>
+<span class="kn">import</span> <span class="nn">setuptools</span>
+
+<span class="n">setup</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;&lt;your package name&gt;&#39;</span><span class="p">,</span>
+    <span class="n">version</span><span class="o">=</span><span class="s1">&#39;&lt;version&gt;&#39;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;&lt;description&gt;&#39;</span><span class="p">,</span>
+    <span class="n">author</span><span class="o">=</span><span class="s1">&#39;&lt;your name&#39;</span><span class="p">,</span>
+    <span class="n">author_email</span><span class="o">=</span><span class="s1">&#39;&lt;your email&gt;&#39;</span><span class="p">,</span>
+    <span class="n">packages</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;&lt;package name&gt;&#39;</span><span class="p">],</span>
+    <span class="c1"># ... any other args</span>
+    <span class="n">entry_points</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;ikkuna.export.subscriber&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s1">&#39;YourSubscriber = module.file:YourSubscriber&#39;</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="p">})</span>
+</pre></div>
+</div>
+<p>If you then run <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">install</span></code>, you will be able to import
+<code class="docutils literal notranslate"><span class="pre">YourSubscriber</span></code> through <a class="reference internal" href="ikkuna.export.subscriber.html#module-ikkuna.export.subscriber" title="ikkuna.export.subscriber"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ikkuna.export.subscriber</span></code></a> as if it had been
+shipped with the library.</p>
 </div>
 </div>
 </div>

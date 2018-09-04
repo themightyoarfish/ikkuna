@@ -2,13 +2,18 @@
 
 from distutils.core import setup
 import setuptools  # noqa
+import os
 
 with open('requirements.txt', mode='r') as f:
     requirements = f.read().split()
 
+with open('README.md') as f:
+    readme = f.read()
+
 setup(name='ikkuna',
       version='0.0.1.post1',
       description='Ikkuna Neural Network Monitor',
+      long_description=readme,
       author='Rasmus Diederichsen',
       author_email='rasmus@peltarion.com',
       url='https://peltarion.github.io/ai_ikkuna/',
@@ -22,4 +27,15 @@ setup(name='ikkuna',
                    ],
       keywords=['deep-learning pytorch neural-networks machine-learning'],
       packages=setuptools.find_packages('.', include=['ikkuna.*']),
-      install_requires=requirements)
+      install_requires=requirements,
+      entry_points={
+          'ikkuna.export.subscriber': [
+              'HistogramSubscriber = ikkuna.export.subscriber.histogram:HistogramSubscriber',
+              'RatioSubscriber = ikkuna.export.subscriber.ratio:RatioSubscriber',
+              'SpectralNormSubscriber = ikkuna.export.subscriber.spectral_norm:SpectralNormSubscriber',
+              'TestAccuracySubscriber = ikkuna.export.subscriber.test_accuracy:TestAccuracySubscriber',
+              'TrainAccuracySubscriber = ikkuna.export.subscriber.train_accuracy:TrainAccuracySubscriber'
+          ]
+      },
+      zip_safe=False,   # don't install egg, but source
+      )
