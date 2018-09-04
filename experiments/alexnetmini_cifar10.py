@@ -14,27 +14,35 @@ from train import Trainer
 from schedulers import FunctionScheduler
 seed_everything()
 
+current_lrs = None
+
 
 def identity_schedule_fn(base_lrs, batch, step, epoch):
     return base_lrs
 
 
 def oscillating_schedule_fn(base_lrs, batch, step, epoch):
-    factor = 1 if epoch % 2 == 0 else 10
+    factor = 1 if epoch % 2 == 0 else 0.5
     return [base_lr * factor for base_lr in base_lrs]
 
 
 def good_schedule_fn(base_lrs, batch, step, epoch):
-    return [base_lr * (0.96 ** epoch) for base_lr in base_lrs]
+    '''With a base LR of 0.3 this performs to about 50% after30 epochs'''
+    global current_lrs
+    new_lrs = [base_lr * (0.96 ** epoch) for base_lr in base_lrs]
+    if new_lrs != current_lrs:
+        print('LR changed to ', new_lrs)
+    current_lrs = new_lrs
+    return new_lrs
 
 
 train_config = {
-    'base_lr':      0.2,
-    'optimizer':    'SGD',
-    'batch_size':   1024,
-    'n_epochs':     100,
-    'loss':         torch.nn.CrossEntropyLoss(),
-    'schedule':     identity_schedule_fn,
+    'base_lr':    0.3,
+    'optimizer':  'SGD',
+    'batch_size': 1024,
+    'n_epochs':   30,
+    'loss':       torch.nn.CrossEntropyLoss(),
+    'schedule':   oscillating_schedule_fn,
 }
 
 if __name__ == '__main__':
