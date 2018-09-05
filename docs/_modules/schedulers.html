@@ -110,11 +110,7 @@
 
 
 <div class="viewcode-block" id="FunctionScheduler"><a class="viewcode-back" href="../schedulers.html#schedulers.FunctionScheduler">[docs]</a><span class="k">class</span> <span class="nc">FunctionScheduler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Scheduler class. This is a ripoff from :class:`torch.optim.lr_scheduler._LRScheduler` because</span>
-<span class="sd">    PyTorch learning rate schedulers only support a resolution of epochs. The need for changing the</span>
-<span class="sd">    learning rate on a batch basis came about when reproducing the ResNet paper, as they change the</span>
-<span class="sd">    learning rate at specific time steps.&#39;&#39;&#39;</span>
-
+    <span class="sd">&#39;&#39;&#39;Scheduler class&#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">lr_fn</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{type(optimizer).__name__} is not an Optimizer&#39;</span><span class="p">)</span>
@@ -137,23 +133,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FunctionScheduler.get_lr"><a class="viewcode-back" href="../schedulers.html#schedulers.FunctionScheduler.get_lr">[docs]</a>    <span class="k">def</span> <span class="nf">get_lr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;Obtain the new learning rate.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        list</span>
-<span class="sd">            list of learning rates, one for each parameter group in the optimizer</span>
-<span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr_fn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_lrs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FunctionScheduler.step"><a class="viewcode-back" href="../schedulers.html#schedulers.FunctionScheduler.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch_finished</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;Do one train step. Calling this does *NOT* call ``step()`` on the associated optimizer.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        epoch_finished  :   bool</span>
-<span class="sd">                            Should be set to ``True`` after an epoch has ended.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">train_step</span>  <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">batch</span>       <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="n">epoch_finished</span><span class="p">:</span>

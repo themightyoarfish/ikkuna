@@ -108,7 +108,6 @@
   <h1>Source code for ikkuna.export.subscriber.ratio</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">from</span> <span class="nn">ikkuna.export.subscriber</span> <span class="k">import</span> <span class="n">PlotSubscriber</span><span class="p">,</span> <span class="n">SynchronizedSubscription</span>
 
@@ -166,8 +165,8 @@
             <span class="n">ratio_sum</span> <span class="o">=</span> <span class="n">ratio_tensor</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
         <span class="n">ratio</span> <span class="o">=</span> <span class="p">(</span><span class="n">ratio_sum</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">n_nans</span><span class="p">))</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isneginf</span><span class="p">(</span><span class="n">ratio</span><span class="p">):</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;NaN | Inf | -Inf ratio encountered&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">ratio</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;NaN value ratio for </span><span class="si">{module_name}</span><span class="s1">&#39;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">seq</span><span class="p">)</span></div></div>
 </pre></div>

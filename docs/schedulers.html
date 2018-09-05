@@ -123,10 +123,7 @@
 <dt id="schedulers.FunctionScheduler">
 <em class="property">class </em><code class="descclassname">schedulers.</code><code class="descname">FunctionScheduler</code><span class="sig-paren">(</span><em>optimizer</em>, <em>lr_fn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/schedulers.html#FunctionScheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#schedulers.FunctionScheduler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Scheduler class. This is a ripoff from <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.optim.lr_scheduler._LRScheduler</span></code> because
-PyTorch learning rate schedulers only support a resolution of epochs. The need for changing the
-learning rate on a batch basis came about when reproducing the ResNet paper, as they change the
-learning rate at specific time steps.</p>
+<p>Scheduler class</p>
 <dl class="method">
 <dt id="schedulers.FunctionScheduler.state_dict">
 <code class="descname">state_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/schedulers.html#FunctionScheduler.state_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#schedulers.FunctionScheduler.state_dict" title="Permalink to this definition">¶</a></dt>
@@ -142,32 +139,12 @@ learning rate at specific time steps.</p>
 <dl class="method">
 <dt id="schedulers.FunctionScheduler.get_lr">
 <code class="descname">get_lr</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/schedulers.html#FunctionScheduler.get_lr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#schedulers.FunctionScheduler.get_lr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Obtain the new learning rate.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of learning rates, one for each parameter group in the optimizer</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="schedulers.FunctionScheduler.step">
 <code class="descname">step</code><span class="sig-paren">(</span><em>epoch_finished=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/schedulers.html#FunctionScheduler.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#schedulers.FunctionScheduler.step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Do one train step. Calling this does <em>NOT</em> call <code class="docutils literal notranslate"><span class="pre">step()</span></code> on the associated optimizer.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>epoch_finished</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Should be set to <code class="docutils literal notranslate"><span class="pre">True</span></code> after an epoch has ended.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 </dd></dl>
 
