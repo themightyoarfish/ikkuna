@@ -1,4 +1,4 @@
-from .backend import TBBackend, MPLBackend, Backend, configure_prefix
+from .backend import TBBackend, MPLBackend, Backend, configure_prefix, set_run_info
 
 __all__ = ['TBBackend', 'MPLBackend', 'Backend', 'configure_prefix']
 

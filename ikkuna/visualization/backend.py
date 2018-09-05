@@ -379,6 +379,9 @@ def configure_prefix(p):
     global prefix
     prefix = p
 
+def set_run_info(info):
+    TBBackend.info = info
+
 
 class TBBackend(Backend):
     '''Tensorboard backend.
@@ -395,17 +398,21 @@ class TBBackend(Backend):
                     Number of bins to use for histograms
     '''
 
+    # TODO: make printing metadata non-hacky
+    info : str = ''
+
     def __init__(self, **kwargs):
         super().__init__(kwargs.pop('title'))
         # These Unfortunately cannot be used in tb
-        self.xlabel = kwargs.pop('xlabel')
-        self.ylabel = kwargs.pop('ylabel')
-        self.ylims  = kwargs.pop('ylims')
+        self.xlabel    = kwargs.pop('xlabel')
+        self.ylabel    = kwargs.pop('ylabel')
+        self.ylims     = kwargs.pop('ylims')
         self.hist_bins = kwargs.pop('bins', 50)
-        log_dir = kwargs.pop('log_dir', 'runs' if not prefix else prefix)
-
-        index = determine_run_index(log_dir)
-        self._writer = SummaryWriter(log_dir=f'{log_dir}/run{index}', **kwargs)
+        log_dir        = kwargs.pop('log_dir', 'runs' if not prefix else prefix)
+        index          = determine_run_index(log_dir)
+        log_dir        = f'{log_dir}/run{index}'
+        self._writer = SummaryWriter(log_dir, **kwargs)
+        self._writer.add_text('run_conf', TBBackend.info)
 
     def add_data(self, module_name, datum, step):
         # Unfortunately, xlabels, ylabels and plot titles are not supported
