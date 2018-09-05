@@ -8,7 +8,7 @@ This module contains the base definition for subscriber functionality. The
 import abc
 from collections import defaultdict
 import ikkuna.visualization
-from ikkuna.export.messages import MessageBundle, TrainingMessage
+from ikkuna.export.messages import MessageBundle, TrainingMessage, ALLOWED_KINDS
 
 
 class Subscription(object):
@@ -45,6 +45,8 @@ class Subscription(object):
         '''
         self._tag        = tag
         self._subscriber = subscriber
+        if not all(map(lambda k: k in ALLOWED_KINDS, kinds)):
+            raise ValueError('Unknown message kind encountered.')
         self._kinds      = kinds
         self._counter    = defaultdict(int)
         self._subsample  = subsample
