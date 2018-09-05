@@ -34,7 +34,8 @@ setup(name='ikkuna',
               'RatioSubscriber = ikkuna.export.subscriber.ratio:RatioSubscriber',
               'SpectralNormSubscriber = ikkuna.export.subscriber.spectral_norm:SpectralNormSubscriber',
               'TestAccuracySubscriber = ikkuna.export.subscriber.test_accuracy:TestAccuracySubscriber',
-              'TrainAccuracySubscriber = ikkuna.export.subscriber.train_accuracy:TrainAccuracySubscriber'
+              'TrainAccuracySubscriber = ikkuna.export.subscriber.train_accuracy:TrainAccuracySubscriber',
+              'VarianceSubscriber = ikkuna.export.subscriber.variance:VarianceSubscriber',
           ]
       },
       zip_safe=False,   # don't install egg, but source
