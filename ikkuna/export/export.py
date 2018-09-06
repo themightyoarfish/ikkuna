@@ -57,9 +57,6 @@ class Exporter(object):
                 Current epoch
     _is_training    :   bool
                         Flag enabling/disabling some messages during testing
-    _did_publish_grads  :   defaultdict(bool)
-                            Record for whether gradients have already been published at this train
-                            step.  This is necessary since tensor hooks are called mutliple times.
     _depth  :   int
                 Depth to which to traverse the module tree
     _module_filter  :   list(torch.nn.Module)
@@ -81,7 +78,6 @@ class Exporter(object):
         self._train_step        = -1
         self._global_step       = -1
         self._is_training       = True
-        self._did_publish_grads = defaultdict(bool)
         self._depth             = depth
         self._frozen            = set()
         self._module_filter     = module_filter
@@ -129,7 +125,7 @@ class Exporter(object):
         if not has_weight and not has_bias:
             return
 
-        # For some reason, registered tensor hooks are called twicein my setup. Maybe this means
+        # For some reason, registered tensor hooks are called twice in my setup. Maybe this means
         # that the gradient is computed twice, because the grad tensors are identical. Not sure why
         # this is so.
         # cache weight and bias gradients and only call new_gradients when both are received
@@ -140,22 +136,20 @@ class Exporter(object):
         # They also check whether we grads were already published at this train step and do nothing
         # in that case.
         def weight_hook(grad):
-            if self._did_publish_grads[module]:
-                return
-            else:
-                grad_cache['weight'] = grad
-                if not has_bias or grad_cache['bias'] is not None:
-                    self.new_gradients(module, (grad_cache['weight'], grad_cache['bias']))
-                    self._did_publish_grads[module] = True
+            if grad_cache['weight']:
+                raise RuntimeError(f'Already received weight gradients for {named_module.name}')
+            grad_cache['weight'] = grad
+            if not has_bias or grad_cache['bias'] is not None:
+                self.new_gradients(module, (grad_cache['weight'], grad_cache['bias']))
+                grad_cache['weight'] = grad_cache['bias'] = None
 
         def bias_hook(grad):
-            if self._did_publish_grads[module]:
-                return
-            else:
-                grad_cache['bias'] = grad
-                if not has_bias or grad_cache['weight'] is not None:
-                    self.new_gradients(module, (grad_cache['weight'], grad_cache['bias']))
-                    self._did_publish_grads[module] = True
+            if grad_cache['bias']:
+                raise RuntimeError(f'Already received bias gradients for {named_module.name}')
+            grad_cache['bias'] = grad
+            if not has_bias or grad_cache['weight'] is not None:
+                self.new_gradients(module, (grad_cache['weight'], grad_cache['bias']))
+                grad_cache['weight'] = grad_cache['bias'] = None
 
         if has_bias:
             module.bias.register_hook(bias_hook)
@@ -187,7 +181,10 @@ class Exporter(object):
             for named_module in module_tree.preorder(depth=self._depth):
                 module, name = named_module
                 if self._module_filter is None or module.__class__ in self._module_filter:
+                    print('Adding ', name)
                     self._add_module_by_name(named_module)
+                else:
+                    print('Skipping ', name)
         else:
             raise ValueError(f'Don\'t know how to handle {module.__class__.__name__}')
 
@@ -327,7 +324,6 @@ class Exporter(object):
         gradients    :   tuple(torch.Tensor, torch.Tensor)
                         The gradients w.r.t weight and bias.
         '''
-        # For some reason, the grad hooks get called twice per step, so only export the first time
         self.publish_training('weight_gradients', module, gradients[0])
 
         if gradients[1] is not None:
@@ -393,7 +389,6 @@ class Exporter(object):
 
         self.publish_meta('batch_finished')
 
-        self._did_publish_grads.clear()
 
     def _freeze_module(self, named_module):
         '''Convenience method for freezing training for a module.

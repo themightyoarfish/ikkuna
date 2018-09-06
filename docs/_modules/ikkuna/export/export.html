@@ -165,9 +165,6 @@
 <span class="sd">                Current epoch</span>
 <span class="sd">    _is_training    :   bool</span>
 <span class="sd">                        Flag enabling/disabling some messages during testing</span>
-<span class="sd">    _did_publish_grads  :   defaultdict(bool)</span>
-<span class="sd">                            Record for whether gradients have already been published at this train</span>
-<span class="sd">                            step.  This is necessary since tensor hooks are called mutliple times.</span>
 <span class="sd">    _depth  :   int</span>
 <span class="sd">                Depth to which to traverse the module tree</span>
 <span class="sd">    _module_filter  :   list(torch.nn.Module)</span>
@@ -189,7 +186,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span>        <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span>       <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_training</span>       <span class="o">=</span> <span class="kc">True</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_did_publish_grads</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_depth</span>             <span class="o">=</span> <span class="n">depth</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_frozen</span>            <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_module_filter</span>     <span class="o">=</span> <span class="n">module_filter</span>
@@ -237,7 +233,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">has_weight</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_bias</span><span class="p">:</span>
             <span class="k">return</span>
 
-        <span class="c1"># For some reason, registered tensor hooks are called twicein my setup. Maybe this means</span>
+        <span class="c1"># For some reason, registered tensor hooks are called twice in my setup. Maybe this means</span>
         <span class="c1"># that the gradient is computed twice, because the grad tensors are identical. Not sure why</span>
         <span class="c1"># this is so.</span>
         <span class="c1"># cache weight and bias gradients and only call new_gradients when both are received</span>
@@ -248,22 +244,20 @@
         <span class="c1"># They also check whether we grads were already published at this train step and do nothing</span>
         <span class="c1"># in that case.</span>
         <span class="k">def</span> <span class="nf">weight_hook</span><span class="p">(</span><span class="n">grad</span><span class="p">):</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_did_publish_grads</span><span class="p">[</span><span class="n">module</span><span class="p">]:</span>
-                <span class="k">return</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">grad_cache</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grad</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">has_bias</span> <span class="ow">or</span> <span class="n">grad_cache</span><span class="p">[</span><span class="s1">&#39;bias&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">new_gradients</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="p">(</span><span class="n">grad_cache</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">],</span> <span class="n">grad_cache</span><span class="p">[</span><span class="s1">&#39;bias&#39;</span><span class="p">]))</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_did_publish_grads</span><span class="p">[</span><span class="n">module</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="n">grad_cache</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Already received weight gradients for </span><span class="si">{named_module.name}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">grad_cache</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grad</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">has_bias</span> <span class="ow">or</span> <span class="n">grad_cache</span><span class="p">[</span><span class="s1">&#39;bias&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">new_gradients</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="p">(</span><span class="n">grad_cache</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">],</span> <span class="n">grad_cache</span><span class="p">[</span><span class="s1">&#39;bias&#39;</span><span class="p">]))</span>
+                <span class="n">grad_cache</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grad_cache</span><span class="p">[</span><span class="s1">&#39;bias&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">def</span> <span class="nf">bias_hook</span><span class="p">(</span><span class="n">grad</span><span class="p">):</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_did_publish_grads</span><span class="p">[</span><span class="n">module</span><span class="p">]:</span>
-                <span class="k">return</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">grad_cache</span><span class="p">[</span><span class="s1">&#39;bias&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grad</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">has_bias</span> <span class="ow">or</span> <span class="n">grad_cache</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">new_gradients</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="p">(</span><span class="n">grad_cache</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">],</span> <span class="n">grad_cache</span><span class="p">[</span><span class="s1">&#39;bias&#39;</span><span class="p">]))</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_did_publish_grads</span><span class="p">[</span><span class="n">module</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="n">grad_cache</span><span class="p">[</span><span class="s1">&#39;bias&#39;</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Already received bias gradients for </span><span class="si">{named_module.name}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">grad_cache</span><span class="p">[</span><span class="s1">&#39;bias&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grad</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">has_bias</span> <span class="ow">or</span> <span class="n">grad_cache</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">new_gradients</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="p">(</span><span class="n">grad_cache</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">],</span> <span class="n">grad_cache</span><span class="p">[</span><span class="s1">&#39;bias&#39;</span><span class="p">]))</span>
+                <span class="n">grad_cache</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grad_cache</span><span class="p">[</span><span class="s1">&#39;bias&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="n">has_bias</span><span class="p">:</span>
             <span class="n">module</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">register_hook</span><span class="p">(</span><span class="n">bias_hook</span><span class="p">)</span>
@@ -295,7 +289,10 @@
             <span class="k">for</span> <span class="n">named_module</span> <span class="ow">in</span> <span class="n">module_tree</span><span class="o">.</span><span class="n">preorder</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_depth</span><span class="p">):</span>
                 <span class="n">module</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">named_module</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_filter</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">module</span><span class="o">.</span><span class="vm">__class__</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_filter</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Adding &#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_add_module_by_name</span><span class="p">(</span><span class="n">named_module</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Skipping &#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Don</span><span class="se">\&#39;</span><span class="s1">t know how to handle </span><span class="si">{module.__class__.__name__}</span><span class="s1">&#39;</span><span class="p">)</span></div>
 
@@ -435,7 +432,6 @@
 <span class="sd">        gradients    :   tuple(torch.Tensor, torch.Tensor)</span>
 <span class="sd">                        The gradients w.r.t weight and bias.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="c1"># For some reason, the grad hooks get called twice per step, so only export the first time</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">publish_training</span><span class="p">(</span><span class="s1">&#39;weight_gradients&#39;</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">gradients</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="n">gradients</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -499,9 +495,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span>  <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">publish_meta</span><span class="p">(</span><span class="s1">&#39;batch_finished&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">publish_meta</span><span class="p">(</span><span class="s1">&#39;batch_finished&#39;</span><span class="p">)</span></div>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_did_publish_grads</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Exporter._freeze_module"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter._freeze_module">[docs]</a>    <span class="k">def</span> <span class="nf">_freeze_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">named_module</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Convenience method for freezing training for a module.</span>
