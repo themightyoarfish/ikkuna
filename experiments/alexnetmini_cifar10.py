@@ -7,7 +7,8 @@ from ikkuna.utils import load_dataset, seed_everything
 seed_everything()
 
 from ikkuna.export.subscriber import (TrainAccuracySubscriber, TestAccuracySubscriber,
-                                      SpectralNormSubscriber, RatioSubscriber, VarianceSubscriber)
+                                      SpectralNormSubscriber, RatioSubscriber, VarianceSubscriber,
+                                      NormSubscriber)
 from ikkuna.export import Exporter
 from ikkuna.models import AlexNetMini
 from ikkuna.visualization import configure_prefix
@@ -19,18 +20,21 @@ current_lrs = None
 
 
 def identity_schedule_fn(base_lrs, batch, step, epoch):
+    '''With a base LR of 0.35 this performs to about 50% after 50 epochs'''
     return base_lrs
 
 
 def oscillating_schedule_fn(base_lrs, batch, step, epoch):
+    '''With a base LR of 0.35 this performs to about 25% after 50 epochs'''
     factor = 1 if epoch % 2 == 0 else 0.5
     return [base_lr * factor for base_lr in base_lrs]
 
 
 def good_schedule_fn(base_lrs, batch, step, epoch):
-    '''With a base LR of 0.3 this performs to about 50% after30 epochs'''
+    '''Exponential decay with 0.98.
+    With a base LR of 0.35 this performs to about 54% after 50 epochs'''
     global current_lrs
-    new_lrs = [base_lr * (0.96 ** epoch) for base_lr in base_lrs]
+    new_lrs = [base_lr * (0.98 ** epoch) for base_lr in base_lrs]
     if new_lrs != current_lrs:
         print('LR changed to ', new_lrs)
     current_lrs = new_lrs
@@ -72,6 +76,8 @@ def main():
     trainer.add_subscriber(SpectralNormSubscriber('weight_gradients'))
     trainer.add_subscriber(RatioSubscriber(['weight_updates', 'weights']))
     trainer.add_subscriber(VarianceSubscriber(['weight_updates']))
+    trainer.add_subscriber(NormSubscriber(['weights']))
+    trainer.add_subscriber(NormSubscriber(['weight_gradients']))
 
     batches_per_epoch = trainer.batches_per_epoch
     epochs = train_config['n_epochs']
