@@ -110,7 +110,14 @@
 
 
 <div class="viewcode-block" id="FunctionScheduler"><a class="viewcode-back" href="../schedulers.html#schedulers.FunctionScheduler">[docs]</a><span class="k">class</span> <span class="nc">FunctionScheduler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Scheduler class&#39;&#39;&#39;</span>
+    <span class="sd">&#39;&#39;&#39;Scheduler class. This is a rip-off from torch&#39;s _LRScheduler base class which instead of</span>
+<span class="sd">    working batch wise has support for both batch and epoch granularity.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        You must call :meth:`step()` on this as well, not only on the Optimizer (just like PyTorch)</span>
+<span class="sd">        schedulers.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">lr_fn</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{type(optimizer).__name__} is not an Optimizer&#39;</span><span class="p">)</span>

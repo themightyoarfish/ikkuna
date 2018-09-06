@@ -2,7 +2,14 @@ from torch.optim import Optimizer
 
 
 class FunctionScheduler(object):
-    '''Scheduler class'''
+    '''Scheduler class. This is a rip-off from torch's _LRScheduler base class which instead of
+    working batch wise has support for both batch and epoch granularity.
+
+    .. note::
+
+        You must call :meth:`step()` on this as well, not only on the Optimizer (just like PyTorch)
+        schedulers.
+    '''
     def __init__(self, optimizer, lr_fn):
         if not isinstance(optimizer, Optimizer):
             raise TypeError(f'{type(optimizer).__name__} is not an Optimizer')

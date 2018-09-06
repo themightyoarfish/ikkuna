@@ -123,7 +123,13 @@
 <dt id="schedulers.FunctionScheduler">
 <em class="property">class </em><code class="descclassname">schedulers.</code><code class="descname">FunctionScheduler</code><span class="sig-paren">(</span><em>optimizer</em>, <em>lr_fn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/schedulers.html#FunctionScheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#schedulers.FunctionScheduler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Scheduler class</p>
+<p>Scheduler class. This is a rip-off from torch’s _LRScheduler base class which instead of
+working batch wise has support for both batch and epoch granularity.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You must call <a class="reference internal" href="#schedulers.FunctionScheduler.step" title="schedulers.FunctionScheduler.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> on this as well, not only on the Optimizer (just like PyTorch)
+schedulers.</p>
+</div>
 <dl class="method">
 <dt id="schedulers.FunctionScheduler.state_dict">
 <code class="descname">state_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/schedulers.html#FunctionScheduler.state_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#schedulers.FunctionScheduler.state_dict" title="Permalink to this definition">¶</a></dt>
