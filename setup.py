@@ -38,6 +38,7 @@ setup(name='ikkuna',
               'VarianceSubscriber = ikkuna.export.subscriber.variance:VarianceSubscriber',
               'SumSubscriber = ikkuna.export.subscriber.sum:SumSubscriber',
               'NormSubscriber = ikkuna.export.subscriber.norm:NormSubscriber',
+              'MeanSubscriber = ikkuna.export.subscriber.mean:MeanSubscriber',
           ]
       },
       zip_safe=False,   # don't install egg, but source
