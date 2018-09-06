@@ -36,6 +36,8 @@ setup(name='ikkuna',
               'TestAccuracySubscriber = ikkuna.export.subscriber.test_accuracy:TestAccuracySubscriber',
               'TrainAccuracySubscriber = ikkuna.export.subscriber.train_accuracy:TrainAccuracySubscriber',
               'VarianceSubscriber = ikkuna.export.subscriber.variance:VarianceSubscriber',
+              'SumSubscriber = ikkuna.export.subscriber.sum:SumSubscriber',
+              'NormSubscriber = ikkuna.export.subscriber.norm:NormSubscriber',
           ]
       },
       zip_safe=False,   # don't install egg, but source
