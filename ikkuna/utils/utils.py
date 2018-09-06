@@ -1,15 +1,10 @@
 def seed_everything(seed=1234):
     '''Set the seed for :mod:`torch`, :mod:`random`, :mod:`numpy` and :mod:`torch.cuda`, as well as
-    the ``PYTHONHASHSEED`` env var.
+    the ``PYTHONHASHSEED`` env var. It also configures CuDNN to use deterministic mode.
 
     .. warning::
 
-        It seems that some amount of indeterminism persists when using CUDA. While results are
-        reproducible on the CPU, small deviations are introduced by the GPU. My theory based on
-        second-hand information is that the order of reductions operations in the context of CUDA
-        threads is not really deterministic. Since floating point math is not perfectly associative,
-        the order with which reductions are performed on the individual threads's outputs is not
-        guaranteed.
+        Setting the CuDNN backend to deterministic mode potentially incurs a performance penalty
 
     Parameters
     ----------
@@ -17,10 +12,10 @@ def seed_everything(seed=1234):
                 Seed value to use.
     '''
     import random, torch, os, numpy as np       # noqa
-    # Manually seeding everything does not work completely on the GPU
     random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.deterministic = True
     np.random.seed(seed)
     os.environ['PYTHONHASHSEED'] = str(seed)
 
