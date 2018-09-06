@@ -415,6 +415,11 @@ computes histograms per epoch.  Histograms are non-normalized.</p>
 </dd></dl>
 
 <dl class="class">
+<dt id="ikkuna.export.subscriber.NormSubscriber">
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">NormSubscriber</code><span class="sig-paren">(</span><em>kinds</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em>, <em>order=2</em>, <em>**tbx_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/norm.html#NormSubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.NormSubscriber" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
 <dt id="ikkuna.export.subscriber.RatioSubscriber">
 <em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">RatioSubscriber</code><span class="sig-paren">(</span><em>kinds</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em>, <em>absolute=True</em>, <em>**tbx_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/ratio.html#RatioSubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.RatioSubscriber" title="Permalink to this definition">¶</a></dt>
 <dd><p>A <a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a> which computes the average ratio between two
@@ -473,6 +478,11 @@ merely in the singular values.</p>
 </dd></dl>
 
 <dl class="class">
+<dt id="ikkuna.export.subscriber.SumSubscriber">
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">SumSubscriber</code><span class="sig-paren">(</span><em>kinds</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em>, <em>**tbx_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/sum.html#SumSubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.SumSubscriber" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
 <dt id="ikkuna.export.subscriber.TestAccuracySubscriber">
 <em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">TestAccuracySubscriber</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>forward_fn</em>, <em>batch_size</em>, <em>frequency=100</em>, <em>ylims=None</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>backend='tb'</em>, <em>**tbx_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/test_accuracy.html#TestAccuracySubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.TestAccuracySubscriber" title="Permalink to this definition">¶</a></dt>
 <dd><p>Subscriber which can compute the accuracy on a given data set (generally the test/validation
@@ -510,7 +520,7 @@ set).</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>dataset_meta</strong> (<a class="reference internal" href="train.html#train.DatasetMeta" title="train.DatasetMeta"><em>train.DatasetMeta</em></a>) – Test dataset</li>
-<li><strong>forward_fn</strong> (<em>function</em>) – Bound version of <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.forward" title="(in PyTorch vmaster (0.5.0a0+b7cd4b6 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.forward()</span></code></a>. This could be obtained
+<li><strong>forward_fn</strong> (<em>function</em>) – Bound version of <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.forward" title="(in PyTorch vmaster (0.5.0a0+bb7d183 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.forward()</span></code></a>. This could be obtained
 from the <a class="reference internal" href="train.html#train.Trainer.model" title="train.Trainer.model"><code class="xref py py-attr docutils literal notranslate"><span class="pre">train.Trainer.model</span></code></a> property.</li>
 <li><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Batch size to use for pushing the test data through the model. This doesn’t
 have to be the training batch size, but must be selected so that the forward
