@@ -47,7 +47,8 @@ extensions = [
     # 'sphinx_autodoc_typehints',   # currently unpippable May 07, 2018
     'sphinx.ext.napoleon',
     'sphinxarg.ext',
-    'sphinx.ext.viewcode'
+    'sphinx.ext.viewcode',
+    'sphinx.ext.inheritance_diagram',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
