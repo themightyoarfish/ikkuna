@@ -12,7 +12,7 @@ from ikkuna.export.subscriber import (TrainAccuracySubscriber, TestAccuracySubsc
 from ikkuna.export import Exporter
 from ikkuna.models import AlexNetMini
 from ikkuna.visualization import configure_prefix
-configure_prefix('alexnet')
+configure_prefix('alexnet_cifar10')
 from train import Trainer
 from schedulers import FunctionScheduler
 
@@ -42,12 +42,12 @@ def good_schedule_fn(base_lrs, batch, step, epoch):
 
 
 train_config = {
-    'base_lr':    0.35,
+    'base_lr':    0.05,
     'optimizer':  'SGD',
     'batch_size': 1024,
     'n_epochs':   50,
     'loss':       torch.nn.CrossEntropyLoss(),
-    'schedule':   good_schedule_fn,
+    'schedule':   oscillating_schedule_fn,
 }
 
 if __name__ == '__main__':
