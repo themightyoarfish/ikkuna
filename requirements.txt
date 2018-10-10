@@ -2,6 +2,7 @@ sphinx_bootstrap_theme>=0.6.5
 matplotlib>=2.2.0
 numpy>=1.15.0
 sphinx>=1.7.5
+sphinx-argparse>=0.2.2
 tensorboardX
 tqdm>=4.24.0
 Cython>=0.28.5
