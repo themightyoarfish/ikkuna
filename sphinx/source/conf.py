@@ -197,6 +197,8 @@ nitpick_ignore = [
     ('py:class', 'torch.optim.lr_scheduler._LRScheduler'),
     ('py:meth', 'torch.optim.lr_scheduler._LRScheduler.state_dict'),
     ('py:meth', 'torch.optim.lr_scheduler._LRScheduler.load_state_dict'),
+    ('py:class', 'tensorboardX.SummaryWriter'),
+    ('py:class', 'ikkuna.visualization.backend.Backend')
 ]
 
 autodoc_member_order = 'bysource'

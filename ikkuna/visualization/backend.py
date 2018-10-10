@@ -8,8 +8,6 @@ from ikkuna.utils import make_fill_polygons
 
 
 class Backend(abc.ABC):
-    __module__ = 'ikkuna.visualization'     # hack to get around sphinx bugs w/ inheritance
-
     '''Base class for visualiation backends. :class:`~ikkuna.export.subscriber.Subscriber`\ s use
     this class to dispatch their metrics to have them visualised.
 
