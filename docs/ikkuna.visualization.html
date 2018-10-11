@@ -141,7 +141,7 @@
 <dl class="class">
 <dt id="ikkuna.visualization.TBBackend">
 <em class="property">class </em><code class="descclassname">ikkuna.visualization.</code><code class="descname">TBBackend</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/visualization/backend.html#TBBackend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.visualization.TBBackend" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ikkuna.visualization.Backend" title="ikkuna.visualization.Backend"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.visualization.Backend</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.visualization.backend.Backend</span></code></p>
 <p>Tensorboard backend.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -175,7 +175,7 @@ with underscores due to the fact that it becomes part of a file name.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of module which emitted the data</li>
-<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+656e81d ))"><em>torch.Tensor</em></a>) – Payload</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+dcd9d73 ))"><em>torch.Tensor</em></a>) – Payload</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
 </ul>
 </td>
@@ -194,7 +194,7 @@ with underscores due to the fact that it becomes part of a file name.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of module which emitted the data</li>
-<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+656e81d ))"><em>torch.Tensor</em></a>) – Payload, not the histogram itself</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+dcd9d73 ))"><em>torch.Tensor</em></a>) – Payload, not the histogram itself</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
 </ul>
 </td>
@@ -208,7 +208,7 @@ with underscores due to the fact that it becomes part of a file name.</p>
 <dl class="class">
 <dt id="ikkuna.visualization.MPLBackend">
 <em class="property">class </em><code class="descclassname">ikkuna.visualization.</code><code class="descname">MPLBackend</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/visualization/backend.html#MPLBackend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.visualization.MPLBackend" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ikkuna.visualization.Backend" title="ikkuna.visualization.Backend"><code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.visualization.Backend</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ikkuna.visualization.backend.Backend</span></code></p>
 <p>Matplotlib backend (use in Jupyter with <code class="docutils literal notranslate"><span class="pre">%matplotlib</span> <span class="pre">inline</span></code> or via X-forwarding over ssh
 [barely useable])</p>
 <dl class="attribute">
@@ -321,7 +321,7 @@ abundance.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of module which emitted the data</li>
-<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+656e81d ))"><em>torch.Tensor</em></a>) – Payload, not the histogram itself</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+dcd9d73 ))"><em>torch.Tensor</em></a>) – Payload, not the histogram itself</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
 </ul>
 </td>
@@ -340,7 +340,7 @@ abundance.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of module which emitted the data</li>
-<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+656e81d ))"><em>torch.Tensor</em></a>) – Payload</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+dcd9d73 ))"><em>torch.Tensor</em></a>) – Payload</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
 </ul>
 </td>
@@ -353,8 +353,16 @@ abundance.</p>
 
 <dl class="class">
 <dt id="ikkuna.visualization.Backend">
-<em class="property">class </em><code class="descclassname">ikkuna.visualization.</code><code class="descname">Backend</code><span class="sig-paren">(</span><em>title</em><span class="sig-paren">)</span><a class="headerlink" href="#ikkuna.visualization.Backend" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ikkuna.visualization.</code><code class="descname">Backend</code><span class="sig-paren">(</span><em>title</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/visualization/backend.html#Backend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.visualization.Backend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<p>Base class for visualiation backends. <a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a>s use
+this class to dispatch their metrics to have them visualised.</p>
+<dl class="attribute">
+<dt id="ikkuna.visualization.Backend.title">
+<code class="descname">title</code><a class="headerlink" href="#ikkuna.visualization.Backend.title" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – The figure title</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="ikkuna.visualization.Backend.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>title</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/visualization/backend.html#Backend.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.visualization.Backend.__init__" title="Permalink to this definition">¶</a></dt>
@@ -378,7 +386,7 @@ abundance.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of module which emitted the data</li>
-<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+656e81d ))"><em>torch.Tensor</em></a>) – Payload</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+dcd9d73 ))"><em>torch.Tensor</em></a>) – Payload</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
 </ul>
 </td>
@@ -397,7 +405,7 @@ abundance.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of module which emitted the data</li>
-<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (0.5.0a0+656e81d ))"><em>torch.Tensor</em></a>) – Payload, not the histogram itself</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+dcd9d73 ))"><em>torch.Tensor</em></a>) – Payload, not the histogram itself</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
 </ul>
 </td>
@@ -407,8 +415,8 @@ abundance.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ikkuna.visualization.Backend.title">
-<code class="descname">title</code><a class="headerlink" href="#ikkuna.visualization.Backend.title" title="Permalink to this definition">¶</a></dt>
+<dt>
+<code class="descname">title</code></dt>
 <dd></dd></dl>
 
 </dd></dl>
