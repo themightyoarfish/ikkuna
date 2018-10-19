@@ -401,6 +401,10 @@ class TBBackend(Backend):
 
     def __init__(self, **kwargs):
         super().__init__(kwargs.pop('title'))
+        # remove args incompatible with TB
+        kwargs.pop('xlabel', None)
+        kwargs.pop('ylabel', None)
+        kwargs.pop('ylims', None)
         self._hist_bins = kwargs.pop('bins', 50)
         log_dir         = kwargs.pop('log_dir', 'runs' if not prefix else prefix)
         index           = determine_run_index(log_dir)
