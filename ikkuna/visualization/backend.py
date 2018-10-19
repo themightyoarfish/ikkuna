@@ -401,15 +401,11 @@ class TBBackend(Backend):
 
     def __init__(self, **kwargs):
         super().__init__(kwargs.pop('title'))
-        # These Unfortunately cannot be used in tb
-        self.xlabel    = kwargs.pop('xlabel')
-        self.ylabel    = kwargs.pop('ylabel')
-        self.ylims     = kwargs.pop('ylims')
-        self.hist_bins = kwargs.pop('bins', 50)
-        log_dir        = kwargs.pop('log_dir', 'runs' if not prefix else prefix)
-        index          = determine_run_index(log_dir)
-        log_dir        = f'{log_dir}/run{index}'
-        self._writer = SummaryWriter(log_dir, **kwargs)
+        self._hist_bins = kwargs.pop('bins', 50)
+        log_dir         = kwargs.pop('log_dir', 'runs' if not prefix else prefix)
+        index           = determine_run_index(log_dir)
+        log_dir         = f'{log_dir}/run{index}'
+        self._writer    = SummaryWriter(log_dir, **kwargs)
         self._writer.add_text('run_conf', TBBackend.info)
 
     def add_data(self, module_name, datum, step):
@@ -418,4 +414,4 @@ class TBBackend(Backend):
 
     def add_histogram(self, module_name, datum, step):
         self._writer.add_histogram(f'{self.title}: {module_name}', datum, global_step=step,
-                                   bins=self.hist_bins)
+                                   bins=self._hist_bins)
