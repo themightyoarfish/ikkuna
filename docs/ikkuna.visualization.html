@@ -7,11 +7,12 @@
     <title>ikkuna.visualization &#8212; ikkuna 0 documentation</title>
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
@@ -151,13 +152,28 @@ with underscores due to the fact that it becomes part of a file name.</p>
 <dl class="attribute">
 <dt id="ikkuna.visualization.TBBackend._writer">
 <code class="descname">_writer</code><a class="headerlink" href="#ikkuna.visualization.TBBackend._writer" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>tensorboardX.SummaryWriter</em></p>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://tensorboardx.readthedocs.io/en/latest/tensorboard.html#tensorboardX.SummaryWriter" title="(in tensorboardX)">tensorboardX.SummaryWriter</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ikkuna.visualization.TBBackend.hist_bins">
 <code class="descname">hist_bins</code><a class="headerlink" href="#ikkuna.visualization.TBBackend.hist_bins" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – Number of bins to use for histograms</p>
+<dd><p>Number of bins to use for histograms</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
@@ -175,7 +191,7 @@ with underscores due to the fact that it becomes part of a file name.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of module which emitted the data</li>
-<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+dcd9d73 ))"><em>torch.Tensor</em></a>) – Payload</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+934297b ))"><em>torch.Tensor</em></a>) – Payload</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
 </ul>
 </td>
@@ -194,7 +210,7 @@ with underscores due to the fact that it becomes part of a file name.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of module which emitted the data</li>
-<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+dcd9d73 ))"><em>torch.Tensor</em></a>) – Payload, not the histogram itself</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+934297b ))"><em>torch.Tensor</em></a>) – Payload, not the histogram itself</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
 </ul>
 </td>
@@ -214,49 +230,113 @@ with underscores due to the fact that it becomes part of a file name.</p>
 <dl class="attribute">
 <dt id="ikkuna.visualization.MPLBackend._xlabel">
 <code class="descname">_xlabel</code><a class="headerlink" href="#ikkuna.visualization.MPLBackend._xlabel" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – X axis label for line plots</p>
+<dd><p>X axis label for line plots</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ikkuna.visualization.MPLBackend._ylabel">
 <code class="descname">_ylabel</code><a class="headerlink" href="#ikkuna.visualization.MPLBackend._ylabel" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – Y axis label for line plots</p>
+<dd><p>Y axis label for line plots</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ikkuna.visualization.MPLBackend._ylims">
 <code class="descname">_ylims</code><a class="headerlink" href="#ikkuna.visualization.MPLBackend._ylims" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>tuple</em> – Limits of the y axis for line plots</p>
+<dd><p>Limits of the y axis for line plots</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ikkuna.visualization.MPLBackend._redraw_counter">
 <code class="descname">_redraw_counter</code><a class="headerlink" href="#ikkuna.visualization.MPLBackend._redraw_counter" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – Number of datapoints to consume before redrawing the figure</p>
+<dd><p>Number of datapoints to consume before redrawing the figure</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ikkuna.visualization.MPLBackend._plots">
 <code class="descname">_plots</code><a class="headerlink" href="#ikkuna.visualization.MPLBackend._plots" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict</em> – module-plot mapping</p>
+<dd><p>module-plot mapping</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)">dict</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ikkuna.visualization.MPLBackend._axes">
 <code class="descname">_axes</code><a class="headerlink" href="#ikkuna.visualization.MPLBackend._axes" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict</em> – module-UpdatableHistogram mapping (this should be refactored)</p>
+<dd><p>module-UpdatableHistogram mapping (this should be refactored)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)">dict</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ikkuna.visualization.MPLBackend._buffer">
 <code class="descname">_buffer</code><a class="headerlink" href="#ikkuna.visualization.MPLBackend._buffer" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict</em> – Per-module buffer of tensors for more reliable histograms</p>
+<dd><p>Per-module buffer of tensors for more reliable histograms</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)">dict</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ikkuna.visualization.MPLBackend._buffer_lim">
 <code class="descname">_buffer_lim</code><a class="headerlink" href="#ikkuna.visualization.MPLBackend._buffer_lim" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – Size of the buffer</p>
+<dd><p>Size of the buffer</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -321,7 +401,7 @@ abundance.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of module which emitted the data</li>
-<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+dcd9d73 ))"><em>torch.Tensor</em></a>) – Payload, not the histogram itself</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+934297b ))"><em>torch.Tensor</em></a>) – Payload, not the histogram itself</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
 </ul>
 </td>
@@ -340,7 +420,7 @@ abundance.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of module which emitted the data</li>
-<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+dcd9d73 ))"><em>torch.Tensor</em></a>) – Payload</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+934297b ))"><em>torch.Tensor</em></a>) – Payload</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
 </ul>
 </td>
@@ -360,7 +440,15 @@ this class to dispatch their metrics to have them visualised.</p>
 <dl class="attribute">
 <dt id="ikkuna.visualization.Backend.title">
 <code class="descname">title</code><a class="headerlink" href="#ikkuna.visualization.Backend.title" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – The figure title</p>
+<dd><p>The figure title</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -386,7 +474,7 @@ this class to dispatch their metrics to have them visualised.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of module which emitted the data</li>
-<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+dcd9d73 ))"><em>torch.Tensor</em></a>) – Payload</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+934297b ))"><em>torch.Tensor</em></a>) – Payload</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
 </ul>
 </td>
@@ -405,7 +493,7 @@ this class to dispatch their metrics to have them visualised.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of module which emitted the data</li>
-<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+dcd9d73 ))"><em>torch.Tensor</em></a>) – Payload, not the histogram itself</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+934297b ))"><em>torch.Tensor</em></a>) – Payload, not the histogram itself</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
 </ul>
 </td>
@@ -451,7 +539,7 @@ this class to dispatch their metrics to have them visualised.</p>
     </p>
     <p>
         &copy; Copyright 2018, Rasmus Diederichsen.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.<br/>
     </p>
   </div>
 </footer>

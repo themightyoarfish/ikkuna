@@ -125,7 +125,7 @@ def get_parser():
     parser.add_argument('-e', '--epochs', type=int, default=10)
     parser.add_argument('-o', '--optimizer', type=str, default='Adam', help='Optimizer to use')
     parser.add_argument('-a', '--ratio-average', type=int, default=10, help='Number of ratios to '
-                        'average for stability (currently unused)')
+                        'average for stability (currently unused)', metavar='N')
     parser.add_argument('-s', '--subsample', type=int, default=1,
                         help='Number of batches to ignore between updates')
     # parser.add_argument('-y', '--ylims', nargs=2, type=int, default=None,
@@ -135,15 +135,16 @@ def get_parser():
     parser.add_argument('-V', '--verbose', action='store_true', help='Print training progress')
     parser.add_argument('--spectral-norm', action='store_true',
                         help='Use spectral norm subscriber on weights')
-    parser.add_argument('--histogram', nargs='*', type=str, default=None,
+    parser.add_argument('--histogram', nargs='*', type=str, default=None, metavar='TOPIC',
                         help='Use histogram subscriber(s)')
-    parser.add_argument('--ratio', type=list_of_tuples, nargs='*', default=None,
+    parser.add_argument('--ratio', type=list_of_tuples, nargs='*', default=None, metavar='TOPIC',
                         help='Use ratio subscriber(s)')
     parser.add_argument('--test-accuracy', action='store_true',
                         help='Use test set accuracy subscriber')
     parser.add_argument('--train-accuracy', action='store_true',
                         help='Use train accuracy subscriber')
-    parser.add_argument('--depth', type=int, default=-1, help='Depth to which to add modules')
+    parser.add_argument('--depth', type=int, default=-1, help='Depth to which to add modules',
+                        metavar='N')
     return parser
 
 

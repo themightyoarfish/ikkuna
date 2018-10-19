@@ -7,11 +7,12 @@
     <title>ikkuna.visualization.backend &#8212; ikkuna 0 documentation</title>
     <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript" src="../../../_static/js/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="../../../_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="../../../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
@@ -509,15 +510,15 @@
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">))</span>
-        <span class="c1"># These Unfortunately cannot be used in tb</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">xlabel</span>    <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;xlabel&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ylabel</span>    <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;ylabel&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ylims</span>     <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;ylims&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hist_bins</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;bins&#39;</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
-        <span class="n">log_dir</span>        <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;log_dir&#39;</span><span class="p">,</span> <span class="s1">&#39;runs&#39;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">prefix</span> <span class="k">else</span> <span class="n">prefix</span><span class="p">)</span>
-        <span class="n">index</span>          <span class="o">=</span> <span class="n">determine_run_index</span><span class="p">(</span><span class="n">log_dir</span><span class="p">)</span>
-        <span class="n">log_dir</span>        <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{log_dir}</span><span class="s1">/run</span><span class="si">{index}</span><span class="s1">&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span> <span class="o">=</span> <span class="n">SummaryWriter</span><span class="p">(</span><span class="n">log_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># remove args incompatible with TB</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;xlabel&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;ylabel&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;ylims&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist_bins</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;bins&#39;</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+        <span class="n">log_dir</span>         <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;log_dir&#39;</span><span class="p">,</span> <span class="s1">&#39;runs&#39;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">prefix</span> <span class="k">else</span> <span class="n">prefix</span><span class="p">)</span>
+        <span class="n">index</span>           <span class="o">=</span> <span class="n">determine_run_index</span><span class="p">(</span><span class="n">log_dir</span><span class="p">)</span>
+        <span class="n">log_dir</span>         <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{log_dir}</span><span class="s1">/run</span><span class="si">{index}</span><span class="s1">&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span>    <span class="o">=</span> <span class="n">SummaryWriter</span><span class="p">(</span><span class="n">log_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">add_text</span><span class="p">(</span><span class="s1">&#39;run_conf&#39;</span><span class="p">,</span> <span class="n">TBBackend</span><span class="o">.</span><span class="n">info</span><span class="p">)</span>
 
 <div class="viewcode-block" id="TBBackend.add_data"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.TBBackend.add_data">[docs]</a>    <span class="k">def</span> <span class="nf">add_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">datum</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
@@ -526,7 +527,7 @@
 
 <div class="viewcode-block" id="TBBackend.add_histogram"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.TBBackend.add_histogram">[docs]</a>    <span class="k">def</span> <span class="nf">add_histogram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">datum</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">add_histogram</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.title}</span><span class="s1">: </span><span class="si">{module_name}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">datum</span><span class="p">,</span> <span class="n">global_step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span>
-                                   <span class="n">bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hist_bins</span><span class="p">)</span></div></div>
+                                   <span class="n">bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_hist_bins</span><span class="p">)</span></div></div>
 </pre></div>
 
     </div>
@@ -541,7 +542,7 @@
     </p>
     <p>
         &copy; Copyright 2018, Rasmus Diederichsen.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.<br/>
     </p>
   </div>
 </footer>

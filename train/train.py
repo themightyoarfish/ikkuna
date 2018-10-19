@@ -23,7 +23,7 @@ class Trainer:
 
     Attributes
     ----------
-    _dataset :  Dataset
+    _dataset :  torch.utils.data.Dataset
                 The dataset used for training
     _num_classes    :   int
                         Number of target categories (inferred)

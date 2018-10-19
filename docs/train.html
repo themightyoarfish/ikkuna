@@ -7,11 +7,12 @@
     <title>train &#8212; ikkuna 0 documentation</title>
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
@@ -147,50 +148,113 @@ dataset.</p>
 <dl class="attribute">
 <dt id="train.Trainer._dataset">
 <code class="descname">_dataset</code><a class="headerlink" href="#train.Trainer._dataset" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>Dataset</em> – The dataset used for training</p>
+<dd><p>The dataset used for training</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/data.html#torch.utils.data.Dataset" title="(in PyTorch vmaster (1.0.0a0+934297b ))">torch.utils.data.Dataset</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="train.Trainer._num_classes">
 <code class="descname">_num_classes</code><a class="headerlink" href="#train.Trainer._num_classes" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – Number of target categories (inferred)</p>
+<dd><p>Number of target categories (inferred)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="train.Trainer._shape">
 <code class="descname">_shape</code><a class="headerlink" href="#train.Trainer._shape" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list</em> – Shape of the input data (N, H, W, C)</p>
+<dd><p>Shape of the input data (N, H, W, C)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="train.Trainer._batch_size">
 <code class="descname">_batch_size</code><a class="headerlink" href="#train.Trainer._batch_size" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – Training batch size</p>
+<dd><p>Training batch size</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="train.Trainer._loss_function">
 <code class="descname">_loss_function</code><a class="headerlink" href="#train.Trainer._loss_function" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>torch.nn._Loss</em> – Loss function instance for training</p>
+<dd><p>Loss function instance for training</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">torch.nn._Loss</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="train.Trainer._dataloader">
 <code class="descname">_dataloader</code><a class="headerlink" href="#train.Trainer._dataloader" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>torch.utils.data.DataLoader</em> – loader for the training dataset</p>
+<dd><p>loader for the training dataset</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/data.html#torch.utils.data.DataLoader" title="(in PyTorch vmaster (1.0.0a0+934297b ))">torch.utils.data.DataLoader</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="train.Trainer._optimizer">
 <code class="descname">_optimizer</code><a class="headerlink" href="#train.Trainer._optimizer" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>torch.optim.Optimizer</em></p>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/optim.html#torch.optim.Optimizer" title="(in PyTorch vmaster (1.0.0a0+934297b ))">torch.optim.Optimizer</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="train.Trainer._scheduler">
 <code class="descname">_scheduler</code><a class="headerlink" href="#train.Trainer._scheduler" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>schedulers.FunctionScheduler</em> – A custom scheduler for learning rate decay (<em>NOT</em> a
+<dd><p>A custom scheduler for learning rate decay (<em>NOT</em> a
 <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.optim.lr_scheduler._LRScheduler</span></code>)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference internal" href="schedulers.html#schedulers.FunctionScheduler" title="schedulers.FunctionScheduler">schedulers.FunctionScheduler</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -218,31 +282,71 @@ set with <a class="reference internal" href="#train.Trainer.add_subscriber" titl
 <dl class="attribute">
 <dt id="train.Trainer.current_batch">
 <code class="descname">current_batch</code><a class="headerlink" href="#train.Trainer.current_batch" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – 0-based batch index</p>
+<dd><p>0-based batch index</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="train.Trainer.batches_per_epoch">
 <code class="descname">batches_per_epoch</code><a class="headerlink" href="#train.Trainer.batches_per_epoch" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – number of batches in an epoch (assuming only full batches, I think)</p>
+<dd><p>number of batches in an epoch (assuming only full batches, I think)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="train.Trainer.model">
 <code class="descname">model</code><a class="headerlink" href="#train.Trainer.model" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>torch.nn.Module</em> – Model</p>
+<dd><p>Model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (1.0.0a0+934297b ))">torch.nn.Module</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="train.Trainer.exporter">
 <code class="descname">exporter</code><a class="headerlink" href="#train.Trainer.exporter" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>ikkuna.export.Exporter</em> – Exporter used during training</p>
+<dd><p>Exporter used during training</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference internal" href="ikkuna.export.html#ikkuna.export.Exporter" title="ikkuna.export.Exporter">ikkuna.export.Exporter</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="train.Trainer.optimizer">
 <code class="descname">optimizer</code><a class="headerlink" href="#train.Trainer.optimizer" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>torch.optim.Optimizer</em> – Optimizer in use, if set</p>
+<dd><p>Optimizer in use, if set</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/optim.html#torch.optim.Optimizer" title="(in PyTorch vmaster (1.0.0a0+934297b ))">torch.optim.Optimizer</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -268,7 +372,7 @@ set with <a class="reference internal" href="#train.Trainer.add_subscriber" titl
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the optimizer (must exist in <a class="reference external" href="https://pytorch.org/docs/master/optim.html#module-torch.optim" title="(in PyTorch vmaster (1.0.0a0+dcd9d73 ))"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torch.optim</span></code></a>)</li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the optimizer (must exist in <a class="reference external" href="https://pytorch.org/docs/master/optim.html#module-torch.optim" title="(in PyTorch vmaster (1.0.0a0+934297b ))"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torch.optim</span></code></a>)</li>
 <li><strong>**kwargs</strong> – All other kwargs are forwarded to the optimizer constructor</li>
 </ul>
 </td>
@@ -317,14 +421,14 @@ set with <a class="reference internal" href="#train.Trainer.add_subscriber" titl
 string is passed.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">Currently, the function automatically calls <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.cuda" title="(in PyTorch vmaster (1.0.0a0+dcd9d73 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.cuda()</span></code></a> and hence a
+<p class="last">Currently, the function automatically calls <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.cuda" title="(in PyTorch vmaster (1.0.0a0+934297b ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.cuda()</span></code></a> and hence a
 GPU is necessary.</p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model_or_str</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (1.0.0a0+dcd9d73 ))"><em>torch.nn.Module</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Model or name of the model (must exist in <a class="reference internal" href="ikkuna.models.html#module-ikkuna.models" title="ikkuna.models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ikkuna.models</span></code></a>)</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model_or_str</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (1.0.0a0+934297b ))"><em>torch.nn.Module</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Model or name of the model (must exist in <a class="reference internal" href="ikkuna.models.html#module-ikkuna.models" title="ikkuna.models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ikkuna.models</span></code></a>)</td>
 </tr>
 </tbody>
 </table>
@@ -365,7 +469,15 @@ restart at the beginning.</p>
 <dl class="attribute">
 <dt id="train.DatasetMeta.size">
 <code class="descname">size</code><a class="headerlink" href="#train.DatasetMeta.size" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – Number of examples in the dataset</p>
+<dd><p>Number of examples in the dataset</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -422,7 +534,7 @@ restart at the beginning.</p>
     </p>
     <p>
         &copy; Copyright 2018, Rasmus Diederichsen.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.<br/>
     </p>
   </div>
 </footer>
