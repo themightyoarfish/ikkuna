@@ -77,6 +77,10 @@
       aria-labelledby="dLabelLocalToc"><ul>
 <li><a class="reference internal" href="#">ikkuna.utils</a><ul>
 <li><a class="reference internal" href="#module-ikkuna.utils">Module contents</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a><ul>
+<li><a class="reference internal" href="#module-ikkuna.utils.numba">ikkuna.utils.numba</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -126,19 +130,10 @@
   <div class="row">
     <div class="col-md-12 content">
       
-  <div class="contents topic" id="contents">
-<p class="topic-title first">Contents</p>
-<ul class="simple">
-<li><a class="reference internal" href="#ikkuna-utils" id="id1">ikkuna.utils</a><ul>
-<li><a class="reference internal" href="#module-ikkuna.utils" id="id2">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="section" id="ikkuna-utils">
-<h1><a class="toc-backref" href="#id1">ikkuna.utils</a><a class="headerlink" href="#ikkuna-utils" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="ikkuna-utils">
+<h1>ikkuna.utils<a class="headerlink" href="#ikkuna-utils" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-ikkuna.utils">
-<span id="module-contents"></span><h2><a class="toc-backref" href="#id2">Module contents</a><a class="headerlink" href="#module-ikkuna.utils" title="Permalink to this headline">¶</a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ikkuna.utils" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="ikkuna.utils.ModuleTree">
 <em class="property">class </em><code class="descclassname">ikkuna.utils.</code><code class="descname">ModuleTree</code><span class="sig-paren">(</span><em>module</em>, <em>name=None</em>, <em>drop_name=True</em>, <em>recursive=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/utils/module_tree.html#ModuleTree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.ModuleTree" title="Permalink to this definition">¶</a></dt>
@@ -391,6 +386,52 @@ obtained from the number of different values in the training labels.</p>
 </table>
 </dd></dl>
 
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-ikkuna.utils.numba">
+<span id="ikkuna-utils-numba"></span><h3>ikkuna.utils.numba<a class="headerlink" href="#module-ikkuna.utils.numba" title="Permalink to this headline">¶</a></h3>
+<p>This module contains functionality for numba-torch interoperability. This isn’t used in the
+library but may be useful in the future. Documentation is spotty.</p>
+<dl class="attribute">
+<dt id="ikkuna.utils.numba.compute_bin">
+<code class="descclassname">ikkuna.utils.numba.</code><code class="descname">compute_bin</code><a class="reference internal" href="_modules/ikkuna/utils/numba.html#compute_bin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.numba.compute_bin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the bins for histogram computation</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ikkuna.utils.numba.dtype_min_max">
+<code class="descclassname">ikkuna.utils.numba.</code><code class="descname">dtype_min_max</code><span class="sig-paren">(</span><em>dtype</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/utils/numba.html#dtype_min_max"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.numba.dtype_min_max" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the min and max value for a numeric dtype</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ikkuna.utils.numba.numba_gpu_histogram">
+<code class="descclassname">ikkuna.utils.numba.</code><code class="descname">numba_gpu_histogram</code><span class="sig-paren">(</span><em>a_gpu</em>, <em>bins</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/utils/numba.html#numba_gpu_histogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.numba.numba_gpu_histogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute a histogram on a numba device array.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ikkuna.utils.numba.typestr">
+<code class="descclassname">ikkuna.utils.numba.</code><code class="descname">typestr</code><span class="sig-paren">(</span><em>tensor</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/utils/numba.html#typestr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.numba.typestr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ikkuna.utils.numba.tensor_to_numba">
+<code class="descclassname">ikkuna.utils.numba.</code><code class="descname">tensor_to_numba</code><span class="sig-paren">(</span><em>tensor</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/utils/numba.html#tensor_to_numba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.utils.numba.tensor_to_numba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a tensor to a numba device array. The tensor will share the underlying CUDA storage
+This works by setting the <code class="docutils literal notranslate"><span class="pre">__cuda_array_interface__</span></code> attribute on the tensor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tensor</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+ed02619 ))"><em>torch.Tensor</em></a>) – </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 </div>
 </div>
 
