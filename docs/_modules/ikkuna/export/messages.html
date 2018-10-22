@@ -129,7 +129,7 @@
 
 <span class="n">DATA_KINDS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;weights&#39;</span><span class="p">,</span> <span class="s1">&#39;weight_gradients&#39;</span><span class="p">,</span> <span class="s1">&#39;weight_updates&#39;</span><span class="p">,</span> <span class="s1">&#39;biases&#39;</span><span class="p">,</span> <span class="s1">&#39;bias_gradients&#39;</span><span class="p">,</span> <span class="s1">&#39;bias_updates&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;activations&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;activations&#39;</span><span class="p">,</span> <span class="s1">&#39;layer_gradients&#39;</span>
 <span class="p">}</span>
 
 <span class="n">ALLOWED_KINDS</span> <span class="o">=</span> <span class="nb">set</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">META_KINDS</span><span class="p">,</span> <span class="n">DATA_KINDS</span><span class="p">)</span>
@@ -389,7 +389,8 @@
         <span class="c1">#  Identifier  #</span>
         <span class="c1">################</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_identifier</span> <span class="o">!=</span> <span class="n">message</span><span class="o">.</span><span class="n">key</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Unexpected identifier &quot;</span><span class="si">{message.key}</span><span class="s1">&quot; (expected &quot;</span><span class="si">{self._identifier}</span><span class="s1">&quot;)&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Unexpected identifier &quot;</span><span class="si">{message.key}</span><span class="s1">&quot; &#39;</span>
+                             <span class="s1">&#39;(expected &quot;</span><span class="si">{self._identifier}</span><span class="s1">&quot;)&#39;</span><span class="p">)</span>
 
         <span class="c1">#################</span>
         <span class="c1">#  Duplication  #</span>

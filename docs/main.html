@@ -134,7 +134,8 @@ accepts the following arguments:</p>
                <span class="p">[</span><span class="o">-</span><span class="n">b</span> <span class="n">BATCH_SIZE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">e</span> <span class="n">EPOCHS</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">o</span> <span class="n">OPTIMIZER</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">a</span> <span class="n">N</span><span class="p">]</span>
                <span class="p">[</span><span class="o">-</span><span class="n">s</span> <span class="n">SUBSAMPLE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span> <span class="p">{</span><span class="n">tb</span><span class="p">,</span><span class="n">mpl</span><span class="p">}]</span> <span class="p">[</span><span class="o">-</span><span class="n">V</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">spectral</span><span class="o">-</span><span class="n">norm</span><span class="p">]</span>
                <span class="p">[</span><span class="o">--</span><span class="n">histogram</span> <span class="p">[</span><span class="n">TOPIC</span> <span class="p">[</span><span class="n">TOPIC</span> <span class="o">...</span><span class="p">]]]</span> <span class="p">[</span><span class="o">--</span><span class="n">ratio</span> <span class="p">[</span><span class="n">TOPIC</span> <span class="p">[</span><span class="n">TOPIC</span> <span class="o">...</span><span class="p">]]]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">test</span><span class="o">-</span><span class="n">accuracy</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">train</span><span class="o">-</span><span class="n">accuracy</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">depth</span> <span class="n">N</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">test</span><span class="o">-</span><span class="n">accuracy</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">train</span><span class="o">-</span><span class="n">accuracy</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">norm</span> <span class="p">[</span><span class="n">TOPIC</span> <span class="p">[</span><span class="n">TOPIC</span> <span class="o">...</span><span class="p">]]]</span> <span class="p">[</span><span class="o">--</span><span class="n">depth</span> <span class="n">N</span><span class="p">]</span>
 </pre></div>
 </div>
 <div class="section" id="Named Arguments">
@@ -212,6 +213,9 @@ accepts the following arguments:</p>
 <tr><td>&#160;</td><td><p class="first">Use train accuracy subscriber</p>
 <p class="last">Default: False</p>
 </td></tr>
+<tr><td class="option-group">
+<kbd>--norm</kbd></td>
+<td>Use norm subscriber(s)</td></tr>
 <tr><td class="option-group">
 <kbd>--depth</kbd></td>
 <td><p class="first">Depth to which to add modules</p>

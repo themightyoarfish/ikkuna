@@ -134,7 +134,8 @@
 <span class="kn">from</span> <span class="nn">train</span> <span class="k">import</span> <span class="n">Trainer</span>
 <span class="kn">from</span> <span class="nn">ikkuna.utils</span> <span class="k">import</span> <span class="n">load_dataset</span>
 <span class="kn">from</span> <span class="nn">ikkuna.export.subscriber</span> <span class="k">import</span> <span class="p">(</span><span class="n">RatioSubscriber</span><span class="p">,</span> <span class="n">HistogramSubscriber</span><span class="p">,</span> <span class="n">SpectralNormSubscriber</span><span class="p">,</span>
-                                      <span class="n">TestAccuracySubscriber</span><span class="p">,</span> <span class="n">TrainAccuracySubscriber</span><span class="p">)</span>
+                                      <span class="n">TestAccuracySubscriber</span><span class="p">,</span> <span class="n">TrainAccuracySubscriber</span><span class="p">,</span>
+                                      <span class="n">NormSubscriber</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">ikkuna.utils</span> <span class="k">import</span> <span class="n">seed_everything</span>
 <span class="n">seed_everything</span><span class="p">()</span>
@@ -194,6 +195,11 @@
             <span class="n">histogram_subscriber</span> <span class="o">=</span> <span class="n">HistogramSubscriber</span><span class="p">([</span><span class="n">kind</span><span class="p">],</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
             <span class="n">trainer</span><span class="o">.</span><span class="n">add_subscriber</span><span class="p">(</span><span class="n">histogram_subscriber</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">kind</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;norm&#39;</span><span class="p">]:</span>
+            <span class="n">norm_subscriber</span> <span class="o">=</span> <span class="n">NormSubscriber</span><span class="p">([</span><span class="n">kind</span><span class="p">],</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
+            <span class="n">trainer</span><span class="o">.</span><span class="n">add_subscriber</span><span class="p">(</span><span class="n">norm_subscriber</span><span class="p">)</span>
+
     <span class="n">batches_per_epoch</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">batches_per_epoch</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Batches per epoch: </span><span class="si">{batches_per_epoch}</span><span class="s1">&#39;</span><span class="p">)</span>
 
@@ -252,6 +258,8 @@
                         <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Use test set accuracy subscriber&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--train-accuracy&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
                         <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Use train accuracy subscriber&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--norm&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;TOPIC&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Use norm subscriber(s)&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--depth&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Depth to which to add modules&#39;</span><span class="p">,</span>
                         <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;N&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">parser</span></div>
