@@ -24,6 +24,13 @@ class AlexNetMini(torch.nn.Module):     # Pytorch Sphinx-doc is buggy here, so u
                 Output width of the classifier
     '''
     def __init__(self, input_shape, num_classes=1000, exporter=None):
+        '''
+        Parameters
+        ----------
+        input_shape :   tuple
+                        H, W C (beware of channel order, is different from what you call the model
+                        with)
+        '''
         super(AlexNetMini, self).__init__()
         exporter.set_model(self)
 

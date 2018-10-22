@@ -179,7 +179,7 @@ def load_dataset(name, train_transforms=None, test_transforms=None):
     Returns
     -------
     tuple
-        2 :class:`~train.DatasetMeta` s are returned, one for train and one test set
+        2 :class:`~train.DatasetMeta`\ s are returned, one for train and one test set
     '''
     from train import DatasetMeta
     train_transforms = Compose(train_transforms) if train_transforms else ToTensor()
