@@ -20,7 +20,7 @@ META_KINDS = {
 
 DATA_KINDS = {
     'weights', 'weight_gradients', 'weight_updates', 'biases', 'bias_gradients', 'bias_updates',
-    'activations',
+    'activations', 'layer_gradients'
 }
 
 ALLOWED_KINDS = set.union(META_KINDS, DATA_KINDS)
@@ -280,7 +280,8 @@ class MessageBundle(object):
         #  Identifier  #
         ################
         if self._identifier != message.key:
-            raise ValueError(f'Unexpected identifier "{message.key}" (expected "{self._identifier}")')
+            raise ValueError(f'Unexpected identifier "{message.key}" '
+                             '(expected "{self._identifier}")')
 
         #################
         #  Duplication  #

@@ -1,5 +1,4 @@
 import torch
-from collections import defaultdict
 
 from ikkuna.export.messages import TrainingMessage, MetaMessage
 from ikkuna.utils import ModuleTree
@@ -120,6 +119,11 @@ class Exporter(object):
         self._modules[module] = named_module
         module.register_forward_hook(self.new_activations)
 
+        def layer_grad_hook(module, grad_in, grad_out):
+            self.new_layer_gradients(module, grad_out)
+
+        module.register_backward_hook(layer_grad_hook)
+
         has_bias   = hasattr(module, 'bias') and module.bias is not None
         has_weight = hasattr(module, 'weight') and module.weight is not None
         if not has_weight and not has_bias:
@@ -128,7 +132,8 @@ class Exporter(object):
         # For some reason, registered tensor hooks are called twice in my setup. Maybe this means
         # that the gradient is computed twice, because the grad tensors are identical. Not sure why
         # this is so.
-        # cache weight and bias gradients and only call new_gradients when both are received
+        # cache weight and bias gradients and only call new_parameter_gradients when both are
+        # received
         grad_cache = {'weight': None, 'bias': None}
 
         # the hooks will check whether both weight and bias have been received and if so, trigger
@@ -140,7 +145,7 @@ class Exporter(object):
                 raise RuntimeError(f'Already received weight gradients for {named_module.name}')
             grad_cache['weight'] = grad
             if not has_bias or grad_cache['bias'] is not None:
-                self.new_gradients(module, (grad_cache['weight'], grad_cache['bias']))
+                self.new_parameter_gradients(module, (grad_cache['weight'], grad_cache['bias']))
                 grad_cache['weight'] = grad_cache['bias'] = None
 
         def bias_hook(grad):
@@ -148,7 +153,7 @@ class Exporter(object):
                 raise RuntimeError(f'Already received bias gradients for {named_module.name}')
             grad_cache['bias'] = grad
             if not has_bias or grad_cache['weight'] is not None:
-                self.new_gradients(module, (grad_cache['weight'], grad_cache['bias']))
+                self.new_parameter_gradients(module, (grad_cache['weight'], grad_cache['bias']))
                 grad_cache['weight'] = grad_cache['bias'] = None
 
         if has_bias:
@@ -303,7 +308,7 @@ class Exporter(object):
             self.publish_training('weights', module, module.weight)
             self._weight_cache[module] = torch.tensor(module.weight)
         if hasattr(module, 'bias') and module.bias is not None:   # bias can be present, but be None
-            # in the first train step, there can be no updates, so we just publish_training zeros,
+            # in the first train step, there can be no updates, so we just publish zeros,
             # otherwise clients would error out since they don't receive the expected messages
             if module in self._bias_cache:
                 self.publish_training('bias_updates', module,
@@ -314,9 +319,30 @@ class Exporter(object):
             self._bias_cache[module] = torch.tensor(module.bias)
         self.publish_training('activations', module, out_)
 
-    def new_gradients(self, module, gradients):
-        '''Callback for newly arriving gradients. Registered as a hook to the tracked modules.
-        Will trigger export of all new gradient data.
+    def new_layer_gradients(self, module, gradients):
+        '''Callback for newly arriving layer gradients (loss wrt layer output). Registered as a hook
+        to the tracked modules.
+
+        .. warning::
+            Currently, only layers with one output are supported. It's not clear to me how one layer
+
+        Parameters
+        ----------
+        module  :   torch.nn.Module
+        gradients    :  torch.Tensor
+                        The gradients of the loss w.r.t. layer output
+        '''
+        if isinstance(gradients, tuple):
+            if len(gradients) != 1:
+                raise RuntimeError('Layers with more than one output are not supported.')
+            else:
+                gradients = gradients[0]
+
+        self.publish_training('layer_gradients', module, gradients)
+
+    def new_parameter_gradients(self, module, gradients):
+        '''Callback for newly arriving gradients wrt weight and/or bias. Registered as a hook to the
+        tracked modules.  Will trigger export of all new gradient data.
 
         Parameters
         ----------
@@ -389,7 +415,6 @@ class Exporter(object):
 
         self.publish_meta('batch_finished')
 
-
     def _freeze_module(self, named_module):
         '''Convenience method for freezing training for a module.
 
@@ -410,7 +435,6 @@ class Exporter(object):
 
     def epoch_finished(self):
         '''Increase the epoch counter and reset the batch counter.'''
-
         self.publish_meta('epoch_finished')
         self._epoch     += 1
         self._train_step = 0
