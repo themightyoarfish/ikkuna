@@ -208,7 +208,7 @@ class Exporter(object):
         self.add_modules(module, recursive)
         return module
 
-    def publish_meta(self, kind, data=None):
+    def publish_meta_message(self, kind, data=None):
         '''Publish an update of type :class:`~ikkuna.export.messages.MetaMessage` to all
         registered subscribers.
 
@@ -225,7 +225,7 @@ class Exporter(object):
         for sub in self._subscribers:
             sub.receive_message(msg)
 
-    def publish_training(self, kind, module, data):
+    def publish_train_message(self, kind, module, data):
         '''Publish an update of type :class:`~ikkuna.export.messages.TrainingMessage` to all
         registered subscribers.
 
@@ -255,7 +255,7 @@ class Exporter(object):
         '''Switch to testing mode. This will turn off all publishing.'''
         self.train(not test)
 
-    def new_input(self, *args):
+    def new_input_data(self, *args):
         '''Callback for new training input to the network.
 
         Parameters
@@ -268,7 +268,7 @@ class Exporter(object):
         else:
             input_data = args
 
-        self.publish_meta('input_data', input_data)
+        self.publish_meta_message('input_data', input_data)
 
     def new_output_and_labels(self, network_output, labels):
         '''Callback for final network output.
@@ -278,8 +278,8 @@ class Exporter(object):
         data    :   torch.Tensor
                     The final layer's output
         '''
-        self.publish_meta('network_output', network_output)
-        self.publish_meta('input_labels', labels)
+        self.publish_meta_message('network_output', network_output)
+        self.publish_meta_message('input_labels', labels)
 
     def new_activations(self, module, in_, out_):
         '''Callback for newly arriving activations. Registered as a hook to the tracked modules.
@@ -295,29 +295,32 @@ class Exporter(object):
         '''
         if not self._is_training:
             return
+
         if self._train_step == 0:
-            self.publish_meta('epoch_started')
-            self.publish_meta('batch_started')
+            self.publish_meta_message('epoch_started')
+            self.publish_meta_message('batch_started')
 
         if hasattr(module, 'weight'):
             if module in self._weight_cache:
-                self.publish_training('weight_updates', module, module.weight -
-                                      self._weight_cache[module])
+                self.publish_train_message('weight_updates', module, module.weight -
+                                           self._weight_cache[module])
             else:
-                self.publish_training('weight_updates', module, torch.zeros_like(module.weight))
-            self.publish_training('weights', module, module.weight)
+                self.publish_train_message('weight_updates', module,
+                                           torch.zeros_like(module.weight))
+            self.publish_train_message('weights', module, module.weight)
             self._weight_cache[module] = torch.tensor(module.weight)
         if hasattr(module, 'bias') and module.bias is not None:   # bias can be present, but be None
+
             # in the first train step, there can be no updates, so we just publish zeros,
             # otherwise clients would error out since they don't receive the expected messages
             if module in self._bias_cache:
-                self.publish_training('bias_updates', module,
-                                      module.bias - self._bias_cache[module])
+                self.publish_train_message('bias_updates', module, module.bias -
+                                           self._bias_cache[module])
             else:
-                self.publish_training('bias_updates', module, torch.zeros_like(module.bias))
-            self.publish_training('biases', module, module.bias)
+                self.publish_train_message('bias_updates', module, torch.zeros_like(module.bias))
+            self.publish_train_message('biases', module, module.bias)
             self._bias_cache[module] = torch.tensor(module.bias)
-        self.publish_training('activations', module, out_)
+        self.publish_train_message('activations', module, out_)
 
     def new_layer_gradients(self, module, gradients):
         '''Callback for newly arriving layer gradients (loss wrt layer output). Registered as a hook
@@ -331,6 +334,11 @@ class Exporter(object):
         module  :   torch.nn.Module
         gradients    :  torch.Tensor
                         The gradients of the loss w.r.t. layer output
+
+        Raises
+        ------
+        RuntimeError
+            If the module has multiple outputs
         '''
         if isinstance(gradients, tuple):
             if len(gradients) != 1:
@@ -338,7 +346,7 @@ class Exporter(object):
             else:
                 gradients = gradients[0]
 
-        self.publish_training('layer_gradients', module, gradients)
+        self.publish_train_message('layer_gradients', module, gradients)
 
     def new_parameter_gradients(self, module, gradients):
         '''Callback for newly arriving gradients wrt weight and/or bias. Registered as a hook to the
@@ -350,10 +358,10 @@ class Exporter(object):
         gradients    :   tuple(torch.Tensor, torch.Tensor)
                         The gradients w.r.t weight and bias.
         '''
-        self.publish_training('weight_gradients', module, gradients[0])
+        self.publish_train_message('weight_gradients', module, gradients[0])
 
         if gradients[1] is not None:
-            self.publish_training('bias_gradients', module, gradients[1])
+            self.publish_train_message('bias_gradients', module, gradients[1])
 
     def set_model(self, model):
         '''Set the model for direct access for some metrics.
@@ -388,7 +396,7 @@ class Exporter(object):
             if this.training:
                 # we need to step before forward pass, else act and grads get different steps
                 self.step()
-            self.new_input(*args)               # do this after stepping
+            self.new_input_data(*args)               # do this after stepping
             ret = forward_fn(*args)             # do forward pass w/o messages spawning
             this.train(was_training)            # restore previous state
             return ret
@@ -413,7 +421,7 @@ class Exporter(object):
         self._train_step  += 1
         self._global_step += 1
 
-        self.publish_meta('batch_finished')
+        self.publish_meta_message('batch_finished')
 
     def _freeze_module(self, named_module):
         '''Convenience method for freezing training for a module.
@@ -435,6 +443,6 @@ class Exporter(object):
 
     def epoch_finished(self):
         '''Increase the epoch counter and reset the batch counter.'''
-        self.publish_meta('epoch_finished')
+        self.publish_meta_message('epoch_finished')
         self._epoch     += 1
         self._train_step = 0

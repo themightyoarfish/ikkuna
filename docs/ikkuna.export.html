@@ -424,8 +424,8 @@ to those will be tracked. Ignores any module in <a class="reference internal" hr
 </dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.export.Exporter.publish_meta">
-<code class="descname">publish_meta</code><span class="sig-paren">(</span><em>kind</em>, <em>data=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.publish_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.Exporter.publish_meta" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.export.Exporter.publish_meta_message">
+<code class="descname">publish_meta_message</code><span class="sig-paren">(</span><em>kind</em>, <em>data=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.publish_meta_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.Exporter.publish_meta_message" title="Permalink to this definition">¶</a></dt>
 <dd><p>Publish an update of type <a class="reference internal" href="#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetaMessage</span></code></a> to all
 registered subscribers.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -443,8 +443,8 @@ registered subscribers.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.export.Exporter.publish_training">
-<code class="descname">publish_training</code><span class="sig-paren">(</span><em>kind</em>, <em>module</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.publish_training"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.Exporter.publish_training" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.export.Exporter.publish_train_message">
+<code class="descname">publish_train_message</code><span class="sig-paren">(</span><em>kind</em>, <em>module</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.publish_train_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.Exporter.publish_train_message" title="Permalink to this definition">¶</a></dt>
 <dd><p>Publish an update of type <a class="reference internal" href="#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingMessage</span></code></a> to all
 registered subscribers.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -475,8 +475,8 @@ registered subscribers.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.export.Exporter.new_input">
-<code class="descname">new_input</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.new_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.Exporter.new_input" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.export.Exporter.new_input_data">
+<code class="descname">new_input_data</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/export.html#Exporter.new_input_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.Exporter.new_input_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Callback for new training input to the network.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -535,10 +535,13 @@ to the tracked modules.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (1.0.0a0+1e8064d ))"><em>torch.nn.Module</em></a>) – </li>
 <li><strong>gradients</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+1e8064d ))"><em>torch.Tensor</em></a>) – The gradients of the loss w.r.t. layer output</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">RuntimeError</span></code></a> – If the module has multiple outputs</p>
 </td>
 </tr>
 </tbody>
