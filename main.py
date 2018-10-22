@@ -25,7 +25,8 @@ from tqdm import tqdm
 from train import Trainer
 from ikkuna.utils import load_dataset
 from ikkuna.export.subscriber import (RatioSubscriber, HistogramSubscriber, SpectralNormSubscriber,
-                                      TestAccuracySubscriber, TrainAccuracySubscriber)
+                                      TestAccuracySubscriber, TrainAccuracySubscriber,
+                                      NormSubscriber)
 
 from ikkuna.utils import seed_everything
 seed_everything()
@@ -85,6 +86,11 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
             histogram_subscriber = HistogramSubscriber([kind], backend=backend)
             trainer.add_subscriber(histogram_subscriber)
 
+    if kwargs['norm']:
+        for kind in kwargs['norm']:
+            norm_subscriber = NormSubscriber([kind], backend=backend)
+            trainer.add_subscriber(norm_subscriber)
+
     batches_per_epoch = trainer.batches_per_epoch
     print(f'Batches per epoch: {batches_per_epoch}')
 
@@ -143,6 +149,8 @@ def get_parser():
                         help='Use test set accuracy subscriber')
     parser.add_argument('--train-accuracy', action='store_true',
                         help='Use train accuracy subscriber')
+    parser.add_argument('--norm', nargs='*', type=str, default=None, metavar='TOPIC',
+                        help='Use norm subscriber(s)')
     parser.add_argument('--depth', type=int, default=-1, help='Depth to which to add modules',
                         metavar='N')
     return parser
