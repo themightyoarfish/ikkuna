@@ -187,7 +187,7 @@ class Subscriber(abc.ABC):
 
     def process_message_bundle(self, message_bundle):
         '''Callback for processing a :class:`~ikkuna.export.messages.MessageBundle` object with
-        :class:`~ikkuna.export.messages.TrainingMessage`\ s or
+        :class:`~ikkuna.export.messages.MetaMessage`\ s or
         :class:`~ikkuna.export.messages.TrainingMessage`\ s in it.
 
         Parameters
