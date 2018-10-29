@@ -39,7 +39,7 @@
         </button>
         <a class="navbar-brand" href="index.html"><span><img src="_static/logo.png"></span>
           ikkuna</a>
-        <span class="navbar-text navbar-version pull-left"><b></b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.0.1.post1</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -153,7 +153,7 @@ dataset.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/data.html#torch.utils.data.Dataset" title="(in PyTorch vmaster (1.0.0a0+1e8064d ))">torch.utils.data.Dataset</a></td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/data.html#torch.utils.data.Dataset" title="(in PyTorch vmaster (1.0.0a0+4276fe7 ))">torch.utils.data.Dataset</a></td>
 </tr>
 </tbody>
 </table>
@@ -223,7 +223,7 @@ dataset.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/data.html#torch.utils.data.DataLoader" title="(in PyTorch vmaster (1.0.0a0+1e8064d ))">torch.utils.data.DataLoader</a></td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/data.html#torch.utils.data.DataLoader" title="(in PyTorch vmaster (1.0.0a0+4276fe7 ))">torch.utils.data.DataLoader</a></td>
 </tr>
 </tbody>
 </table>
@@ -236,7 +236,7 @@ dataset.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/optim.html#torch.optim.Optimizer" title="(in PyTorch vmaster (1.0.0a0+1e8064d ))">torch.optim.Optimizer</a></td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/optim.html#torch.optim.Optimizer" title="(in PyTorch vmaster (1.0.0a0+4276fe7 ))">torch.optim.Optimizer</a></td>
 </tr>
 </tbody>
 </table>
@@ -268,7 +268,9 @@ set with <a class="reference internal" href="#train.Trainer.add_subscriber" titl
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>dataset_meta</strong> (<a class="reference internal" href="#train.DatasetMeta" title="train.DatasetMeta"><em>train.DatasetMeta</em></a>) – Train data, obtained via <a class="reference internal" href="ikkuna.utils.html#ikkuna.utils.load_dataset" title="ikkuna.utils.load_dataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">ikkuna.utils.load_dataset()</span></code></a></li>
+<li><strong>dataset_meta</strong> (<a class="reference internal" href="#train.DatasetMeta" title="train.DatasetMeta"><em>train.DatasetMeta</em></a>) – Train data, obtained via <a class="reference internal" href="ikkuna.utils.html#ikkuna.utils.load_dataset" title="ikkuna.utils.load_dataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">ikkuna.utils.load_dataset()</span></code></a>. Currently,
+there is no support for dropping the last incomplete batch in case the
+batch size does not evenly divide the number of examples</li>
 <li><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – </li>
 <li><strong>loss</strong> (<em>function</em>) – Defaults to torch.nn.CrossEntropyLoss</li>
 <li><strong>depth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Depth to which to traverse the module tree</li>
@@ -315,7 +317,7 @@ set with <a class="reference internal" href="#train.Trainer.add_subscriber" titl
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (1.0.0a0+1e8064d ))">torch.nn.Module</a></td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (1.0.0a0+4276fe7 ))">torch.nn.Module</a></td>
 </tr>
 </tbody>
 </table>
@@ -343,7 +345,7 @@ set with <a class="reference internal" href="#train.Trainer.add_subscriber" titl
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/optim.html#torch.optim.Optimizer" title="(in PyTorch vmaster (1.0.0a0+1e8064d ))">torch.optim.Optimizer</a></td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/optim.html#torch.optim.Optimizer" title="(in PyTorch vmaster (1.0.0a0+4276fe7 ))">torch.optim.Optimizer</a></td>
 </tr>
 </tbody>
 </table>
@@ -372,7 +374,7 @@ set with <a class="reference internal" href="#train.Trainer.add_subscriber" titl
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the optimizer (must exist in <a class="reference external" href="https://pytorch.org/docs/master/optim.html#module-torch.optim" title="(in PyTorch vmaster (1.0.0a0+1e8064d ))"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torch.optim</span></code></a>)</li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the optimizer (must exist in <a class="reference external" href="https://pytorch.org/docs/master/optim.html#module-torch.optim" title="(in PyTorch vmaster (1.0.0a0+4276fe7 ))"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torch.optim</span></code></a>)</li>
 <li><strong>**kwargs</strong> – All other kwargs are forwarded to the optimizer constructor</li>
 </ul>
 </td>
@@ -421,14 +423,14 @@ set with <a class="reference internal" href="#train.Trainer.add_subscriber" titl
 string is passed.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">Currently, the function automatically calls <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.cuda" title="(in PyTorch vmaster (1.0.0a0+1e8064d ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.cuda()</span></code></a> and hence a
+<p class="last">Currently, the function automatically calls <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.cuda" title="(in PyTorch vmaster (1.0.0a0+4276fe7 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.cuda()</span></code></a> and hence a
 GPU is necessary.</p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model_or_str</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (1.0.0a0+1e8064d ))"><em>torch.nn.Module</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Model or name of the model (must exist in <a class="reference internal" href="ikkuna.models.html#module-ikkuna.models" title="ikkuna.models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ikkuna.models</span></code></a>)</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model_or_str</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (1.0.0a0+4276fe7 ))"><em>torch.nn.Module</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Model or name of the model (must exist in <a class="reference internal" href="ikkuna.models.html#module-ikkuna.models" title="ikkuna.models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ikkuna.models</span></code></a>)</td>
 </tr>
 </tbody>
 </table>

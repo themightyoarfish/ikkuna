@@ -39,7 +39,7 @@
         </button>
         <a class="navbar-brand" href="index.html"><span><img src="_static/logo.png"></span>
           ikkuna</a>
-        <span class="navbar-text navbar-version pull-left"><b></b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.0.1.post1</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -186,7 +186,7 @@ Subscriber is not interested in actual training artifacts, or
 <dt id="ikkuna.export.subscriber.Subscriber.process_message_bundle">
 <code class="descname">process_message_bundle</code><span class="sig-paren">(</span><em>message_bundle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/subscriber.html#Subscriber.process_message_bundle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber.process_message_bundle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Callback for processing a <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MessageBundle" title="ikkuna.export.messages.MessageBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageBundle</span></code></a> object with
-<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingMessage</span></code></a>s or
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetaMessage</span></code></a>s or
 <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingMessage</span></code></a>s in it.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -463,20 +463,6 @@ to the record.</p>
 <em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">HistogramSubscriber</code><span class="sig-paren">(</span><em>kinds</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/histogram.html#HistogramSubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber" title="Permalink to this definition">¶</a></dt>
 <dd><p>A <a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a> which subsamples training artifacts and
 computes histograms per epoch.  Histograms are non-normalized.</p>
-<dl class="attribute">
-<dt id="ikkuna.export.subscriber.HistogramSubscriber._buffer">
-<code class="descname">_buffer</code><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber._buffer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Per-module buffer of values to compute more robust histogram</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)">dict</a>(<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>)</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="class">
@@ -579,7 +565,7 @@ set).</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/data.html#torch.utils.data.DataLoader" title="(in PyTorch vmaster (1.0.0a0+1e8064d ))">torch.utils.data.DataLoader</a></td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/data.html#torch.utils.data.DataLoader" title="(in PyTorch vmaster (1.0.0a0+4276fe7 ))">torch.utils.data.DataLoader</a></td>
 </tr>
 </tbody>
 </table>
@@ -622,7 +608,7 @@ set).</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>dataset_meta</strong> (<a class="reference internal" href="train.html#train.DatasetMeta" title="train.DatasetMeta"><em>train.DatasetMeta</em></a>) – Test dataset</li>
-<li><strong>forward_fn</strong> (<em>function</em>) – Bound version of <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.forward" title="(in PyTorch vmaster (1.0.0a0+1e8064d ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.forward()</span></code></a>. This could be obtained
+<li><strong>forward_fn</strong> (<em>function</em>) – Bound version of <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.forward" title="(in PyTorch vmaster (1.0.0a0+4276fe7 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.forward()</span></code></a>. This could be obtained
 from the <a class="reference internal" href="train.html#train.Trainer.model" title="train.Trainer.model"><code class="xref py py-attr docutils literal notranslate"><span class="pre">train.Trainer.model</span></code></a> property.</li>
 <li><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Batch size to use for pushing the test data through the model. This doesn’t
 have to be the training batch size, but must be selected so that the forward

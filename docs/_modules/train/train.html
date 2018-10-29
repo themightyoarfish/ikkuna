@@ -37,7 +37,7 @@
         </button>
         <a class="navbar-brand" href="../../index.html"><span><img src="../../_static/logo.png"></span>
           ikkuna</a>
-        <span class="navbar-text navbar-version pull-left"><b></b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.0.1.post1</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -158,7 +158,9 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        dataset_meta    :   train.DatasetMeta</span>
-<span class="sd">                            Train data, obtained via :func:`ikkuna.utils.load_dataset()`</span>
+<span class="sd">                            Train data, obtained via :func:`ikkuna.utils.load_dataset()`. Currently,</span>
+<span class="sd">                            there is no support for dropping the last incomplete batch in case the</span>
+<span class="sd">                            batch size does not evenly divide the number of examples</span>
 <span class="sd">        batch_size  :   int</span>
 <span class="sd">        loss   :    function</span>
 <span class="sd">                    Defaults to torch.nn.CrossEntropyLoss</span>
@@ -259,6 +261,8 @@
 <span class="sd">        **kwargs    :   dict</span>
 <span class="sd">                        Passed to the scheduler constructor</span>
 <span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;You must set the optimizer before setting the schedule.&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span> <span class="o">=</span> <span class="n">Scheduler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Trainer.set_model"><a class="viewcode-back" href="../../train.html#train.Trainer.set_model">[docs]</a>    <span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_or_str</span><span class="p">):</span>
@@ -289,7 +293,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">model_or_str</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exporter</span><span class="o">.</span><span class="n">_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_exporter</span><span class="o">.</span><span class="n">set_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Trainer.train_batch"><a class="viewcode-back" href="../../train.html#train.Trainer.train_batch">[docs]</a>    <span class="k">def</span> <span class="nf">train_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Run through 1 batch in the training set. The iterator will wrap around and</span>
