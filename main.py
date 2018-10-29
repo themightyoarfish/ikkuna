@@ -51,7 +51,12 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
 
     trainer = Trainer(dataset_train, batch_size=batch_size, depth=kwargs['depth'])
     trainer.set_model(model_str)
-    trainer.optimize(name=optimizer)
+    trainer.optimize(name=optimizer, lr=kwargs.get('learning_rate', 0.01))
+    if 'exponential_decay' in kwargs:
+        decay = kwargs['exponential_decay']
+        if decay is not None:
+            import torch
+            trainer.set_schedule(torch.optim.lr_scheduler.ExponentialLR, decay)
 
     subsample = kwargs['subsample']
     backend   = kwargs['visualisation']
@@ -130,6 +135,7 @@ def get_parser():
     parser.add_argument('-b', '--batch-size', type=int, default=128)
     parser.add_argument('-e', '--epochs', type=int, default=10)
     parser.add_argument('-o', '--optimizer', type=str, default='Adam', help='Optimizer to use')
+    parser.add_argument('-l', '--learning-rate', type=float, default=0.01, help='Learning rate')
     parser.add_argument('-a', '--ratio-average', type=int, default=10, help='Number of ratios to '
                         'average for stability (currently unused)', metavar='N')
     parser.add_argument('-s', '--subsample', type=int, default=1,
@@ -153,6 +159,8 @@ def get_parser():
                         help='Use norm subscriber(s)')
     parser.add_argument('--depth', type=int, default=-1, help='Depth to which to add modules',
                         metavar='N')
+    parser.add_argument('--exponential-decay', type=float, required=False,
+                        help='Decay parameter for exponential decay', metavar='GAMMA')
     return parser
 
 
