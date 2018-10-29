@@ -35,9 +35,24 @@ class Message(abc.ABC):
     def __init__(self, tag, seq, step, epoch, kind):
         self._tag  = tag
         self._seq  = seq
-        self.step  = step
-        self.epoch = epoch
-        self.kind  = kind
+
+        # check step
+        if step < 0:
+            raise ValueError('Step cannot be negative.')
+        else:
+            self._step = step
+
+        # check epoch
+        if epoch < 0:
+            raise ValueError('Epoch cannot be negative')
+        else:
+            self._epoch = epoch
+
+        # check kind
+        if kind not in ALLOWED_KINDS:
+            raise ValueError(f'Invalid message kind "{kind}"')
+        else:
+            self._kind = kind
         self._data = None
 
     @property
@@ -55,36 +70,15 @@ class Message(abc.ABC):
         '''int: Epoch-local sequence number (the current batch index)'''
         return self._step
 
-    @step.setter
-    def step(self, value):
-        if value < 0:
-            raise ValueError('Step cannot be negative.')
-        else:
-            self._step = value
-
     @property
     def epoch(self):
         '''int: Current epoch number'''
         return self._epoch
 
-    @epoch.setter
-    def epoch(self, value):
-        if value < 0:
-            raise ValueError
-        else:
-            self._epoch = value
-
     @property
     def kind(self):
         '''str: Message kind'''
         return self._kind
-
-    @kind.setter
-    def kind(self, value):
-        if value not in ALLOWED_KINDS:
-            raise ValueError(f'Invalid message kind "{value}"')
-        else:
-            self._kind = value
 
     @property
     def data(self):
@@ -109,15 +103,10 @@ class MetaMessage(Message):
     '''A message with meta information not tied to any specific module. Can still carry tensor data,
     if necessary.'''
     def __init__(self, tag, seq, step, epoch, kind, data=None):
+        if kind not in META_KINDS:
+            raise ValueError(f'Invalid message kind "{kind}"')
         super().__init__(tag, seq, step, epoch, kind)
         self._data = data
-
-    @Message.kind.setter
-    def kind(self, value):
-        if value not in META_KINDS:
-            raise ValueError(f'Invalid message kind "{value}"')
-        else:
-            self._kind = value
 
     @property
     def data(self):
@@ -144,13 +133,6 @@ class TrainingMessage(Message):
     def module(self):
         '''torch.nn.Module: Module emitting this data'''
         return self._module
-
-    @Message.kind.setter
-    def kind(self, value):
-        if value not in DATA_KINDS:
-            raise ValueError(f'Invalid message kind "{value}"')
-        else:
-            self._kind = value
 
     @property
     def key(self):
