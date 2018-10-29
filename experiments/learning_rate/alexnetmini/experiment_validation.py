@@ -51,7 +51,7 @@ def cfg():
 @ex.main
 def run(batch_size, loss, optimizer, base_lr, n_epochs, schedule):
     # load the dataset
-    dataset_train_meta, dataset_test_meta = load_dataset('CIFAR10')
+    dataset_train_meta, dataset_test_meta = load_dataset('MNIST')
 
     # instantiate model
     model = AlexNetMini(dataset_train_meta.shape[1:],

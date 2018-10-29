@@ -1,8 +1,9 @@
 '''
 .. moduleauthor Rasmus Diederichsen
 
-This module defines :class:`ikkuna.models.AlexNetMini`, a reduced version of AlexNet. Adapted from
-:meth:`torchvision.models.alexnet()`.
+This module defines :class:`ikkuna.models.AlexNetMini`, a reduced version of AlexNet.
+Adapted from
+https://github.com/sukilau/Ziff-deep-learning/blob/master/3-CIFAR10-lrate/CIFAR10-lrate.ipynb
 '''
 import torch
 
@@ -39,25 +40,29 @@ class AlexNetMini(torch.nn.Module):     # Pytorch Sphinx-doc is buggy here, so u
         H, W, C = input_shape
 
         self.features = torch.nn.Sequential(
-            torch.nn.Conv2d(C, 64, kernel_size=5, stride=2, padding=1),
+            torch.nn.Conv2d(C, 4, kernel_size=3, padding=0),
             torch.nn.ReLU(inplace=True),
-            torch.nn.MaxPool2d(kernel_size=3, stride=2),
-            torch.nn.Conv2d(64, 192, kernel_size=3, padding=2),
+            torch.nn.Conv2d(4, 8, kernel_size=3, padding=0),
             torch.nn.ReLU(inplace=True),
-            torch.nn.MaxPool2d(kernel_size=3, stride=2),
-            torch.nn.Conv2d(192, 192, kernel_size=3, padding=1),
-            torch.nn.ReLU(inplace=True),
+            torch.nn.MaxPool2d(kernel_size=2, stride=2),
         )
-        self.H_out =  H // (2 * 2 * 2)
-        self.W_out =  W // (2 * 2 * 2)
+        # for each conv or padding layer, apply the output size formula ((length - filter_size +
+        # 2*padding)/ stride) + 1
+        H_conv1 =  (H - 3 + 2 * 0) // 1 + 1
+        H_conv2 =  (H_conv1 - 3 + 2 * 0) // 1 + 1
+        self.H_out =  (H_conv2 - 2 + 2 * 0) // 2 + 1
+
+        W_conv1 =  (W - 3 + 2 * 0) // 1 + 1
+        W_conv2 =  (W_conv1 - 3 + 2 * 0) // 1 + 1
+        self.W_out =  (W_conv2 - 2 + 2 * 0) // 2 + 1
+
         self.classifier = torch.nn.Sequential(
-            torch.nn.Dropout(),
-            torch.nn.Linear(192 * self.H_out * self.W_out, 2048),
+            torch.nn.Dropout(0.25),
+            torch.nn.Linear(8 * self.H_out * self.W_out, 16),
             torch.nn.ReLU(inplace=True),
-            torch.nn.Dropout(),
-            torch.nn.Linear(2048, 2048),
-            torch.nn.ReLU(inplace=True),
-            torch.nn.Linear(2048, num_classes),
+            torch.nn.Dropout(0.5),
+            torch.nn.Linear(16, num_classes),
+            torch.nn.Softmax()
         )
 
         if exporter:
@@ -66,6 +71,6 @@ class AlexNetMini(torch.nn.Module):     # Pytorch Sphinx-doc is buggy here, so u
 
     def forward(self, x):
         x = self.features(x)
-        x = x.view(x.size(0), 192 * self.H_out * self.W_out)
+        x = x.view(x.size(0), 8 * self.H_out * self.W_out)
         x = self.classifier(x)
         return x
