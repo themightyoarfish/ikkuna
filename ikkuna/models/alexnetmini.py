@@ -32,7 +32,6 @@ class AlexNetMini(torch.nn.Module):     # Pytorch Sphinx-doc is buggy here, so u
                         with)
         '''
         super(AlexNetMini, self).__init__()
-        exporter.set_model(self)
 
         # if channel dim not present, add 1
         if len(input_shape) == 2:
@@ -61,7 +60,9 @@ class AlexNetMini(torch.nn.Module):     # Pytorch Sphinx-doc is buggy here, so u
             torch.nn.Linear(2048, num_classes),
         )
 
-        exporter.add_modules(self)
+        if exporter:
+            exporter.set_model(self)
+            exporter.add_modules(self)
 
     def forward(self, x):
         x = self.features(x)

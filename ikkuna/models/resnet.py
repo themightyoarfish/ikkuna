@@ -97,8 +97,9 @@ class ResNet(nn.Module):
         self.layer4 = self._make_layer(BlockType, 512, num_blocks[3], stride=2)
         self.linear = nn.Linear(512*BlockType.expansion, num_classes)
 
-        exporter.set_model(self)
-        exporter.add_modules(self)
+        if exporter:
+            exporter.set_model(self)
+            exporter.add_modules(self)
 
     def _make_layer(self, BlockType, planes, num_blocks, stride):
         strides = [stride] + [1]*(num_blocks-1)

@@ -112,8 +112,6 @@ class DenseNet(nn.Module):
         assert 0 < compression <= 1, 'compression of densenet should be between 0 and 1'
         self.avgpool_size = 8 if small_inputs else 7
 
-        exporter.set_model(self)
-
         _, _, C = input_shape
 
         # First convolution
@@ -169,7 +167,9 @@ class DenseNet(nn.Module):
             elif 'classifier' in name and 'bias' in name:
                 param.data.fill_(0)
 
-        exporter.add_modules(self)
+        if exporter:
+            exporter.set_model(self)
+            exporter.add_modules(self)
 
     def forward(self, x):
         features = self.features(x)
