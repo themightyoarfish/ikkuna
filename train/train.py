@@ -49,7 +49,9 @@ class Trainer:
         Parameters
         ----------
         dataset_meta    :   train.DatasetMeta
-                            Train data, obtained via :func:`ikkuna.utils.load_dataset()`
+                            Train data, obtained via :func:`ikkuna.utils.load_dataset()`. Currently,
+                            there is no support for dropping the last incomplete batch in case the
+                            batch size does not evenly divide the number of examples
         batch_size  :   int
         loss   :    function
                     Defaults to torch.nn.CrossEntropyLoss
@@ -150,6 +152,8 @@ class Trainer:
         **kwargs    :   dict
                         Passed to the scheduler constructor
         '''
+        if not self._optimizer:
+            raise ValueError('You must set the optimizer before setting the schedule.')
         self._scheduler = Scheduler(self._optimizer, *args, **kwargs)
 
     def set_model(self, model_or_str):
@@ -181,6 +185,8 @@ class Trainer:
             self._model = model_or_str
 
         self._model.cuda()
+        if self._exporter._model is None:
+            self._exporter.set_model(self._model)
 
     def train_batch(self):
         '''Run through 1 batch in the training set. The iterator will wrap around and
