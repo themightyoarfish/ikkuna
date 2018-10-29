@@ -208,7 +208,7 @@ class Trainer:
             self._next_X, self._next_Y = next(self._data_iter)
         except StopIteration:
             if self._scheduler:
-                self._scheduler.step(epoch_finished=True)
+                self._scheduler.step(self._epoch)
             self._exporter.epoch_finished()
             self._batch_counter        = 0
             self._epoch               += 1
@@ -216,7 +216,7 @@ class Trainer:
             self._next_X, self._next_Y = next(self._data_iter)
         else:
             if self._scheduler:
-                self._scheduler.step(epoch_finished=False)
+                self._scheduler.step(self._epoch)
 
         self._batch_counter  += 1
         self._global_counter += 1

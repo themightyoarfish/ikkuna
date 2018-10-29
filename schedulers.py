@@ -34,12 +34,12 @@ class FunctionScheduler(object):
     def get_lr(self):
         return self.lr_fn(self.base_lrs, self.batch, self.train_step, self.epoch)
 
-    def step(self, epoch_finished=False):
+    def step(self, epoch=None):
         self.train_step  += 1
         self.batch       += 1
-        if epoch_finished:
-            self.batch  = 0
-            self.epoch += 1
+        if epoch is not None and epoch != self.epoch:
+            self.batch = 0
+            self.epoch = epoch
 
         for param_group, lr in zip(self.optimizer.param_groups, self.get_lr()):
             param_group['lr'] = lr
