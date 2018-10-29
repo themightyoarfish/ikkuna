@@ -23,9 +23,10 @@ import sphinx_bootstrap_theme
 project = 'ikkuna'
 copyright = '2018, Rasmus Diederichsen'
 author = 'Rasmus Diederichsen'
+suppress_warnings = ['epub.unknown_project_files']
 
 # The short X.Y version
-version = ''
+version = '0.0.1.post1'
 # The full version, including alpha/beta/rc tags
 release = '0'
 
