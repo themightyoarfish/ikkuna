@@ -157,8 +157,10 @@ class MessageBundle(object):
         identifier  :   str
                         String to uniquely identify the bundle. Will usually be either the module
                         name or `'META'` for a collection of meta messages.
-        kinds   :   list
-                    Message kinds contained in this bundle
+        kinds   :   str or list
+                    Single kind when a :class:`~ikkuna.export.subscriber.Subscription` is used, or a
+                    list of Message kinds contained in this bundle for use with
+                    :class:`~ikkuna.export.subscriber.SynchronizedSubscription`
         '''
         if isinstance(kinds, str):
             # this has bitten me before. base `Subscription`s don't use multiple kinds
