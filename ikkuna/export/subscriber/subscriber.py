@@ -8,7 +8,7 @@ This module contains the base definition for subscriber functionality. The
 import abc
 from collections import defaultdict
 import ikkuna.visualization
-from ikkuna.export.messages import MessageBundle, TrainingMessage, ALLOWED_KINDS
+from ikkuna.export.messages import MessageBundle, TrainingMessage, ALLOWED_KINDS, get_default_bus
 
 
 class Subscription(object):
@@ -157,13 +157,22 @@ class Subscriber(abc.ABC):
     '''Base class for receiving and processing activations, gradients and other stuff into
     insightful metrics.'''
 
-    def __init__(self, subscription):
+    def __init__(self, subscription, message_bus):
         '''
         Parameters
         ----------
         subscription    :   Subscription
         '''
         self._subscription = subscription
+        self._msg_bus      = message_bus
+
+    @property
+    def subscription(self):
+        return self._subscription
+
+    @property
+    def message_bus(self):
+        return self._msg_bus
 
     @abc.abstractmethod
     def _metric(self, message_or_data):
@@ -218,7 +227,7 @@ class PlotSubscriber(Subscriber):
                     Plotting backend
     '''
 
-    def __init__(self, subscription, plot_config, backend='tb', **tbx_params):
+    def __init__(self, subscription, message_bus, plot_config, backend='tb', **tbx_params):
         '''
         Parameters
         ----------
@@ -231,7 +240,7 @@ class PlotSubscriber(Subscriber):
         **tbx_params    :   dict
                             Keywords for the :class:`tensorboardX.SummaryWriter`
         '''
-        super().__init__(subscription)
+        super().__init__(subscription, message_bus)
 
         self._backend = ikkuna.visualization.get_backend(backend, plot_config, **tbx_params)
 

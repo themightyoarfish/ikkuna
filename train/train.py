@@ -56,7 +56,8 @@ class Trainer:
         loss   :    function
                     Defaults to torch.nn.CrossEntropyLoss
         depth   :   int
-                    Depth to which to traverse the module tree
+                    Depth to which to traverse the module tree. Ignored if ``exporter`` keyword arg
+                    is set
         '''
         ############################################################################################
         #                                  Acquire parameters                                      #
@@ -116,7 +117,7 @@ class Trainer:
         subscriber  :   ikkuna.export.subscriber.Subscriber
 
         '''
-        self._exporter.subscribe(subscriber)
+        self._exporter.message_bus.register_subscriber(subscriber)
 
     def optimize(self, name='Adam', **kwargs):
         '''Set the optimizer.

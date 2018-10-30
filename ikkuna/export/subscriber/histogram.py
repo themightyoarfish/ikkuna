@@ -1,6 +1,7 @@
 from ikkuna.export.subscriber import PlotSubscriber, SynchronizedSubscription
-from collections import defaultdict
+from ikkuna.export.messages import get_default_bus
 
+from collections import defaultdict
 
 class HistogramSubscriber(PlotSubscriber):
 
@@ -8,11 +9,12 @@ class HistogramSubscriber(PlotSubscriber):
     computes histograms per epoch.  Histograms are non-normalized.
     '''
 
-    def __init__(self, kinds, tag=None, subsample=1, backend='tb'):
+    def __init__(self, kinds, message_bus=get_default_bus(), tag=None, subsample=1, backend='tb'):
         subscription = SynchronizedSubscription(self, kinds, tag, subsample)
         title        = f'{kinds[0]} histogram'
         ylabel       = 'Frequency'
-        super().__init__(subscription, {'title': title, 'ylabel': ylabel}, backend=backend)
+        super().__init__(subscription, message_bus, {'title': title, 'ylabel': ylabel},
+                         backend=backend)
 
     def _metric(self, message_bundle):
 

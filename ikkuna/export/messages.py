@@ -310,3 +310,73 @@ class MessageBundle(object):
 
     def __repr__(self):
         return str(self)
+
+
+class MessageBus(object):
+    '''A class which receives messages registers subscribers and relays the former to the latter.'''
+
+    def __init__(self, name):
+        self._name = name
+        self._subscribers = set()
+
+    @property
+    def name(self):
+        return self._name
+
+    def register_subscriber(self, sub):
+        self._subscribers.add(sub)
+
+    def publish_meta_message(self, global_step, train_step, epoch, kind, data=None):
+        '''Publish an update of type :class:`~ikkuna.export.messages.MetaMessage` to all
+        registered subscribers.
+
+        Parameters
+        ----------
+        global_step :   int
+                        Global training step
+        train_step  :   int
+                        Epoch-relative training step
+        epoch   :   int
+                    Epoch index
+        kind    :   str
+                    Kind of message
+        data    :   torch.Tensor or None
+                    Payload, if necessary
+        '''
+        msg = MetaMessage(seq=global_step, tag=None, kind=kind, step=train_step,
+                          epoch=epoch, data=data)
+        for sub in self._subscribers:
+            sub.receive_message(msg)
+
+    def publish_train_message(self, global_step, train_step, epoch, kind, named_module, data):
+        '''Publish an update of type :class:`~ikkuna.export.messages.TrainingMessage` to all
+        registered subscribers.
+
+        Parameters
+        ----------
+        global_step :   int
+                        Global training step
+        train_step  :   int
+                        Epoch-relative training step
+        epoch   :   int
+                    Epoch index
+        kind    :   str
+                    Kind of message
+        module  :   torch.nn.Module
+                    The module in question
+        data    :   torch.Tensor
+                    Payload
+        '''
+        msg = TrainingMessage(seq=global_step, tag=None, kind=kind, module=named_module,
+                              step=train_step, epoch=epoch, data=data)
+
+        for sub in self._subscribers:
+            sub.receive_message(msg)
+
+
+default_bus = MessageBus('default')
+
+
+def get_default_bus():
+    global default_bus
+    return default_bus

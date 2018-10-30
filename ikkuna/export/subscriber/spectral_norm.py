@@ -2,11 +2,13 @@ import torch
 from torch.nn.functional import normalize
 
 from ikkuna.export.subscriber import PlotSubscriber, Subscription
+from ikkuna.export.messages import get_default_bus
 
 
 class SpectralNormSubscriber(PlotSubscriber):
 
-    def __init__(self, kind, tag=None, subsample=1, ylims=None, backend='tb', **tbx_params):
+    def __init__(self, kind, message_bus=get_default_bus(), tag=None, subsample=1, ylims=None,
+                 backend='tb', **tbx_params):
         '''
         Parameters
         ----------
@@ -24,7 +26,7 @@ class SpectralNormSubscriber(PlotSubscriber):
         title = f'Spectral norms of {kind}'
         xlabel = 'Step'
         ylabel = 'Spectral norm'
-        super().__init__(subscription,
+        super().__init__(subscription, message_bus,
                          {'title': title, 'xlabel': xlabel, 'ylims': ylims, 'ylabel': ylabel},
                          backend=backend, **tbx_params)
         self.u = dict()

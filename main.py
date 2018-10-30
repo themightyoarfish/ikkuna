@@ -27,6 +27,8 @@ from ikkuna.utils import load_dataset
 from ikkuna.export.subscriber import (RatioSubscriber, HistogramSubscriber, SpectralNormSubscriber,
                                       TestAccuracySubscriber, TrainAccuracySubscriber,
                                       NormSubscriber)
+from ikkuna.export import Exporter
+from ikkuna.export.messages import MessageBus
 import ikkuna.visualization
 
 
@@ -47,7 +49,9 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
 
     dataset_train, dataset_test = load_dataset(dataset_str)
 
-    trainer = Trainer(dataset_train, batch_size=batch_size, depth=kwargs['depth'])
+    bus = MessageBus('main')
+    trainer = Trainer(dataset_train, batch_size=batch_size,
+                      exporter=Exporter(depth=kwargs['depth'], message_bus=bus))
     trainer.set_model(model_str)
     trainer.optimize(name=optimizer, lr=kwargs.get('learning_rate', 0.01))
     if 'exponential_decay' in kwargs:

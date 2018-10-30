@@ -1,6 +1,6 @@
 import torch
 
-from ikkuna.export.messages import TrainingMessage, MetaMessage
+from ikkuna.export.messages import get_default_bus
 from ikkuna.utils import ModuleTree
 
 
@@ -46,7 +46,6 @@ class Exporter(object):
                         Cache for keeping the previous weights for computing differences
     _bias_cache :   dict
                     see ``_weight_cache``
-    _subscribers    :   set(ikkuna.export.subscriber.Subscriber)
     _model          :   torch.nn.Module
     _train_step :   int
                     Current batch index
@@ -63,23 +62,27 @@ class Exporter(object):
                         in this list is ignored
     '''
 
-    def __init__(self, depth, module_filter=None):
+    def __init__(self, depth, module_filter=None, message_bus=get_default_bus()):
         self._modules           = {}
-        self._weight_cache      = {}     # potential memory hog
+        self._weight_cache      = {}
         self._bias_cache        = {}
-        self._subscribers       = set()
         self._model             = None
         self._epoch             = 0
         # for gradient and activation to have the same step number, we need to increase it before
         # propagation or after backpropagation. but we don't know when the backprop finishes, while
         # we do know when the forward prop starts. So we step before and thus initialize the
-        # counters with -1 to start at 0
+        # counters with -1 to effectively start at 0
         self._train_step        = -1
         self._global_step       = -1
         self._is_training       = True
         self._depth             = depth
         self._frozen            = set()
         self._module_filter     = module_filter
+        self._msg_bus           = message_bus
+
+    @property
+    def message_bus(self):
+        return self._msg_bus
 
     @property
     def modules(self):
@@ -90,23 +93,6 @@ class Exporter(object):
     def named_modules(self):
         '''list(ikkuna.utils.NamedModule) - Named modules tracked by this :class:`Exporter`'''
         return list(self._modules.values())
-
-    def _check_model(self):
-        '''Check if a model is set, issue a warning otherwise. Some things may still work and not
-        crash (???).'''
-        if not self._model:
-            import warnings
-            warnings.warn('Warning: No model set. This will either do nothing or crash.')
-
-    def subscribe(self, subscriber):
-        '''Add a subscriber.
-
-        Parameters
-        ----------
-        subscription    :   ikkuna.export.subscriber.Subscriber
-                            Subscriber to register
-        '''
-        self._subscribers.add(subscriber)
 
     def _add_module_by_name(self, named_module):
         '''Register a module with a name attached.
@@ -208,45 +194,6 @@ class Exporter(object):
         self.add_modules(module, recursive)
         return module
 
-    def publish_meta_message(self, kind, data=None):
-        '''Publish an update of type :class:`~ikkuna.export.messages.MetaMessage` to all
-        registered subscribers.
-
-        Parameters
-        ----------
-        kind    :   str
-                    Kind of message
-        data    :   torch.Tensor or None
-                    Payload, if necessary
-        '''
-        self._check_model()
-        msg = MetaMessage(seq=self._global_step, tag=None, kind=kind, step=self._train_step,
-                          epoch=self._epoch, data=data)
-        for sub in self._subscribers:
-            sub.receive_message(msg)
-
-    def publish_train_message(self, kind, module, data):
-        '''Publish an update of type :class:`~ikkuna.export.messages.TrainingMessage` to all
-        registered subscribers.
-
-        Parameters
-        ----------
-        kind    :   str
-                    Kind of message
-        module  :   torch.nn.Module
-                    The module in question
-        data    :   torch.Tensor
-                    Payload
-        '''
-        self._check_model()
-
-        named_module = self._modules[module]
-        msg          = TrainingMessage(seq=self._global_step, tag=None, kind=kind,
-                                       module=named_module, step=self._train_step,
-                                       epoch=self._epoch, data=data)
-        for sub in self._subscribers:
-            sub.receive_message(msg)
-
     def train(self, train=True):
         '''Switch to training mode. This will ensure all data is published.'''
         self._is_training = train
@@ -268,7 +215,8 @@ class Exporter(object):
         else:
             input_data = args
 
-        self.publish_meta_message('input_data', input_data)
+        self._msg_bus.publish_meta_message(self._global_step, self._train_step, self._epoch,
+                                           'input_data', input_data)
 
     def new_output_and_labels(self, network_output, labels):
         '''Callback for final network output.
@@ -278,8 +226,10 @@ class Exporter(object):
         data    :   torch.Tensor
                     The final layer's output
         '''
-        self.publish_meta_message('network_output', network_output)
-        self.publish_meta_message('input_labels', labels)
+        self._msg_bus.publish_meta_message(self._global_step, self._train_step, self._epoch,
+                                           'network_output', network_output)
+        self._msg_bus.publish_meta_message(self._global_step, self._train_step, self._epoch,
+                                           'input_labels', labels)
 
     def new_activations(self, module, in_, out_):
         '''Callback for newly arriving activations. Registered as a hook to the tracked modules.
@@ -297,30 +247,49 @@ class Exporter(object):
             return
 
         if self._train_step == 0:
-            self.publish_meta_message('epoch_started')
-            self.publish_meta_message('batch_started')
+            self._msg_bus.publish_meta_message(self._global_step, self._train_step,
+                                               self._epoch, 'epoch_started')
+            self._msg_bus.publish_meta_message(self._global_step, self._train_step,
+                                               self._epoch, 'batch_started')
 
         if hasattr(module, 'weight'):
+
             if module in self._weight_cache:
-                self.publish_train_message('weight_updates', module, module.weight -
-                                           self._weight_cache[module])
+                self._msg_bus.publish_train_message(self._global_step, self._train_step,
+                                                    self._epoch, 'weight_updates',
+                                                    self._modules[module],
+                                                    module.weight - self._weight_cache[module])
             else:
-                self.publish_train_message('weight_updates', module,
-                                           torch.zeros_like(module.weight))
-            self.publish_train_message('weights', module, module.weight)
+                self._msg_bus.publish_train_message(self._global_step, self._train_step,
+                                                    self._epoch, 'weight_updates',
+                                                    self._modules[module],
+                                                    torch.zeros_like(module.weight))
+
+            self._msg_bus.publish_train_message(self._global_step, self._train_step, self._epoch,
+                                                'weights', self._modules[module], module.weight)
             self._weight_cache[module] = torch.tensor(module.weight)
+
         if hasattr(module, 'bias') and module.bias is not None:   # bias can be present, but be None
 
             # in the first train step, there can be no updates, so we just publish zeros,
             # otherwise clients would error out since they don't receive the expected messages
             if module in self._bias_cache:
-                self.publish_train_message('bias_updates', module, module.bias -
-                                           self._bias_cache[module])
+                self._msg_bus.publish_train_message(self._global_step, self._train_step,
+                                                    self._epoch, 'bias_updates',
+                                                    self._modules[module],
+                                                    module.bias - self._bias_cache[module])
             else:
-                self.publish_train_message('bias_updates', module, torch.zeros_like(module.bias))
-            self.publish_train_message('biases', module, module.bias)
+                self._msg_bus.publish_train_message(self._global_step, self._train_step,
+                                                    self._epoch, 'bias_updates',
+                                                    self._modules[module],
+                                                    torch.zeros_like(module.bias))
+
+            self._msg_bus.publish_train_message(self._global_step, self._train_step, self._epoch,
+                                                'biases', self._modules[module], module.bias)
             self._bias_cache[module] = torch.tensor(module.bias)
-        self.publish_train_message('activations', module, out_)
+
+        self._msg_bus.publish_train_message(self._global_step, self._train_step, self._epoch,
+                                            'activations', self._modules[module], out_)
 
     def new_layer_gradients(self, module, gradients):
         '''Callback for newly arriving layer gradients (loss wrt layer output). Registered as a hook
@@ -346,7 +315,8 @@ class Exporter(object):
             else:
                 gradients = gradients[0]
 
-        self.publish_train_message('layer_gradients', module, gradients)
+        self._msg_bus.publish_train_message(self._global_step, self._train_step, self._epoch,
+                                            'layer_gradients', self._modules[module], gradients)
 
     def new_parameter_gradients(self, module, gradients):
         '''Callback for newly arriving gradients wrt weight and/or bias. Registered as a hook to the
@@ -358,10 +328,13 @@ class Exporter(object):
         gradients    :   tuple(torch.Tensor, torch.Tensor)
                         The gradients w.r.t weight and bias.
         '''
-        self.publish_train_message('weight_gradients', module, gradients[0])
+        self._msg_bus.publish_train_message(self._global_step, self._train_step, self._epoch,
+                                            'weight_gradients', self._modules[module], gradients[0])
 
         if gradients[1] is not None:
-            self.publish_train_message('bias_gradients', module, gradients[1])
+            self._msg_bus.publish_train_message(self._global_step, self._train_step, self._epoch,
+                                                'bias_gradients', self._modules[module],
+                                                gradients[1])
 
     def set_model(self, model):
         '''Set the model for direct access for some metrics.
@@ -421,7 +394,8 @@ class Exporter(object):
         self._train_step  += 1
         self._global_step += 1
 
-        self.publish_meta_message('batch_finished')
+        self._msg_bus.publish_meta_message(self._global_step, self._train_step, self._epoch,
+                                           'batch_finished')
 
     def _freeze_module(self, named_module):
         '''Convenience method for freezing training for a module.
@@ -443,6 +417,7 @@ class Exporter(object):
 
     def epoch_finished(self):
         '''Increase the epoch counter and reset the batch counter.'''
-        self.publish_meta_message('epoch_finished')
+        self._msg_bus.publish_meta_message(self._global_step, self._train_step, self._epoch,
+                                           'epoch_finished')
         self._epoch     += 1
         self._train_step = 0

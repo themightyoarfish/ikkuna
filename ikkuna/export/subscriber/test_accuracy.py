@@ -1,4 +1,5 @@
 from ikkuna.export.subscriber import PlotSubscriber, Subscription
+from ikkuna.export.messages import get_default_bus
 from torch.utils.data import DataLoader
 
 
@@ -19,8 +20,8 @@ class TestAccuracySubscriber(PlotSubscriber):
                     Bound method on the model to push data through and get predictions
     '''
 
-    def __init__(self, dataset_meta, forward_fn, batch_size, frequency=100, ylims=None, tag=None,
-                 subsample=1, backend='tb', **tbx_params):
+    def __init__(self, dataset_meta, forward_fn, batch_size, message_bus=get_default_bus(),
+                 frequency=100, ylims=None, tag=None, subsample=1, backend='tb', **tbx_params):
         '''
         Parameters
         ----------
@@ -42,6 +43,7 @@ class TestAccuracySubscriber(PlotSubscriber):
         xlabel = 'Train step'
         subscription = Subscription(self, kinds, tag, subsample)
         super().__init__(subscription,
+                         message_bus,
                          {'title': title, 'ylabel': ylabel, 'ylims': ylims, 'xlabel': xlabel},
                          backend=backend, **tbx_params)
 

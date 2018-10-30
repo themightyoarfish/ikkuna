@@ -2,6 +2,7 @@ import torch
 import numpy as np
 
 from ikkuna.export.subscriber import PlotSubscriber, SynchronizedSubscription
+from ikkuna.export.messages import get_default_bus
 
 ZERO_TENSOR = torch.tensor(0.0).cuda()
 
@@ -13,8 +14,8 @@ class RatioSubscriber(PlotSubscriber):
     Therefore it is vital to pass the message kinds to the
     :class:`~ikkuna.export.subscriber.Subscription` object in the correct order.'''
 
-    def __init__(self, kinds, tag=None, subsample=1, ylims=None, backend='tb', absolute=True,
-                 **tbx_params):
+    def __init__(self, kinds, message_bus=get_default_bus(), tag=None, subsample=1, ylims=None,
+                 backend='tb', absolute=True, **tbx_params):
         '''
         Parameters
         ----------
@@ -25,10 +26,11 @@ class RatioSubscriber(PlotSubscriber):
         ylabel       = 'Ratio'
         xlabel       = 'Train step'
         subscription = SynchronizedSubscription(self, kinds, tag, subsample)
-        super().__init__(subscription, {'title': title,
-                                        'ylabel': ylabel,
-                                        'ylims': ylims,
-                                        'xlabel': xlabel},
+        super().__init__(subscription, message_bus,
+                         {'title': title,
+                          'ylabel': ylabel,
+                          'ylims': ylims,
+                          'xlabel': xlabel},
                          backend=backend, **tbx_params)
         if absolute:
             self._metric_postprocess = torch.abs
@@ -55,7 +57,7 @@ class RatioSubscriber(PlotSubscriber):
             ratio_sum = torch.where(1 - nan_tensor, ratio_tensor, ZERO_TENSOR).sum()
         else:
             ratio_sum = ratio_tensor.sum()
-        ratio = (ratio_sum / (n - n_nans)).item()
+            ratio = (ratio_sum / (n - n_nans)).item()
 
         if np.isnan(ratio):
             raise ValueError(f'NaN value ratio for {module_name}')

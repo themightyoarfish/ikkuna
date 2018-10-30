@@ -1,18 +1,19 @@
 from ikkuna.export.subscriber import PlotSubscriber, SynchronizedSubscription
+from ikkuna.export.messages import get_default_bus
 
 
 class MeanSubscriber(PlotSubscriber):
 
-    def __init__(self, kinds, tag=None, subsample=1, ylims=None, backend='tb',
-                 **tbx_params):
+    def __init__(self, kinds, message_bus=get_default_bus(), tag=None, subsample=1, ylims=None,
+                 backend='tb', **tbx_params):
         title        = f'{kinds[0]} mean'
         ylabel       = 'Mean'
         xlabel       = 'Train step'
         subscription = SynchronizedSubscription(self, kinds, tag, subsample)
-        super().__init__(subscription, {'title': title,
-                                        'ylabel': ylabel,
-                                        'ylims': ylims,
-                                        'xlabel': xlabel},
+        super().__init__(subscription, message_bus, {'title': title,
+                                                     'ylabel': ylabel,
+                                                     'ylims': ylims,
+                                                     'xlabel': xlabel},
                          backend=backend, **tbx_params)
 
     def _metric(self, message_bundle):
