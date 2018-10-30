@@ -27,9 +27,7 @@ from ikkuna.utils import load_dataset
 from ikkuna.export.subscriber import (RatioSubscriber, HistogramSubscriber, SpectralNormSubscriber,
                                       TestAccuracySubscriber, TrainAccuracySubscriber,
                                       NormSubscriber)
-
-from ikkuna.utils import seed_everything
-seed_everything()
+import ikkuna.visualization
 
 
 def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
@@ -168,6 +166,7 @@ def main():
 
     args = get_parser().parse_args()
     kwargs = vars(args)
+    ikkuna.visualization.TBBackend.info = str(kwargs)
     _main(kwargs.pop('dataset'), kwargs.pop('model'), kwargs.pop('batch_size'),
           kwargs.pop('epochs'), kwargs.pop('optimizer'), **vars(args))
 
