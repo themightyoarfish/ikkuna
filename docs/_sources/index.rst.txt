@@ -20,7 +20,6 @@ or less personal utilities making my work with it easier.
    ikkuna
    main
    train
-   schedulers
 
 
 

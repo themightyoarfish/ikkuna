@@ -59,7 +59,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../ikkuna.html">ikkuna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../main.html">main program</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../train.html">train</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../schedulers.html">schedulers module</a></li>
 </ul>
 </ul>
 </li>
@@ -136,9 +135,9 @@
 <span class="kn">from</span> <span class="nn">ikkuna.export.subscriber</span> <span class="k">import</span> <span class="p">(</span><span class="n">RatioSubscriber</span><span class="p">,</span> <span class="n">HistogramSubscriber</span><span class="p">,</span> <span class="n">SpectralNormSubscriber</span><span class="p">,</span>
                                       <span class="n">TestAccuracySubscriber</span><span class="p">,</span> <span class="n">TrainAccuracySubscriber</span><span class="p">,</span>
                                       <span class="n">NormSubscriber</span><span class="p">)</span>
-
-<span class="kn">from</span> <span class="nn">ikkuna.utils</span> <span class="k">import</span> <span class="n">seed_everything</span>
-<span class="n">seed_everything</span><span class="p">()</span>
+<span class="kn">from</span> <span class="nn">ikkuna.export</span> <span class="k">import</span> <span class="n">Exporter</span>
+<span class="kn">from</span> <span class="nn">ikkuna.export.messages</span> <span class="k">import</span> <span class="n">MessageBus</span>
+<span class="kn">import</span> <span class="nn">ikkuna.visualization</span>
 
 
 <div class="viewcode-block" id="_main"><a class="viewcode-back" href="../main.html#main._main">[docs]</a><span class="k">def</span> <span class="nf">_main</span><span class="p">(</span><span class="n">dataset_str</span><span class="p">,</span> <span class="n">model_str</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">epochs</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -158,9 +157,16 @@
 
     <span class="n">dataset_train</span><span class="p">,</span> <span class="n">dataset_test</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="n">dataset_str</span><span class="p">)</span>
 
-    <span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="n">dataset_train</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;depth&#39;</span><span class="p">])</span>
+    <span class="n">bus</span> <span class="o">=</span> <span class="n">MessageBus</span><span class="p">(</span><span class="s1">&#39;main&#39;</span><span class="p">)</span>
+    <span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="n">dataset_train</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+                      <span class="n">exporter</span><span class="o">=</span><span class="n">Exporter</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;depth&#39;</span><span class="p">],</span> <span class="n">message_bus</span><span class="o">=</span><span class="n">bus</span><span class="p">))</span>
     <span class="n">trainer</span><span class="o">.</span><span class="n">set_model</span><span class="p">(</span><span class="n">model_str</span><span class="p">)</span>
-    <span class="n">trainer</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">optimizer</span><span class="p">)</span>
+    <span class="n">trainer</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;learning_rate&#39;</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">))</span>
+    <span class="k">if</span> <span class="s1">&#39;exponential_decay&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">decay</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;exponential_decay&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">decay</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">torch</span>
+            <span class="n">trainer</span><span class="o">.</span><span class="n">set_schedule</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">ExponentialLR</span><span class="p">,</span> <span class="n">decay</span><span class="p">)</span>
 
     <span class="n">subsample</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;subsample&#39;</span><span class="p">]</span>
     <span class="n">backend</span>   <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;visualisation&#39;</span><span class="p">]</span>
@@ -239,6 +245,7 @@
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-b&#39;</span><span class="p">,</span> <span class="s1">&#39;--batch-size&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-e&#39;</span><span class="p">,</span> <span class="s1">&#39;--epochs&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-o&#39;</span><span class="p">,</span> <span class="s1">&#39;--optimizer&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;Adam&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Optimizer to use&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-l&#39;</span><span class="p">,</span> <span class="s1">&#39;--learning-rate&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Learning rate&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-a&#39;</span><span class="p">,</span> <span class="s1">&#39;--ratio-average&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Number of ratios to &#39;</span>
                         <span class="s1">&#39;average for stability (currently unused)&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;N&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-s&#39;</span><span class="p">,</span> <span class="s1">&#39;--subsample&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
@@ -262,6 +269,8 @@
                         <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Use norm subscriber(s)&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--depth&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Depth to which to add modules&#39;</span><span class="p">,</span>
                         <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;N&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--exponential-decay&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Decay parameter for exponential decay&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;GAMMA&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">parser</span></div>
 
 
@@ -269,6 +278,7 @@
 
     <span class="n">args</span> <span class="o">=</span> <span class="n">get_parser</span><span class="p">()</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
     <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">ikkuna</span><span class="o">.</span><span class="n">visualization</span><span class="o">.</span><span class="n">TBBackend</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">_main</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;dataset&#39;</span><span class="p">),</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">),</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;batch_size&#39;</span><span class="p">),</span>
           <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;epochs&#39;</span><span class="p">),</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;optimizer&#39;</span><span class="p">),</span> <span class="o">**</span><span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">))</span></div>
 

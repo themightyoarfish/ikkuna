@@ -59,7 +59,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../ikkuna.html">ikkuna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../main.html">main program</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../train.html">train</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../schedulers.html">schedulers module</a></li>
 </ul>
 </ul>
 </li>
@@ -145,9 +144,7 @@
 <span class="sd">    _dataloader :   torch.utils.data.DataLoader</span>
 <span class="sd">                    loader for the training dataset</span>
 <span class="sd">    _optimizer  : torch.optim.Optimizer</span>
-<span class="sd">    _scheduler  :   schedulers.FunctionScheduler</span>
-<span class="sd">                    A custom scheduler for learning rate decay (*NOT* a</span>
-<span class="sd">                    :class:`torch.optim.lr_scheduler._LRScheduler`)</span>
+<span class="sd">    _scheduler  :   torch.optim.lr_scheduler._LRScheduler</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
 <div class="viewcode-block" id="Trainer.__init__"><a class="viewcode-back" href="../../train.html#train.Trainer.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset_meta</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -165,7 +162,8 @@
 <span class="sd">        loss   :    function</span>
 <span class="sd">                    Defaults to torch.nn.CrossEntropyLoss</span>
 <span class="sd">        depth   :   int</span>
-<span class="sd">                    Depth to which to traverse the module tree</span>
+<span class="sd">                    Depth to which to traverse the module tree. Ignored if ``exporter`` keyword arg</span>
+<span class="sd">                    is set</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="c1">############################################################################################</span>
         <span class="c1">#                                  Acquire parameters                                      #</span>
@@ -225,7 +223,7 @@
 <span class="sd">        subscriber  :   ikkuna.export.subscriber.Subscriber</span>
 
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_exporter</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">subscriber</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exporter</span><span class="o">.</span><span class="n">message_bus</span><span class="o">.</span><span class="n">register_subscriber</span><span class="p">(</span><span class="n">subscriber</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Trainer.optimize"><a class="viewcode-back" href="../../train.html#train.Trainer.optimize">[docs]</a>    <span class="k">def</span> <span class="nf">optimize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Adam&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Set the optimizer.</span>
@@ -255,7 +253,8 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        Scheduler   :   type</span>
-<span class="sd">                        Class of the Scheduler to use (e.g. :class:`schedulers.FunctionScheduler`)</span>
+<span class="sd">                        Class of the Scheduler to use (e.g.</span>
+<span class="sd">                        :class:`~torch.optim.lr_scheduler.LambdaLR`)</span>
 <span class="sd">        *args   :   list</span>
 <span class="sd">                    Passed to the scheduler constructor</span>
 <span class="sd">        **kwargs    :   dict</span>
@@ -317,7 +316,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_next_X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_Y</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_iter</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">epoch_finished</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_exporter</span><span class="o">.</span><span class="n">epoch_finished</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_batch_counter</span>        <span class="o">=</span> <span class="mi">0</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span>               <span class="o">+=</span> <span class="mi">1</span>
@@ -325,7 +324,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_next_X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_Y</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_iter</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">epoch_finished</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_batch_counter</span>  <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_global_counter</span> <span class="o">+=</span> <span class="mi">1</span></div></div>

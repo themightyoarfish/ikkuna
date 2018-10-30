@@ -59,7 +59,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../ikkuna.html">ikkuna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../main.html">main program</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../train.html">train</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../schedulers.html">schedulers module</a></li>
 </ul>
 </ul>
 </li>
@@ -108,12 +107,14 @@
       
   <h1>Source code for ikkuna.export.subscriber.train_accuracy</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">ikkuna.export.subscriber</span> <span class="k">import</span> <span class="n">PlotSubscriber</span><span class="p">,</span> <span class="n">SynchronizedSubscription</span>
+<span class="kn">from</span> <span class="nn">ikkuna.export.messages</span> <span class="k">import</span> <span class="n">get_default_bus</span>
 
 
 <div class="viewcode-block" id="TrainAccuracySubscriber"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.TrainAccuracySubscriber">[docs]</a><span class="k">class</span> <span class="nc">TrainAccuracySubscriber</span><span class="p">(</span><span class="n">PlotSubscriber</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;:class:`~ikkuna.export.subscriber.Subscriber` which computes the batch accuracy.&#39;&#39;&#39;</span>
 
-<div class="viewcode-block" id="TrainAccuracySubscriber.__init__"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.TrainAccuracySubscriber.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ylims</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;tb&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">tbx_params</span><span class="p">):</span>
+<div class="viewcode-block" id="TrainAccuracySubscriber.__init__"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.TrainAccuracySubscriber.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_bus</span><span class="o">=</span><span class="n">get_default_bus</span><span class="p">(),</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ylims</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;tb&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">tbx_params</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        For parameters see :class:`~ikkuna.export.subscriber.PlotSubscriber`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -124,6 +125,7 @@
         <span class="n">xlabel</span> <span class="o">=</span> <span class="s1">&#39;Step&#39;</span>
         <span class="n">ylabel</span> <span class="o">=</span> <span class="s1">&#39;Accuracy&#39;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subscription</span><span class="p">,</span>
+                         <span class="n">message_bus</span><span class="p">,</span>
                          <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span> <span class="s1">&#39;xlabel&#39;</span><span class="p">:</span> <span class="n">xlabel</span><span class="p">,</span> <span class="s1">&#39;ylims&#39;</span><span class="p">:</span> <span class="n">ylims</span><span class="p">,</span> <span class="s1">&#39;ylabel&#39;</span><span class="p">:</span> <span class="n">ylabel</span><span class="p">},</span>
                          <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span> <span class="o">**</span><span class="n">tbx_params</span><span class="p">)</span></div>
 

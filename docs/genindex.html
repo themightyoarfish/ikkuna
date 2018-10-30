@@ -60,7 +60,6 @@
 <li class="toctree-l1"><a class="reference internal" href="ikkuna.html">ikkuna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="main.html">main program</a></li>
 <li class="toctree-l1"><a class="reference internal" href="train.html">train</a></li>
-<li class="toctree-l1"><a class="reference internal" href="schedulers.html">schedulers module</a></li>
 </ul>
 </ul>
 </li>
@@ -213,8 +212,6 @@
 </li>
       <li><a href="ikkuna.export.html#ikkuna.export.messages.MessageBundle._check_message">_check_message() (ikkuna.export.messages.MessageBundle method)</a>
 </li>
-      <li><a href="ikkuna.export.html#ikkuna.export.Exporter._check_model">_check_model() (ikkuna.export.Exporter method)</a>
-</li>
       <li><a href="ikkuna.utils.html#ikkuna.utils.ModuleTree._children">_children (ikkuna.utils.ModuleTree attribute)</a>
 </li>
       <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.TestAccuracySubscriber._data_loader">_data_loader (ikkuna.export.subscriber.TestAccuracySubscriber attribute)</a>
@@ -304,8 +301,6 @@
       <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscription._subsample">_subsample (ikkuna.export.subscriber.Subscription attribute)</a>
 </li>
       <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscription._subscriber">_subscriber (ikkuna.export.subscriber.Subscription attribute)</a>
-</li>
-      <li><a href="ikkuna.export.html#ikkuna.export.Exporter._subscribers">_subscribers (ikkuna.export.Exporter attribute)</a>
 </li>
       <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscription._tag">_tag (ikkuna.export.subscriber.Subscription attribute)</a>
 </li>
@@ -460,16 +455,12 @@
 </li>
       </ul></li>
   </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="schedulers.html#schedulers.FunctionScheduler">FunctionScheduler (class in schedulers)</a>
-</li>
-  </ul></td>
 </tr></table>
 
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="schedulers.html#schedulers.FunctionScheduler.get_lr">get_lr() (schedulers.FunctionScheduler method)</a>
+      <li><a href="ikkuna.export.html#ikkuna.export.messages.get_default_bus">get_default_bus() (in module ikkuna.export.messages)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -550,10 +541,6 @@
       <li><a href="ikkuna.utils.html#ikkuna.utils.load_dataset">load_dataset() (in module ikkuna.utils)</a>
 </li>
   </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="schedulers.html#schedulers.FunctionScheduler.load_state_dict">load_state_dict() (schedulers.FunctionScheduler method)</a>
-</li>
-  </ul></td>
 </tr></table>
 
 <h2 id="M">M</h2>
@@ -569,12 +556,20 @@
 </li>
       <li><a href="ikkuna.export.html#ikkuna.export.messages.Message">Message (class in ikkuna.export.messages)</a>
 </li>
-      <li><a href="ikkuna.export.html#ikkuna.export.messages.MessageBundle">MessageBundle (class in ikkuna.export.messages)</a>
+      <li><a href="ikkuna.export.html#ikkuna.export.Exporter.message_bus">message_bus (ikkuna.export.Exporter attribute)</a>
+
+      <ul>
+        <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.message_bus">(ikkuna.export.subscriber.Subscriber attribute)</a>
 </li>
-      <li><a href="ikkuna.export.html#ikkuna.export.messages.META_KINDS">META_KINDS (in module ikkuna.export.messages)</a>
+      </ul></li>
+      <li><a href="ikkuna.export.html#ikkuna.export.messages.MessageBundle">MessageBundle (class in ikkuna.export.messages)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="ikkuna.export.html#ikkuna.export.messages.MessageBus">MessageBus (class in ikkuna.export.messages)</a>
+</li>
+      <li><a href="ikkuna.export.html#ikkuna.export.messages.META_KINDS">META_KINDS (in module ikkuna.export.messages)</a>
+</li>
       <li><a href="ikkuna.export.html#ikkuna.export.messages.MetaMessage">MetaMessage (class in ikkuna.export.messages)</a>
 </li>
       <li><a href="train.html#train.Trainer.model">model (train.Trainer attribute)</a>
@@ -597,8 +592,12 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="ikkuna.utils.html#ikkuna.utils.NamedModule.name">name (ikkuna.utils.NamedModule attribute)</a>
+      <li><a href="ikkuna.export.html#ikkuna.export.messages.MessageBus.name">name (ikkuna.export.messages.MessageBus attribute)</a>
+
+      <ul>
+        <li><a href="ikkuna.utils.html#ikkuna.utils.NamedModule.name">(ikkuna.utils.NamedModule attribute)</a>
 </li>
+      </ul></li>
       <li><a href="ikkuna.export.html#ikkuna.export.Exporter.named_modules">named_modules (ikkuna.export.Exporter attribute)</a>
 </li>
       <li><a href="ikkuna.utils.html#ikkuna.utils.NamedModule">NamedModule (class in ikkuna.utils)</a>
@@ -647,9 +646,9 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.process_message_bundle">process_message_bundle() (ikkuna.export.subscriber.Subscriber method)</a>
 </li>
-      <li><a href="ikkuna.export.html#ikkuna.export.Exporter.publish_meta_message">publish_meta_message() (ikkuna.export.Exporter method)</a>
+      <li><a href="ikkuna.export.html#ikkuna.export.messages.MessageBus.publish_meta_message">publish_meta_message() (ikkuna.export.messages.MessageBus method)</a>
 </li>
-      <li><a href="ikkuna.export.html#ikkuna.export.Exporter.publish_train_message">publish_train_message() (ikkuna.export.Exporter method)</a>
+      <li><a href="ikkuna.export.html#ikkuna.export.messages.MessageBus.publish_train_message">publish_train_message() (ikkuna.export.messages.MessageBus method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -659,9 +658,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.RatioSubscriber">RatioSubscriber (class in ikkuna.export.subscriber)</a>
 </li>
+      <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.receive_message">receive_message() (ikkuna.export.subscriber.Subscriber method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.receive_message">receive_message() (ikkuna.export.subscriber.Subscriber method)</a>
+      <li><a href="ikkuna.export.html#ikkuna.export.messages.MessageBus.register_subscriber">register_subscriber() (ikkuna.export.messages.MessageBus method)</a>
 </li>
       <li><a href="ikkuna.models.html#ikkuna.models.ResNet">ResNet (class in ikkuna.models)</a>
 </li>
@@ -671,8 +672,6 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="schedulers.html#module-schedulers">schedulers (module)</a>
-</li>
       <li><a href="ikkuna.export.html#ikkuna.export.messages.Message.seq">seq (ikkuna.export.messages.Message attribute)</a>
 
       <ul>
@@ -693,11 +692,9 @@
 </li>
       <li><a href="train.html#train.DatasetMeta.size">size (train.DatasetMeta attribute)</a>
 </li>
-      <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.SpectralNormSubscriber">SpectralNormSubscriber (class in ikkuna.export.subscriber)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="schedulers.html#schedulers.FunctionScheduler.state_dict">state_dict() (schedulers.FunctionScheduler method)</a>
+      <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.SpectralNormSubscriber">SpectralNormSubscriber (class in ikkuna.export.subscriber)</a>
 </li>
       <li><a href="ikkuna.export.html#ikkuna.export.messages.Message.step">step (ikkuna.export.messages.Message attribute)</a>
 
@@ -706,16 +703,12 @@
 </li>
       </ul></li>
       <li><a href="ikkuna.export.html#ikkuna.export.Exporter.step">step() (ikkuna.export.Exporter method)</a>
-
-      <ul>
-        <li><a href="schedulers.html#schedulers.FunctionScheduler.step">(schedulers.FunctionScheduler method)</a>
-</li>
-      </ul></li>
-      <li><a href="ikkuna.export.html#ikkuna.export.Exporter.subscribe">subscribe() (ikkuna.export.Exporter method)</a>
 </li>
       <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber">Subscriber (class in ikkuna.export.subscriber)</a>
 </li>
       <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscription">Subscription (class in ikkuna.export.subscriber)</a>
+</li>
+      <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.subscription">subscription (ikkuna.export.subscriber.Subscriber attribute)</a>
 </li>
       <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.SumSubscriber">SumSubscriber (class in ikkuna.export.subscriber)</a>
 </li>

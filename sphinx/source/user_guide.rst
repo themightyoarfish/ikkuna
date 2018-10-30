@@ -230,10 +230,22 @@ contain at least the following arguments:
 
     .. code-block:: python
 
-        def __init__(self, kinds, tag=None, subsample=1, ylims=None, backend='tb'):
+        def __init__(self, message_bus, kinds, tag=None, subsample=1, ylims=None, backend='tb'):
 
-Since you'll have to create a :class:`~ikkuna.export.subscriber.Subscription`
-object which represents the kind of connection to the Publisher.
+Their significance is:
+
+* ``kinds``: you'll have to create a :class:`~ikkuna.export.subscriber.Subscription`
+  object which represents the kind of connection to the Publisher
+* ``message_bus``: The :class:`ikkuna.export.messages.MessageBus` is the
+  receiver and sender of all messages. You should pass this bus to the
+  superclass initialiser
+* ``kinds``: the kinds/topics of messages to receive. For now, refer to the
+  source code for :mod:`ikkuna.export.messages` for a list of available topics.
+* ``tag``:  a tag can be used for filtering messages. I'm not sure what this
+  would be useful for, but the :class:`~ikkuna.export.subscriber.Subscription`
+  instance removes messages which do not have the correct tag.
+
+For the other args, peruse the documentation of :meth:`~ikkuna.export.subscriber.PlotSubscriber.__init__`
 
 A :class:`~ikkuna.export.subscriber.Subscription` object contains the
 information about the topic, subsampling (maybe you want to process only every `n`-th

@@ -59,7 +59,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../ikkuna.html">ikkuna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../main.html">main program</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../train.html">train</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../schedulers.html">schedulers module</a></li>
 </ul>
 </ul>
 </li>
@@ -109,7 +108,7 @@
   <h1>Source code for ikkuna.export.export</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 
-<span class="kn">from</span> <span class="nn">ikkuna.export.messages</span> <span class="k">import</span> <span class="n">TrainingMessage</span><span class="p">,</span> <span class="n">MetaMessage</span>
+<span class="kn">from</span> <span class="nn">ikkuna.export.messages</span> <span class="k">import</span> <span class="n">get_default_bus</span>
 <span class="kn">from</span> <span class="nn">ikkuna.utils</span> <span class="k">import</span> <span class="n">ModuleTree</span>
 
 
@@ -155,7 +154,6 @@
 <span class="sd">                        Cache for keeping the previous weights for computing differences</span>
 <span class="sd">    _bias_cache :   dict</span>
 <span class="sd">                    see ``_weight_cache``</span>
-<span class="sd">    _subscribers    :   set(ikkuna.export.subscriber.Subscriber)</span>
 <span class="sd">    _model          :   torch.nn.Module</span>
 <span class="sd">    _train_step :   int</span>
 <span class="sd">                    Current batch index</span>
@@ -172,23 +170,27 @@
 <span class="sd">                        in this list is ignored</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">module_filter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">module_filter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">message_bus</span><span class="o">=</span><span class="n">get_default_bus</span><span class="p">()):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_modules</span>           <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_weight_cache</span>      <span class="o">=</span> <span class="p">{}</span>     <span class="c1"># potential memory hog</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_weight_cache</span>      <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_bias_cache</span>        <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_subscribers</span>       <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_model</span>             <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span>             <span class="o">=</span> <span class="mi">0</span>
         <span class="c1"># for gradient and activation to have the same step number, we need to increase it before</span>
         <span class="c1"># propagation or after backpropagation. but we don&#39;t know when the backprop finishes, while</span>
         <span class="c1"># we do know when the forward prop starts. So we step before and thus initialize the</span>
-        <span class="c1"># counters with -1 to start at 0</span>
+        <span class="c1"># counters with -1 to effectively start at 0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span>        <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span>       <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_training</span>       <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_depth</span>             <span class="o">=</span> <span class="n">depth</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_frozen</span>            <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_module_filter</span>     <span class="o">=</span> <span class="n">module_filter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span>           <span class="o">=</span> <span class="n">message_bus</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">message_bus</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">modules</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -199,23 +201,6 @@
     <span class="k">def</span> <span class="nf">named_modules</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;list(ikkuna.utils.NamedModule) - Named modules tracked by this :class:`Exporter`&#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_modules</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-
-<div class="viewcode-block" id="Exporter._check_model"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter._check_model">[docs]</a>    <span class="k">def</span> <span class="nf">_check_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;Check if a model is set, issue a warning otherwise. Some things may still work and not</span>
-<span class="sd">        crash (???).&#39;&#39;&#39;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">warnings</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Warning: No model set. This will either do nothing or crash.&#39;</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="Exporter.subscribe"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.subscribe">[docs]</a>    <span class="k">def</span> <span class="nf">subscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscriber</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;Add a subscriber.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        subscription    :   ikkuna.export.subscriber.Subscriber</span>
-<span class="sd">                            Subscriber to register</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_subscribers</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">subscriber</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Exporter._add_module_by_name"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter._add_module_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">_add_module_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">named_module</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Register a module with a name attached.</span>
@@ -317,45 +302,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">add_modules</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">recursive</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">module</span></div>
 
-<div class="viewcode-block" id="Exporter.publish_meta_message"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.publish_meta_message">[docs]</a>    <span class="k">def</span> <span class="nf">publish_meta_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;Publish an update of type :class:`~ikkuna.export.messages.MetaMessage` to all</span>
-<span class="sd">        registered subscribers.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        kind    :   str</span>
-<span class="sd">                    Kind of message</span>
-<span class="sd">        data    :   torch.Tensor or None</span>
-<span class="sd">                    Payload, if necessary</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_check_model</span><span class="p">()</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="n">MetaMessage</span><span class="p">(</span><span class="n">seq</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span><span class="p">,</span>
-                          <span class="n">epoch</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subscribers</span><span class="p">:</span>
-            <span class="n">sub</span><span class="o">.</span><span class="n">receive_message</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="Exporter.publish_train_message"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.publish_train_message">[docs]</a>    <span class="k">def</span> <span class="nf">publish_train_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;Publish an update of type :class:`~ikkuna.export.messages.TrainingMessage` to all</span>
-<span class="sd">        registered subscribers.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        kind    :   str</span>
-<span class="sd">                    Kind of message</span>
-<span class="sd">        module  :   torch.nn.Module</span>
-<span class="sd">                    The module in question</span>
-<span class="sd">        data    :   torch.Tensor</span>
-<span class="sd">                    Payload</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_check_model</span><span class="p">()</span>
-
-        <span class="n">named_module</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modules</span><span class="p">[</span><span class="n">module</span><span class="p">]</span>
-        <span class="n">msg</span>          <span class="o">=</span> <span class="n">TrainingMessage</span><span class="p">(</span><span class="n">seq</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">,</span>
-                                       <span class="n">module</span><span class="o">=</span><span class="n">named_module</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span><span class="p">,</span>
-                                       <span class="n">epoch</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subscribers</span><span class="p">:</span>
-            <span class="n">sub</span><span class="o">.</span><span class="n">receive_message</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
-
 <div class="viewcode-block" id="Exporter.train"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Switch to training mode. This will ensure all data is published.&#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_training</span> <span class="o">=</span> <span class="n">train</span></div>
@@ -377,7 +323,8 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">input_data</span> <span class="o">=</span> <span class="n">args</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">publish_meta_message</span><span class="p">(</span><span class="s1">&#39;input_data&#39;</span><span class="p">,</span> <span class="n">input_data</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">publish_meta_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">,</span>
+                                           <span class="s1">&#39;input_data&#39;</span><span class="p">,</span> <span class="n">input_data</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Exporter.new_output_and_labels"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.new_output_and_labels">[docs]</a>    <span class="k">def</span> <span class="nf">new_output_and_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">network_output</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Callback for final network output.</span>
@@ -387,8 +334,10 @@
 <span class="sd">        data    :   torch.Tensor</span>
 <span class="sd">                    The final layer&#39;s output</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">publish_meta_message</span><span class="p">(</span><span class="s1">&#39;network_output&#39;</span><span class="p">,</span> <span class="n">network_output</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">publish_meta_message</span><span class="p">(</span><span class="s1">&#39;input_labels&#39;</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">publish_meta_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">,</span>
+                                           <span class="s1">&#39;network_output&#39;</span><span class="p">,</span> <span class="n">network_output</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">publish_meta_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">,</span>
+                                           <span class="s1">&#39;input_labels&#39;</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Exporter.new_activations"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.new_activations">[docs]</a>    <span class="k">def</span> <span class="nf">new_activations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">in_</span><span class="p">,</span> <span class="n">out_</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Callback for newly arriving activations. Registered as a hook to the tracked modules.</span>
@@ -406,30 +355,49 @@
             <span class="k">return</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">publish_meta_message</span><span class="p">(</span><span class="s1">&#39;epoch_started&#39;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">publish_meta_message</span><span class="p">(</span><span class="s1">&#39;batch_started&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">publish_meta_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span><span class="p">,</span>
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">,</span> <span class="s1">&#39;epoch_started&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">publish_meta_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span><span class="p">,</span>
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">,</span> <span class="s1">&#39;batch_started&#39;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s1">&#39;weight&#39;</span><span class="p">):</span>
+
             <span class="k">if</span> <span class="n">module</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weight_cache</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">publish_train_message</span><span class="p">(</span><span class="s1">&#39;weight_updates&#39;</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">module</span><span class="o">.</span><span class="n">weight</span> <span class="o">-</span>
-                                           <span class="bp">self</span><span class="o">.</span><span class="n">_weight_cache</span><span class="p">[</span><span class="n">module</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">publish_train_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span><span class="p">,</span>
+                                                    <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">,</span> <span class="s1">&#39;weight_updates&#39;</span><span class="p">,</span>
+                                                    <span class="bp">self</span><span class="o">.</span><span class="n">_modules</span><span class="p">[</span><span class="n">module</span><span class="p">],</span>
+                                                    <span class="n">module</span><span class="o">.</span><span class="n">weight</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weight_cache</span><span class="p">[</span><span class="n">module</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">publish_train_message</span><span class="p">(</span><span class="s1">&#39;weight_updates&#39;</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span>
-                                           <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">weight</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">publish_train_message</span><span class="p">(</span><span class="s1">&#39;weights&#39;</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">module</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">publish_train_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span><span class="p">,</span>
+                                                    <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">,</span> <span class="s1">&#39;weight_updates&#39;</span><span class="p">,</span>
+                                                    <span class="bp">self</span><span class="o">.</span><span class="n">_modules</span><span class="p">[</span><span class="n">module</span><span class="p">],</span>
+                                                    <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">weight</span><span class="p">))</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">publish_train_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">,</span>
+                                                <span class="s1">&#39;weights&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modules</span><span class="p">[</span><span class="n">module</span><span class="p">],</span> <span class="n">module</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_weight_cache</span><span class="p">[</span><span class="n">module</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s1">&#39;bias&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">module</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>   <span class="c1"># bias can be present, but be None</span>
 
             <span class="c1"># in the first train step, there can be no updates, so we just publish zeros,</span>
             <span class="c1"># otherwise clients would error out since they don&#39;t receive the expected messages</span>
             <span class="k">if</span> <span class="n">module</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bias_cache</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">publish_train_message</span><span class="p">(</span><span class="s1">&#39;bias_updates&#39;</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">module</span><span class="o">.</span><span class="n">bias</span> <span class="o">-</span>
-                                           <span class="bp">self</span><span class="o">.</span><span class="n">_bias_cache</span><span class="p">[</span><span class="n">module</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">publish_train_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span><span class="p">,</span>
+                                                    <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">,</span> <span class="s1">&#39;bias_updates&#39;</span><span class="p">,</span>
+                                                    <span class="bp">self</span><span class="o">.</span><span class="n">_modules</span><span class="p">[</span><span class="n">module</span><span class="p">],</span>
+                                                    <span class="n">module</span><span class="o">.</span><span class="n">bias</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bias_cache</span><span class="p">[</span><span class="n">module</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">publish_train_message</span><span class="p">(</span><span class="s1">&#39;bias_updates&#39;</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">bias</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">publish_train_message</span><span class="p">(</span><span class="s1">&#39;biases&#39;</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">module</span><span class="o">.</span><span class="n">bias</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">publish_train_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span><span class="p">,</span>
+                                                    <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">,</span> <span class="s1">&#39;bias_updates&#39;</span><span class="p">,</span>
+                                                    <span class="bp">self</span><span class="o">.</span><span class="n">_modules</span><span class="p">[</span><span class="n">module</span><span class="p">],</span>
+                                                    <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">bias</span><span class="p">))</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">publish_train_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">,</span>
+                                                <span class="s1">&#39;biases&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modules</span><span class="p">[</span><span class="n">module</span><span class="p">],</span> <span class="n">module</span><span class="o">.</span><span class="n">bias</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_bias_cache</span><span class="p">[</span><span class="n">module</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">bias</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">publish_train_message</span><span class="p">(</span><span class="s1">&#39;activations&#39;</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">out_</span><span class="p">)</span></div>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">publish_train_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">,</span>
+                                            <span class="s1">&#39;activations&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modules</span><span class="p">[</span><span class="n">module</span><span class="p">],</span> <span class="n">out_</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Exporter.new_layer_gradients"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.new_layer_gradients">[docs]</a>    <span class="k">def</span> <span class="nf">new_layer_gradients</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">gradients</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Callback for newly arriving layer gradients (loss wrt layer output). Registered as a hook</span>
@@ -455,7 +423,8 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">gradients</span> <span class="o">=</span> <span class="n">gradients</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">publish_train_message</span><span class="p">(</span><span class="s1">&#39;layer_gradients&#39;</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">gradients</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">publish_train_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">,</span>
+                                            <span class="s1">&#39;layer_gradients&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modules</span><span class="p">[</span><span class="n">module</span><span class="p">],</span> <span class="n">gradients</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Exporter.new_parameter_gradients"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.new_parameter_gradients">[docs]</a>    <span class="k">def</span> <span class="nf">new_parameter_gradients</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">gradients</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Callback for newly arriving gradients wrt weight and/or bias. Registered as a hook to the</span>
@@ -467,10 +436,13 @@
 <span class="sd">        gradients    :   tuple(torch.Tensor, torch.Tensor)</span>
 <span class="sd">                        The gradients w.r.t weight and bias.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">publish_train_message</span><span class="p">(</span><span class="s1">&#39;weight_gradients&#39;</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">gradients</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">publish_train_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">,</span>
+                                            <span class="s1">&#39;weight_gradients&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modules</span><span class="p">[</span><span class="n">module</span><span class="p">],</span> <span class="n">gradients</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="n">gradients</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">publish_train_message</span><span class="p">(</span><span class="s1">&#39;bias_gradients&#39;</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">gradients</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">publish_train_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">,</span>
+                                                <span class="s1">&#39;bias_gradients&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modules</span><span class="p">[</span><span class="n">module</span><span class="p">],</span>
+                                                <span class="n">gradients</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="Exporter.set_model"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.set_model">[docs]</a>    <span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Set the model for direct access for some metrics.</span>
@@ -530,7 +502,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span>  <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">publish_meta_message</span><span class="p">(</span><span class="s1">&#39;batch_finished&#39;</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">publish_meta_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">,</span>
+                                           <span class="s1">&#39;batch_finished&#39;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Exporter._freeze_module"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter._freeze_module">[docs]</a>    <span class="k">def</span> <span class="nf">_freeze_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">named_module</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Convenience method for freezing training for a module.</span>
@@ -552,7 +525,8 @@
 
 <div class="viewcode-block" id="Exporter.epoch_finished"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.epoch_finished">[docs]</a>    <span class="k">def</span> <span class="nf">epoch_finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Increase the epoch counter and reset the batch counter.&#39;&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">publish_meta_message</span><span class="p">(</span><span class="s1">&#39;epoch_finished&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">publish_meta_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">,</span>
+                                           <span class="s1">&#39;epoch_finished&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span>     <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span> <span class="o">=</span> <span class="mi">0</span></div></div>
 </pre></div>

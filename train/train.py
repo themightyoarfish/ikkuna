@@ -36,9 +36,7 @@ class Trainer:
     _dataloader :   torch.utils.data.DataLoader
                     loader for the training dataset
     _optimizer  : torch.optim.Optimizer
-    _scheduler  :   schedulers.FunctionScheduler
-                    A custom scheduler for learning rate decay (*NOT* a
-                    :class:`torch.optim.lr_scheduler._LRScheduler`)
+    _scheduler  :   torch.optim.lr_scheduler._LRScheduler
     '''
 
     def __init__(self, dataset_meta, **kwargs):
@@ -147,7 +145,8 @@ class Trainer:
         Parameters
         ----------
         Scheduler   :   type
-                        Class of the Scheduler to use (e.g. :class:`schedulers.FunctionScheduler`)
+                        Class of the Scheduler to use (e.g.
+                        :class:`~torch.optim.lr_scheduler.LambdaLR`)
         *args   :   list
                     Passed to the scheduler constructor
         **kwargs    :   dict
