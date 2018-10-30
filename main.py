@@ -49,9 +49,14 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
 
     dataset_train, dataset_test = load_dataset(dataset_str)
 
+    # for some strange reason, python claims 'torch referenced before assignment' when importing at
+    # the top. hahaaaaa
+    import torch
     bus = MessageBus('main')
     trainer = Trainer(dataset_train, batch_size=batch_size,
-                      exporter=Exporter(depth=kwargs['depth'], message_bus=bus))
+                      exporter=Exporter(depth=kwargs['depth'],
+                                        module_filter=[torch.nn.Conv2d, torch.nn.Linear],
+                                        message_bus=bus))
     trainer.set_model(model_str)
     trainer.optimize(name=optimizer, lr=kwargs.get('learning_rate', 0.01))
     if 'exponential_decay' in kwargs:
