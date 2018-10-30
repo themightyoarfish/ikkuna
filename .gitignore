@@ -105,3 +105,4 @@ code_graveyard.py
 runs
 *.swp
 *.swo
+experiments/learning_rate/alexnetmini/playground/
