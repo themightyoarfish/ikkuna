@@ -147,7 +147,8 @@
 
 <div class="viewcode-block" id="RatioSubscriber.compute"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.RatioSubscriber.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_bundle</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;The ratio between the two kinds is computed over the subset of not-NaN values and added</span>
-<span class="sd">        to the record.&#39;&#39;&#39;</span>
+<span class="sd">        to the record. A :class:`~ikkuna.export.messages.SubscriberMessage` with the identifier</span>
+<span class="sd">        ``{kind1}_{kind2}_ratio`` is published.&#39;&#39;&#39;</span>
 
         <span class="n">module_name</span>  <span class="o">=</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">identifier</span>
 
@@ -170,7 +171,12 @@
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">ratio</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;NaN value ratio for </span><span class="si">{module_name}</span><span class="s1">&#39;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">seq</span><span class="p">)</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">seq</span><span class="p">)</span>
+
+        <span class="n">kind</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{self._subscription.kinds[0]}</span><span class="s1">_</span><span class="si">{self._subscription.kinds[1]}</span><span class="s1">_ratio&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message_bus</span><span class="o">.</span><span class="n">publish_subscriber_message</span><span class="p">(</span><span class="n">message_bundle</span><span class="o">.</span><span class="n">seq</span><span class="p">,</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">step</span><span class="p">,</span>
+                                                    <span class="n">message_bundle</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span>
+                                                    <span class="n">message_bundle</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span> <span class="n">ratio</span><span class="p">)</span></div></div>
 </pre></div>
 
     </div>

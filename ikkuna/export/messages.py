@@ -51,9 +51,9 @@ class Message(abc.ABC):
         epoch   :   int
                     Epoch index
         kind    :   str
-                    Message topic. Must be in :ref:`allowed_kinds` or ``None`` in which case no
-                    checking is performed. This guards against misspellings or otherwise incorrect
-                    topics.
+                    Message topic. Must be in :ref:`ALLOWED_KINDS <allowed_kinds>` or ``None`` in
+                    which case no checking is performed. This guards against misspellings or
+                    otherwise incorrect topics.
         '''
         self._tag  = tag
         self._seq  = seq
@@ -133,7 +133,7 @@ class MetaMessage(Message):
 
     @property
     def data(self):
-        '''torch.Tensor, tuple, number or None: Optional data. Can be used e.g. for input to the
+        '''torch.Tensor, tuple, float, int or None: Optional data. Can be used e.g. for input to the
         network, labels or network output'''
         return self._data
 
@@ -407,7 +407,7 @@ class MessageBus(object):
                     Identifier chosen by the publishing subscriber
         module  :   ikkuna.utils.NamedModule
                     The module in question
-        data    :   torch.Tensor, tuple(torch.Tensor), number or None
+        data    :   torch.Tensor, tuple(torch.Tensor), float, int or None
                     Payload, if necessary
         '''
         msg = SubscriberMessage(seq=global_step, tag=None, kind=kind, identifier=identifier,
