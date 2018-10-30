@@ -7,7 +7,6 @@ from torch.utils.data import DataLoader
 from ikkuna.models import AlexNetMini
 from ikkuna.utils import load_dataset
 from train import Trainer
-from schedulers import FunctionScheduler
 
 ##################
 #  Sacred stuff  #
@@ -23,27 +22,25 @@ ex.observers.append(MongoObserver.create())
 schedules = ['identity_schedule_fn', 'exponential_schedule_fn', 'oscillating_schedule_fn']
 
 
-def identity_schedule_fn(base_lrs, batch, step, epoch):
-    return base_lrs
+def identity_schedule_fn(epoch):
+    return 1
 
 
-def oscillating_schedule_fn(base_lrs, batch, step, epoch):
-    factor = 1 if epoch % 2 == 0 else 0.5
-    return [base_lr * factor for base_lr in base_lrs]
+def oscillating_schedule_fn(epoch, period=5):
+    # switch every 5 epochs between lr and lr/10
+    return 1 if (epoch // period) % 2 == 0 else 0.1
 
 
-def exponential_schedule_fn(base_lrs, batch, step, epoch):
-    global current_lrs
-    new_lrs = [base_lr * (0.98 ** epoch) for base_lr in base_lrs]
-    return new_lrs
+def exponential_schedule_fn(epoch, gamma=0.98):
+    return gamma ** epoch
 
 
 @ex.config
 def cfg():
-    base_lr    = 0.1
+    base_lr    = 0.5
     optimizer  = 'SGD'
-    batch_size = 1024
-    n_epochs   = 20
+    batch_size = 128
+    n_epochs   = 100
     loss       = 'CrossEntropyLoss'
     schedule   = 'oscillating_schedule_fn'
 
@@ -51,7 +48,7 @@ def cfg():
 @ex.main
 def run(batch_size, loss, optimizer, base_lr, n_epochs, schedule):
     # load the dataset
-    dataset_train_meta, dataset_test_meta = load_dataset('MNIST')
+    dataset_train_meta, dataset_test_meta = load_dataset('CIFAR10')
 
     # instantiate model
     model = AlexNetMini(dataset_train_meta.shape[1:],
@@ -65,7 +62,7 @@ def run(batch_size, loss, optimizer, base_lr, n_epochs, schedule):
     trainer = Trainer(dataset_train_meta, batch_size=batch_size, loss=loss_fn)
     trainer.set_model(model)
     trainer.optimize(name=optimizer, lr=base_lr)
-    trainer.set_schedule(FunctionScheduler, schedule_fn)
+    trainer.set_schedule(torch.optim.lr_scheduler.LambdaLR, schedule_fn)
 
     # do n epochs of training
     batches_per_epoch = trainer.batches_per_epoch

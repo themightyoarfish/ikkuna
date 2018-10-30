@@ -7,7 +7,7 @@ sacred_db = db_client.get_database('sacred')
 runs      = sacred_db.runs
 
 # pipeline to get all accuracies with `_id`s
-accuracies_pipeline = pipeline = [{'$match': {'config.base_lr': 0.1}},              # use only lr=0.1
+accuracies_pipeline = pipeline = [{'$match': {'config.base_lr': 0.5}},              # use only lr=0.5
                                   {'$group': {'_id': '$config.schedule',            # group by id, use schedule fn as name
                                               'acc' : {'$addToSet': '$result'}}}]   # make array from all accuracies
 grouped_runs = sacred_db.runs.aggregate(accuracies_pipeline)
