@@ -423,15 +423,29 @@
 <div class="viewcode-block" id="MessageBus"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.messages.MessageBus">[docs]</a><span class="k">class</span> <span class="nc">MessageBus</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;A class which receives messages registers subscribers and relays the former to the latter.&#39;&#39;&#39;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="MessageBus.__init__"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.messages.MessageBus.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name    :   str</span>
+<span class="sd">                    Identifier for this bus</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_subscribers</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subscribers</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;str: The name of this bus&#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
 
 <div class="viewcode-block" id="MessageBus.register_subscriber"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.messages.MessageBus.register_subscriber">[docs]</a>    <span class="k">def</span> <span class="nf">register_subscriber</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sub</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Add a new subscriber to the set. Adding subscribers mutliple times will still only call</span>
+<span class="sd">        them once per message.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sub :   ikkuna.export.subscriber.Subscriber</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subscribers</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sub</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MessageBus.publish_meta_message"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.messages.MessageBus.publish_meta_message">[docs]</a>    <span class="k">def</span> <span class="nf">publish_meta_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">global_step</span><span class="p">,</span> <span class="n">train_step</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -470,7 +484,7 @@
 <span class="sd">                    Epoch index</span>
 <span class="sd">        kind    :   str</span>
 <span class="sd">                    Kind of message</span>
-<span class="sd">        module  :   torch.nn.Module</span>
+<span class="sd">        module  :   ikkuna.utils.NamedModule</span>
 <span class="sd">                    The module in question</span>
 <span class="sd">        data    :   torch.Tensor</span>
 <span class="sd">                    Payload</span>

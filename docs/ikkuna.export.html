@@ -934,15 +934,47 @@ sequence number and epoch.</p>
 <em class="property">class </em><code class="descclassname">ikkuna.export.messages.</code><code class="descname">MessageBus</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/messages.html#MessageBus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.messages.MessageBus" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A class which receives messages registers subscribers and relays the former to the latter.</p>
+<dl class="method">
+<dt id="ikkuna.export.messages.MessageBus.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/messages.html#MessageBus.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.messages.MessageBus.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Identifier for this bus</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="ikkuna.export.messages.MessageBus.name">
 <code class="descname">name</code><a class="headerlink" href="#ikkuna.export.messages.MessageBus.name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The name of this bus</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ikkuna.export.messages.MessageBus.register_subscriber">
 <code class="descname">register_subscriber</code><span class="sig-paren">(</span><em>sub</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/messages.html#MessageBus.register_subscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.messages.MessageBus.register_subscriber" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Add a new subscriber to the set. Adding subscribers mutliple times will still only call
+them once per message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sub</strong> (<a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><em>ikkuna.export.subscriber.Subscriber</em></a>) – </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ikkuna.export.messages.MessageBus.publish_meta_message">
@@ -980,7 +1012,7 @@ registered subscribers.</p>
 <li><strong>train_step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Epoch-relative training step</li>
 <li><strong>epoch</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Epoch index</li>
 <li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Kind of message</li>
-<li><strong>module</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (1.0.0a0+47c0d88 ))"><em>torch.nn.Module</em></a>) – The module in question</li>
+<li><strong>module</strong> (<a class="reference internal" href="ikkuna.utils.html#ikkuna.utils.NamedModule" title="ikkuna.utils.NamedModule"><em>ikkuna.utils.NamedModule</em></a>) – The module in question</li>
 <li><strong>data</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+47c0d88 ))"><em>torch.Tensor</em></a>) – Payload</li>
 </ul>
 </td>

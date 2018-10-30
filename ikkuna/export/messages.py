@@ -316,14 +316,28 @@ class MessageBus(object):
     '''A class which receives messages registers subscribers and relays the former to the latter.'''
 
     def __init__(self, name):
+        '''
+        Parameters
+        ----------
+        name    :   str
+                    Identifier for this bus
+        '''
         self._name = name
         self._subscribers = set()
 
     @property
     def name(self):
+        '''str: The name of this bus'''
         return self._name
 
     def register_subscriber(self, sub):
+        '''Add a new subscriber to the set. Adding subscribers mutliple times will still only call
+        them once per message.
+
+        Parameters
+        ----------
+        sub :   ikkuna.export.subscriber.Subscriber
+        '''
         self._subscribers.add(sub)
 
     def publish_meta_message(self, global_step, train_step, epoch, kind, data=None):
@@ -362,7 +376,7 @@ class MessageBus(object):
                     Epoch index
         kind    :   str
                     Kind of message
-        module  :   torch.nn.Module
+        module  :   ikkuna.utils.NamedModule
                     The module in question
         data    :   torch.Tensor
                     Payload
