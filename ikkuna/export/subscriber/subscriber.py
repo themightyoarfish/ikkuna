@@ -175,11 +175,12 @@ class Subscriber(abc.ABC):
         return self._msg_bus
 
     @abc.abstractmethod
-    def _metric(self, message_or_data):
+    def compute(self, message_or_data):
         '''This is where the magic happens. Subclasses should override this method so that they can
-        compute their metric upon reception of their desired messages. They should then use their
-        :attr:`~ikkuna.export.subscriber.PlotSubscriber.backend` property to publish the metric (if
-        they display line plots).
+        compute their metric upon reception of their desired messages or do whatever else they want.
+        If interested in plotting, they should then use their
+        :attr:`~ikkuna.export.subscriber.PlotSubscriber.backend` property to plot the metric (if
+        they display line plots) and their ``message_bus`` to publish a new message with the metric.
 
         Parameters
         ----------
@@ -215,7 +216,7 @@ class Subscriber(abc.ABC):
         if not message_bundle.complete():
             raise ValueError(f'Data received for "{message_bundle._module}" is not complete.')
 
-        self._metric(message_bundle)
+        self.compute(message_bundle)
 
 
 class PlotSubscriber(Subscriber):
@@ -250,5 +251,5 @@ class PlotSubscriber(Subscriber):
         return self._backend
 
     @abc.abstractmethod
-    def _metric(self, message_or_data):
+    def compute(self, message_or_data):
         pass

@@ -167,12 +167,13 @@ insightful metrics.</p>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.export.subscriber.Subscriber._metric">
-<code class="descname">_metric</code><span class="sig-paren">(</span><em>message_or_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/subscriber.html#Subscriber._metric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber._metric" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.export.subscriber.Subscriber.compute">
+<code class="descname">compute</code><span class="sig-paren">(</span><em>message_or_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/subscriber.html#Subscriber.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber.compute" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is where the magic happens. Subclasses should override this method so that they can
-compute their metric upon reception of their desired messages. They should then use their
-<a class="reference internal" href="#ikkuna.export.subscriber.PlotSubscriber.backend" title="ikkuna.export.subscriber.PlotSubscriber.backend"><code class="xref py py-attr docutils literal notranslate"><span class="pre">backend</span></code></a> property to publish the metric (if
-they display line plots).</p>
+compute their metric upon reception of their desired messages or do whatever else they want.
+If interested in plotting, they should then use their
+<a class="reference internal" href="#ikkuna.export.subscriber.PlotSubscriber.backend" title="ikkuna.export.subscriber.PlotSubscriber.backend"><code class="xref py py-attr docutils literal notranslate"><span class="pre">backend</span></code></a> property to plot the metric (if
+they display line plots) and their <code class="docutils literal notranslate"><span class="pre">message_bus</span></code> to publish a new message with the metric.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -435,6 +436,26 @@ depends on the <a class="reference internal" href="ikkuna.visualization.html#ikk
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="ikkuna.export.subscriber.PlotSubscriber.compute">
+<code class="descname">compute</code><span class="sig-paren">(</span><em>message_or_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/subscriber.html#PlotSubscriber.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.PlotSubscriber.compute" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is where the magic happens. Subclasses should override this method so that they can
+compute their metric upon reception of their desired messages or do whatever else they want.
+If interested in plotting, they should then use their
+<a class="reference internal" href="#ikkuna.export.subscriber.PlotSubscriber.backend" title="ikkuna.export.subscriber.PlotSubscriber.backend"><code class="xref py py-attr docutils literal notranslate"><span class="pre">backend</span></code></a> property to plot the metric (if
+they display line plots) and their <code class="docutils literal notranslate"><span class="pre">message_bus</span></code> to publish a new message with the metric.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message_or_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><em>ikkuna.export.messages.Message</em></a>) – Can either be <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetaMessage</span></code></a> if the
+Subscriber is not interested in actual training artifacts, or
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingMessage</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -472,17 +493,77 @@ to the record.</p>
 <em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">HistogramSubscriber</code><span class="sig-paren">(</span><em>kinds</em>, <em>message_bus=&lt;ikkuna.export.messages.MessageBus object&gt;</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/histogram.html#HistogramSubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber" title="Permalink to this definition">¶</a></dt>
 <dd><p>A <a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a> which subsamples training artifacts and
 computes histograms per epoch.  Histograms are non-normalized.</p>
+<dl class="method">
+<dt id="ikkuna.export.subscriber.HistogramSubscriber.compute">
+<code class="descname">compute</code><span class="sig-paren">(</span><em>message_bundle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/histogram.html#HistogramSubscriber.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber.compute" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is where the magic happens. Subclasses should override this method so that they can
+compute their metric upon reception of their desired messages or do whatever else they want.
+If interested in plotting, they should then use their
+<a class="reference internal" href="#ikkuna.export.subscriber.PlotSubscriber.backend" title="ikkuna.export.subscriber.PlotSubscriber.backend"><code class="xref py py-attr docutils literal notranslate"><span class="pre">backend</span></code></a> property to plot the metric (if
+they display line plots) and their <code class="docutils literal notranslate"><span class="pre">message_bus</span></code> to publish a new message with the metric.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message_or_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><em>ikkuna.export.messages.Message</em></a>) – Can either be <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetaMessage</span></code></a> if the
+Subscriber is not interested in actual training artifacts, or
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingMessage</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="ikkuna.export.subscriber.MeanSubscriber">
 <em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">MeanSubscriber</code><span class="sig-paren">(</span><em>kinds</em>, <em>message_bus=&lt;ikkuna.export.messages.MessageBus object&gt;</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em>, <em>**tbx_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/mean.html#MeanSubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.MeanSubscriber" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><dl class="method">
+<dt id="ikkuna.export.subscriber.MeanSubscriber.compute">
+<code class="descname">compute</code><span class="sig-paren">(</span><em>message_bundle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/mean.html#MeanSubscriber.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.MeanSubscriber.compute" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is where the magic happens. Subclasses should override this method so that they can
+compute their metric upon reception of their desired messages or do whatever else they want.
+If interested in plotting, they should then use their
+<a class="reference internal" href="#ikkuna.export.subscriber.PlotSubscriber.backend" title="ikkuna.export.subscriber.PlotSubscriber.backend"><code class="xref py py-attr docutils literal notranslate"><span class="pre">backend</span></code></a> property to plot the metric (if
+they display line plots) and their <code class="docutils literal notranslate"><span class="pre">message_bus</span></code> to publish a new message with the metric.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message_or_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><em>ikkuna.export.messages.Message</em></a>) – Can either be <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetaMessage</span></code></a> if the
+Subscriber is not interested in actual training artifacts, or
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingMessage</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
 
 <dl class="class">
 <dt id="ikkuna.export.subscriber.NormSubscriber">
 <em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">NormSubscriber</code><span class="sig-paren">(</span><em>kinds</em>, <em>message_bus=&lt;ikkuna.export.messages.MessageBus object&gt;</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em>, <em>order=2</em>, <em>**tbx_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/norm.html#NormSubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.NormSubscriber" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><dl class="method">
+<dt id="ikkuna.export.subscriber.NormSubscriber.compute">
+<code class="descname">compute</code><span class="sig-paren">(</span><em>message_bundle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/norm.html#NormSubscriber.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.NormSubscriber.compute" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is where the magic happens. Subclasses should override this method so that they can
+compute their metric upon reception of their desired messages or do whatever else they want.
+If interested in plotting, they should then use their
+<a class="reference internal" href="#ikkuna.export.subscriber.PlotSubscriber.backend" title="ikkuna.export.subscriber.PlotSubscriber.backend"><code class="xref py py-attr docutils literal notranslate"><span class="pre">backend</span></code></a> property to plot the metric (if
+they display line plots) and their <code class="docutils literal notranslate"><span class="pre">message_bus</span></code> to publish a new message with the metric.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message_or_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><em>ikkuna.export.messages.Message</em></a>) – Can either be <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetaMessage</span></code></a> if the
+Subscriber is not interested in actual training artifacts, or
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingMessage</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
 
 <dl class="class">
 <dt id="ikkuna.export.subscriber.RatioSubscriber">
@@ -506,8 +587,8 @@ Therefore it is vital to pass the message kinds to the
 </dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.export.subscriber.RatioSubscriber._metric">
-<code class="descname">_metric</code><span class="sig-paren">(</span><em>message_bundle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/ratio.html#RatioSubscriber._metric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.RatioSubscriber._metric" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.export.subscriber.RatioSubscriber.compute">
+<code class="descname">compute</code><span class="sig-paren">(</span><em>message_bundle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/ratio.html#RatioSubscriber.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.RatioSubscriber.compute" title="Permalink to this definition">¶</a></dt>
 <dd><p>The ratio between the two kinds is computed over the subset of not-NaN values and added
 to the record.</p>
 </dd></dl>
@@ -533,8 +614,8 @@ non-matrix type.</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="ikkuna.export.subscriber.SpectralNormSubscriber._metric">
-<code class="descname">_metric</code><span class="sig-paren">(</span><em>message_bundle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/spectral_norm.html#SpectralNormSubscriber._metric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.SpectralNormSubscriber._metric" title="Permalink to this definition">¶</a></dt>
+<dt id="ikkuna.export.subscriber.SpectralNormSubscriber.compute">
+<code class="descname">compute</code><span class="sig-paren">(</span><em>message_bundle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/spectral_norm.html#SpectralNormSubscriber.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.SpectralNormSubscriber.compute" title="Permalink to this definition">¶</a></dt>
 <dd><p>The spectral norm computation is taken from the <a class="reference external" href="https://pytorch.org/docs/master/_modules/torch/nn/utils/spectral_norm.html">Pytorch implementation of spectral norm</a>. It’s
 possible to use SVD instead, but we are not interested in the full matrix decomposition,
 merely in the singular values.</p>
@@ -545,7 +626,27 @@ merely in the singular values.</p>
 <dl class="class">
 <dt id="ikkuna.export.subscriber.SumSubscriber">
 <em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">SumSubscriber</code><span class="sig-paren">(</span><em>kinds</em>, <em>message_bus=&lt;ikkuna.export.messages.MessageBus object&gt;</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em>, <em>**tbx_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/sum.html#SumSubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.SumSubscriber" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><dl class="method">
+<dt id="ikkuna.export.subscriber.SumSubscriber.compute">
+<code class="descname">compute</code><span class="sig-paren">(</span><em>message_bundle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/sum.html#SumSubscriber.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.SumSubscriber.compute" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is where the magic happens. Subclasses should override this method so that they can
+compute their metric upon reception of their desired messages or do whatever else they want.
+If interested in plotting, they should then use their
+<a class="reference internal" href="#ikkuna.export.subscriber.PlotSubscriber.backend" title="ikkuna.export.subscriber.PlotSubscriber.backend"><code class="xref py py-attr docutils literal notranslate"><span class="pre">backend</span></code></a> property to plot the metric (if
+they display line plots) and their <code class="docutils literal notranslate"><span class="pre">message_bus</span></code> to publish a new message with the metric.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message_or_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><em>ikkuna.export.messages.Message</em></a>) – Can either be <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetaMessage</span></code></a> if the
+Subscriber is not interested in actual training artifacts, or
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingMessage</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
 
 <dl class="class">
 <dt id="ikkuna.export.subscriber.TestAccuracySubscriber">
@@ -630,6 +731,26 @@ pass fits into memory.</li>
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="ikkuna.export.subscriber.TestAccuracySubscriber.compute">
+<code class="descname">compute</code><span class="sig-paren">(</span><em>message_or_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/test_accuracy.html#TestAccuracySubscriber.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.TestAccuracySubscriber.compute" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is where the magic happens. Subclasses should override this method so that they can
+compute their metric upon reception of their desired messages or do whatever else they want.
+If interested in plotting, they should then use their
+<a class="reference internal" href="#ikkuna.export.subscriber.PlotSubscriber.backend" title="ikkuna.export.subscriber.PlotSubscriber.backend"><code class="xref py py-attr docutils literal notranslate"><span class="pre">backend</span></code></a> property to plot the metric (if
+they display line plots) and their <code class="docutils literal notranslate"><span class="pre">message_bus</span></code> to publish a new message with the metric.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message_or_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><em>ikkuna.export.messages.Message</em></a>) – Can either be <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetaMessage</span></code></a> if the
+Subscriber is not interested in actual training artifacts, or
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingMessage</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -642,6 +763,26 @@ pass fits into memory.</li>
 <dd><p>For parameters see <a class="reference internal" href="#ikkuna.export.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotSubscriber</span></code></a></p>
 </dd></dl>
 
+<dl class="method">
+<dt id="ikkuna.export.subscriber.TrainAccuracySubscriber.compute">
+<code class="descname">compute</code><span class="sig-paren">(</span><em>message_bundle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/train_accuracy.html#TrainAccuracySubscriber.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.TrainAccuracySubscriber.compute" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is where the magic happens. Subclasses should override this method so that they can
+compute their metric upon reception of their desired messages or do whatever else they want.
+If interested in plotting, they should then use their
+<a class="reference internal" href="#ikkuna.export.subscriber.PlotSubscriber.backend" title="ikkuna.export.subscriber.PlotSubscriber.backend"><code class="xref py py-attr docutils literal notranslate"><span class="pre">backend</span></code></a> property to plot the metric (if
+they display line plots) and their <code class="docutils literal notranslate"><span class="pre">message_bus</span></code> to publish a new message with the metric.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message_or_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><em>ikkuna.export.messages.Message</em></a>) – Can either be <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetaMessage</span></code></a> if the
+Subscriber is not interested in actual training artifacts, or
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingMessage</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -649,6 +790,26 @@ pass fits into memory.</li>
 <em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">VarianceSubscriber</code><span class="sig-paren">(</span><em>kinds</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em>, <em>**tbx_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/variance.html#VarianceSubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.VarianceSubscriber" title="Permalink to this definition">¶</a></dt>
 <dd><p>A <a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a> which computes the
 variance of quantity for the current batch.</p>
+<dl class="method">
+<dt id="ikkuna.export.subscriber.VarianceSubscriber.compute">
+<code class="descname">compute</code><span class="sig-paren">(</span><em>message_bundle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/variance.html#VarianceSubscriber.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.VarianceSubscriber.compute" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is where the magic happens. Subclasses should override this method so that they can
+compute their metric upon reception of their desired messages or do whatever else they want.
+If interested in plotting, they should then use their
+<a class="reference internal" href="#ikkuna.export.subscriber.PlotSubscriber.backend" title="ikkuna.export.subscriber.PlotSubscriber.backend"><code class="xref py py-attr docutils literal notranslate"><span class="pre">backend</span></code></a> property to plot the metric (if
+they display line plots) and their <code class="docutils literal notranslate"><span class="pre">message_bus</span></code> to publish a new message with the metric.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message_or_data</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><em>ikkuna.export.messages.Message</em></a>) – Can either be <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MetaMessage" title="ikkuna.export.messages.MetaMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetaMessage</span></code></a> if the
+Subscriber is not interested in actual training artifacts, or
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.TrainingMessage" title="ikkuna.export.messages.TrainingMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingMessage</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 </div>

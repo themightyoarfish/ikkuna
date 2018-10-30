@@ -161,7 +161,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_frequency</span>    <span class="o">=</span> <span class="n">frequency</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_forward_fn</span>   <span class="o">=</span> <span class="n">forward_fn</span></div>
 
-    <span class="k">def</span> <span class="nf">_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_or_data</span><span class="p">):</span>
+<div class="viewcode-block" id="TestAccuracySubscriber.compute"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.TestAccuracySubscriber.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_or_data</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subscription</span><span class="o">.</span><span class="n">counter</span><span class="p">[</span><span class="s1">&#39;batch_finished&#39;</span><span class="p">]</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frequency</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">n_batches</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">accuracy</span>  <span class="o">=</span> <span class="mi">0</span>
@@ -176,7 +176,7 @@
                     <span class="n">n_batches</span>  <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
                 <span class="n">accuracy</span> <span class="o">/=</span> <span class="n">n_batches</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="s1">&#39;test accuracy&#39;</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">message_or_data</span><span class="o">.</span><span class="n">seq</span><span class="p">)</span></div>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="s1">&#39;test accuracy&#39;</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">message_or_data</span><span class="o">.</span><span class="n">seq</span><span class="p">)</span></div></div>
 </pre></div>
 
     </div>

@@ -225,7 +225,7 @@ For adding your own metric, you must subclass
 :class:`~ikkuna.export.subscriber.Subscriber` or the more specialised
 :class:`~ikkuna.export.subscriber.PlotSubscriber` if the metric can be displayed
 in a line plot. All you need to do is write an ``__init__`` method and override
-:meth:`~ikkuna.export.subscriber.Subscriber._metric()`. Your initializer should
+:meth:`~ikkuna.export.subscriber.Subscriber.compute()`. Your initializer should
 contain at least the following arguments:
 
     .. code-block:: python
@@ -258,7 +258,7 @@ received for a module.
 
 The :class:`~ikkuna.export.subscriber.Subscription`\ s will invoke the
 :class:`~ikkuna.export.subscriber.Subscriber`\ s
-:meth:`~ikkuna.export.subscriber.Subscriber._metric()` method with either single
+:meth:`~ikkuna.export.subscriber.Subscriber.compute()` method with either single
 messages, if no synchronisation is used, or
 :class:`~ikkuna.export.messages.MessageBundle` objects which contain the data
 for one module and all desired kinds. As an example, consider the

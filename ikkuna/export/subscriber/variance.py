@@ -20,7 +20,7 @@ class VarianceSubscriber(PlotSubscriber):
                                         'xlabel': xlabel},
                          backend=backend, **tbx_params)
 
-    def _metric(self, message_bundle):
+    def compute(self, message_bundle):
 
         module_name  = message_bundle.identifier
 

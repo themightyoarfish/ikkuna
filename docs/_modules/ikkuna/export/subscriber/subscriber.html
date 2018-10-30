@@ -282,12 +282,13 @@
     <span class="k">def</span> <span class="nf">message_bus</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span>
 
-<div class="viewcode-block" id="Subscriber._metric"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber._metric">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-    <span class="k">def</span> <span class="nf">_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_or_data</span><span class="p">):</span>
+<div class="viewcode-block" id="Subscriber.compute"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.compute">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_or_data</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;This is where the magic happens. Subclasses should override this method so that they can</span>
-<span class="sd">        compute their metric upon reception of their desired messages. They should then use their</span>
-<span class="sd">        :attr:`~ikkuna.export.subscriber.PlotSubscriber.backend` property to publish the metric (if</span>
-<span class="sd">        they display line plots).</span>
+<span class="sd">        compute their metric upon reception of their desired messages or do whatever else they want.</span>
+<span class="sd">        If interested in plotting, they should then use their</span>
+<span class="sd">        :attr:`~ikkuna.export.subscriber.PlotSubscriber.backend` property to plot the metric (if</span>
+<span class="sd">        they display line plots) and their ``message_bus`` to publish a new message with the metric.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -323,7 +324,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">complete</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Data received for &quot;</span><span class="si">{message_bundle._module}</span><span class="s1">&quot; is not complete.&#39;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="n">message_bundle</span><span class="p">)</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">message_bundle</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="PlotSubscriber"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.PlotSubscriber">[docs]</a><span class="k">class</span> <span class="nc">PlotSubscriber</span><span class="p">(</span><span class="n">Subscriber</span><span class="p">):</span>
@@ -357,9 +358,9 @@
         <span class="sd">&#39;&#39;&#39;ikkuna.visualization.Backend: The backend to use for plotting&#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span>
 
-    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-    <span class="k">def</span> <span class="nf">_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_or_data</span><span class="p">):</span>
-        <span class="k">pass</span></div>
+<div class="viewcode-block" id="PlotSubscriber.compute"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.PlotSubscriber.compute">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_or_data</span><span class="p">):</span>
+        <span class="k">pass</span></div></div>
 </pre></div>
 
     </div>

@@ -53,7 +53,7 @@ class TestAccuracySubscriber(PlotSubscriber):
         self._frequency    = frequency
         self._forward_fn   = forward_fn
 
-    def _metric(self, message_or_data):
+    def compute(self, message_or_data):
         if self._subscription.counter['batch_finished'] % self._frequency == 0:
             n_batches = 0
             accuracy  = 0

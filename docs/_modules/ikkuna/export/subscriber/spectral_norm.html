@@ -139,7 +139,7 @@
                          <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span> <span class="o">**</span><span class="n">tbx_params</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">u</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="SpectralNormSubscriber._metric"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.SpectralNormSubscriber._metric">[docs]</a>    <span class="k">def</span> <span class="nf">_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_bundle</span><span class="p">):</span>
+<div class="viewcode-block" id="SpectralNormSubscriber.compute"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.SpectralNormSubscriber.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_bundle</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;The spectral norm computation is taken from the `Pytorch implementation of spectral norm</span>
 <span class="sd">        &lt;https://pytorch.org/docs/master/_modules/torch/nn/utils/spectral_norm.html&gt;`_. It&#39;s</span>
 <span class="sd">        possible to use SVD instead, but we are not interested in the full matrix decomposition,</span>

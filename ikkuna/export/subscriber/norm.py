@@ -17,7 +17,7 @@ class NormSubscriber(PlotSubscriber):
                          backend=backend, **tbx_params)
         self._order  = order
 
-    def _metric(self, message_bundle):
+    def compute(self, message_bundle):
 
         module_name  = message_bundle.identifier
 

@@ -365,7 +365,7 @@ creating a <a class="reference internal" href="ikkuna.export.html#ikkuna.export.
 <a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a> or the more specialised
 <a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotSubscriber</span></code></a> if the metric can be displayed
 in a line plot. All you need to do is write an <code class="docutils literal notranslate"><span class="pre">__init__</span></code> method and override
-<a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber._metric" title="ikkuna.export.subscriber.Subscriber._metric"><code class="xref py py-meth docutils literal notranslate"><span class="pre">_metric()</span></code></a>. Your initializer should
+<a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.compute" title="ikkuna.export.subscriber.Subscriber.compute"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute()</span></code></a>. Your initializer should
 contain at least the following arguments:</p>
 <blockquote>
 <div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_bus</span><span class="p">,</span> <span class="n">kinds</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ylims</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;tb&#39;</span><span class="p">):</span>
@@ -396,7 +396,7 @@ takes care of only releasing the messages in bundles after all kinds have been
 received for a module.</p>
 <p>The <a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscription" title="ikkuna.export.subscriber.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscription</span></code></a>s will invoke the
 <a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a>s
-<a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber._metric" title="ikkuna.export.subscriber.Subscriber._metric"><code class="xref py py-meth docutils literal notranslate"><span class="pre">_metric()</span></code></a> method with either single
+<a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.compute" title="ikkuna.export.subscriber.Subscriber.compute"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute()</span></code></a> method with either single
 messages, if no synchronisation is used, or
 <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MessageBundle" title="ikkuna.export.messages.MessageBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageBundle</span></code></a> objects which contain the data
 for one module and all desired kinds. As an example, consider the
@@ -432,7 +432,7 @@ for one module and all desired kinds. As an example, consider the
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_metric_postprocess</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
 
-    <span class="k">def</span> <span class="nf">_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_bundle</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_bundle</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;The ratio between the two kinds is computed over the subset of not-NaN values and added</span>
 <span class="sd">        to the record.&#39;&#39;&#39;</span>
 

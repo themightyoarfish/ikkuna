@@ -37,7 +37,7 @@ class RatioSubscriber(PlotSubscriber):
         else:
             self._metric_postprocess = lambda x: x
 
-    def _metric(self, message_bundle):
+    def compute(self, message_bundle):
         '''The ratio between the two kinds is computed over the subset of not-NaN values and added
         to the record.'''
 

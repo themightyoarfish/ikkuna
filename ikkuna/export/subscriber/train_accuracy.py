@@ -21,7 +21,7 @@ class TrainAccuracySubscriber(PlotSubscriber):
                          {'title': title, 'xlabel': xlabel, 'ylims': ylims, 'ylabel': ylabel},
                          backend=backend, **tbx_params)
 
-    def _metric(self, message_bundle):
+    def compute(self, message_bundle):
         Y           = message_bundle.data['network_output']
         labels      = message_bundle.data['input_labels']
         predictions = Y.argmax(1)

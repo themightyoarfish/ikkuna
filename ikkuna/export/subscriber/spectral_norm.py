@@ -31,7 +31,7 @@ class SpectralNormSubscriber(PlotSubscriber):
                          backend=backend, **tbx_params)
         self.u = dict()
 
-    def _metric(self, message_bundle):
+    def compute(self, message_bundle):
         '''The spectral norm computation is taken from the `Pytorch implementation of spectral norm
         <https://pytorch.org/docs/master/_modules/torch/nn/utils/spectral_norm.html>`_. It's
         possible to use SVD instead, but we are not interested in the full matrix decomposition,

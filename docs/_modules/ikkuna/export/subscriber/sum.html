@@ -125,12 +125,12 @@
                           <span class="s1">&#39;xlabel&#39;</span><span class="p">:</span> <span class="n">xlabel</span><span class="p">},</span>
                          <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span> <span class="o">**</span><span class="n">tbx_params</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_bundle</span><span class="p">):</span>
+<div class="viewcode-block" id="SumSubscriber.compute"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.SumSubscriber.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_bundle</span><span class="p">):</span>
 
         <span class="n">module_name</span>  <span class="o">=</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">identifier</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_subscription</span><span class="o">.</span><span class="n">kinds</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">seq</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">seq</span><span class="p">)</span></div></div>
 </pre></div>
 
     </div>

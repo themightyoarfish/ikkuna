@@ -16,7 +16,7 @@ class HistogramSubscriber(PlotSubscriber):
         super().__init__(subscription, message_bus, {'title': title, 'ylabel': ylabel},
                          backend=backend)
 
-    def _metric(self, message_bundle):
+    def compute(self, message_bundle):
 
         module_name = message_bundle.identifier
         data        = message_bundle.data[self._subscription.kinds[0]]
