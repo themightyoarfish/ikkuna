@@ -55,8 +55,8 @@ class Message(abc.ABC):
                     which case no checking is performed. This guards against misspellings or
                     otherwise incorrect topics.
         '''
-        self._tag  = tag
-        self._seq  = seq
+        self._tag = tag
+        self._seq = seq
 
         # check step
         if step < 0:
@@ -193,9 +193,8 @@ class MessageBundle(object):
     during training. This data type can be used to buffer different kinds and check whether all
     expected kinds have been received for a module or meta information. The collection is enforced
     to be homogeneous with respect to global step, train step, epoch, and identifier
-    (:attr:`Message.key`)
+    (:attr:`Message.key`)'''
 
-    '''
     def __init__(self, identifier, kinds):
         '''
         Parameters
@@ -468,7 +467,7 @@ class MessageBus(object):
             sub.receive_message(msg)
 
 
-default_bus = MessageBus('default')
+__default_bus = MessageBus('default')
 
 
 def get_default_bus():
@@ -478,5 +477,5 @@ def get_default_bus():
     -------
     MessageBus
     '''
-    global default_bus
-    return default_bus
+    global __default_bus
+    return __default_bus
