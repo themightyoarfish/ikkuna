@@ -45,9 +45,10 @@ class Subscription(object):
         self._tag        = tag
         self._subscriber = subscriber
 
-        for k in kinds:
-            if k not in ALLOWED_KINDS:
-                raise ValueError(f'Unknown message kind "{k}" encountered.')
+        # TODO: Make topics registerable, then this check makes sense again.
+        # for k in kinds:
+        #     if k not in ALLOWED_KINDS:
+        #         raise ValueError(f'Unknown message kind "{k}" encountered.')
 
         self._kinds      = kinds
         self._counter    = defaultdict(int)
@@ -176,7 +177,7 @@ class Subscriber(abc.ABC):
         return self._msg_bus
 
     @abc.abstractmethod
-    def compute(self, message_or_data):
+    def compute(self, message_or_bundle):
         '''This is where the magic happens. Subclasses should override this method so that they can
         compute their metric upon reception of their desired messages or do whatever else they want.
         If interested in plotting, they should then use their
@@ -185,7 +186,7 @@ class Subscriber(abc.ABC):
 
         Parameters
         ----------
-        message_or_data :   ikkuna.export.messages.Message
+        message_or_bundle :   ikkuna.export.messages.Message or ikkuna.export.messages.MessageBundle
                             Can either be :class:`~ikkuna.export.messages.MetaMessage` if the
                             Subscriber is not interested in actual training artifacts, or
                             :class:`~ikkuna.export.messages.TrainingMessage`
@@ -252,5 +253,36 @@ class PlotSubscriber(Subscriber):
         return self._backend
 
     @abc.abstractmethod
-    def compute(self, message_or_data):
+    def compute(self, message_or_bundle):
         pass
+
+
+class CallbackSubscriber(Subscriber):
+    '''Subscriber class for subscribing to :class:`~ikkuna.export.messages.SubscriberMessage`\ s and
+    running a callback with them.'''
+
+    def __init__(self, kinds, callback, message_bus=get_default_bus(), tag=None, subsample=1):
+        '''
+        Parameters
+        ----------
+        subscription    :   Subscription
+        message_bus :   ikkuna.export.messages.MessageBus
+        callback    :   function
+                        A function that accepts as many parameters as the ``Subscription`` delivers
+                        messages at once.
+        '''
+        subscription = SynchronizedSubscription(self, kinds, tag, subsample)
+        super().__init__(subscription, message_bus)
+        self._callback = callback
+
+    def compute(self, message_or_bundle):
+        kinds = self._subscription.kinds
+        args  = (message_or_bundle.data[kind] for kind in kinds)
+
+        # TODO: Rename MessageBundle.identifier to key and remove this
+        if isinstance(message_or_bundle, ikkuna.export.messages.MessageBundle):
+            id_ = message_or_bundle.identifier
+        else:
+            id_ = message_or_bundle.key
+        self._callback(*args, message_or_bundle.seq, message_or_bundle.step,
+                       message_or_bundle.epoch, id_)
