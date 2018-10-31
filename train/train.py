@@ -48,8 +48,8 @@ class Trainer:
         ----------
         dataset_meta    :   train.DatasetMeta
                             Train data, obtained via :func:`ikkuna.utils.load_dataset()`. Currently,
-                            there is no support for dropping the last incomplete batch in case the
-                            batch size does not evenly divide the number of examples
+                            only full batches are used; if the batch size does not evenly divide the
+                            number of examples, the last batch is dropped.
         batch_size  :   int
         loss   :    function
                     Defaults to torch.nn.CrossEntropyLoss
@@ -64,10 +64,10 @@ class Trainer:
         self._batch_size        = kwargs.pop('batch_size', 1)
         self._loss_function     = kwargs.pop('loss', nn.CrossEntropyLoss())
         self._dataloader        = DataLoader(self._dataset, batch_size=self._batch_size,
-                                             pin_memory=True, shuffle=True)
+                                             pin_memory=True, shuffle=True, drop_last=True)
         self._data_iter         = iter(self._dataloader)
         N_train                 = self._shape[0]
-        self._batches_per_epoch = round(N_train / self._batch_size + 0.5)
+        self._batches_per_epoch = N_train // self._batch_size
         self._batch_counter     = 0
         self._global_counter    = 0
         self._epoch             = 0
