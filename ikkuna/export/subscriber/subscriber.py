@@ -44,16 +44,18 @@ class Subscription(object):
         '''
         self._tag        = tag
         self._subscriber = subscriber
-        if not all(map(lambda k: k in ALLOWED_KINDS, kinds)):
-            raise ValueError('Unknown message kind encountered.')
+
+        for k in kinds:
+            if k not in ALLOWED_KINDS:
+                raise ValueError(f'Unknown message kind "{k}" encountered.')
+
         self._kinds      = kinds
         self._counter    = defaultdict(int)
         self._subsample  = subsample
 
     @property
     def counter(self):
-        # caution: if you alter this dict, you're on your own
-        return self._counter
+        return dict(self._counter)
 
     @property
     def kinds(self):
