@@ -41,30 +41,18 @@ class RatioSubscriber(PlotSubscriber):
             self._metric_postprocess = lambda x: x
 
     def compute(self, message_bundle):
-        '''The ratio between the two kinds is computed over the subset of not-NaN values and added
-        to the record. A :class:`~ikkuna.export.messages.SubscriberMessage` with the identifier
+        '''The ratio between the two kinds is computed as the ratio of L2-Norms of the two Tensors.
+        A :class:`~ikkuna.export.messages.SubscriberMessage` with the identifier
         ``{kind1}_{kind2}_ratio`` is published.'''
 
-        module_name  = message_bundle.identifier
+        module_name = message_bundle.identifier
 
-        dividend = message_bundle.data[self._subscription.kinds[0]]
-        divisor  = message_bundle.data[self._subscription.kinds[1]]
+        dividend    = message_bundle.data[self._subscription.kinds[0]]
+        divisor     = message_bundle.data[self._subscription.kinds[1]]
 
-        ######################################################################################
-        #  We need to see how many NaNs we have and compute the mean only over the non-nans  #
-        ######################################################################################
-        ratio_tensor = self._metric_postprocess(dividend.div(divisor))
-        n            = float(divisor.numel())
-        nan_tensor   = torch.isnan(ratio_tensor)
-        n_nans       = nan_tensor.sum().to(torch.float32)
-        if n_nans > 0:
-            ratio_sum = torch.where(1 - nan_tensor, ratio_tensor, ZERO_TENSOR).sum()
-        else:
-            ratio_sum = ratio_tensor.sum()
-            ratio = (ratio_sum / (n - n_nans)).item()
-
-        if np.isnan(ratio):
-            raise ValueError(f'NaN value ratio for {module_name}')
+        scale1      = dividend.norm()
+        scale2      = divisor.norm()
+        ratio       = scale1 / scale2
 
         self._backend.add_data(module_name, ratio, message_bundle.seq)
 
