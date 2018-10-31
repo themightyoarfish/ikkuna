@@ -1,7 +1,5 @@
-import torch
-import numpy as np
-
-from ikkuna.export.subscriber import PlotSubscriber, SynchronizedSubscription
+from ikkuna.export.subscriber import PlotSubscriber, Subscription
+from ikkuna.export.messages import get_default_bus
 
 
 class VarianceSubscriber(PlotSubscriber):
@@ -9,15 +7,21 @@ class VarianceSubscriber(PlotSubscriber):
     variance of quantity for the current batch.
     '''
 
-    def __init__(self, kinds, tag=None, subsample=1, ylims=None, backend='tb', **tbx_params):
-        title        = f'variance of {kinds[0]}'
+    def __init__(self, kind, message_bus=get_default_bus(), tag=None, subsample=1, ylims=None,
+                 backend='tb', **tbx_params):
+
+        if not isinstance(kind, str):
+            raise ValueError('VarianceSubscriber only accepts 1 kind')
+
+        title        = f'variance of {kind}'
         ylabel       = 'σ^2'
         xlabel       = 'Train step'
-        subscription = SynchronizedSubscription(self, kinds, tag, subsample)
-        super().__init__(subscription, {'title': title,
-                                        'ylabel': ylabel,
-                                        'ylims': ylims,
-                                        'xlabel': xlabel},
+        subscription = Subscription(self, [kind], tag, subsample)
+        super().__init__(subscription, message_bus,
+                         {'title': title,
+                          'ylabel': ylabel,
+                          'ylims': ylims,
+                          'xlabel': xlabel},
                          backend=backend, **tbx_params)
 
     def compute(self, message_bundle):
