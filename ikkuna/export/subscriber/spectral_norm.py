@@ -19,8 +19,10 @@ class SpectralNormSubscriber(PlotSubscriber):
 
         For other parameters, see :class:`~ikkuna.export.subscriber.PlotSubscriber`
         '''
+
         if not isinstance(kind, str):
             raise ValueError('SpectralNormSubscriber only accepts 1 kind')
+
         subscription = Subscription(self, [kind], tag, subsample)
 
         title = f'Spectral norms of {kind}'
@@ -35,7 +37,10 @@ class SpectralNormSubscriber(PlotSubscriber):
         '''The spectral norm computation is taken from the `Pytorch implementation of spectral norm
         <https://pytorch.org/docs/master/_modules/torch/nn/utils/spectral_norm.html>`_. It's
         possible to use SVD instead, but we are not interested in the full matrix decomposition,
-        merely in the singular values.'''
+        merely in the singular values.
+
+        A :class:`~ikkuna.export.messages.SubscriberMessage`
+        with the identifier ``{kind}_spectral_norm`` is published. '''
 
         module_name = message_bundle.identifier
         # get and reshape the weight tensor to 2d
@@ -56,3 +61,8 @@ class SpectralNormSubscriber(PlotSubscriber):
         norm = torch.dot(self.u[module_name], torch.matmul(weights2d, v)).item()
 
         self._backend.add_data(module_name, norm, message_bundle.seq)
+
+        kind = f'{self._subscription.kinds[0]}_spectral_norm'
+        self.message_bus.publish_subscriber_message(message_bundle.seq, message_bundle.step,
+                                                    message_bundle.epoch, kind,
+                                                    message_bundle.identifier, norm)

@@ -22,9 +22,18 @@ class TrainAccuracySubscriber(PlotSubscriber):
                          backend=backend, **tbx_params)
 
     def compute(self, message_bundle):
+        '''Compute accuracy over the current train batch.
+
+        A :class:`~ikkuna.export.messages.SubscriberMessage` with the identifier
+        ``train_accuracy`` is published. '''
         Y           = message_bundle.data['network_output']
         labels      = message_bundle.data['input_labels']
         predictions = Y.argmax(1)
         n_correct   = (predictions == labels).sum().item()
         accuracy    = n_correct / float(labels.numel())
         self._backend.add_data('Train batch accuracy', accuracy, message_bundle.seq)
+
+        kind = 'train_accuracy'
+        self.message_bus.publish_subscriber_message(message_bundle.seq, message_bundle.step,
+                                                    message_bundle.epoch, kind,
+                                                    message_bundle.identifier, accuracy)

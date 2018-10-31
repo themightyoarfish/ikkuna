@@ -40,8 +40,7 @@ class Subscription(object):
         subscriber  :   ikkuna.export.subscriber.Subscriber
                         Object that wants to receive the messages
         tag :   str or None
-                Optional tag for filtering messages. If ``None``, all messages will be
-                relayed
+                Optional tag for filtering messages. If ``None``, all messages will be relayed
         '''
         self._tag        = tag
         self._subscriber = subscriber

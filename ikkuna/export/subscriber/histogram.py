@@ -1,7 +1,6 @@
-from ikkuna.export.subscriber import PlotSubscriber, SynchronizedSubscription
+from ikkuna.export.subscriber import PlotSubscriber, Subscription
 from ikkuna.export.messages import get_default_bus
 
-from collections import defaultdict
 
 class HistogramSubscriber(PlotSubscriber):
 
@@ -9,14 +8,24 @@ class HistogramSubscriber(PlotSubscriber):
     computes histograms per epoch.  Histograms are non-normalized.
     '''
 
-    def __init__(self, kinds, message_bus=get_default_bus(), tag=None, subsample=1, backend='tb'):
-        subscription = SynchronizedSubscription(self, kinds, tag, subsample)
-        title        = f'{kinds[0]} histogram'
+    def __init__(self, kind, message_bus=get_default_bus(), tag=None, subsample=1, backend='tb'):
+
+        if not isinstance(kind, str):
+            raise ValueError('HistogramSubscriber only accepts 1 kind')
+
+        subscription = Subscription(self, [kind], tag, subsample)
+        title        = f'{kind} histogram'
         ylabel       = 'Frequency'
         super().__init__(subscription, message_bus, {'title': title, 'ylabel': ylabel},
                          backend=backend)
 
     def compute(self, message_bundle):
+        '''
+        .. note::
+            Since the histogram is computed by the visualization backend (there's no practical way
+            around it), this subscriber does *not* publish a
+            :class:`~ikkuna.export.messages.SubscriberMessage`
+        '''
 
         module_name = message_bundle.identifier
         data        = message_bundle.data[self._subscription.kinds[0]]

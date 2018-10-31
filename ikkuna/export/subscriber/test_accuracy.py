@@ -54,6 +54,10 @@ class TestAccuracySubscriber(PlotSubscriber):
         self._forward_fn   = forward_fn
 
     def compute(self, message_or_data):
+        '''Compute accuracy over the entire test set.
+
+        A :class:`~ikkuna.export.messages.SubscriberMessage` with the identifier
+        ``test_accuracy`` is published. '''
         if self._subscription.counter['batch_finished'] % self._frequency == 0:
             n_batches = 0
             accuracy  = 0
@@ -69,3 +73,9 @@ class TestAccuracySubscriber(PlotSubscriber):
             except StopIteration:
                 accuracy /= n_batches
                 self._backend.add_data('test accuracy', accuracy, message_or_data.seq)
+
+                kind = 'test_accuracy'
+                self.message_bus.publish_subscriber_message(message_or_data.seq,
+                                                            message_or_data.step,
+                                                            message_or_data.epoch, kind,
+                                                            message_or_data.identifier, accuracy)

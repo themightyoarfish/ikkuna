@@ -22,6 +22,9 @@ class RatioSubscriber(PlotSubscriber):
         absolute :  bool
                     Whether to use absolute ratio
         '''
+        if len(kinds) != 2:
+            raise ValueError(f'RatioSubscriber requires 2 kinds, got {len(kinds)}.')
+
         title        = f'{kinds[0]}/{kinds[1]} ratio'
         ylabel       = 'Ratio'
         xlabel       = 'Train step'
@@ -39,7 +42,8 @@ class RatioSubscriber(PlotSubscriber):
 
     def compute(self, message_bundle):
         '''The ratio between the two kinds is computed over the subset of not-NaN values and added
-        to the record.'''
+        to the record. A :class:`~ikkuna.export.messages.SubscriberMessage` with the identifier
+        ``{kind1}_{kind2}_ratio`` is published.'''
 
         module_name  = message_bundle.identifier
 
@@ -63,3 +67,8 @@ class RatioSubscriber(PlotSubscriber):
             raise ValueError(f'NaN value ratio for {module_name}')
 
         self._backend.add_data(module_name, ratio, message_bundle.seq)
+
+        kind = f'{self._subscription.kinds[0]}_{self._subscription.kinds[1]}_ratio'
+        self.message_bus.publish_subscriber_message(message_bundle.seq, message_bundle.step,
+                                                    message_bundle.epoch, kind,
+                                                    message_bundle.identifier, ratio)
