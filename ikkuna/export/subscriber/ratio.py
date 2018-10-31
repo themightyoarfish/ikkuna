@@ -52,7 +52,7 @@ class RatioSubscriber(PlotSubscriber):
 
         scale1      = dividend.norm()
         scale2      = divisor.norm()
-        ratio       = scale1 / scale2
+        ratio       = (scale1 / scale2).item()
 
         self._backend.add_data(module_name, ratio, message_bundle.seq)
 
