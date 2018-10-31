@@ -191,11 +191,9 @@ class MessageBundle(object):
 
     '''Data object for holding a set of artifacts for a module (or meta information) at one point
     during training. This data type can be used to buffer different kinds and check whether all
-    expected kinds have been received for a module or meta information.
-
-    .. note::
-
-        This docstring doesn't make sense yet.
+    expected kinds have been received for a module or meta information. The collection is enforced
+    to be homogeneous with respect to global step, train step, epoch, and identifier
+    (:attr:`Message.key`)
 
     '''
     def __init__(self, identifier, kinds):
@@ -227,6 +225,11 @@ class MessageBundle(object):
         This can be the module name or a string such as ``META`` or other  denoting these are
         messages which do not belong to a module.'''
         return self._identifier
+
+    @property
+    def kinds(self):
+        '''list(str): Alias to :attr:`expected_kinds`'''
+        return self.expected_kinds
 
     @property
     def expected_kinds(self):
@@ -405,8 +408,10 @@ class MessageBus(object):
                     Epoch index
         kind    :   str
                     Identifier chosen by the publishing subscriber
-        module  :   ikkuna.utils.NamedModule
-                    The module in question
+        identifier  :   str
+                        Identifier for this message. Usually the module name, if it is tied to a
+                        module, or 'META' for other messages. The string is used for collection in
+                        :class:`MessageBundle`\ s which must be uniform in this respect.
         data    :   torch.Tensor, tuple(torch.Tensor), float, int or None
                     Payload, if necessary
         '''
@@ -451,7 +456,7 @@ class MessageBus(object):
                     Epoch index
         kind    :   str
                     Kind of message
-        module  :   ikkuna.utils.NamedModule
+       named_ module  :   ikkuna.utils.NamedModule
                     The module in question
         data    :   torch.Tensor
                     Payload
