@@ -69,10 +69,9 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
     backend   = kwargs['visualisation']
 
     if kwargs['spectral_norm']:
-        spectral_norm_subscriber = SpectralNormSubscriber('weights',
-                                                          subsample=subsample,
-                                                          backend=backend)
-        trainer.add_subscriber(spectral_norm_subscriber)
+        for kind in kwargs['spectral_norm']:
+            spectral_norm_subscriber = SpectralNormSubscriber(kind, backend=backend)
+            trainer.add_subscriber(spectral_norm_subscriber)
 
     if kwargs['test_accuracy']:
         test_accuracy_subscriber = TestAccuracySubscriber(dataset_test, trainer.model.forward,
@@ -95,12 +94,12 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
 
     if kwargs['histogram']:
         for kind in kwargs['histogram']:
-            histogram_subscriber = HistogramSubscriber([kind], backend=backend)
+            histogram_subscriber = HistogramSubscriber(kind, backend=backend)
             trainer.add_subscriber(histogram_subscriber)
 
     if kwargs['norm']:
         for kind in kwargs['norm']:
-            norm_subscriber = NormSubscriber([kind], backend=backend)
+            norm_subscriber = NormSubscriber(kind, backend=backend)
             trainer.add_subscriber(norm_subscriber)
 
     batches_per_epoch = trainer.batches_per_epoch
@@ -152,8 +151,8 @@ def get_parser():
     parser.add_argument('-v', '--visualisation', type=str, choices=['tb', 'mpl'], default='tb',
                         help='Visualisation backend to use.')
     parser.add_argument('-V', '--verbose', action='store_true', help='Print training progress')
-    parser.add_argument('--spectral-norm', action='store_true',
-                        help='Use spectral norm subscriber on weights')
+    parser.add_argument('--spectral-norm', nargs='*', type=str, default=None, metavar='TOPIC',
+                        help='Use spectral norm subscriber(s)')
     parser.add_argument('--histogram', nargs='*', type=str, default=None, metavar='TOPIC',
                         help='Use histogram subscriber(s)')
     parser.add_argument('--ratio', type=list_of_tuples, nargs='*', default=None, metavar='TOPIC',
@@ -163,7 +162,7 @@ def get_parser():
     parser.add_argument('--train-accuracy', action='store_true',
                         help='Use train accuracy subscriber')
     parser.add_argument('--norm', nargs='*', type=str, default=None, metavar='TOPIC',
-                        help='Use norm subscriber(s)')
+                        help='Use 2-norm subscriber(s)')
     parser.add_argument('--depth', type=int, default=-1, help='Depth to which to add modules',
                         metavar='N')
     parser.add_argument('--exponential-decay', type=float, required=False,
