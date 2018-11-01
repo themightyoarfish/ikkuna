@@ -22,7 +22,7 @@ class NormSubscriber(PlotSubscriber):
         self._order  = order
 
     def compute(self, message_bundle):
-        '''Compute the norm of a quantity. A :class:`~ikkuna.export.messages.SubscriberMessage`
+        '''Compute the norm of a quantity. A :class:`~ikkuna.export.messages.ModuleMessage`
         with the identifier ``{kind}_norm{order}`` is published. '''
 
         module, module_name  = message_bundle.key
@@ -32,7 +32,7 @@ class NormSubscriber(PlotSubscriber):
         self._backend.add_data(module_name, norm, message_bundle.global_step)
 
         kind = f'{self._subscription.kinds[0]}_norm{self._order}'
-        self.message_bus.publish_subscriber_message(message_bundle.global_step,
+        self.message_bus.publish_module_message(message_bundle.global_step,
                                                     message_bundle.train_step,
                                                     message_bundle.epoch, kind,
                                                     message_bundle.key, norm)

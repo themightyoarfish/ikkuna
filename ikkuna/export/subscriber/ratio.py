@@ -42,7 +42,7 @@ class RatioSubscriber(PlotSubscriber):
 
     def compute(self, message_bundle):
         '''The ratio between the two kinds is computed as the ratio of L2-Norms of the two Tensors.
-        A :class:`~ikkuna.export.messages.SubscriberMessage` with the identifier
+        A :class:`~ikkuna.export.messages.ModuleMessage` with the identifier
         ``{kind1}_{kind2}_ratio`` is published.'''
 
         module, module_name = message_bundle.key
@@ -57,7 +57,7 @@ class RatioSubscriber(PlotSubscriber):
         self._backend.add_data(module_name, ratio, message_bundle.global_step)
 
         kind = f'{self._subscription.kinds[0]}_{self._subscription.kinds[1]}_ratio'
-        self.message_bus.publish_subscriber_message(message_bundle.global_step,
+        self.message_bus.publish_module_message(message_bundle.global_step,
                                                     message_bundle.train_step,
                                                     message_bundle.epoch, kind,
                                                     message_bundle.key, ratio)

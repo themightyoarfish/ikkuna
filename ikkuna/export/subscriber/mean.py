@@ -21,7 +21,7 @@ class MeanSubscriber(PlotSubscriber):
                          backend=backend, **tbx_params)
 
     def compute(self, message_bundle):
-        '''Compute the average of a quantity. A :class:`~ikkuna.export.messages.SubscriberMessage`
+        '''Compute the average of a quantity. A :class:`~ikkuna.export.messages.ModuleMessage`
         with the identifier ``{kind}_mean`` is published. '''
 
         module, module_name  = message_bundle.key
@@ -31,7 +31,7 @@ class MeanSubscriber(PlotSubscriber):
         self._backend.add_data(module_name, mean, message_bundle.global_step)
 
         kind = f'{self._subscription.kinds[0]}_mean'
-        self.message_bus.publish_subscriber_message(message_bundle.global_step,
+        self.message_bus.publish_module_message(message_bundle.global_step,
                                                     message_bundle.train_step,
                                                     message_bundle.epoch, kind,
                                                     message_bundle.key, mean)

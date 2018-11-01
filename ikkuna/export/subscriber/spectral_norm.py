@@ -39,7 +39,7 @@ class SpectralNormSubscriber(PlotSubscriber):
         possible to use SVD instead, but we are not interested in the full matrix decomposition,
         merely in the singular values.
 
-        A :class:`~ikkuna.export.messages.SubscriberMessage`
+        A :class:`~ikkuna.export.messages.ModuleMessage`
         with the identifier ``{kind}_spectral_norm`` is published. '''
 
         module, module_name = message_bundle.key
@@ -63,7 +63,7 @@ class SpectralNormSubscriber(PlotSubscriber):
         self._backend.add_data(module_name, norm, message_bundle.global_step)
 
         kind = f'{self._subscription.kinds[0]}_spectral_norm'
-        self.message_bus.publish_subscriber_message(message_bundle.global_step,
-                                                    message_bundle.train_step,
-                                                    message_bundle.epoch, kind,
-                                                    message_bundle.key, norm)
+        self.message_bus.publish_module_message(message_bundle.global_step,
+                                                message_bundle.train_step,
+                                                message_bundle.epoch, kind,
+                                                message_bundle.key, norm)

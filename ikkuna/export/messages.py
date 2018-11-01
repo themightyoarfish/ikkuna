@@ -1,3 +1,5 @@
+import abc
+
 '''
 .. _meta_kinds:
 .. data:: META_KINDS
@@ -15,9 +17,6 @@
     Simply the union of ``META_KINDS`` and ``DATA_KINDS``
 '''
 
-import abc
-
-from ikkuna.utils import NamedModule
 
 META_KINDS = {
     'batch_started', 'batch_finished', 'epoch_started', 'epoch_finished', 'input_data',
@@ -28,6 +27,7 @@ DATA_KINDS = {
     'weights', 'weight_gradients', 'weight_updates', 'biases', 'bias_gradients', 'bias_updates',
     'activations', 'layer_gradients'
 }
+
 
 ALLOWED_KINDS = set.union(META_KINDS, DATA_KINDS)
 
@@ -70,11 +70,7 @@ class Message(abc.ABC):
         else:
             self._epoch = epoch
 
-        # check kind
-        if kind is not None and kind not in ALLOWED_KINDS:
-            raise ValueError(f'Invalid message kind "{kind}"')
-        else:
-            self._kind = kind
+        self._kind = kind
 
         self._data = None
 
@@ -126,8 +122,6 @@ class NetworkMessage(Message):
     '''A message with meta information not tied to any specific module. Can still carry tensor data,
     if necessary.'''
     def __init__(self, tag, global_step, train_step, epoch, kind, data=None):
-        if kind not in META_KINDS:
-            raise ValueError(f'Invalid message kind "{kind}"')
         super().__init__(tag, global_step, train_step, epoch, kind)
         self._data = data
 
@@ -160,31 +154,6 @@ class ModuleMessage(Message):
     @property
     def key(self):
         return self.module
-
-
-class SubscriberMessage(Message):
-    '''A message published by subscribers. There's no whitelist of allowed ``kind``\ s as there is
-    for messages originating from the model.'''
-
-    def __init__(self, tag, global_step, train_step, epoch, kind, identifier, data):
-        # we pass None for kind so as to explicitly avoid the validity check
-        super().__init__(tag, global_step, train_step, epoch, None)
-
-        if isinstance(identifier, NamedModule):
-            self._identifier = identifier.name
-        else:
-            self._identifier = identifier
-
-        self._kind = kind
-
-        if data is None:
-            raise ValueError('Data cannot be `None` for `SubscriberMessage`')
-        self._data = data
-
-    @property
-    def key(self):
-        # man I really need to rethink this key business
-        return self._identifier
 
 
 class MessageBundle(object):
@@ -386,33 +355,6 @@ class MessageBus(object):
         sub :   ikkuna.export.subscriber.Subscriber
         '''
         self._subscribers.add(sub)
-
-    def publish_subscriber_message(self, global_step, train_step, epoch, kind, identifier,
-                                   data=None):
-        '''Publish an update of type :class:`~ikkuna.export.messages.SubscriberMessage` to all
-        registered subscribers.
-
-        Parameters
-        ----------
-        global_step :   int
-                        Global training step
-        train_step  :   int
-                        Epoch-relative training step
-        epoch   :   int
-                    Epoch index
-        kind    :   str
-                    Identifier chosen by the publishing subscriber
-        identifier  :   str
-                        Identifier for this message. Usually the module name, if it is tied to a
-                        module, or 'META' for other messages. The string is used for collection in
-                        :class:`MessageBundle`\ s which must be uniform in this respect.
-        data    :   torch.Tensor, tuple(torch.Tensor), float, int or None
-                    Payload, if necessary
-        '''
-        msg = SubscriberMessage(global_step=global_step, tag=None, kind=kind, identifier=identifier,
-                                train_step=train_step, epoch=epoch, data=data)
-        for sub in self._subscribers:
-            sub.receive_message(msg)
 
     def publish_network_message(self, global_step, train_step, epoch, kind, data=None):
         '''Publish an update of type :class:`~ikkuna.export.messages.NetworkMessage` to all

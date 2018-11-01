@@ -24,7 +24,7 @@ class HistogramSubscriber(PlotSubscriber):
         .. note::
             Since the histogram is computed by the visualization backend (there's no practical way
             around it), this subscriber does *not* publish a
-            :class:`~ikkuna.export.messages.SubscriberMessage`
+            :class:`~ikkuna.export.messages.ModuleMessage`
         '''
 
         module, name = message_bundle.key

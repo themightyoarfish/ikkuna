@@ -257,7 +257,7 @@ class PlotSubscriber(Subscriber):
 
 
 class CallbackSubscriber(Subscriber):
-    '''Subscriber class for subscribing to :class:`~ikkuna.export.messages.SubscriberMessage`\ s and
+    '''Subscriber class for subscribing to :class:`~ikkuna.export.messages.ModuleMessage`\ s and
     running a callback with them.'''
 
     def __init__(self, kinds, callback, message_bus=get_default_bus(), tag=None, subsample=1):
