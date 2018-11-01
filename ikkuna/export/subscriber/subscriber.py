@@ -186,7 +186,7 @@ class Subscriber(abc.ABC):
         Parameters
         ----------
         message_or_bundle :   ikkuna.export.messages.Message or ikkuna.export.messages.MessageBundle
-                            Can either be :class:`~ikkuna.export.messages.MetaMessage` if the
+                            Can either be :class:`~ikkuna.export.messages.NetworkMessage` if the
                             Subscriber is not interested in actual training artifacts, or
                             :class:`~ikkuna.export.messages.TrainingMessage`
         '''
@@ -198,7 +198,7 @@ class Subscriber(abc.ABC):
 
     def process_message_bundle(self, message_bundle):
         '''Callback for processing a :class:`~ikkuna.export.messages.MessageBundle` object with
-        :class:`~ikkuna.export.messages.MetaMessage`\ s or
+        :class:`~ikkuna.export.messages.NetworkMessage`\ s or
         :class:`~ikkuna.export.messages.TrainingMessage`\ s in it.
 
         Parameters

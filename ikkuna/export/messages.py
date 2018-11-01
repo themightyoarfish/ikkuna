@@ -106,7 +106,7 @@ class Message(abc.ABC):
     @property
     def data(self):
         '''torch.Tensor, tuple(torch.Tensor) or None:  This field is optional for
-        :class:`MetaMessage`, but mandatory for :class:`TrainingMessage`'''
+        :class:`NetworkMessage`, but mandatory for :class:`TrainingMessage`'''
         return self._data
 
     @abc.abstractproperty
@@ -122,7 +122,7 @@ class Message(abc.ABC):
         return str(self)
 
 
-class MetaMessage(Message):
+class NetworkMessage(Message):
     '''A message with meta information not tied to any specific module. Can still carry tensor data,
     if necessary.'''
     def __init__(self, tag, global_step, train_step, epoch, kind, data=None):
@@ -421,7 +421,7 @@ class MessageBus(object):
             sub.receive_message(msg)
 
     def publish_meta_message(self, global_step, train_step, epoch, kind, data=None):
-        '''Publish an update of type :class:`~ikkuna.export.messages.MetaMessage` to all
+        '''Publish an update of type :class:`~ikkuna.export.messages.NetworkMessage` to all
         registered subscribers.
 
         Parameters
@@ -437,7 +437,7 @@ class MessageBus(object):
         data    :   torch.Tensor or None
                     Payload, if necessary
         '''
-        msg = MetaMessage(global_step=global_step, tag=None, kind=kind, train_step=train_step,
+        msg = NetworkMessage(global_step=global_step, tag=None, kind=kind, train_step=train_step,
                           epoch=epoch, data=data)
         for sub in self._subscribers:
             sub.receive_message(msg)
