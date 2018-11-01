@@ -127,8 +127,10 @@
 
 <span class="sd">        For other parameters, see :class:`~ikkuna.export.subscriber.PlotSubscriber`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;SpectralNormSubscriber only accepts 1 kind&#39;</span><span class="p">)</span>
+
         <span class="n">subscription</span> <span class="o">=</span> <span class="n">Subscription</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">[</span><span class="n">kind</span><span class="p">],</span> <span class="n">tag</span><span class="p">,</span> <span class="n">subsample</span><span class="p">)</span>
 
         <span class="n">title</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;Spectral norms of </span><span class="si">{kind}</span><span class="s1">&#39;</span>
@@ -143,13 +145,16 @@
         <span class="sd">&#39;&#39;&#39;The spectral norm computation is taken from the `Pytorch implementation of spectral norm</span>
 <span class="sd">        &lt;https://pytorch.org/docs/master/_modules/torch/nn/utils/spectral_norm.html&gt;`_. It&#39;s</span>
 <span class="sd">        possible to use SVD instead, but we are not interested in the full matrix decomposition,</span>
-<span class="sd">        merely in the singular values.&#39;&#39;&#39;</span>
+<span class="sd">        merely in the singular values.</span>
 
-        <span class="n">module_name</span> <span class="o">=</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">identifier</span>
+<span class="sd">        A :class:`~ikkuna.export.messages.SubscriberMessage`</span>
+<span class="sd">        with the identifier ``{kind}_spectral_norm`` is published. &#39;&#39;&#39;</span>
+
+        <span class="n">module</span><span class="p">,</span> <span class="n">module_name</span> <span class="o">=</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">key</span>
         <span class="c1"># get and reshape the weight tensor to 2d</span>
-        <span class="n">weights</span>     <span class="o">=</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_subscription</span><span class="o">.</span><span class="n">kinds</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-        <span class="n">height</span>      <span class="o">=</span> <span class="n">weights</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">weights2d</span>   <span class="o">=</span> <span class="n">weights</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">weights</span>             <span class="o">=</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_subscription</span><span class="o">.</span><span class="n">kinds</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">height</span>              <span class="o">=</span> <span class="n">weights</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">weights2d</span>           <span class="o">=</span> <span class="n">weights</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="c1"># buffer for power iteration (don&#39;t know what the mahematical purpose is)</span>
         <span class="k">if</span> <span class="n">module_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="p">:</span>
@@ -163,7 +168,13 @@
 
         <span class="n">norm</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="p">[</span><span class="n">module_name</span><span class="p">],</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">weights2d</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">seq</span><span class="p">)</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">global_step</span><span class="p">)</span>
+
+        <span class="n">kind</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{self._subscription.kinds[0]}</span><span class="s1">_spectral_norm&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message_bus</span><span class="o">.</span><span class="n">publish_subscriber_message</span><span class="p">(</span><span class="n">message_bundle</span><span class="o">.</span><span class="n">global_step</span><span class="p">,</span>
+                                                    <span class="n">message_bundle</span><span class="o">.</span><span class="n">train_step</span><span class="p">,</span>
+                                                    <span class="n">message_bundle</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span>
+                                                    <span class="n">message_bundle</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">norm</span><span class="p">)</span></div></div>
 </pre></div>
 
     </div>

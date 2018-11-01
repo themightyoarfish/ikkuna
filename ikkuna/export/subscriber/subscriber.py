@@ -112,7 +112,7 @@ class SynchronizedSubscription(Subscription):
 
         Parameters
         ----------
-        round_idx : intt
+        round_idx : int
                     Global train step of the new round
 
         Raises

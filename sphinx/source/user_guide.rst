@@ -195,11 +195,11 @@ interesting happening. It uses PyTorch hooks (see
 inside.
 
 Messages published from the :class:`~ikkuna.export.Exporter` come in two types,
-the :class:`~ikkuna.export.messages.MetaMessage` for events which are not tied
-to any specific module and :class:`~ikkuna.export.messages.TrainingMessage` for
+the :class:`~ikkuna.export.messages.NetworkMessage` for events which are not tied
+to any specific module and :class:`~ikkuna.export.messages.ModuleMessage` for
 those that are. All messages have a :attr:`~ikkuna.export.messages.Message.kind`
 attribute, which is the topic the message is about. For
-:class:`~ikkuna.export.messages.MetaMessage`\ s, the following kinds are
+:class:`~ikkuna.export.messages.NetworkMessage`\ s, the following kinds are
 available:
 
 .. literalinclude:: ../../ikkuna/export/messages.py
@@ -209,14 +209,14 @@ Most of these topics do not come with any data attached, but for some, the
 messages :attr:`~ikkuna.export.messages.Message.data` attribute will not be
 ``None``, but contain :class:`~torch.Tensor`\ s.
 
-For :class:`~ikkuna.export.messages.TrainingMessage`\ s, the following
+For :class:`~ikkuna.export.messages.ModuleMessage`\ s, the following
 kinds are available:
 
 .. literalinclude:: ../../ikkuna/export/messages.py
     :lines: 21-24
 
 These topics always come with data attached and it is an error to attempt
-creating a :class:`~ikkuna.export.messages.TrainingMessage` without passing data.
+creating a :class:`~ikkuna.export.messages.ModuleMessage` without passing data.
 
 Creating a new Subscriber
 .........................

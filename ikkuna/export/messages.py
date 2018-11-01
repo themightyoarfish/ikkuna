@@ -450,7 +450,7 @@ class MessageBus(object):
                     Epoch index
         kind    :   str
                     Kind of message
-       named_ module  :   ikkuna.utils.NamedModule
+        named_module  :   ikkuna.utils.NamedModule
                     The module in question
         data    :   torch.Tensor
                     Payload

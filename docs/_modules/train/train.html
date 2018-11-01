@@ -156,8 +156,8 @@
 <span class="sd">        ----------</span>
 <span class="sd">        dataset_meta    :   train.DatasetMeta</span>
 <span class="sd">                            Train data, obtained via :func:`ikkuna.utils.load_dataset()`. Currently,</span>
-<span class="sd">                            there is no support for dropping the last incomplete batch in case the</span>
-<span class="sd">                            batch size does not evenly divide the number of examples</span>
+<span class="sd">                            only full batches are used; if the batch size does not evenly divide the</span>
+<span class="sd">                            number of examples, the last batch is dropped.</span>
 <span class="sd">        batch_size  :   int</span>
 <span class="sd">        loss   :    function</span>
 <span class="sd">                    Defaults to torch.nn.CrossEntropyLoss</span>
@@ -172,10 +172,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span>        <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;batch_size&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_loss_function</span>     <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;loss&#39;</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dataloader</span>        <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span><span class="p">,</span>
-                                             <span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                                             <span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_iter</span>         <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataloader</span><span class="p">)</span>
         <span class="n">N_train</span>                 <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_batches_per_epoch</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">N_train</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_batches_per_epoch</span> <span class="o">=</span> <span class="n">N_train</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_batch_counter</span>     <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_global_counter</span>    <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span>             <span class="o">=</span> <span class="mi">0</span>

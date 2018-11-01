@@ -116,7 +116,7 @@
 <span class="kn">import</span> <span class="nn">abc</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
 <span class="kn">import</span> <span class="nn">ikkuna.visualization</span>
-<span class="kn">from</span> <span class="nn">ikkuna.export.messages</span> <span class="k">import</span> <span class="n">MessageBundle</span><span class="p">,</span> <span class="n">TrainingMessage</span><span class="p">,</span> <span class="n">ALLOWED_KINDS</span><span class="p">,</span> <span class="n">get_default_bus</span>
+<span class="kn">from</span> <span class="nn">ikkuna.export.messages</span> <span class="k">import</span> <span class="n">MessageBundle</span><span class="p">,</span> <span class="n">ModuleMessage</span><span class="p">,</span> <span class="n">ALLOWED_KINDS</span><span class="p">,</span> <span class="n">get_default_bus</span>
 
 
 <div class="viewcode-block" id="Subscription"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscription">[docs]</a><span class="k">class</span> <span class="nc">Subscription</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -148,21 +148,23 @@
 <span class="sd">        subscriber  :   ikkuna.export.subscriber.Subscriber</span>
 <span class="sd">                        Object that wants to receive the messages</span>
 <span class="sd">        tag :   str or None</span>
-<span class="sd">                Optional tag for filtering messages. If ``None``, all messages will be</span>
-<span class="sd">                relayed</span>
+<span class="sd">                Optional tag for filtering messages. If ``None``, all messages will be relayed</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span>        <span class="o">=</span> <span class="n">tag</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subscriber</span> <span class="o">=</span> <span class="n">subscriber</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">ALLOWED_KINDS</span><span class="p">,</span> <span class="n">kinds</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown message kind encountered.&#39;</span><span class="p">)</span>
+
+        <span class="c1"># TODO: Make topics registerable, then this check makes sense again.</span>
+        <span class="c1"># for k in kinds:</span>
+        <span class="c1">#     if k not in ALLOWED_KINDS:</span>
+        <span class="c1">#         raise ValueError(f&#39;Unknown message kind &quot;{k}&quot; encountered.&#39;)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_kinds</span>      <span class="o">=</span> <span class="n">kinds</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span>    <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subsample</span>  <span class="o">=</span> <span class="n">subsample</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">counter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># caution: if you alter this dict, you&#39;re on your own</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_counter</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">kinds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -176,7 +178,7 @@
 <span class="sd">        ----------</span>
 <span class="sd">        message    :   ikkuna.export.messages.Message</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">MessageBundle</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">kind</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">MessageBundle</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">kind</span><span class="p">)</span>
         <span class="n">data</span><span class="o">.</span><span class="n">add_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subscriber</span><span class="o">.</span><span class="n">process_message_bundle</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
 
@@ -185,7 +187,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        message    :   ikkuna.export.messages.TrainingMessage</span>
+<span class="sd">        message    :   ikkuna.export.messages.ModuleMessage</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tag</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span> <span class="o">==</span> <span class="n">message</span><span class="o">.</span><span class="n">tag</span><span class="p">):</span>
             <span class="k">return</span>
@@ -193,7 +195,7 @@
         <span class="k">if</span> <span class="n">message</span><span class="o">.</span><span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kinds</span><span class="p">:</span>
             <span class="k">return</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">TrainingMessage</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">ModuleMessage</span><span class="p">):</span>
             <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">module</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">kind</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">key</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">kind</span>
@@ -209,54 +211,53 @@
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscriber</span><span class="p">,</span> <span class="n">kinds</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subscriber</span><span class="p">,</span> <span class="n">kinds</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">subsample</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_current_seq</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_identifiers</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_step</span>        <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_global_step</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_open_bundles</span>        <span class="o">=</span> <span class="p">{}</span>
 
-<div class="viewcode-block" id="SynchronizedSubscription._new_round"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.SynchronizedSubscription._new_round">[docs]</a>    <span class="k">def</span> <span class="nf">_new_round</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq</span><span class="p">):</span>
+<div class="viewcode-block" id="SynchronizedSubscription._new_round"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.SynchronizedSubscription._new_round">[docs]</a>    <span class="k">def</span> <span class="nf">_new_round</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">round_idx</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Start a new round of buffering, clearing the previous cache and resetting the record for</span>
 <span class="sd">        which kinds were received in this round.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        seq :   int</span>
-<span class="sd">                Sequence number for the new round</span>
+<span class="sd">        round_idx : int</span>
+<span class="sd">                    Global train step of the new round</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        RuntimeError</span>
 <span class="sd">            If not all desired kinds have been received for all identifiers yet in the current round</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">for</span> <span class="n">bundle</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_identifiers</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">bundle</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_bundles</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">bundle</span><span class="o">.</span><span class="n">complete</span><span class="p">():</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Bundle for module </span><span class="si">{bundle._module}</span><span class="s1"> not yet complete.&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_current_seq</span> <span class="o">=</span> <span class="n">seq</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_identifiers</span> <span class="o">=</span> <span class="p">{}</span></div>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Bundle with id=</span><span class="si">{bundle.key}</span><span class="s1"> not yet complete.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_global_step</span> <span class="o">=</span> <span class="n">round_idx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_open_bundles</span> <span class="o">=</span> <span class="p">{}</span></div>
 
     <span class="k">def</span> <span class="nf">_publish_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">delete_these</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="c1"># any full? publish</span>
-        <span class="k">for</span> <span class="n">identifier</span><span class="p">,</span> <span class="n">message_bundle</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_identifiers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">module_and_kind</span><span class="p">,</span> <span class="n">message_bundle</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_bundles</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">complete</span><span class="p">():</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_subscriber</span><span class="o">.</span><span class="n">process_message_bundle</span><span class="p">(</span><span class="n">message_bundle</span><span class="p">)</span>
-                <span class="n">delete_these</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">identifier</span><span class="p">)</span>
+                <span class="n">delete_these</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">module_and_kind</span><span class="p">)</span>
 
         <span class="c1"># purge published data</span>
-        <span class="k">for</span> <span class="n">identifier</span> <span class="ow">in</span> <span class="n">delete_these</span><span class="p">:</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_identifiers</span><span class="p">[</span><span class="n">identifier</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">module_and_kind</span> <span class="ow">in</span> <span class="n">delete_these</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_bundles</span><span class="p">[</span><span class="n">module_and_kind</span><span class="p">]</span>
 
 <div class="viewcode-block" id="SynchronizedSubscription._handle_message"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.SynchronizedSubscription._handle_message">[docs]</a>    <span class="k">def</span> <span class="nf">_handle_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Start a new round if a new sequence number is seen.&#39;&#39;&#39;</span>
 
         <span class="c1"># if we get a new sequence number, a new train step must have begun</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_seq</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_seq</span> <span class="o">!=</span> <span class="n">message</span><span class="o">.</span><span class="n">seq</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_new_round</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">seq</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_global_step</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_global_step</span> <span class="o">!=</span> <span class="n">message</span><span class="o">.</span><span class="n">global_step</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_new_round</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">global_step</span><span class="p">)</span>
 
         <span class="c1"># module not seen -&gt; init data</span>
         <span class="n">key</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">key</span>
-        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_identifiers</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_identifiers</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">MessageBundle</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kinds</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_identifiers</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">add_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_bundles</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_open_bundles</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">MessageBundle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kinds</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_open_bundles</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">add_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_publish_complete</span><span class="p">()</span></div></div>
 
@@ -283,7 +284,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span>
 
 <div class="viewcode-block" id="Subscriber.compute"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.compute">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_or_data</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_or_bundle</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;This is where the magic happens. Subclasses should override this method so that they can</span>
 <span class="sd">        compute their metric upon reception of their desired messages or do whatever else they want.</span>
 <span class="sd">        If interested in plotting, they should then use their</span>
@@ -292,10 +293,10 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        message_or_data :   ikkuna.export.messages.Message</span>
-<span class="sd">                            Can either be :class:`~ikkuna.export.messages.MetaMessage` if the</span>
+<span class="sd">        message_or_bundle :   ikkuna.export.messages.Message or ikkuna.export.messages.MessageBundle</span>
+<span class="sd">                            Can either be :class:`~ikkuna.export.messages.NetworkMessage` if the</span>
 <span class="sd">                            Subscriber is not interested in actual training artifacts, or</span>
-<span class="sd">                            :class:`~ikkuna.export.messages.TrainingMessage`</span>
+<span class="sd">                            :class:`~ikkuna.export.messages.ModuleMessage`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">pass</span></div>
 
@@ -305,8 +306,8 @@
 
 <div class="viewcode-block" id="Subscriber.process_message_bundle"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.process_message_bundle">[docs]</a>    <span class="k">def</span> <span class="nf">process_message_bundle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_bundle</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Callback for processing a :class:`~ikkuna.export.messages.MessageBundle` object with</span>
-<span class="sd">        :class:`~ikkuna.export.messages.MetaMessage`\ s or</span>
-<span class="sd">        :class:`~ikkuna.export.messages.TrainingMessage`\ s in it.</span>
+<span class="sd">        :class:`~ikkuna.export.messages.NetworkMessage`\ s or</span>
+<span class="sd">        :class:`~ikkuna.export.messages.ModuleMessage`\ s in it.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -359,8 +360,35 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span>
 
 <div class="viewcode-block" id="PlotSubscriber.compute"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.PlotSubscriber.compute">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_or_data</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_or_bundle</span><span class="p">):</span>
         <span class="k">pass</span></div></div>
+
+
+<div class="viewcode-block" id="CallbackSubscriber"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.CallbackSubscriber">[docs]</a><span class="k">class</span> <span class="nc">CallbackSubscriber</span><span class="p">(</span><span class="n">Subscriber</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Subscriber class for subscribing to :class:`~ikkuna.export.messages.SubscriberMessage`\ s and</span>
+<span class="sd">    running a callback with them.&#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="CallbackSubscriber.__init__"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.CallbackSubscriber.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kinds</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">message_bus</span><span class="o">=</span><span class="n">get_default_bus</span><span class="p">(),</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        subscription    :   Subscription</span>
+<span class="sd">        message_bus :   ikkuna.export.messages.MessageBus</span>
+<span class="sd">        callback    :   function</span>
+<span class="sd">                        A function that accepts as many parameters as the ``Subscription`` delivers</span>
+<span class="sd">                        messages at once.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">subscription</span> <span class="o">=</span> <span class="n">SynchronizedSubscription</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kinds</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">subsample</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subscription</span><span class="p">,</span> <span class="n">message_bus</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span> <span class="o">=</span> <span class="n">callback</span></div>
+
+<div class="viewcode-block" id="CallbackSubscriber.compute"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.CallbackSubscriber.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_or_bundle</span><span class="p">):</span>
+        <span class="n">kinds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subscription</span><span class="o">.</span><span class="n">kinds</span>
+        <span class="n">args</span>  <span class="o">=</span> <span class="p">(</span><span class="n">message_or_bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">kind</span><span class="p">]</span> <span class="k">for</span> <span class="n">kind</span> <span class="ow">in</span> <span class="n">kinds</span><span class="p">)</span>
+
+        <span class="n">id_</span> <span class="o">=</span> <span class="n">message_or_bundle</span><span class="o">.</span><span class="n">key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">message_or_bundle</span><span class="o">.</span><span class="n">global_step</span><span class="p">,</span> <span class="n">message_or_bundle</span><span class="o">.</span><span class="n">train_step</span><span class="p">,</span>
+                       <span class="n">message_or_bundle</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">id_</span><span class="p">)</span></div></div>
 </pre></div>
 
     </div>

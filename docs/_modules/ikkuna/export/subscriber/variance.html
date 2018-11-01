@@ -106,10 +106,8 @@
     <div class="col-md-12 content">
       
   <h1>Source code for ikkuna.export.subscriber.variance</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
-<span class="kn">from</span> <span class="nn">ikkuna.export.subscriber</span> <span class="k">import</span> <span class="n">PlotSubscriber</span><span class="p">,</span> <span class="n">SynchronizedSubscription</span>
+<span></span><span class="kn">from</span> <span class="nn">ikkuna.export.subscriber</span> <span class="k">import</span> <span class="n">PlotSubscriber</span><span class="p">,</span> <span class="n">Subscription</span>
+<span class="kn">from</span> <span class="nn">ikkuna.export.messages</span> <span class="k">import</span> <span class="n">get_default_bus</span>
 
 
 <div class="viewcode-block" id="VarianceSubscriber"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.VarianceSubscriber">[docs]</a><span class="k">class</span> <span class="nc">VarianceSubscriber</span><span class="p">(</span><span class="n">PlotSubscriber</span><span class="p">):</span>
@@ -117,24 +115,37 @@
 <span class="sd">    variance of quantity for the current batch.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kinds</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ylims</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;tb&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">tbx_params</span><span class="p">):</span>
-        <span class="n">title</span>        <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;variance of </span><span class="si">{kinds[0]}</span><span class="s1">&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">message_bus</span><span class="o">=</span><span class="n">get_default_bus</span><span class="p">(),</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ylims</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;tb&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">tbx_params</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;VarianceSubscriber only accepts 1 kind&#39;</span><span class="p">)</span>
+
+        <span class="n">title</span>        <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;variance of </span><span class="si">{kind}</span><span class="s1">&#39;</span>
         <span class="n">ylabel</span>       <span class="o">=</span> <span class="s1">&#39;σ^2&#39;</span>
         <span class="n">xlabel</span>       <span class="o">=</span> <span class="s1">&#39;Train step&#39;</span>
-        <span class="n">subscription</span> <span class="o">=</span> <span class="n">SynchronizedSubscription</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kinds</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">subsample</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subscription</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
-                                        <span class="s1">&#39;ylabel&#39;</span><span class="p">:</span> <span class="n">ylabel</span><span class="p">,</span>
-                                        <span class="s1">&#39;ylims&#39;</span><span class="p">:</span> <span class="n">ylims</span><span class="p">,</span>
-                                        <span class="s1">&#39;xlabel&#39;</span><span class="p">:</span> <span class="n">xlabel</span><span class="p">},</span>
+        <span class="n">subscription</span> <span class="o">=</span> <span class="n">Subscription</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">[</span><span class="n">kind</span><span class="p">],</span> <span class="n">tag</span><span class="p">,</span> <span class="n">subsample</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subscription</span><span class="p">,</span> <span class="n">message_bus</span><span class="p">,</span>
+                         <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
+                          <span class="s1">&#39;ylabel&#39;</span><span class="p">:</span> <span class="n">ylabel</span><span class="p">,</span>
+                          <span class="s1">&#39;ylims&#39;</span><span class="p">:</span> <span class="n">ylims</span><span class="p">,</span>
+                          <span class="s1">&#39;xlabel&#39;</span><span class="p">:</span> <span class="n">xlabel</span><span class="p">},</span>
                          <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span> <span class="o">**</span><span class="n">tbx_params</span><span class="p">)</span>
 
 <div class="viewcode-block" id="VarianceSubscriber.compute"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.VarianceSubscriber.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_bundle</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Compute the variance of a quantity. A :class:`~ikkuna.export.messages.SubscriberMessage`</span>
+<span class="sd">        with the identifier ``{kind}_variance`` is published. &#39;&#39;&#39;</span>
 
-        <span class="n">module_name</span>  <span class="o">=</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">identifier</span>
+        <span class="n">module</span><span class="p">,</span> <span class="n">module_name</span> <span class="o">=</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">key</span>
+        <span class="n">data</span>                <span class="o">=</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_subscription</span><span class="o">.</span><span class="n">kinds</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">var</span>                 <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">var</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">global_step</span><span class="p">)</span>
 
-        <span class="n">data</span> <span class="o">=</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_subscription</span><span class="o">.</span><span class="n">kinds</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-        <span class="n">var</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">var</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">seq</span><span class="p">)</span></div></div>
+        <span class="n">kind</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{self._subscription.kinds[0]}</span><span class="s1">_variance&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message_bus</span><span class="o">.</span><span class="n">publish_subscriber_message</span><span class="p">(</span><span class="n">message_bundle</span><span class="o">.</span><span class="n">global_step</span><span class="p">,</span>
+                                                    <span class="n">message_bundle</span><span class="o">.</span><span class="n">train_step</span><span class="p">,</span>
+                                                    <span class="n">message_bundle</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span>
+                                                    <span class="n">message_bundle</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span></div></div>
 </pre></div>
 
     </div>

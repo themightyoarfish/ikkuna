@@ -130,6 +130,9 @@
 <span class="sd">        absolute :  bool</span>
 <span class="sd">                    Whether to use absolute ratio</span>
 <span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">kinds</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;RatioSubscriber requires 2 kinds, got {len(kinds)}.&#39;</span><span class="p">)</span>
+
         <span class="n">title</span>        <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{kinds[0]}</span><span class="s1">/</span><span class="si">{kinds[1]}</span><span class="s1"> ratio&#39;</span>
         <span class="n">ylabel</span>       <span class="o">=</span> <span class="s1">&#39;Ratio&#39;</span>
         <span class="n">xlabel</span>       <span class="o">=</span> <span class="s1">&#39;Train step&#39;</span>
@@ -146,37 +149,26 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_metric_postprocess</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span></div>
 
 <div class="viewcode-block" id="RatioSubscriber.compute"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.RatioSubscriber.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_bundle</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;The ratio between the two kinds is computed over the subset of not-NaN values and added</span>
-<span class="sd">        to the record. A :class:`~ikkuna.export.messages.SubscriberMessage` with the identifier</span>
+        <span class="sd">&#39;&#39;&#39;The ratio between the two kinds is computed as the ratio of L2-Norms of the two Tensors.</span>
+<span class="sd">        A :class:`~ikkuna.export.messages.SubscriberMessage` with the identifier</span>
 <span class="sd">        ``{kind1}_{kind2}_ratio`` is published.&#39;&#39;&#39;</span>
 
-        <span class="n">module_name</span>  <span class="o">=</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">identifier</span>
+        <span class="n">module</span><span class="p">,</span> <span class="n">module_name</span> <span class="o">=</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">key</span>
 
-        <span class="n">dividend</span> <span class="o">=</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_subscription</span><span class="o">.</span><span class="n">kinds</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-        <span class="n">divisor</span>  <span class="o">=</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_subscription</span><span class="o">.</span><span class="n">kinds</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">dividend</span>            <span class="o">=</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_subscription</span><span class="o">.</span><span class="n">kinds</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">divisor</span>             <span class="o">=</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_subscription</span><span class="o">.</span><span class="n">kinds</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
 
-        <span class="c1">######################################################################################</span>
-        <span class="c1">#  We need to see how many NaNs we have and compute the mean only over the non-nans  #</span>
-        <span class="c1">######################################################################################</span>
-        <span class="n">ratio_tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metric_postprocess</span><span class="p">(</span><span class="n">dividend</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">divisor</span><span class="p">))</span>
-        <span class="n">n</span>            <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">divisor</span><span class="o">.</span><span class="n">numel</span><span class="p">())</span>
-        <span class="n">nan_tensor</span>   <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">ratio_tensor</span><span class="p">)</span>
-        <span class="n">n_nans</span>       <span class="o">=</span> <span class="n">nan_tensor</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">n_nans</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">ratio_sum</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">nan_tensor</span><span class="p">,</span> <span class="n">ratio_tensor</span><span class="p">,</span> <span class="n">ZERO_TENSOR</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">ratio_sum</span> <span class="o">=</span> <span class="n">ratio_tensor</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-            <span class="n">ratio</span> <span class="o">=</span> <span class="p">(</span><span class="n">ratio_sum</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">n_nans</span><span class="p">))</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="n">scale1</span>              <span class="o">=</span> <span class="n">dividend</span><span class="o">.</span><span class="n">norm</span><span class="p">()</span>
+        <span class="n">scale2</span>              <span class="o">=</span> <span class="n">divisor</span><span class="o">.</span><span class="n">norm</span><span class="p">()</span>
+        <span class="n">ratio</span>               <span class="o">=</span> <span class="p">(</span><span class="n">scale1</span> <span class="o">/</span> <span class="n">scale2</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">ratio</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;NaN value ratio for </span><span class="si">{module_name}</span><span class="s1">&#39;</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">seq</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">global_step</span><span class="p">)</span>
 
         <span class="n">kind</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{self._subscription.kinds[0]}</span><span class="s1">_</span><span class="si">{self._subscription.kinds[1]}</span><span class="s1">_ratio&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">message_bus</span><span class="o">.</span><span class="n">publish_subscriber_message</span><span class="p">(</span><span class="n">message_bundle</span><span class="o">.</span><span class="n">seq</span><span class="p">,</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">step</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message_bus</span><span class="o">.</span><span class="n">publish_subscriber_message</span><span class="p">(</span><span class="n">message_bundle</span><span class="o">.</span><span class="n">global_step</span><span class="p">,</span>
+                                                    <span class="n">message_bundle</span><span class="o">.</span><span class="n">train_step</span><span class="p">,</span>
                                                     <span class="n">message_bundle</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span>
-                                                    <span class="n">message_bundle</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span> <span class="n">ratio</span><span class="p">)</span></div></div>
+                                                    <span class="n">message_bundle</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">ratio</span><span class="p">)</span></div></div>
 </pre></div>
 
     </div>
