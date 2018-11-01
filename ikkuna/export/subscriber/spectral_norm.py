@@ -60,9 +60,10 @@ class SpectralNormSubscriber(PlotSubscriber):
 
         norm = torch.dot(self.u[module_name], torch.matmul(weights2d, v)).item()
 
-        self._backend.add_data(module_name, norm, message_bundle.seq)
+        self._backend.add_data(module_name, norm, message_bundle.global_step)
 
         kind = f'{self._subscription.kinds[0]}_spectral_norm'
-        self.message_bus.publish_subscriber_message(message_bundle.seq, message_bundle.step,
+        self.message_bus.publish_subscriber_message(message_bundle.global_step,
+                                                    message_bundle.train_step,
                                                     message_bundle.epoch, kind,
                                                     message_bundle.identifier, norm)

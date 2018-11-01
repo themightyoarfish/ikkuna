@@ -25,9 +25,17 @@ class VarianceSubscriber(PlotSubscriber):
                          backend=backend, **tbx_params)
 
     def compute(self, message_bundle):
+        '''Compute the variance of a quantity. A :class:`~ikkuna.export.messages.SubscriberMessage`
+        with the identifier ``{kind}_variance`` is published. '''
 
         module_name  = message_bundle.identifier
 
         data = message_bundle.data[self._subscription.kinds[0]]
         var = data.var()
-        self._backend.add_data(module_name, var, message_bundle.seq)
+        self._backend.add_data(module_name, var, message_bundle.global_step)
+
+        kind = f'{self._subscription.kinds[0]}_variance'
+        self.message_bus.publish_subscriber_message(message_bundle.global_step,
+                                                    message_bundle.train_step,
+                                                    message_bundle.epoch, kind,
+                                                    message_bundle.identifier, var)

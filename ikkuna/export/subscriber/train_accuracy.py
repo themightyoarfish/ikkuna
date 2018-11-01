@@ -31,9 +31,10 @@ class TrainAccuracySubscriber(PlotSubscriber):
         predictions = Y.argmax(1)
         n_correct   = (predictions == labels).sum().item()
         accuracy    = n_correct / float(labels.numel())
-        self._backend.add_data('Train batch accuracy', accuracy, message_bundle.seq)
+        self._backend.add_data('Train batch accuracy', accuracy, message_bundle.global_step)
 
         kind = 'train_accuracy'
-        self.message_bus.publish_subscriber_message(message_bundle.seq, message_bundle.step,
+        self.message_bus.publish_subscriber_message(message_bundle.global_step,
+                                                    message_bundle.train_step,
                                                     message_bundle.epoch, kind,
                                                     message_bundle.identifier, accuracy)

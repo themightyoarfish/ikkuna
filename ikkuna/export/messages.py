@@ -38,15 +38,15 @@ class Message(abc.ABC):
     These messages are assembled into :class:`MessageBundle` objects in the
     :class:`~ikkuna.export.subscriber.Subscription`.
     '''
-    def __init__(self, tag, seq, step, epoch, kind):
+    def __init__(self, tag, global_step, train_step, epoch, kind):
         '''
         Parameters
         ----------
         tag :   str
                 Tag for this message
-        seq :   int
+        global_step :   int
                 Global train step
-        step    :   int
+        train_step    :   int
                     Epoch-local train step
         epoch   :   int
                     Epoch index
@@ -56,13 +56,13 @@ class Message(abc.ABC):
                     otherwise incorrect topics.
         '''
         self._tag = tag
-        self._seq = seq
+        self._global_step = global_step
 
-        # check step
-        if step < 0:
+        # check train_step
+        if train_step < 0:
             raise ValueError('Step cannot be negative.')
         else:
-            self._step = step
+            self._train_step = train_step
 
         # check epoch
         if epoch < 0:
@@ -84,14 +84,14 @@ class Message(abc.ABC):
         return self._tag
 
     @property
-    def seq(self):
+    def global_step(self):
         '''int: Global sequence number. This counter should not reset after each epoch.'''
-        return self._seq
+        return self._global_step
 
     @property
-    def step(self):
+    def train_step(self):
         '''int: Epoch-local sequence number (the current batch index)'''
-        return self._step
+        return self._train_step
 
     @property
     def epoch(self):
@@ -115,8 +115,8 @@ class Message(abc.ABC):
         pass
 
     def __str__(self):
-        return (f'<{self.__class__.__name__}: seq={self.seq}, '
-                f'step={self.step}, epoch={self.epoch}, kind={self.kind}>')
+        return (f'<{self.__class__.__name__}: global_step={self.global_step}, '
+                f'train_step={self.train_step}, epoch={self.epoch}, kind={self.kind}>')
 
     def __repr__(self):
         return str(self)
@@ -125,10 +125,10 @@ class Message(abc.ABC):
 class MetaMessage(Message):
     '''A message with meta information not tied to any specific module. Can still carry tensor data,
     if necessary.'''
-    def __init__(self, tag, seq, step, epoch, kind, data=None):
+    def __init__(self, tag, global_step, train_step, epoch, kind, data=None):
         if kind not in META_KINDS:
             raise ValueError(f'Invalid message kind "{kind}"')
-        super().__init__(tag, seq, step, epoch, kind)
+        super().__init__(tag, global_step, train_step, epoch, kind)
         self._data = data
 
     @property
@@ -145,8 +145,8 @@ class MetaMessage(Message):
 class TrainingMessage(Message):
     '''A message tied to a specific module, with tensor data attached.'''
 
-    def __init__(self, tag, seq, step, epoch, kind, module, data):
-        super().__init__(tag, seq, step, epoch, kind)
+    def __init__(self, tag, global_step, train_step, epoch, kind, module, data):
+        super().__init__(tag, global_step, train_step, epoch, kind)
         self._module  = module
         if data is None:
             raise ValueError('Data cannot be `None` for `TrainingMessage`')
@@ -166,9 +166,9 @@ class SubscriberMessage(Message):
     '''A message published by subscribers. There's no whitelist of allowed ``kind``\ s as there is
     for messages originating from the model.'''
 
-    def __init__(self, tag, seq, step, epoch, kind, identifier, data):
+    def __init__(self, tag, global_step, train_step, epoch, kind, identifier, data):
         # we pass None for kind so as to explicitly avoid the validity check
-        super().__init__(tag, seq, step, epoch, None)
+        super().__init__(tag, global_step, train_step, epoch, None)
 
         if isinstance(identifier, NamedModule):
             self._identifier = identifier.name
@@ -214,8 +214,8 @@ class MessageBundle(object):
         self._expected_kinds = kinds
         self._received       = {kind: False for kind in kinds}
         self._data           = {kind: None for kind in kinds}
-        self._seq            = None
-        self._step           = None
+        self._global_step    = None
+        self._train_step     = None
         self._epoch          = None
 
     @property
@@ -241,15 +241,15 @@ class MessageBundle(object):
         return self._data
 
     @property
-    def seq(self):
+    def global_step(self):
         '''int: Global sequence number of this class'''
-        return self._seq
+        return self._global_step
 
     @property
-    def step(self):
+    def train_step(self):
         '''int: Sequence number (training step) of the received messages (should match across all
         msgs in one iteration)'''
-        return self._step
+        return self._train_step
 
     @property
     def epoch(self):
@@ -277,29 +277,30 @@ class MessageBundle(object):
         Raises
         ------
         ValueError
-            If ``message.(seq|step|epoch|identifier)`` does not match the current
-            ``(seq|step|epoch|identifier)`` or in case a message of ``message.kind`` has already
-            been received
+            If ``message.(global_step|step|epoch|identifier)`` does not match the current
+            ``(global_step|step|epoch|identifier)`` or in case a message of ``message.kind`` has
+            already been received
         '''
         ############
         #  seqnum  #
         ############
-        if not self._seq:
-            self._seq = message.seq
+        if not self._global_step:
+            self._global_step = message.global_step
 
-        if message.seq != self._seq:
-            raise ValueError(f'Attempting to add message with seq {message.seq} to bundle with '
-                             'initial seq {self._seq}')
+        if message.global_step != self._global_step:
+            raise ValueError('Attempting to add message with global_step '
+                             f'{message.global_step} to bundle with '
+                             'initial global_step {self._global_step}')
 
         ##########
         #  step  #
         ##########
-        if not self._step:
-            self._step = message.step
+        if not self._train_step:
+            self._train_step = message.train_step
 
-        if message.step != self._step:
+        if message.train_step != self._train_step:
             raise ValueError(f'Attempting to add message with step {message.step} to bundle with '
-                             'initial step {self._step}')
+                             'initial step {self._train_step}')
         #############
         #  content  #
         #############
@@ -355,7 +356,7 @@ class MessageBundle(object):
 
     def __str__(self):
         mod   = self._identifier
-        step  = self._step
+        step  = self._train_step
         kinds = list(self._data.keys())
         return f'<MessageBundle: identifier={mod}, kinds={kinds}, step={step}>'
 
@@ -414,8 +415,8 @@ class MessageBus(object):
         data    :   torch.Tensor, tuple(torch.Tensor), float, int or None
                     Payload, if necessary
         '''
-        msg = SubscriberMessage(seq=global_step, tag=None, kind=kind, identifier=identifier,
-                                step=train_step, epoch=epoch, data=data)
+        msg = SubscriberMessage(global_step=global_step, tag=None, kind=kind, identifier=identifier,
+                                train_step=train_step, epoch=epoch, data=data)
         for sub in self._subscribers:
             sub.receive_message(msg)
 
@@ -436,8 +437,8 @@ class MessageBus(object):
         data    :   torch.Tensor or None
                     Payload, if necessary
         '''
-        msg = MetaMessage(seq=global_step, tag=None, kind=kind, step=train_step, epoch=epoch,
-                          data=data)
+        msg = MetaMessage(global_step=global_step, tag=None, kind=kind, train_step=train_step,
+                          epoch=epoch, data=data)
         for sub in self._subscribers:
             sub.receive_message(msg)
 
@@ -460,8 +461,8 @@ class MessageBus(object):
         data    :   torch.Tensor
                     Payload
         '''
-        msg = TrainingMessage(seq=global_step, tag=None, kind=kind, module=named_module,
-                              step=train_step, epoch=epoch, data=data)
+        msg = TrainingMessage(global_step=global_step, tag=None, kind=kind, module=named_module,
+                              train_step=train_step, epoch=epoch, data=data)
 
         for sub in self._subscribers:
             sub.receive_message(msg)

@@ -103,54 +103,53 @@ class SynchronizedSubscription(Subscription):
 
     def __init__(self, subscriber, kinds, tag=None, subsample=1):
         super().__init__(subscriber, kinds, tag, subsample)
-        self._current_seq = None
-        self._identifiers = {}
-        self._step        = None
+        self._current_global_step = None
+        self._open_bundles        = {}
 
-    def _new_round(self, seq):
+    def _new_round(self, round_idx):
         '''Start a new round of buffering, clearing the previous cache and resetting the record for
         which kinds were received in this round.
 
         Parameters
         ----------
-        seq :   int
-                Sequence number for the new round
+        round_idx : intt
+                    Global train step of the new round
 
         Raises
         ------
         RuntimeError
             If not all desired kinds have been received for all identifiers yet in the current round
         '''
-        for bundle in self._identifiers.values():
+        for bundle in self._open_bundles.values():
             if not bundle.complete():
-                raise RuntimeError(f'Bundle for module {bundle._module} not yet complete.')
-        self._current_seq = seq
-        self._identifiers = {}
+                raise RuntimeError(f'Bundle with id={bundle.identifier} not yet complete.')
+        self._current_global_step = round_idx
+        self._open_bundles = {}
 
     def _publish_complete(self):
         delete_these = []
         # any full? publish
-        for identifier, message_bundle in self._identifiers.items():
+        for identifier, message_bundle in self._open_bundles.items():
             if message_bundle.complete():
                 self._subscriber.process_message_bundle(message_bundle)
                 delete_these.append(identifier)
 
         # purge published data
         for identifier in delete_these:
-            del self._identifiers[identifier]
+            del self._open_bundles[identifier]
 
     def _handle_message(self, message):
         '''Start a new round if a new sequence number is seen.'''
 
         # if we get a new sequence number, a new train step must have begun
-        if self._current_seq is None or self._current_seq != message.seq:
-            self._new_round(message.seq)
+        if self._current_global_step is None or self._current_global_step != message.global_step:
+            self._new_round(message.global_step)
 
         # module not seen -> init data
         key = message.key
-        if key not in self._identifiers:
-            self._identifiers[key] = MessageBundle(key, self.kinds)
-        self._identifiers[key].add_message(message)
+        if key not in self._open_bundles:
+            self._open_bundles[key] = MessageBundle(key, self.kinds)
+        self._open_bundles[key].add_message(message)
 
         self._publish_complete()
 
@@ -284,5 +283,5 @@ class CallbackSubscriber(Subscriber):
             id_ = message_or_bundle.identifier
         else:
             id_ = message_or_bundle.key
-        self._callback(*args, message_or_bundle.seq, message_or_bundle.step,
+        self._callback(*args, message_or_bundle.global_step, message_or_bundle.train_step,
                        message_or_bundle.epoch, id_)

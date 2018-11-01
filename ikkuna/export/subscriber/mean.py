@@ -28,9 +28,10 @@ class MeanSubscriber(PlotSubscriber):
 
         data = message_bundle.data[self._subscription.kinds[0]]
         mean = data.mean()
-        self._backend.add_data(module_name, mean, message_bundle.seq)
+        self._backend.add_data(module_name, mean, message_bundle.global_step)
 
         kind = f'{self._subscription.kinds[0]}_mean'
-        self.message_bus.publish_subscriber_message(message_bundle.seq, message_bundle.step,
+        self.message_bus.publish_subscriber_message(message_bundle.global_step,
+                                                    message_bundle.train_step,
                                                     message_bundle.epoch, kind,
                                                     message_bundle.identifier, mean)

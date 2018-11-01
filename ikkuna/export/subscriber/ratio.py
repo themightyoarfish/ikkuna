@@ -54,9 +54,10 @@ class RatioSubscriber(PlotSubscriber):
         scale2      = divisor.norm()
         ratio       = (scale1 / scale2).item()
 
-        self._backend.add_data(module_name, ratio, message_bundle.seq)
+        self._backend.add_data(module_name, ratio, message_bundle.global_step)
 
         kind = f'{self._subscription.kinds[0]}_{self._subscription.kinds[1]}_ratio'
-        self.message_bus.publish_subscriber_message(message_bundle.seq, message_bundle.step,
+        self.message_bus.publish_subscriber_message(message_bundle.global_step,
+                                                    message_bundle.train_step,
                                                     message_bundle.epoch, kind,
                                                     message_bundle.identifier, ratio)

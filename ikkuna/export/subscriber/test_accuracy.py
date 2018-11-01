@@ -72,10 +72,10 @@ class TestAccuracySubscriber(PlotSubscriber):
                     n_batches  += 1
             except StopIteration:
                 accuracy /= n_batches
-                self._backend.add_data('test accuracy', accuracy, message_or_data.seq)
+                self._backend.add_data('test accuracy', accuracy, message_or_data.global_step)
 
                 kind = 'test_accuracy'
-                self.message_bus.publish_subscriber_message(message_or_data.seq,
-                                                            message_or_data.step,
+                self.message_bus.publish_subscriber_message(message_or_data.global_step,
+                                                            message_or_data.train_step,
                                                             message_or_data.epoch, kind,
                                                             message_or_data.identifier, accuracy)

@@ -29,4 +29,4 @@ class HistogramSubscriber(PlotSubscriber):
 
         module_name = message_bundle.identifier
         data        = message_bundle.data[self._subscription.kinds[0]]
-        self._backend.add_histogram(module_name, data, message_bundle.seq)
+        self._backend.add_histogram(module_name, data, message_bundle.global_step)
