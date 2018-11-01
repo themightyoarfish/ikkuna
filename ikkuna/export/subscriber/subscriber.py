@@ -8,7 +8,7 @@ This module contains the base definition for subscriber functionality. The
 import abc
 from collections import defaultdict
 import ikkuna.visualization
-from ikkuna.export.messages import MessageBundle, TrainingMessage, ALLOWED_KINDS, get_default_bus
+from ikkuna.export.messages import MessageBundle, ModuleMessage, ALLOWED_KINDS, get_default_bus
 
 
 class Subscription(object):
@@ -79,7 +79,7 @@ class Subscription(object):
 
         Parameters
         ----------
-        message    :   ikkuna.export.messages.TrainingMessage
+        message    :   ikkuna.export.messages.ModuleMessage
         '''
         if not (self._tag is None or self._tag == message.tag):
             return
@@ -87,7 +87,7 @@ class Subscription(object):
         if message.kind not in self.kinds:
             return
 
-        if isinstance(message, TrainingMessage):
+        if isinstance(message, ModuleMessage):
             key = (message.module, message.kind)
         else:
             key = message.kind
@@ -188,7 +188,7 @@ class Subscriber(abc.ABC):
         message_or_bundle :   ikkuna.export.messages.Message or ikkuna.export.messages.MessageBundle
                             Can either be :class:`~ikkuna.export.messages.NetworkMessage` if the
                             Subscriber is not interested in actual training artifacts, or
-                            :class:`~ikkuna.export.messages.TrainingMessage`
+                            :class:`~ikkuna.export.messages.ModuleMessage`
         '''
         pass
 
@@ -199,7 +199,7 @@ class Subscriber(abc.ABC):
     def process_message_bundle(self, message_bundle):
         '''Callback for processing a :class:`~ikkuna.export.messages.MessageBundle` object with
         :class:`~ikkuna.export.messages.NetworkMessage`\ s or
-        :class:`~ikkuna.export.messages.TrainingMessage`\ s in it.
+        :class:`~ikkuna.export.messages.ModuleMessage`\ s in it.
 
         Parameters
         ----------

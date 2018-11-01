@@ -106,7 +106,7 @@ class Message(abc.ABC):
     @property
     def data(self):
         '''torch.Tensor, tuple(torch.Tensor) or None:  This field is optional for
-        :class:`NetworkMessage`, but mandatory for :class:`TrainingMessage`'''
+        :class:`NetworkMessage`, but mandatory for :class:`ModuleMessage`'''
         return self._data
 
     @abc.abstractproperty
@@ -142,14 +142,14 @@ class NetworkMessage(Message):
         return 'META'
 
 
-class TrainingMessage(Message):
+class ModuleMessage(Message):
     '''A message tied to a specific module, with tensor data attached.'''
 
     def __init__(self, tag, global_step, train_step, epoch, kind, module, data):
         super().__init__(tag, global_step, train_step, epoch, kind)
         self._module  = module
         if data is None:
-            raise ValueError('Data cannot be `None` for `TrainingMessage`')
+            raise ValueError('Data cannot be `None` for `ModuleMessage`')
         self._data = data
 
     @property
@@ -443,7 +443,7 @@ class MessageBus(object):
             sub.receive_message(msg)
 
     def publish_train_message(self, global_step, train_step, epoch, kind, named_module, data):
-        '''Publish an update of type :class:`~ikkuna.export.messages.TrainingMessage` to all
+        '''Publish an update of type :class:`~ikkuna.export.messages.ModuleMessage` to all
         registered subscribers.
 
         Parameters
@@ -461,7 +461,7 @@ class MessageBus(object):
         data    :   torch.Tensor
                     Payload
         '''
-        msg = TrainingMessage(global_step=global_step, tag=None, kind=kind, module=named_module,
+        msg = ModuleMessage(global_step=global_step, tag=None, kind=kind, module=named_module,
                               train_step=train_step, epoch=epoch, data=data)
 
         for sub in self._subscribers:
