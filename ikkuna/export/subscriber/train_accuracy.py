@@ -21,6 +21,8 @@ class TrainAccuracySubscriber(PlotSubscriber):
                          {'title': title, 'xlabel': xlabel, 'ylims': ylims, 'ylabel': ylabel},
                          backend=backend, **tbx_params)
 
+        self._add_publication(f'train_accuracy', type='META')
+
     def compute(self, message_bundle):
         '''Compute accuracy over the current train batch.
 

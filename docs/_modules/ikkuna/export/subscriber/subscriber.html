@@ -116,7 +116,7 @@
 <span class="kn">import</span> <span class="nn">abc</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
 <span class="kn">import</span> <span class="nn">ikkuna.visualization</span>
-<span class="kn">from</span> <span class="nn">ikkuna.export.messages</span> <span class="k">import</span> <span class="n">MessageBundle</span><span class="p">,</span> <span class="n">ModuleMessage</span><span class="p">,</span> <span class="n">ALLOWED_KINDS</span><span class="p">,</span> <span class="n">get_default_bus</span>
+<span class="kn">from</span> <span class="nn">ikkuna.export.messages</span> <span class="k">import</span> <span class="n">MessageBundle</span><span class="p">,</span> <span class="n">ModuleMessage</span><span class="p">,</span> <span class="n">get_default_bus</span>
 
 
 <div class="viewcode-block" id="Subscription"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscription">[docs]</a><span class="k">class</span> <span class="nc">Subscription</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -152,11 +152,6 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span>        <span class="o">=</span> <span class="n">tag</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subscriber</span> <span class="o">=</span> <span class="n">subscriber</span>
-
-        <span class="c1"># TODO: Make topics registerable, then this check makes sense again.</span>
-        <span class="c1"># for k in kinds:</span>
-        <span class="c1">#     if k not in ALLOWED_KINDS:</span>
-        <span class="c1">#         raise ValueError(f&#39;Unknown message kind &quot;{k}&quot; encountered.&#39;)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_kinds</span>      <span class="o">=</span> <span class="n">kinds</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span>    <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
@@ -272,8 +267,36 @@
 <span class="sd">        ----------</span>
 <span class="sd">        subscription    :   Subscription</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_subscription</span> <span class="o">=</span> <span class="n">subscription</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span>      <span class="o">=</span> <span class="n">message_bus</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subscription</span>     <span class="o">=</span> <span class="n">subscription</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span>          <span class="o">=</span> <span class="n">message_bus</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_published_topics</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Subscriber._add_publication"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber._add_publication">[docs]</a>    <span class="k">def</span> <span class="nf">_add_publication</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">topic</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;DATA&#39;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        topic   :   str</span>
+<span class="sd">                    Topic name</span>
+<span class="sd">        type    :   str</span>
+<span class="sd">                    ``DATA`` or ``META``</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="nb">type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;DATA&#39;</span><span class="p">,</span> <span class="s1">&#39;META&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Unknown message type &quot;</span><span class="si">{type}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_published_topics</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="n">topic</span>
+        <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;DATA&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">register_data_topic</span><span class="p">(</span><span class="n">topic</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">register_meta_topic</span><span class="p">(</span><span class="n">topic</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Subscriber.__del__"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.__del__">[docs]</a>    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;If for whatever reason a subscriber ceases to exist before the interpreter ends, delete</span>
+<span class="sd">        the registered topics&#39;&#39;&#39;</span>
+        <span class="k">for</span> <span class="nb">type</span><span class="p">,</span> <span class="n">topic</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_published_topics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;DATA&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">deregister_data_topic</span><span class="p">(</span><span class="n">topic</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">deregister_meta_topic</span><span class="p">(</span><span class="n">topic</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">subscription</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -365,7 +388,7 @@
 
 
 <div class="viewcode-block" id="CallbackSubscriber"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.CallbackSubscriber">[docs]</a><span class="k">class</span> <span class="nc">CallbackSubscriber</span><span class="p">(</span><span class="n">Subscriber</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Subscriber class for subscribing to :class:`~ikkuna.export.messages.SubscriberMessage`\ s and</span>
+    <span class="sd">&#39;&#39;&#39;Subscriber class for subscribing to :class:`~ikkuna.export.messages.ModuleMessage`\ s and</span>
 <span class="sd">    running a callback with them.&#39;&#39;&#39;</span>
 
 <div class="viewcode-block" id="CallbackSubscriber.__init__"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.CallbackSubscriber.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kinds</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">message_bus</span><span class="o">=</span><span class="n">get_default_bus</span><span class="p">(),</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>

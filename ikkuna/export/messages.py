@@ -1,35 +1,30 @@
 import abc
 
 '''
-.. _meta_kinds:
-.. data:: META_KINDS
+.. meta_kinds:
+.. data:: _META_KINDS
 
-    Message kinds which are not tied to any specific module.
+    Message kinds which are not tied to any specific module. These topics is just what comes with
+    the library, others can be added to a specific :class:`MessageBus`
 
-.. _data_kinds:
-.. data:: DATA_KINDS
+.. data_kinds:
+ data:: _DATA_KINDS
 
-    Message kinds which are tied to a specific module and always carry data
+    Message kinds which are tied to a specific module and always carry data. These topics is just
+    what comes with the library, others can be added to a specific :class:`MessageBus`
 
-.. _allowed_kinds:
-.. data:: ALLOWED_KINDS
-
-    Simply the union of ``META_KINDS`` and ``DATA_KINDS``
 '''
 
 
-META_KINDS = {
+_META_KINDS = {
     'batch_started', 'batch_finished', 'epoch_started', 'epoch_finished', 'input_data',
     'input_labels', 'network_output'
 }
 
-DATA_KINDS = {
+_DATA_KINDS = {
     'weights', 'weight_gradients', 'weight_updates', 'biases', 'bias_gradients', 'bias_updates',
     'activations', 'layer_gradients'
 }
-
-
-ALLOWED_KINDS = set.union(META_KINDS, DATA_KINDS)
 
 
 class Message(abc.ABC):
@@ -51,9 +46,7 @@ class Message(abc.ABC):
         epoch   :   int
                     Epoch index
         kind    :   str
-                    Message topic. Must be in :ref:`ALLOWED_KINDS <allowed_kinds>` or ``None`` in
-                    which case no checking is performed. This guards against misspellings or
-                    otherwise incorrect topics.
+                    Message topic
         '''
         self._tag = tag
         self._global_step = global_step
@@ -340,6 +333,26 @@ class MessageBus(object):
         '''
         self._name = name
         self._subscribers = set()
+        self._meta_kinds = _META_KINDS
+        self._data_kinds = _DATA_KINDS
+
+    def register_meta_topic(self, kind):
+        '''Register a topic so it can be subscribed.'''
+        self._meta_kinds.add(kind)
+
+    def deregister_meta_topic(self, kind):
+        '''Unregister a topic so it can not be subscribed any longer.'''
+        self._meta_kinds.remove(kind)
+        # TODO: Don't just believe the sender that it registered the topic
+
+    def register_data_topic(self, kind):
+        '''Register a topic so it can be subscribed.'''
+        self._data_kinds.add(kind)
+
+    def deregister_data_topic(self, kind):
+        '''Unregister a topic so it can not be subscribed any longer.'''
+        self._data_kinds.remove(kind)
+        # TODO: Don't just believe the sender that it registered the topic
 
     @property
     def name(self):
@@ -373,6 +386,9 @@ class MessageBus(object):
         data    :   torch.Tensor or None
                     Payload, if necessary
         '''
+        if kind not in self._meta_kinds:
+            raise ValueError(f'Unknown kind "{kind}"')
+
         msg = NetworkMessage(global_step=global_step, tag=None, kind=kind, train_step=train_step,
                              epoch=epoch, data=data)
         for sub in self._subscribers:
@@ -397,6 +413,8 @@ class MessageBus(object):
         data    :   torch.Tensor
                     Payload
         '''
+        if kind not in self._data_kinds:
+            raise ValueError(f'Unknown kind "{kind}"')
         msg = ModuleMessage(global_step=global_step, tag=None, kind=kind, named_module=named_module,
                             train_step=train_step, epoch=epoch, data=data)
 

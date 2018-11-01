@@ -1,5 +1,4 @@
 import torch
-import numpy as np
 
 from ikkuna.export.subscriber import PlotSubscriber, SynchronizedSubscription
 from ikkuna.export.messages import get_default_bus
@@ -40,6 +39,8 @@ class RatioSubscriber(PlotSubscriber):
         else:
             self._metric_postprocess = lambda x: x
 
+        self._add_publication(f'{kinds[0]}_{kinds[1]}_ratio', type='DATA')
+
     def compute(self, message_bundle):
         '''The ratio between the two kinds is computed as the ratio of L2-Norms of the two Tensors.
         A :class:`~ikkuna.export.messages.ModuleMessage` with the identifier
@@ -58,6 +59,6 @@ class RatioSubscriber(PlotSubscriber):
 
         kind = f'{self._subscription.kinds[0]}_{self._subscription.kinds[1]}_ratio'
         self.message_bus.publish_module_message(message_bundle.global_step,
-                                                    message_bundle.train_step,
-                                                    message_bundle.epoch, kind,
-                                                    message_bundle.key, ratio)
+                                                message_bundle.train_step,
+                                                message_bundle.epoch, kind,
+                                                message_bundle.key, ratio)

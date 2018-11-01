@@ -20,6 +20,7 @@ class NormSubscriber(PlotSubscriber):
                                                      'xlabel': xlabel},
                          backend=backend, **tbx_params)
         self._order  = order
+        self._add_publication(f'{kind}_norm{order}', type='DATA')
 
     def compute(self, message_bundle):
         '''Compute the norm of a quantity. A :class:`~ikkuna.export.messages.ModuleMessage`
@@ -33,6 +34,6 @@ class NormSubscriber(PlotSubscriber):
 
         kind = f'{self._subscription.kinds[0]}_norm{self._order}'
         self.message_bus.publish_module_message(message_bundle.global_step,
-                                                    message_bundle.train_step,
-                                                    message_bundle.epoch, kind,
-                                                    message_bundle.key, norm)
+                                                message_bundle.train_step,
+                                                message_bundle.epoch, kind,
+                                                message_bundle.key, norm)

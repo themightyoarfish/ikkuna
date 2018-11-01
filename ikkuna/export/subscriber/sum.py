@@ -18,6 +18,7 @@ class SumSubscriber(PlotSubscriber):
                           'ylims': ylims,
                           'xlabel': xlabel},
                          backend=backend, **tbx_params)
+        self._add_publication(f'{kind}_sum', type='DATA')
 
     def compute(self, message_bundle):
         '''Compute the sum of a quantity. A :class:`~ikkuna.export.messages.ModuleMessage`

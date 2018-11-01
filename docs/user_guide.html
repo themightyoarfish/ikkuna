@@ -330,8 +330,8 @@ registered subscribers. This central authority is the
 <a class="reference internal" href="ikkuna.export.html#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> class. Internally, it replaces some of the
 Model’s methods with wrappers so it can be transparently informed of anything
 interesting happening. It uses PyTorch hooks (see
-<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.register_forward_hook" title="(in PyTorch vmaster (1.0.0a0+c0e2444 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.register_forward_hook()</span></code></a> and related methods) on the
-<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (1.0.0a0+c0e2444 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a>s it is tracking and the <a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+c0e2444 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a>s
+<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.register_forward_hook" title="(in PyTorch vmaster (1.0.0a0+99a5d19 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.register_forward_hook()</span></code></a> and related methods) on the
+<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (1.0.0a0+99a5d19 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a>s it is tracking and the <a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+99a5d19 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a>s
 inside.</p>
 <p>Messages published from the <a class="reference internal" href="ikkuna.export.html#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> come in two types,
 the <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.NetworkMessage" title="ikkuna.export.messages.NetworkMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">NetworkMessage</span></code></a> for events which are not tied
@@ -342,19 +342,19 @@ attribute, which is the topic the message is about. For
 available:</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;&#39;&#39;</span>
 
-<span class="s1">import abc</span>
 
+<span class="s1">_META_KINDS = {</span>
 </pre></div>
 </div>
 <p>Most of these topics do not come with any data attached, but for some, the
 messages <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message.data" title="ikkuna.export.messages.Message.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code></a> attribute will not be
-<code class="docutils literal notranslate"><span class="pre">None</span></code>, but contain <a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+c0e2444 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a>s.</p>
+<code class="docutils literal notranslate"><span class="pre">None</span></code>, but contain <a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+99a5d19 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a>s.</p>
 <p>For <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleMessage" title="ikkuna.export.messages.ModuleMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleMessage</span></code></a>s, the following
 kinds are available:</p>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span>
-<span class="n">META_KINDS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;batch_started&#39;</span><span class="p">,</span> <span class="s1">&#39;batch_finished&#39;</span><span class="p">,</span> <span class="s1">&#39;epoch_started&#39;</span><span class="p">,</span> <span class="s1">&#39;epoch_finished&#39;</span><span class="p">,</span> <span class="s1">&#39;input_data&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;input_labels&#39;</span><span class="p">,</span> <span class="s1">&#39;network_output&#39;</span>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span>    <span class="s1">&#39;input_labels&#39;</span><span class="p">,</span> <span class="s1">&#39;network_output&#39;</span>
+<span class="p">}</span>
+
+<span class="n">_DATA_KINDS</span> <span class="o">=</span> <span class="p">{</span>
 </pre></div>
 </div>
 <p>These topics always come with data attached and it is an error to attempt
@@ -401,8 +401,7 @@ messages, if no synchronisation is used, or
 <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MessageBundle" title="ikkuna.export.messages.MessageBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageBundle</span></code></a> objects which contain the data
 for one module and all desired kinds. As an example, consider the
 <a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.RatioSubscriber" title="ikkuna.export.subscriber.RatioSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">RatioSubscriber</span></code></a>:</p>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span>
-<span class="k">class</span> <span class="nc">RatioSubscriber</span><span class="p">(</span><span class="n">PlotSubscriber</span><span class="p">):</span>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">RatioSubscriber</span><span class="p">(</span><span class="n">PlotSubscriber</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;A :class:`~ikkuna.export.subscriber.Subscriber` which computes the average ratio between two</span>
 <span class="sd">    quantities.  The dividend will be the first element of the</span>
 <span class="sd">    :attr:`~ikkuna.export.subscriber.Subscription.kinds` property, the divisor the second.</span>
@@ -435,9 +434,11 @@ for one module and all desired kinds. As an example, consider the
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_metric_postprocess</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_publication</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{kinds[0]}</span><span class="s1">_</span><span class="si">{kinds[1]}</span><span class="s1">_ratio&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;DATA&#39;</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_bundle</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;The ratio between the two kinds is computed as the ratio of L2-Norms of the two Tensors.</span>
-<span class="sd">        A :class:`~ikkuna.export.messages.SubscriberMessage` with the identifier</span>
+<span class="sd">        A :class:`~ikkuna.export.messages.ModuleMessage` with the identifier</span>
 <span class="sd">        ``{kind1}_{kind2}_ratio`` is published.&#39;&#39;&#39;</span>
 
         <span class="n">module</span><span class="p">,</span> <span class="n">module_name</span> <span class="o">=</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">key</span>
@@ -452,9 +453,8 @@ for one module and all desired kinds. As an example, consider the
         <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">global_step</span><span class="p">)</span>
 
         <span class="n">kind</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{self._subscription.kinds[0]}</span><span class="s1">_</span><span class="si">{self._subscription.kinds[1]}</span><span class="s1">_ratio&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">message_bus</span><span class="o">.</span><span class="n">publish_subscriber_message</span><span class="p">(</span><span class="n">message_bundle</span><span class="o">.</span><span class="n">global_step</span><span class="p">,</span>
-                                                    <span class="n">message_bundle</span><span class="o">.</span><span class="n">train_step</span><span class="p">,</span>
-                                                    <span class="n">message_bundle</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message_bus</span><span class="o">.</span><span class="n">publish_module_message</span><span class="p">(</span><span class="n">message_bundle</span><span class="o">.</span><span class="n">global_step</span><span class="p">,</span>
+                                                <span class="n">message_bundle</span><span class="o">.</span><span class="n">train_step</span><span class="p">,</span>
 </pre></div>
 </div>
 <p>As you can see, the <a class="reference internal" href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a> initialiser

@@ -53,6 +53,8 @@ class TestAccuracySubscriber(PlotSubscriber):
         self._frequency    = frequency
         self._forward_fn   = forward_fn
 
+        self._add_publication('test_accuracy', type='META')
+
     def compute(self, message_or_data):
         '''Compute accuracy over the entire test set.
 

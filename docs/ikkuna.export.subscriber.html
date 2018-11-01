@@ -156,6 +156,30 @@ insightful metrics.</p>
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="ikkuna.export.subscriber.Subscriber._add_publication">
+<code class="descname">_add_publication</code><span class="sig-paren">(</span><em>topic</em>, <em>type='DATA'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/subscriber.html#Subscriber._add_publication"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber._add_publication" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>topic</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Topic name</li>
+<li><strong>type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – <code class="docutils literal notranslate"><span class="pre">DATA</span></code> or <code class="docutils literal notranslate"><span class="pre">META</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.Subscriber.__del__">
+<code class="descname">__del__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/subscriber.html#Subscriber.__del__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber.__del__" title="Permalink to this definition">¶</a></dt>
+<dd><p>If for whatever reason a subscriber ceases to exist before the interpreter ends, delete
+the registered topics</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="ikkuna.export.subscriber.Subscriber.subscription">
 <code class="descname">subscription</code><a class="headerlink" href="#ikkuna.export.subscriber.Subscriber.subscription" title="Permalink to this definition">¶</a></dt>
@@ -460,7 +484,7 @@ Subscriber is not interested in actual training artifacts, or
 <dl class="class">
 <dt id="ikkuna.export.subscriber.CallbackSubscriber">
 <em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">CallbackSubscriber</code><span class="sig-paren">(</span><em>kinds</em>, <em>callback</em>, <em>message_bus=&lt;ikkuna.export.messages.MessageBus object&gt;</em>, <em>tag=None</em>, <em>subsample=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/subscriber.html#CallbackSubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.CallbackSubscriber" title="Permalink to this definition">¶</a></dt>
-<dd><p>Subscriber class for subscribing to <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.SubscriberMessage" title="ikkuna.export.messages.SubscriberMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubscriberMessage</span></code></a>s and
+<dd><p>Subscriber class for subscribing to <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleMessage" title="ikkuna.export.messages.ModuleMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleMessage</span></code></a>s and
 running a callback with them.</p>
 <dl class="method">
 <dt id="ikkuna.export.subscriber.CallbackSubscriber.__init__">
@@ -545,7 +569,7 @@ computes histograms per epoch.  Histograms are non-normalized.</p>
 <p class="first admonition-title">Note</p>
 <p class="last">Since the histogram is computed by the visualization backend (there’s no practical way
 around it), this subscriber does <em>not</em> publish a
-<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.SubscriberMessage" title="ikkuna.export.messages.SubscriberMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubscriberMessage</span></code></a></p>
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleMessage" title="ikkuna.export.messages.ModuleMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleMessage</span></code></a></p>
 </div>
 </dd></dl>
 
@@ -557,7 +581,7 @@ around it), this subscriber does <em>not</em> publish a
 <dd><dl class="method">
 <dt id="ikkuna.export.subscriber.MeanSubscriber.compute">
 <code class="descname">compute</code><span class="sig-paren">(</span><em>message_bundle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/mean.html#MeanSubscriber.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.MeanSubscriber.compute" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the average of a quantity. A <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.SubscriberMessage" title="ikkuna.export.messages.SubscriberMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubscriberMessage</span></code></a>
+<dd><p>Compute the average of a quantity. A <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleMessage" title="ikkuna.export.messages.ModuleMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleMessage</span></code></a>
 with the identifier <code class="docutils literal notranslate"><span class="pre">{kind}_mean</span></code> is published.</p>
 </dd></dl>
 
@@ -569,7 +593,7 @@ with the identifier <code class="docutils literal notranslate"><span class="pre"
 <dd><dl class="method">
 <dt id="ikkuna.export.subscriber.NormSubscriber.compute">
 <code class="descname">compute</code><span class="sig-paren">(</span><em>message_bundle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/norm.html#NormSubscriber.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.NormSubscriber.compute" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the norm of a quantity. A <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.SubscriberMessage" title="ikkuna.export.messages.SubscriberMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubscriberMessage</span></code></a>
+<dd><p>Compute the norm of a quantity. A <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleMessage" title="ikkuna.export.messages.ModuleMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleMessage</span></code></a>
 with the identifier <code class="docutils literal notranslate"><span class="pre">{kind}_norm{order}</span></code> is published.</p>
 </dd></dl>
 
@@ -600,7 +624,7 @@ Therefore it is vital to pass the message kinds to the
 <dt id="ikkuna.export.subscriber.RatioSubscriber.compute">
 <code class="descname">compute</code><span class="sig-paren">(</span><em>message_bundle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/ratio.html#RatioSubscriber.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.RatioSubscriber.compute" title="Permalink to this definition">¶</a></dt>
 <dd><p>The ratio between the two kinds is computed as the ratio of L2-Norms of the two Tensors.
-A <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.SubscriberMessage" title="ikkuna.export.messages.SubscriberMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubscriberMessage</span></code></a> with the identifier
+A <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleMessage" title="ikkuna.export.messages.ModuleMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleMessage</span></code></a> with the identifier
 <code class="docutils literal notranslate"><span class="pre">{kind1}_{kind2}_ratio</span></code> is published.</p>
 </dd></dl>
 
@@ -630,7 +654,7 @@ non-matrix type.</td>
 <dd><p>The spectral norm computation is taken from the <a class="reference external" href="https://pytorch.org/docs/master/_modules/torch/nn/utils/spectral_norm.html">Pytorch implementation of spectral norm</a>. It’s
 possible to use SVD instead, but we are not interested in the full matrix decomposition,
 merely in the singular values.</p>
-<p>A <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.SubscriberMessage" title="ikkuna.export.messages.SubscriberMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubscriberMessage</span></code></a>
+<p>A <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleMessage" title="ikkuna.export.messages.ModuleMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleMessage</span></code></a>
 with the identifier <code class="docutils literal notranslate"><span class="pre">{kind}_spectral_norm</span></code> is published.</p>
 </dd></dl>
 
@@ -642,7 +666,7 @@ with the identifier <code class="docutils literal notranslate"><span class="pre"
 <dd><dl class="method">
 <dt id="ikkuna.export.subscriber.SumSubscriber.compute">
 <code class="descname">compute</code><span class="sig-paren">(</span><em>message_bundle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/sum.html#SumSubscriber.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.SumSubscriber.compute" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the sum of a quantity. A <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.SubscriberMessage" title="ikkuna.export.messages.SubscriberMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubscriberMessage</span></code></a>
+<dd><p>Compute the sum of a quantity. A <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleMessage" title="ikkuna.export.messages.ModuleMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleMessage</span></code></a>
 with the identifier <code class="docutils literal notranslate"><span class="pre">{kind}_sum</span></code> is published.</p>
 </dd></dl>
 
@@ -675,7 +699,7 @@ set).</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/data.html#torch.utils.data.DataLoader" title="(in PyTorch vmaster (1.0.0a0+c0e2444 ))">torch.utils.data.DataLoader</a></td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/data.html#torch.utils.data.DataLoader" title="(in PyTorch vmaster (1.0.0a0+99a5d19 ))">torch.utils.data.DataLoader</a></td>
 </tr>
 </tbody>
 </table>
@@ -718,7 +742,7 @@ set).</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>dataset_meta</strong> (<a class="reference internal" href="train.html#train.DatasetMeta" title="train.DatasetMeta"><em>train.DatasetMeta</em></a>) – Test dataset</li>
-<li><strong>forward_fn</strong> (<em>function</em>) – Bound version of <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.forward" title="(in PyTorch vmaster (1.0.0a0+c0e2444 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.forward()</span></code></a>. This could be obtained
+<li><strong>forward_fn</strong> (<em>function</em>) – Bound version of <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.forward" title="(in PyTorch vmaster (1.0.0a0+99a5d19 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.forward()</span></code></a>. This could be obtained
 from the <a class="reference internal" href="train.html#train.Trainer.model" title="train.Trainer.model"><code class="xref py py-attr docutils literal notranslate"><span class="pre">train.Trainer.model</span></code></a> property.</li>
 <li><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Batch size to use for pushing the test data through the model. This doesn’t
 have to be the training batch size, but must be selected so that the forward
@@ -735,7 +759,7 @@ pass fits into memory.</li>
 <dt id="ikkuna.export.subscriber.TestAccuracySubscriber.compute">
 <code class="descname">compute</code><span class="sig-paren">(</span><em>message_or_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/test_accuracy.html#TestAccuracySubscriber.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.TestAccuracySubscriber.compute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute accuracy over the entire test set.</p>
-<p>A <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.SubscriberMessage" title="ikkuna.export.messages.SubscriberMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubscriberMessage</span></code></a> with the identifier
+<p>A <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.NetworkMessage" title="ikkuna.export.messages.NetworkMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">NetworkMessage</span></code></a> with the identifier
 <code class="docutils literal notranslate"><span class="pre">test_accuracy</span></code> is published.</p>
 </dd></dl>
 
@@ -755,7 +779,7 @@ pass fits into memory.</li>
 <dt id="ikkuna.export.subscriber.TrainAccuracySubscriber.compute">
 <code class="descname">compute</code><span class="sig-paren">(</span><em>message_bundle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/train_accuracy.html#TrainAccuracySubscriber.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.TrainAccuracySubscriber.compute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute accuracy over the current train batch.</p>
-<p>A <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.SubscriberMessage" title="ikkuna.export.messages.SubscriberMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubscriberMessage</span></code></a> with the identifier
+<p>A <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.NetworkMessage" title="ikkuna.export.messages.NetworkMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">NetworkMessage</span></code></a> with the identifier
 <code class="docutils literal notranslate"><span class="pre">train_accuracy</span></code> is published.</p>
 </dd></dl>
 
@@ -769,7 +793,7 @@ variance of quantity for the current batch.</p>
 <dl class="method">
 <dt id="ikkuna.export.subscriber.VarianceSubscriber.compute">
 <code class="descname">compute</code><span class="sig-paren">(</span><em>message_bundle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/variance.html#VarianceSubscriber.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.VarianceSubscriber.compute" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the variance of a quantity. A <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.SubscriberMessage" title="ikkuna.export.messages.SubscriberMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubscriberMessage</span></code></a>
+<dd><p>Compute the variance of a quantity. A <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleMessage" title="ikkuna.export.messages.ModuleMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleMessage</span></code></a>
 with the identifier <code class="docutils literal notranslate"><span class="pre">{kind}_variance</span></code> is published.</p>
 </dd></dl>
 

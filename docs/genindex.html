@@ -140,6 +140,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ikkuna.export.html#ikkuna.export.Exporter.__call__">__call__() (ikkuna.export.Exporter method)</a>
 </li>
+      <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.__del__">__del__() (ikkuna.export.subscriber.Subscriber method)</a>
+</li>
       <li><a href="ikkuna.export.html#ikkuna.export.messages.MessageBundle.__getattr__">__getattr__() (ikkuna.export.messages.MessageBundle method)</a>
 </li>
       <li><a href="ikkuna.utils.html#ikkuna.utils.NamedModule.__getnewargs__">__getnewargs__() (ikkuna.utils.NamedModule method)</a>
@@ -198,6 +200,8 @@
       </ul></li>
       <li><a href="ikkuna.export.html#ikkuna.export.Exporter._add_module_by_name">_add_module_by_name() (ikkuna.export.Exporter method)</a>
 </li>
+      <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber._add_publication">_add_publication() (ikkuna.export.subscriber.Subscriber method)</a>
+</li>
       <li><a href="ikkuna.utils.html#ikkuna.utils.NamedModule._asdict">_asdict() (ikkuna.utils.NamedModule method)</a>
 
       <ul>
@@ -226,10 +230,10 @@
 </li>
       <li><a href="train.html#train.Trainer._dataset">_dataset (train.Trainer attribute)</a>
 </li>
-      <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.TestAccuracySubscriber._dataset_meta">_dataset_meta (ikkuna.export.subscriber.TestAccuracySubscriber attribute)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.TestAccuracySubscriber._dataset_meta">_dataset_meta (ikkuna.export.subscriber.TestAccuracySubscriber attribute)</a>
+</li>
       <li><a href="ikkuna.export.html#ikkuna.export.Exporter._depth">_depth (ikkuna.export.Exporter attribute)</a>
 </li>
       <li><a href="ikkuna.export.html#ikkuna.export.Exporter._epoch">_epoch (ikkuna.export.Exporter attribute)</a>
@@ -348,8 +352,6 @@
 </li>
       <li><a href="ikkuna.models.html#ikkuna.models.AlexNetMini">AlexNetMini (class in ikkuna.models)</a>
 </li>
-      <li><a href="ikkuna.export.html#ikkuna.export.messages.ALLOWED_KINDS">ALLOWED_KINDS (in module ikkuna.export.messages)</a>
-</li>
       <li><a href="ikkuna.utils.html#ikkuna.utils.available_optimizers">available_optimizers() (in module ikkuna.utils)</a>
 </li>
   </ul></td>
@@ -430,15 +432,17 @@
         <li><a href="ikkuna.export.html#ikkuna.export.messages.NetworkMessage.data">(ikkuna.export.messages.NetworkMessage attribute)</a>
 </li>
       </ul></li>
-      <li><a href="ikkuna.export.html#ikkuna.export.messages.DATA_KINDS">DATA_KINDS (in module ikkuna.export.messages)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="train.html#train.DatasetMeta.dataset">dataset (train.DatasetMeta attribute)</a>
 </li>
       <li><a href="train.html#train.DatasetMeta">DatasetMeta (class in train)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ikkuna.models.html#ikkuna.models.DenseNet">DenseNet (class in ikkuna.models)</a>
+</li>
+      <li><a href="ikkuna.export.html#ikkuna.export.messages.MessageBus.deregister_data_topic">deregister_data_topic() (ikkuna.export.messages.MessageBus method)</a>
+</li>
+      <li><a href="ikkuna.export.html#ikkuna.export.messages.MessageBus.deregister_meta_topic">deregister_meta_topic() (ikkuna.export.messages.MessageBus method)</a>
 </li>
       <li><a href="ikkuna.utils.html#ikkuna.utils.numba.dtype_min_max">dtype_min_max() (in module ikkuna.utils.numba)</a>
 </li>
@@ -559,8 +563,6 @@
 </li>
         <li><a href="ikkuna.export.html#ikkuna.export.messages.NetworkMessage.key">(ikkuna.export.messages.NetworkMessage attribute)</a>
 </li>
-        <li><a href="ikkuna.export.html#ikkuna.export.messages.SubscriberMessage.key">(ikkuna.export.messages.SubscriberMessage attribute)</a>
-</li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -607,8 +609,6 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ikkuna.export.html#ikkuna.export.messages.MessageBus">MessageBus (class in ikkuna.export.messages)</a>
-</li>
-      <li><a href="ikkuna.export.html#ikkuna.export.messages.META_KINDS">META_KINDS (in module ikkuna.export.messages)</a>
 </li>
       <li><a href="train.html#train.Trainer.model">model (train.Trainer attribute)</a>
 </li>
@@ -684,15 +684,13 @@
 </li>
       <li><a href="ikkuna.utils.html#ikkuna.utils.ModuleTree.preorder">preorder() (ikkuna.utils.ModuleTree method)</a>
 </li>
-      <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.process_message_bundle">process_message_bundle() (ikkuna.export.subscriber.Subscriber method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.process_message_bundle">process_message_bundle() (ikkuna.export.subscriber.Subscriber method)</a>
+</li>
       <li><a href="ikkuna.export.html#ikkuna.export.messages.MessageBus.publish_module_message">publish_module_message() (ikkuna.export.messages.MessageBus method)</a>
 </li>
       <li><a href="ikkuna.export.html#ikkuna.export.messages.MessageBus.publish_network_message">publish_network_message() (ikkuna.export.messages.MessageBus method)</a>
-</li>
-      <li><a href="ikkuna.export.html#ikkuna.export.messages.MessageBus.publish_subscriber_message">publish_subscriber_message() (ikkuna.export.messages.MessageBus method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -704,8 +702,12 @@
 </li>
       <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.receive_message">receive_message() (ikkuna.export.subscriber.Subscriber method)</a>
 </li>
+      <li><a href="ikkuna.export.html#ikkuna.export.messages.MessageBus.register_data_topic">register_data_topic() (ikkuna.export.messages.MessageBus method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="ikkuna.export.html#ikkuna.export.messages.MessageBus.register_meta_topic">register_meta_topic() (ikkuna.export.messages.MessageBus method)</a>
+</li>
       <li><a href="ikkuna.export.html#ikkuna.export.messages.MessageBus.register_subscriber">register_subscriber() (ikkuna.export.messages.MessageBus method)</a>
 </li>
       <li><a href="ikkuna.models.html#ikkuna.models.ResNet">ResNet (class in ikkuna.models)</a>
@@ -730,15 +732,13 @@
 </li>
       <li><a href="train.html#train.DatasetMeta.size">size (train.DatasetMeta attribute)</a>
 </li>
-      <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.SpectralNormSubscriber">SpectralNormSubscriber (class in ikkuna.export.subscriber)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.SpectralNormSubscriber">SpectralNormSubscriber (class in ikkuna.export.subscriber)</a>
+</li>
       <li><a href="ikkuna.export.html#ikkuna.export.Exporter.step">step() (ikkuna.export.Exporter method)</a>
 </li>
       <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber">Subscriber (class in ikkuna.export.subscriber)</a>
-</li>
-      <li><a href="ikkuna.export.html#ikkuna.export.messages.SubscriberMessage">SubscriberMessage (class in ikkuna.export.messages)</a>
 </li>
       <li><a href="ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscription">Subscription (class in ikkuna.export.subscriber)</a>
 </li>

@@ -8,7 +8,7 @@ This module contains the base definition for subscriber functionality. The
 import abc
 from collections import defaultdict
 import ikkuna.visualization
-from ikkuna.export.messages import MessageBundle, ModuleMessage, ALLOWED_KINDS, get_default_bus
+from ikkuna.export.messages import MessageBundle, ModuleMessage, get_default_bus
 
 
 class Subscription(object):
@@ -44,11 +44,6 @@ class Subscription(object):
         '''
         self._tag        = tag
         self._subscriber = subscriber
-
-        # TODO: Make topics registerable, then this check makes sense again.
-        # for k in kinds:
-        #     if k not in ALLOWED_KINDS:
-        #         raise ValueError(f'Unknown message kind "{k}" encountered.')
 
         self._kinds      = kinds
         self._counter    = defaultdict(int)
@@ -164,8 +159,36 @@ class Subscriber(abc.ABC):
         ----------
         subscription    :   Subscription
         '''
-        self._subscription = subscription
-        self._msg_bus      = message_bus
+        self._subscription     = subscription
+        self._msg_bus          = message_bus
+        self._published_topics = dict()
+
+    def _add_publication(self, topic, type='DATA'):
+        '''
+        Parameters
+        ----------
+        topic   :   str
+                    Topic name
+        type    :   str
+                    ``DATA`` or ``META``
+        '''
+        if type not in ('DATA', 'META'):
+            raise ValueError(f'Unknown message type "{type}"')
+
+        self._published_topics[type] = topic
+        if type == 'DATA':
+            self._msg_bus.register_data_topic(topic)
+        else:
+            self._msg_bus.register_meta_topic(topic)
+
+    def __del__(self):
+        '''If for whatever reason a subscriber ceases to exist before the interpreter ends, delete
+        the registered topics'''
+        for type, topic in self._published_topics.items():
+            if type == 'DATA':
+                self._msg_bus.deregister_data_topic(topic)
+            else:
+                self._msg_bus.deregister_meta_topic(topic)
 
     @property
     def subscription(self):

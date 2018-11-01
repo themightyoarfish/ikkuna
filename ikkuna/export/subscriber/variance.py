@@ -24,6 +24,8 @@ class VarianceSubscriber(PlotSubscriber):
                           'xlabel': xlabel},
                          backend=backend, **tbx_params)
 
+        self._add_publication(f'{kind}_variance', type='DATA')
+
     def compute(self, message_bundle):
         '''Compute the variance of a quantity. A :class:`~ikkuna.export.messages.ModuleMessage`
         with the identifier ``{kind}_variance`` is published. '''

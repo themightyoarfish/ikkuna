@@ -32,6 +32,7 @@ class SpectralNormSubscriber(PlotSubscriber):
                          {'title': title, 'xlabel': xlabel, 'ylims': ylims, 'ylabel': ylabel},
                          backend=backend, **tbx_params)
         self.u = dict()
+        self._add_publication(f'{kind}_spectral_norm', type='DATA')
 
     def compute(self, message_bundle):
         '''The spectral norm computation is taken from the `Pytorch implementation of spectral norm

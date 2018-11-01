@@ -106,38 +106,33 @@
     <div class="col-md-12 content">
       
   <h1>Source code for ikkuna.export.messages</h1><div class="highlight"><pre>
-<span></span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">.. _meta_kinds:</span>
-<span class="sd">.. data:: META_KINDS</span>
+<span></span><span class="kn">import</span> <span class="nn">abc</span>
 
-<span class="sd">    Message kinds which are not tied to any specific module.</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">.. meta_kinds:</span>
+<span class="sd">.. data:: _META_KINDS</span>
 
-<span class="sd">.. _data_kinds:</span>
-<span class="sd">.. data:: DATA_KINDS</span>
+<span class="sd">    Message kinds which are not tied to any specific module. These topics is just what comes with</span>
+<span class="sd">    the library, others can be added to a specific :class:`MessageBus`</span>
 
-<span class="sd">    Message kinds which are tied to a specific module and always carry data</span>
+<span class="sd">.. data_kinds:</span>
+<span class="sd"> data:: _DATA_KINDS</span>
 
-<span class="sd">.. _allowed_kinds:</span>
-<span class="sd">.. data:: ALLOWED_KINDS</span>
+<span class="sd">    Message kinds which are tied to a specific module and always carry data. These topics is just</span>
+<span class="sd">    what comes with the library, others can be added to a specific :class:`MessageBus`</span>
 
-<span class="sd">    Simply the union of ``META_KINDS`` and ``DATA_KINDS``</span>
 <span class="sd">&#39;&#39;&#39;</span>
 
-<span class="kn">import</span> <span class="nn">abc</span>
 
-<span class="kn">from</span> <span class="nn">ikkuna.utils</span> <span class="k">import</span> <span class="n">NamedModule</span>
-
-<span class="n">META_KINDS</span> <span class="o">=</span> <span class="p">{</span>
+<span class="n">_META_KINDS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;batch_started&#39;</span><span class="p">,</span> <span class="s1">&#39;batch_finished&#39;</span><span class="p">,</span> <span class="s1">&#39;epoch_started&#39;</span><span class="p">,</span> <span class="s1">&#39;epoch_finished&#39;</span><span class="p">,</span> <span class="s1">&#39;input_data&#39;</span><span class="p">,</span>
     <span class="s1">&#39;input_labels&#39;</span><span class="p">,</span> <span class="s1">&#39;network_output&#39;</span>
 <span class="p">}</span>
 
-<span class="n">DATA_KINDS</span> <span class="o">=</span> <span class="p">{</span>
+<span class="n">_DATA_KINDS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;weights&#39;</span><span class="p">,</span> <span class="s1">&#39;weight_gradients&#39;</span><span class="p">,</span> <span class="s1">&#39;weight_updates&#39;</span><span class="p">,</span> <span class="s1">&#39;biases&#39;</span><span class="p">,</span> <span class="s1">&#39;bias_gradients&#39;</span><span class="p">,</span> <span class="s1">&#39;bias_updates&#39;</span><span class="p">,</span>
     <span class="s1">&#39;activations&#39;</span><span class="p">,</span> <span class="s1">&#39;layer_gradients&#39;</span>
 <span class="p">}</span>
-
-<span class="n">ALLOWED_KINDS</span> <span class="o">=</span> <span class="nb">set</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">META_KINDS</span><span class="p">,</span> <span class="n">DATA_KINDS</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Message"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.messages.Message">[docs]</a><span class="k">class</span> <span class="nc">Message</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
@@ -159,9 +154,7 @@
 <span class="sd">        epoch   :   int</span>
 <span class="sd">                    Epoch index</span>
 <span class="sd">        kind    :   str</span>
-<span class="sd">                    Message topic. Must be in :ref:`ALLOWED_KINDS &lt;allowed_kinds&gt;` or ``None`` in</span>
-<span class="sd">                    which case no checking is performed. This guards against misspellings or</span>
-<span class="sd">                    otherwise incorrect topics.</span>
+<span class="sd">                    Message topic</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span> <span class="o">=</span> <span class="n">tag</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span> <span class="o">=</span> <span class="n">global_step</span>
@@ -178,11 +171,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span> <span class="o">=</span> <span class="n">epoch</span>
 
-        <span class="c1"># check kind</span>
-        <span class="k">if</span> <span class="n">kind</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ALLOWED_KINDS</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Invalid message kind &quot;</span><span class="si">{kind}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_kind</span> <span class="o">=</span> <span class="n">kind</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kind</span> <span class="o">=</span> <span class="n">kind</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="kc">None</span></div>
 
@@ -234,8 +223,6 @@
     <span class="sd">&#39;&#39;&#39;A message with meta information not tied to any specific module. Can still carry tensor data,</span>
 <span class="sd">    if necessary.&#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">global_step</span><span class="p">,</span> <span class="n">train_step</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">META_KINDS</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Invalid message kind &quot;</span><span class="si">{kind}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">global_step</span><span class="p">,</span> <span class="n">train_step</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">kind</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
 
@@ -268,31 +255,6 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">module</span></div>
-
-
-<div class="viewcode-block" id="SubscriberMessage"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.messages.SubscriberMessage">[docs]</a><span class="k">class</span> <span class="nc">SubscriberMessage</span><span class="p">(</span><span class="n">Message</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;A message published by subscribers. There&#39;s no whitelist of allowed ``kind``\ s as there is</span>
-<span class="sd">    for messages originating from the model.&#39;&#39;&#39;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">global_step</span><span class="p">,</span> <span class="n">train_step</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">identifier</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="c1"># we pass None for kind so as to explicitly avoid the validity check</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">global_step</span><span class="p">,</span> <span class="n">train_step</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">identifier</span><span class="p">,</span> <span class="n">NamedModule</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_identifier</span> <span class="o">=</span> <span class="n">identifier</span><span class="o">.</span><span class="n">name</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_identifier</span> <span class="o">=</span> <span class="n">identifier</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_kind</span> <span class="o">=</span> <span class="n">kind</span>
-
-        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Data cannot be `None` for `SubscriberMessage`&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># man I really need to rethink this key business</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_identifier</span></div>
 
 
 <div class="viewcode-block" id="MessageBundle"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.messages.MessageBundle">[docs]</a><span class="k">class</span> <span class="nc">MessageBundle</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -478,7 +440,27 @@
 <span class="sd">                    Identifier for this bus</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_subscribers</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subscribers</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_meta_kinds</span> <span class="o">=</span> <span class="n">_META_KINDS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_kinds</span> <span class="o">=</span> <span class="n">_DATA_KINDS</span></div>
+
+<div class="viewcode-block" id="MessageBus.register_meta_topic"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.messages.MessageBus.register_meta_topic">[docs]</a>    <span class="k">def</span> <span class="nf">register_meta_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Register a topic so it can be subscribed.&#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_meta_kinds</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MessageBus.deregister_meta_topic"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.messages.MessageBus.deregister_meta_topic">[docs]</a>    <span class="k">def</span> <span class="nf">deregister_meta_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Unregister a topic so it can not be subscribed any longer.&#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_meta_kinds</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span></div>
+        <span class="c1"># TODO: Don&#39;t just believe the sender that it registered the topic</span>
+
+<div class="viewcode-block" id="MessageBus.register_data_topic"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.messages.MessageBus.register_data_topic">[docs]</a>    <span class="k">def</span> <span class="nf">register_data_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Register a topic so it can be subscribed.&#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_kinds</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MessageBus.deregister_data_topic"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.messages.MessageBus.deregister_data_topic">[docs]</a>    <span class="k">def</span> <span class="nf">deregister_data_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Unregister a topic so it can not be subscribed any longer.&#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_kinds</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span></div>
+        <span class="c1"># TODO: Don&#39;t just believe the sender that it registered the topic</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -494,33 +476,6 @@
 <span class="sd">        sub :   ikkuna.export.subscriber.Subscriber</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subscribers</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sub</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="MessageBus.publish_subscriber_message"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.messages.MessageBus.publish_subscriber_message">[docs]</a>    <span class="k">def</span> <span class="nf">publish_subscriber_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">global_step</span><span class="p">,</span> <span class="n">train_step</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">identifier</span><span class="p">,</span>
-                                   <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;Publish an update of type :class:`~ikkuna.export.messages.SubscriberMessage` to all</span>
-<span class="sd">        registered subscribers.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        global_step :   int</span>
-<span class="sd">                        Global training step</span>
-<span class="sd">        train_step  :   int</span>
-<span class="sd">                        Epoch-relative training step</span>
-<span class="sd">        epoch   :   int</span>
-<span class="sd">                    Epoch index</span>
-<span class="sd">        kind    :   str</span>
-<span class="sd">                    Identifier chosen by the publishing subscriber</span>
-<span class="sd">        identifier  :   str</span>
-<span class="sd">                        Identifier for this message. Usually the module name, if it is tied to a</span>
-<span class="sd">                        module, or &#39;META&#39; for other messages. The string is used for collection in</span>
-<span class="sd">                        :class:`MessageBundle`\ s which must be uniform in this respect.</span>
-<span class="sd">        data    :   torch.Tensor, tuple(torch.Tensor), float, int or None</span>
-<span class="sd">                    Payload, if necessary</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="n">SubscriberMessage</span><span class="p">(</span><span class="n">global_step</span><span class="o">=</span><span class="n">global_step</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">,</span> <span class="n">identifier</span><span class="o">=</span><span class="n">identifier</span><span class="p">,</span>
-                                <span class="n">train_step</span><span class="o">=</span><span class="n">train_step</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="n">epoch</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subscribers</span><span class="p">:</span>
-            <span class="n">sub</span><span class="o">.</span><span class="n">receive_message</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MessageBus.publish_network_message"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.messages.MessageBus.publish_network_message">[docs]</a>    <span class="k">def</span> <span class="nf">publish_network_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">global_step</span><span class="p">,</span> <span class="n">train_step</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Publish an update of type :class:`~ikkuna.export.messages.NetworkMessage` to all</span>
@@ -539,6 +494,9 @@
 <span class="sd">        data    :   torch.Tensor or None</span>
 <span class="sd">                    Payload, if necessary</span>
 <span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta_kinds</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Unknown kind &quot;</span><span class="si">{kind}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+
         <span class="n">msg</span> <span class="o">=</span> <span class="n">NetworkMessage</span><span class="p">(</span><span class="n">global_step</span><span class="o">=</span><span class="n">global_step</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">,</span> <span class="n">train_step</span><span class="o">=</span><span class="n">train_step</span><span class="p">,</span>
                              <span class="n">epoch</span><span class="o">=</span><span class="n">epoch</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subscribers</span><span class="p">:</span>
@@ -563,6 +521,8 @@
 <span class="sd">        data    :   torch.Tensor</span>
 <span class="sd">                    Payload</span>
 <span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_kinds</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Unknown kind &quot;</span><span class="si">{kind}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="n">ModuleMessage</span><span class="p">(</span><span class="n">global_step</span><span class="o">=</span><span class="n">global_step</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">,</span> <span class="n">named_module</span><span class="o">=</span><span class="n">named_module</span><span class="p">,</span>
                             <span class="n">train_step</span><span class="o">=</span><span class="n">train_step</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="n">epoch</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
 
