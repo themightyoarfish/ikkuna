@@ -37,7 +37,7 @@ def exponential_schedule_fn(epoch, gamma=0.98):
 
 @ex.config
 def cfg():
-    base_lr    = 0.5
+    base_lr    = 0.2
     optimizer  = 'SGD'
     batch_size = 128
     n_epochs   = 100
@@ -45,7 +45,7 @@ def cfg():
     schedule   = 'oscillating_schedule_fn'
 
 
-@ex.main
+@ex.automain
 def run(batch_size, loss, optimizer, base_lr, n_epochs, schedule):
     # load the dataset
     dataset_train_meta, dataset_test_meta = load_dataset('CIFAR10')
@@ -66,9 +66,8 @@ def run(batch_size, loss, optimizer, base_lr, n_epochs, schedule):
 
     # do n epochs of training
     batches_per_epoch = trainer.batches_per_epoch
-    epochs = n_epochs
+    epochs            = n_epochs
     for i in range(epochs):
-        print(f'Epoch {i}')
         for b in range(batches_per_epoch):
             trainer.train_batch()
 
