@@ -31,30 +31,34 @@ def main():
         # do not start more procs than configs
         procs_to_start = min(len(runs), args.jobs)
 
-        # run initial batch
-        print(f'Starting {procs_to_start} jobs')
-        for i in range(procs_to_start):
-            start_job()
+        try:
+            # run initial batch
+            print(f'Starting {procs_to_start} jobs')
+            for i in range(procs_to_start):
+                start_job()
 
-        # keep polling the list of running processes. if one has terminated, remove it and start a
-        # new one, unless the list of run configs is empty. In that case, if there are no more
-        # running processes, exit the loop, otherwise simply remove the terminated process.
-        while True:
-            # all done?
-            if not runs and not running:
-                break
+            # keep polling the list of running processes. if one has terminated, remove it and start
+            # a new one, unless the list of run configs is empty. In that case, if there are no more
+            # running processes, exit the loop, otherwise simply remove the terminated process.
+            while True:
+                # all done?
+                if not runs and not running:
+                    break
 
-            print(f'Checking for finished jobs...')
+                for proc in running:
+                    if proc.poll() is not None:
+                        if runs:
+                            print('Found! Starting new job.')
+                            start_job()
+                            running.remove(proc)
+                            print(f'{len(runs)} left.')
+                        else:
+                            running.remove(proc)
+                time.sleep(10)
+        except:
+            print('Attempting to cancel all processes...')
             for proc in running:
-                if proc.poll() is not None:
-                    if runs:
-                        print('Found! Starting new job.')
-                        start_job()
-                        running.remove(proc)
-                        print(f'{len(runs)} left.')
-                    else:
-                        running.remove(proc)
-            time.sleep(10)
+                proc.terminate()
     else:
         print('Running serial')
         for schedule in runs:
