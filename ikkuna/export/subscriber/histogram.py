@@ -27,6 +27,6 @@ class HistogramSubscriber(PlotSubscriber):
             :class:`~ikkuna.export.messages.SubscriberMessage`
         '''
 
-        module_name = message_bundle.identifier
-        data        = message_bundle.data[self._subscription.kinds[0]]
-        self._backend.add_histogram(module_name, data, message_bundle.global_step)
+        module, name = message_bundle.key
+        data         = message_bundle.data[self._subscription.kinds[0]]
+        self._backend.add_histogram(name, data, message_bundle.global_step)

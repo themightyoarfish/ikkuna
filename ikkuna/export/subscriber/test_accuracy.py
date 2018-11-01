@@ -78,4 +78,4 @@ class TestAccuracySubscriber(PlotSubscriber):
                 self.message_bus.publish_subscriber_message(message_or_data.global_step,
                                                             message_or_data.train_step,
                                                             message_or_data.epoch, kind,
-                                                            message_or_data.identifier, accuracy)
+                                                            message_or_data.key, accuracy)

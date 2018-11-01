@@ -145,9 +145,9 @@ class NetworkMessage(Message):
 class ModuleMessage(Message):
     '''A message tied to a specific module, with tensor data attached.'''
 
-    def __init__(self, tag, global_step, train_step, epoch, kind, module, data):
+    def __init__(self, tag, global_step, train_step, epoch, kind, named_module, data):
         super().__init__(tag, global_step, train_step, epoch, kind)
-        self._module  = module
+        self._module  = named_module
         if data is None:
             raise ValueError('Data cannot be `None` for `ModuleMessage`')
         self._data = data
@@ -159,7 +159,7 @@ class ModuleMessage(Message):
 
     @property
     def key(self):
-        return self.module.name
+        return self.module
 
 
 class SubscriberMessage(Message):
@@ -195,13 +195,10 @@ class MessageBundle(object):
     to be homogeneous with respect to global step, train step, epoch, and identifier
     (:attr:`Message.key`)'''
 
-    def __init__(self, identifier, kinds):
+    def __init__(self, kinds):
         '''
         Parameters
         ----------
-        identifier  :   str
-                        String to uniquely identify the bundle. Will usually be either the module
-                        name or `'META'` for a collection of meta messages.
         kinds   :   str or list
                     Single kind when a :class:`~ikkuna.export.subscriber.Subscription` is used, or a
                     list of Message kinds contained in this bundle for use with
@@ -210,7 +207,7 @@ class MessageBundle(object):
         if isinstance(kinds, str):
             # this has bitten me before. base `Subscription`s don't use multiple kinds
             kinds = [kinds]
-        self._identifier     = identifier
+        self._key            = None
         self._expected_kinds = kinds
         self._received       = {kind: False for kind in kinds}
         self._data           = {kind: None for kind in kinds}
@@ -219,11 +216,11 @@ class MessageBundle(object):
         self._epoch          = None
 
     @property
-    def identifier(self):
-        ''' str: A string denoting the common aspect of the collected messages (besides the step).
-        This can be the module name or a string such as ``META`` or other  denoting these are
-        messages which do not belong to a module.'''
-        return self._identifier
+    def key(self):
+        ''' str: An object denoting the common aspect of the collected messages (besides the steps).
+        This can be the :class:`~ikkuna.utils.NamedModule` emitting the data or a string such as
+        ``'META'`` or other denoting these are messages which do not belong to a module.'''
+        return self._key
 
     @property
     def kinds(self):
@@ -281,43 +278,41 @@ class MessageBundle(object):
             ``(global_step|step|epoch|identifier)`` or in case a message of ``message.kind`` has
             already been received
         '''
-        ############
-        #  seqnum  #
-        ############
-        if not self._global_step:
+        #################
+        #  global_step  #
+        #################
+        if self._global_step is None:
             self._global_step = message.global_step
-
-        if message.global_step != self._global_step:
+        elif message.global_step != self._global_step:
             raise ValueError('Attempting to add message with global_step '
                              f'{message.global_step} to bundle with '
                              'initial global_step {self._global_step}')
 
-        ##########
-        #  step  #
-        ##########
-        if not self._train_step:
+        ################
+        #  train_step  #
+        ################
+        if self._train_step is None:
             self._train_step = message.train_step
-
-        if message.train_step != self._train_step:
+        elif message.train_step != self._train_step:
             raise ValueError(f'Attempting to add message with step {message.step} to bundle with '
                              'initial step {self._train_step}')
         #############
-        #  content  #
+        #  epoch    #
         #############
-
-        if not self._epoch:
+        if self._epoch is None:
             self._epoch = message.epoch
-
-        if message.epoch != self._epoch:
+        elif message.epoch != self._epoch:
             raise ValueError(f'Attempting to add message from epoch {message.epoch} to bundle with '
                              'initial epoch {self._epoch}')
 
         ################
-        #  Identifier  #
+        #  key         #
         ################
-        if self._identifier != message.key:
-            raise ValueError(f'Unexpected identifier "{message.key}" '
-                             '(expected "{self._identifier}")')
+        if self._key is None:
+            self._key = message.key
+        elif self._key != message.key:
+            raise ValueError(f'Unexpected message key "{message.key}" '
+                             f'(expected "{self._key}")')
 
         #################
         #  Duplication  #
@@ -339,7 +334,6 @@ class MessageBundle(object):
             see :meth:`~MessageBundle._check_message()`
         '''
         self._check_message(message)
-
         self._received[message.kind] = True
 
         if message.data is not None:
@@ -355,7 +349,7 @@ class MessageBundle(object):
             return self.__getattribute__(name)
 
     def __str__(self):
-        mod   = self._identifier
+        mod   = self._key
         step  = self._train_step
         kinds = list(self._data.keys())
         return f'<MessageBundle: identifier={mod}, kinds={kinds}, step={step}>'
@@ -420,7 +414,7 @@ class MessageBus(object):
         for sub in self._subscribers:
             sub.receive_message(msg)
 
-    def publish_meta_message(self, global_step, train_step, epoch, kind, data=None):
+    def publish_network_message(self, global_step, train_step, epoch, kind, data=None):
         '''Publish an update of type :class:`~ikkuna.export.messages.NetworkMessage` to all
         registered subscribers.
 
@@ -438,11 +432,11 @@ class MessageBus(object):
                     Payload, if necessary
         '''
         msg = NetworkMessage(global_step=global_step, tag=None, kind=kind, train_step=train_step,
-                          epoch=epoch, data=data)
+                             epoch=epoch, data=data)
         for sub in self._subscribers:
             sub.receive_message(msg)
 
-    def publish_train_message(self, global_step, train_step, epoch, kind, named_module, data):
+    def publish_module_message(self, global_step, train_step, epoch, kind, named_module, data):
         '''Publish an update of type :class:`~ikkuna.export.messages.ModuleMessage` to all
         registered subscribers.
 
@@ -461,8 +455,8 @@ class MessageBus(object):
         data    :   torch.Tensor
                     Payload
         '''
-        msg = ModuleMessage(global_step=global_step, tag=None, kind=kind, module=named_module,
-                              train_step=train_step, epoch=epoch, data=data)
+        msg = ModuleMessage(global_step=global_step, tag=None, kind=kind, named_module=named_module,
+                            train_step=train_step, epoch=epoch, data=data)
 
         for sub in self._subscribers:
             sub.receive_message(msg)

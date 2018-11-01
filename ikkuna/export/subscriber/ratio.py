@@ -45,14 +45,14 @@ class RatioSubscriber(PlotSubscriber):
         A :class:`~ikkuna.export.messages.SubscriberMessage` with the identifier
         ``{kind1}_{kind2}_ratio`` is published.'''
 
-        module_name = message_bundle.identifier
+        module, module_name = message_bundle.key
 
-        dividend    = message_bundle.data[self._subscription.kinds[0]]
-        divisor     = message_bundle.data[self._subscription.kinds[1]]
+        dividend            = message_bundle.data[self._subscription.kinds[0]]
+        divisor             = message_bundle.data[self._subscription.kinds[1]]
 
-        scale1      = dividend.norm()
-        scale2      = divisor.norm()
-        ratio       = (scale1 / scale2).item()
+        scale1              = dividend.norm()
+        scale2              = divisor.norm()
+        ratio               = (scale1 / scale2).item()
 
         self._backend.add_data(module_name, ratio, message_bundle.global_step)
 
@@ -60,4 +60,4 @@ class RatioSubscriber(PlotSubscriber):
         self.message_bus.publish_subscriber_message(message_bundle.global_step,
                                                     message_bundle.train_step,
                                                     message_bundle.epoch, kind,
-                                                    message_bundle.identifier, ratio)
+                                                    message_bundle.key, ratio)

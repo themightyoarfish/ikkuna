@@ -24,7 +24,7 @@ class MeanSubscriber(PlotSubscriber):
         '''Compute the average of a quantity. A :class:`~ikkuna.export.messages.SubscriberMessage`
         with the identifier ``{kind}_mean`` is published. '''
 
-        module_name  = message_bundle.identifier
+        module, module_name  = message_bundle.key
 
         data = message_bundle.data[self._subscription.kinds[0]]
         mean = data.mean()
@@ -34,4 +34,4 @@ class MeanSubscriber(PlotSubscriber):
         self.message_bus.publish_subscriber_message(message_bundle.global_step,
                                                     message_bundle.train_step,
                                                     message_bundle.epoch, kind,
-                                                    message_bundle.identifier, mean)
+                                                    message_bundle.key, mean)

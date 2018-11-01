@@ -8,7 +8,7 @@ class SumSubscriber(PlotSubscriber):
                  backend='tb', **tbx_params):
         if not isinstance(kind, str):
             raise ValueError('SumSubscriber only accepts 1 kind')
-        title        = f'{kinds[0]} sum'
+        title        = f'{kind[0]} sum'
         ylabel       = 'Sum'
         xlabel       = 'Train step'
         subscription = Subscription(self, [kind], tag, subsample)
@@ -23,7 +23,7 @@ class SumSubscriber(PlotSubscriber):
         '''Compute the sum of a quantity. A :class:`~ikkuna.export.messages.SubscriberMessage`
         with the identifier ``{kind}_sum`` is published. '''
 
-        module_name  = message_bundle.identifier
+        module, module_name  = message_bundle.key
 
         data = message_bundle.data[self._subscription.kinds[0]]
         sum = data.sum()
@@ -33,4 +33,4 @@ class SumSubscriber(PlotSubscriber):
         self.message_bus.publish_subscriber_message(message_bundle.global_step,
                                                     message_bundle.train_step,
                                                     message_bundle.epoch, kind,
-                                                    message_bundle.identifier, sum)
+                                                    message_bundle.key, sum)

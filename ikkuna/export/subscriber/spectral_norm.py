@@ -42,11 +42,11 @@ class SpectralNormSubscriber(PlotSubscriber):
         A :class:`~ikkuna.export.messages.SubscriberMessage`
         with the identifier ``{kind}_spectral_norm`` is published. '''
 
-        module_name = message_bundle.identifier
+        module, module_name = message_bundle.key
         # get and reshape the weight tensor to 2d
-        weights     = message_bundle.data[self._subscription.kinds[0]]
-        height      = weights.size(0)
-        weights2d   = weights.reshape(height, -1)
+        weights             = message_bundle.data[self._subscription.kinds[0]]
+        height              = weights.size(0)
+        weights2d           = weights.reshape(height, -1)
 
         # buffer for power iteration (don't know what the mahematical purpose is)
         if module_name not in self.u:
@@ -66,4 +66,4 @@ class SpectralNormSubscriber(PlotSubscriber):
         self.message_bus.publish_subscriber_message(message_bundle.global_step,
                                                     message_bundle.train_step,
                                                     message_bundle.epoch, kind,
-                                                    message_bundle.identifier, norm)
+                                                    message_bundle.key, norm)

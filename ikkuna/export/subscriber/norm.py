@@ -25,7 +25,7 @@ class NormSubscriber(PlotSubscriber):
         '''Compute the norm of a quantity. A :class:`~ikkuna.export.messages.SubscriberMessage`
         with the identifier ``{kind}_norm{order}`` is published. '''
 
-        module_name  = message_bundle.identifier
+        module, module_name  = message_bundle.key
 
         data = message_bundle.data[self._subscription.kinds[0]]
         norm = data.norm(p=self._order)
@@ -35,4 +35,4 @@ class NormSubscriber(PlotSubscriber):
         self.message_bus.publish_subscriber_message(message_bundle.global_step,
                                                     message_bundle.train_step,
                                                     message_bundle.epoch, kind,
-                                                    message_bundle.identifier, norm)
+                                                    message_bundle.key, norm)

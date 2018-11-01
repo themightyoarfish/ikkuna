@@ -70,7 +70,7 @@ class Subscription(object):
         ----------
         message    :   ikkuna.export.messages.Message
         '''
-        data = MessageBundle(message.key, message.kind)
+        data = MessageBundle(message.kind)
         data.add_message(message)
         self._subscriber.process_message_bundle(data)
 
@@ -122,21 +122,21 @@ class SynchronizedSubscription(Subscription):
         '''
         for bundle in self._open_bundles.values():
             if not bundle.complete():
-                raise RuntimeError(f'Bundle with id={bundle.identifier} not yet complete.')
+                raise RuntimeError(f'Bundle with id={bundle.key} not yet complete.')
         self._current_global_step = round_idx
         self._open_bundles = {}
 
     def _publish_complete(self):
         delete_these = []
         # any full? publish
-        for identifier, message_bundle in self._open_bundles.items():
+        for module_and_kind, message_bundle in self._open_bundles.items():
             if message_bundle.complete():
                 self._subscriber.process_message_bundle(message_bundle)
-                delete_these.append(identifier)
+                delete_these.append(module_and_kind)
 
         # purge published data
-        for identifier in delete_these:
-            del self._open_bundles[identifier]
+        for module_and_kind in delete_these:
+            del self._open_bundles[module_and_kind]
 
     def _handle_message(self, message):
         '''Start a new round if a new sequence number is seen.'''
@@ -148,7 +148,7 @@ class SynchronizedSubscription(Subscription):
         # module not seen -> init data
         key = message.key
         if key not in self._open_bundles:
-            self._open_bundles[key] = MessageBundle(key, self.kinds)
+            self._open_bundles[key] = MessageBundle(self.kinds)
         self._open_bundles[key].add_message(message)
 
         self._publish_complete()
@@ -278,10 +278,6 @@ class CallbackSubscriber(Subscriber):
         kinds = self._subscription.kinds
         args  = (message_or_bundle.data[kind] for kind in kinds)
 
-        # TODO: Rename MessageBundle.identifier to key and remove this
-        if isinstance(message_or_bundle, ikkuna.export.messages.MessageBundle):
-            id_ = message_or_bundle.identifier
-        else:
-            id_ = message_or_bundle.key
+        id_ = message_or_bundle.key
         self._callback(*args, message_or_bundle.global_step, message_or_bundle.train_step,
                        message_or_bundle.epoch, id_)

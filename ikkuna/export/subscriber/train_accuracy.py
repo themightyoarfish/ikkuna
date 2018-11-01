@@ -37,4 +37,4 @@ class TrainAccuracySubscriber(PlotSubscriber):
         self.message_bus.publish_subscriber_message(message_bundle.global_step,
                                                     message_bundle.train_step,
                                                     message_bundle.epoch, kind,
-                                                    message_bundle.identifier, accuracy)
+                                                    message_bundle.key, accuracy)
