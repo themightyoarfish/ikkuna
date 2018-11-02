@@ -122,7 +122,7 @@
         <span class="n">ylabel</span>       <span class="o">=</span> <span class="s1">&#39;Mean&#39;</span>
         <span class="n">xlabel</span>       <span class="o">=</span> <span class="s1">&#39;Train step&#39;</span>
         <span class="n">subscription</span> <span class="o">=</span> <span class="n">Subscription</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">[</span><span class="n">kind</span><span class="p">],</span> <span class="n">tag</span><span class="p">,</span> <span class="n">subsample</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subscription</span><span class="p">,</span> <span class="n">message_bus</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">([</span><span class="n">subscription</span><span class="p">],</span> <span class="n">message_bus</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
                                                      <span class="s1">&#39;ylabel&#39;</span><span class="p">:</span> <span class="n">ylabel</span><span class="p">,</span>
                                                      <span class="s1">&#39;ylims&#39;</span><span class="p">:</span> <span class="n">ylims</span><span class="p">,</span>
                                                      <span class="s1">&#39;xlabel&#39;</span><span class="p">:</span> <span class="n">xlabel</span><span class="p">},</span>
@@ -139,7 +139,7 @@
         <span class="n">mean</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">global_step</span><span class="p">)</span>
 
-        <span class="n">kind</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{self._subscription.kinds[0]}</span><span class="s1">_mean&#39;</span>
+        <span class="n">kind</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{message.kind}</span><span class="s1">_mean&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message_bus</span><span class="o">.</span><span class="n">publish_module_message</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">global_step</span><span class="p">,</span>
                                                 <span class="n">message</span><span class="o">.</span><span class="n">train_step</span><span class="p">,</span>
                                                 <span class="n">message</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span>

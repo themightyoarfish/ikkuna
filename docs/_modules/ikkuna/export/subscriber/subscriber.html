@@ -185,9 +185,6 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tag</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span> <span class="o">==</span> <span class="n">message</span><span class="o">.</span><span class="n">tag</span><span class="p">):</span>
             <span class="k">return</span>
 
-        <span class="k">if</span> <span class="n">message</span><span class="o">.</span><span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kinds</span><span class="p">:</span>
-            <span class="k">return</span>
-
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">ModuleMessage</span><span class="p">):</span>
             <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">module</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">kind</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -259,13 +256,14 @@
     <span class="sd">&#39;&#39;&#39;Base class for receiving and processing activations, gradients and other stuff into</span>
 <span class="sd">    insightful metrics.&#39;&#39;&#39;</span>
 
-<div class="viewcode-block" id="Subscriber.__init__"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscription</span><span class="p">,</span> <span class="n">message_bus</span><span class="p">):</span>
+<div class="viewcode-block" id="Subscriber.__init__"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscriptions</span><span class="p">,</span> <span class="n">message_bus</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        subscription    :   Subscription</span>
+<span class="sd">        subscriptions    :   list(Subscription)</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_subscription</span>     <span class="o">=</span> <span class="n">subscription</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subscriptions</span>    <span class="o">=</span> <span class="p">{</span><span class="n">kind</span><span class="p">:</span> <span class="n">subscription</span>
+                                  <span class="k">for</span> <span class="n">subscription</span> <span class="ow">in</span> <span class="n">subscriptions</span> <span class="k">for</span> <span class="n">kind</span> <span class="ow">in</span> <span class="n">subscription</span><span class="o">.</span><span class="n">kinds</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span>          <span class="o">=</span> <span class="n">message_bus</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_published_topics</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span></div>
 
@@ -297,8 +295,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">deregister_meta_topic</span><span class="p">(</span><span class="n">topic</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">subscription</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subscription</span>
+    <span class="k">def</span> <span class="nf">subscriptions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subscriptions</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">message_bus</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -327,7 +325,9 @@
 
 <div class="viewcode-block" id="Subscriber.receive_message"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.receive_message">[docs]</a>    <span class="k">def</span> <span class="nf">receive_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Process a single message received from an :class:`~ikkuna.export.messages.MessageBus`.&#39;&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_subscription</span><span class="o">.</span><span class="n">handle_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+
+        <span class="k">if</span> <span class="n">message</span><span class="o">.</span><span class="n">kind</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subscriptions</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_subscriptions</span><span class="p">[</span><span class="n">message</span><span class="o">.</span><span class="n">kind</span><span class="p">]</span><span class="o">.</span><span class="n">handle_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Subscriber.process_messages"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.process_messages">[docs]</a>    <span class="k">def</span> <span class="nf">process_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_or_bundle</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Callback for processing a single :class:`~ikkuna.export.messages.Message` or a</span>
@@ -364,7 +364,7 @@
 <span class="sd">                    Plotting backend</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-<div class="viewcode-block" id="PlotSubscriber.__init__"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.PlotSubscriber.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscription</span><span class="p">,</span> <span class="n">message_bus</span><span class="p">,</span> <span class="n">plot_config</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;tb&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">tbx_params</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotSubscriber.__init__"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.PlotSubscriber.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscriptions</span><span class="p">,</span> <span class="n">message_bus</span><span class="p">,</span> <span class="n">plot_config</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;tb&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">tbx_params</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -377,7 +377,7 @@
 <span class="sd">        **tbx_params    :   dict</span>
 <span class="sd">                            Keywords for the :class:`tensorboardX.SummaryWriter`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subscription</span><span class="p">,</span> <span class="n">message_bus</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subscriptions</span><span class="p">,</span> <span class="n">message_bus</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span> <span class="o">=</span> <span class="n">ikkuna</span><span class="o">.</span><span class="n">visualization</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="n">backend</span><span class="p">,</span> <span class="n">plot_config</span><span class="p">,</span> <span class="o">**</span><span class="n">tbx_params</span><span class="p">)</span></div>
 
@@ -406,11 +406,11 @@
 <span class="sd">                        messages at once.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">subscription</span> <span class="o">=</span> <span class="n">SynchronizedSubscription</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kinds</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">subsample</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subscription</span><span class="p">,</span> <span class="n">message_bus</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">([</span><span class="n">subscription</span><span class="p">],</span> <span class="n">message_bus</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span> <span class="o">=</span> <span class="n">callback</span></div>
 
 <div class="viewcode-block" id="CallbackSubscriber.compute"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.CallbackSubscriber.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_or_bundle</span><span class="p">):</span>
-        <span class="n">kinds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subscription</span><span class="o">.</span><span class="n">kinds</span>
+        <span class="n">kinds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subscriptions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">kinds</span>
         <span class="n">args</span>  <span class="o">=</span> <span class="p">(</span><span class="n">message_or_bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">kind</span><span class="p">]</span> <span class="k">for</span> <span class="n">kind</span> <span class="ow">in</span> <span class="n">kinds</span><span class="p">)</span>
 
         <span class="n">id_</span> <span class="o">=</span> <span class="n">message_or_bundle</span><span class="o">.</span><span class="n">key</span>

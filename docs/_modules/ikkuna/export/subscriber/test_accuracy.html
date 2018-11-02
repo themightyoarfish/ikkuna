@@ -150,7 +150,7 @@
         <span class="n">ylabel</span> <span class="o">=</span> <span class="s1">&#39;Accuracy&#39;</span>
         <span class="n">xlabel</span> <span class="o">=</span> <span class="s1">&#39;Train step&#39;</span>
         <span class="n">subscription</span> <span class="o">=</span> <span class="n">Subscription</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kinds</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">subsample</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subscription</span><span class="p">,</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">([</span><span class="n">subscription</span><span class="p">],</span>
                          <span class="n">message_bus</span><span class="p">,</span>
                          <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span> <span class="s1">&#39;ylabel&#39;</span><span class="p">:</span> <span class="n">ylabel</span><span class="p">,</span> <span class="s1">&#39;ylims&#39;</span><span class="p">:</span> <span class="n">ylims</span><span class="p">,</span> <span class="s1">&#39;xlabel&#39;</span><span class="p">:</span> <span class="n">xlabel</span><span class="p">},</span>
                          <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span> <span class="o">**</span><span class="n">tbx_params</span><span class="p">)</span>
@@ -167,8 +167,9 @@
         <span class="sd">&#39;&#39;&#39;Compute accuracy over the entire test set.</span>
 
 <span class="sd">        A :class:`~ikkuna.export.messages.NetworkMessage` with the identifier</span>
-<span class="sd">        ``test_accuracy`` is published. &#39;&#39;&#39;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subscription</span><span class="o">.</span><span class="n">counter</span><span class="p">[</span><span class="s1">&#39;batch_finished&#39;</span><span class="p">]</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frequency</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+<span class="sd">        ``test_accuracy`` is published.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subscriptions</span><span class="p">[</span><span class="s1">&#39;batch_finished&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">counter</span><span class="p">[</span><span class="s1">&#39;batch_finished&#39;</span><span class="p">]</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frequency</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">n_batches</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">accuracy</span>  <span class="o">=</span> <span class="mi">0</span>
             <span class="n">loader</span>    <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_loader</span><span class="p">)</span>
