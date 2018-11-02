@@ -173,9 +173,7 @@
 <span class="sd">        ----------</span>
 <span class="sd">        message    :   ikkuna.export.messages.Message</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">MessageBundle</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">kind</span><span class="p">)</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">add_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_subscriber</span><span class="o">.</span><span class="n">process_message_bundle</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subscriber</span><span class="o">.</span><span class="n">process_messages</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Subscription.handle_message"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscription.handle_message">[docs]</a>    <span class="k">def</span> <span class="nf">handle_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Callback for receiving an incoming message.</span>
@@ -234,7 +232,7 @@
         <span class="c1"># any full? publish</span>
         <span class="k">for</span> <span class="n">module_and_kind</span><span class="p">,</span> <span class="n">message_bundle</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_bundles</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">complete</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_subscriber</span><span class="o">.</span><span class="n">process_message_bundle</span><span class="p">(</span><span class="n">message_bundle</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_subscriber</span><span class="o">.</span><span class="n">process_messages</span><span class="p">(</span><span class="n">message_bundle</span><span class="p">)</span>
                 <span class="n">delete_these</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">module_and_kind</span><span class="p">)</span>
 
         <span class="c1"># purge published data</span>
@@ -316,25 +314,30 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        message_or_bundle :   ikkuna.export.messages.Message or ikkuna.export.messages.MessageBundle</span>
-<span class="sd">                            Can either be :class:`~ikkuna.export.messages.NetworkMessage` if the</span>
-<span class="sd">                            Subscriber is not interested in actual training artifacts, or</span>
+<span class="sd">        message_or_bundle : ikkuna.export.messages.Message or ikkuna.export.messages.MessageBundle</span>
+<span class="sd">                            If the subscriber uses a :class:`SynchronizedSubscription`, a bundle is</span>
+<span class="sd">                            received in each call, otherwise just a</span>
+<span class="sd">                            :class:`~ikkuna.export.messages.Message`.</span>
+
+<span class="sd">                            Messages can either be :class:`~ikkuna.export.messages.NetworkMessage`</span>
+<span class="sd">                            if the Subscriber is not interested in actual training artifacts, or</span>
 <span class="sd">                            :class:`~ikkuna.export.messages.ModuleMessage`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="Subscriber.receive_message"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.receive_message">[docs]</a>    <span class="k">def</span> <span class="nf">receive_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;Process a message received from an :class:`~ikkuna.export.Exporter`.&#39;&#39;&#39;</span>
+        <span class="sd">&#39;&#39;&#39;Process a single message received from an :class:`~ikkuna.export.messages.MessageBus`.&#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subscription</span><span class="o">.</span><span class="n">handle_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Subscriber.process_message_bundle"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.process_message_bundle">[docs]</a>    <span class="k">def</span> <span class="nf">process_message_bundle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_bundle</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;Callback for processing a :class:`~ikkuna.export.messages.MessageBundle` object with</span>
+<div class="viewcode-block" id="Subscriber.process_messages"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.process_messages">[docs]</a>    <span class="k">def</span> <span class="nf">process_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_or_bundle</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Callback for processing a single :class:`~ikkuna.export.messages.Message` or a</span>
+<span class="sd">        :class:`~ikkuna.export.messages.MessageBundle` object with</span>
 <span class="sd">        :class:`~ikkuna.export.messages.NetworkMessage`\ s or</span>
 <span class="sd">        :class:`~ikkuna.export.messages.ModuleMessage`\ s in it.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        message_bundle    :   ikkuna.export.messages.MessageBundle</span>
+<span class="sd">        message_or_bundle    :   ikkuna.export.messages.Message or ikkuna.export.messages.MessageBundle</span>
 <span class="sd">                            The exact nature of this package is determined by the</span>
 <span class="sd">                            :class:`ikkuna.export.subscriber.Subscription` attached to this</span>
 <span class="sd">                            :class:`ikkuna.export.subscriber.Subscriber`.</span>
@@ -345,10 +348,11 @@
 <span class="sd">            If the received :class:`~ikkuna.export.messages.MessageBundle` object is not</span>
 <span class="sd">            :meth:`~ikkuna.export.messages.MessageBundle.complete()`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">message_bundle</span><span class="o">.</span><span class="n">complete</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Data received for &quot;</span><span class="si">{message_bundle._module}</span><span class="s1">&quot; is not complete.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">message_or_bundle</span><span class="p">,</span> <span class="n">ikkuna</span><span class="o">.</span><span class="n">export</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">MessageBundle</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="n">message_or_bundle</span><span class="o">.</span><span class="n">complete</span><span class="p">()):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Data received for &quot;</span><span class="si">{message_or_bundle._module}</span><span class="s1">&quot; is not complete.&#39;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">message_bundle</span><span class="p">)</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">message_or_bundle</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="PlotSubscriber"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.PlotSubscriber">[docs]</a><span class="k">class</span> <span class="nc">PlotSubscriber</span><span class="p">(</span><span class="n">Subscriber</span><span class="p">):</span>

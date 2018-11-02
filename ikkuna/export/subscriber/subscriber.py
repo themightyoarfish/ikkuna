@@ -65,9 +65,7 @@ class Subscription(object):
         ----------
         message    :   ikkuna.export.messages.Message
         '''
-        data = MessageBundle(message.kind)
-        data.add_message(message)
-        self._subscriber.process_message_bundle(data)
+        self._subscriber.process_messages(message)
 
     def handle_message(self, message):
         '''Callback for receiving an incoming message.
@@ -126,7 +124,7 @@ class SynchronizedSubscription(Subscription):
         # any full? publish
         for module_and_kind, message_bundle in self._open_bundles.items():
             if message_bundle.complete():
-                self._subscriber.process_message_bundle(message_bundle)
+                self._subscriber.process_messages(message_bundle)
                 delete_these.append(module_and_kind)
 
         # purge published data
@@ -208,25 +206,30 @@ class Subscriber(abc.ABC):
 
         Parameters
         ----------
-        message_or_bundle :   ikkuna.export.messages.Message or ikkuna.export.messages.MessageBundle
-                            Can either be :class:`~ikkuna.export.messages.NetworkMessage` if the
-                            Subscriber is not interested in actual training artifacts, or
+        message_or_bundle : ikkuna.export.messages.Message or ikkuna.export.messages.MessageBundle
+                            If the subscriber uses a :class:`SynchronizedSubscription`, a bundle is
+                            received in each call, otherwise just a
+                            :class:`~ikkuna.export.messages.Message`.
+
+                            Messages can either be :class:`~ikkuna.export.messages.NetworkMessage`
+                            if the Subscriber is not interested in actual training artifacts, or
                             :class:`~ikkuna.export.messages.ModuleMessage`
         '''
         pass
 
     def receive_message(self, message):
-        '''Process a message received from an :class:`~ikkuna.export.Exporter`.'''
+        '''Process a single message received from an :class:`~ikkuna.export.messages.MessageBus`.'''
         self._subscription.handle_message(message)
 
-    def process_message_bundle(self, message_bundle):
-        '''Callback for processing a :class:`~ikkuna.export.messages.MessageBundle` object with
+    def process_messages(self, message_or_bundle):
+        '''Callback for processing a single :class:`~ikkuna.export.messages.Message` or a
+        :class:`~ikkuna.export.messages.MessageBundle` object with
         :class:`~ikkuna.export.messages.NetworkMessage`\ s or
         :class:`~ikkuna.export.messages.ModuleMessage`\ s in it.
 
         Parameters
         ----------
-        message_bundle    :   ikkuna.export.messages.MessageBundle
+        message_or_bundle    :   ikkuna.export.messages.Message or ikkuna.export.messages.MessageBundle
                             The exact nature of this package is determined by the
                             :class:`ikkuna.export.subscriber.Subscription` attached to this
                             :class:`ikkuna.export.subscriber.Subscriber`.
@@ -237,10 +240,11 @@ class Subscriber(abc.ABC):
             If the received :class:`~ikkuna.export.messages.MessageBundle` object is not
             :meth:`~ikkuna.export.messages.MessageBundle.complete()`
         '''
-        if not message_bundle.complete():
-            raise ValueError(f'Data received for "{message_bundle._module}" is not complete.')
+        if (isinstance(message_or_bundle, ikkuna.export.messages.MessageBundle)
+            and not message_or_bundle.complete()):
+            raise ValueError(f'Data received for "{message_or_bundle._module}" is not complete.')
 
-        self.compute(message_bundle)
+        self.compute(message_or_bundle)
 
 
 class PlotSubscriber(Subscriber):

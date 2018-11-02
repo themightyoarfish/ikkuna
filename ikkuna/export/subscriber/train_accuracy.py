@@ -23,20 +23,20 @@ class TrainAccuracySubscriber(PlotSubscriber):
 
         self._add_publication(f'train_accuracy', type='META')
 
-    def compute(self, message_bundle):
+    def compute(self, message):
         '''Compute accuracy over the current train batch.
 
         A :class:`~ikkuna.export.messages.NetworkMessage` with the identifier
         ``train_accuracy`` is published. '''
-        Y           = message_bundle.data['network_output']
-        labels      = message_bundle.data['input_labels']
+        Y           = message.data['network_output']
+        labels      = message.data['input_labels']
         predictions = Y.argmax(1)
         n_correct   = (predictions == labels).sum().item()
         accuracy    = n_correct / float(labels.numel())
-        self._backend.add_data('Train batch accuracy', accuracy, message_bundle.global_step)
+        self._backend.add_data('Train batch accuracy', accuracy, message.global_step)
 
         kind = 'train_accuracy'
-        self.message_bus.publish_network_message(message_bundle.global_step,
-                                                 message_bundle.train_step,
-                                                 message_bundle.epoch, kind,
+        self.message_bus.publish_network_message(message.global_step,
+                                                 message.train_step,
+                                                 message.epoch, kind,
                                                  data=accuracy)

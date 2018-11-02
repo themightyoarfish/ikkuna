@@ -34,7 +34,7 @@ class SpectralNormSubscriber(PlotSubscriber):
         self.u = dict()
         self._add_publication(f'{kind}_spectral_norm', type='DATA')
 
-    def compute(self, message_bundle):
+    def compute(self, message):
         '''The spectral norm computation is taken from the `Pytorch implementation of spectral norm
         <https://pytorch.org/docs/master/_modules/torch/nn/utils/spectral_norm.html>`_. It's
         possible to use SVD instead, but we are not interested in the full matrix decomposition,
@@ -43,9 +43,9 @@ class SpectralNormSubscriber(PlotSubscriber):
         A :class:`~ikkuna.export.messages.ModuleMessage`
         with the identifier ``{kind}_spectral_norm`` is published. '''
 
-        module, module_name = message_bundle.key
+        module, module_name = message.key
         # get and reshape the weight tensor to 2d
-        weights             = message_bundle.data[self._subscription.kinds[0]]
+        weights             = message.data
         height              = weights.size(0)
         weights2d           = weights.reshape(height, -1)
 
@@ -61,10 +61,10 @@ class SpectralNormSubscriber(PlotSubscriber):
 
         norm = torch.dot(self.u[module_name], torch.matmul(weights2d, v)).item()
 
-        self._backend.add_data(module_name, norm, message_bundle.global_step)
+        self._backend.add_data(module_name, norm, message.global_step)
 
-        kind = f'{self._subscription.kinds[0]}_spectral_norm'
-        self.message_bus.publish_module_message(message_bundle.global_step,
-                                                message_bundle.train_step,
-                                                message_bundle.epoch, kind,
-                                                message_bundle.key, norm)
+        kind = f'{message.kind}_spectral_norm'
+        self.message_bus.publish_module_message(message.global_step,
+                                                message.train_step,
+                                                message.epoch, kind,
+                                                message.key, norm)

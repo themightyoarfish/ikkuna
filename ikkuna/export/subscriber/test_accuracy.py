@@ -55,7 +55,7 @@ class TestAccuracySubscriber(PlotSubscriber):
 
         self._add_publication('test_accuracy', type='META')
 
-    def compute(self, message_or_data):
+    def compute(self, message):
         '''Compute accuracy over the entire test set.
 
         A :class:`~ikkuna.export.messages.NetworkMessage` with the identifier
@@ -74,10 +74,10 @@ class TestAccuracySubscriber(PlotSubscriber):
                     n_batches  += 1
             except StopIteration:
                 accuracy /= n_batches
-                self._backend.add_data('test accuracy', accuracy, message_or_data.global_step)
+                self._backend.add_data('test accuracy', accuracy, message.global_step)
 
                 kind = 'test_accuracy'
-                self.message_bus.publish_network_message(message_or_data.global_step,
-                                                         message_or_data.train_step,
-                                                         message_or_data.epoch, kind,
+                self.message_bus.publish_network_message(message.global_step,
+                                                         message.train_step,
+                                                         message.epoch, kind,
                                                          data=accuracy)

@@ -26,17 +26,17 @@ class VarianceSubscriber(PlotSubscriber):
 
         self._add_publication(f'{kind}_variance', type='DATA')
 
-    def compute(self, message_bundle):
+    def compute(self, message):
         '''Compute the variance of a quantity. A :class:`~ikkuna.export.messages.ModuleMessage`
         with the identifier ``{kind}_variance`` is published. '''
 
-        module, module_name = message_bundle.key
-        data                = message_bundle.data[self._subscription.kinds[0]]
+        module, module_name = message.key
+        data                = message.data
         var                 = data.var()
-        self._backend.add_data(module_name, var, message_bundle.global_step)
+        self._backend.add_data(module_name, var, message.global_step)
 
         kind = f'{self._subscription.kinds[0]}_variance'
-        self.message_bus.publish_module_message(message_bundle.global_step,
-                                                message_bundle.train_step,
-                                                message_bundle.epoch, kind,
-                                                message_bundle.key, var)
+        self.message_bus.publish_module_message(message.global_step,
+                                                message.train_step,
+                                                message.epoch, kind,
+                                                message.key, var)

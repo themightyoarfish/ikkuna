@@ -22,18 +22,18 @@ class NormSubscriber(PlotSubscriber):
         self._order  = order
         self._add_publication(f'{kind}_norm{order}', type='DATA')
 
-    def compute(self, message_bundle):
+    def compute(self, message):
         '''Compute the norm of a quantity. A :class:`~ikkuna.export.messages.ModuleMessage`
         with the identifier ``{kind}_norm{order}`` is published. '''
 
-        module, module_name  = message_bundle.key
+        module, module_name  = message.key
 
-        data = message_bundle.data[self._subscription.kinds[0]]
+        data = message.data
         norm = data.norm(p=self._order)
-        self._backend.add_data(module_name, norm, message_bundle.global_step)
+        self._backend.add_data(module_name, norm, message.global_step)
 
-        kind = f'{self._subscription.kinds[0]}_norm{self._order}'
-        self.message_bus.publish_module_message(message_bundle.global_step,
-                                                message_bundle.train_step,
-                                                message_bundle.epoch, kind,
-                                                message_bundle.key, norm)
+        kind = f'{message.kind}_norm{self._order}'
+        self.message_bus.publish_module_message(message.global_step,
+                                                message.train_step,
+                                                message.epoch, kind,
+                                                message.key, norm)

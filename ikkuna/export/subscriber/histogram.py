@@ -19,7 +19,7 @@ class HistogramSubscriber(PlotSubscriber):
         super().__init__(subscription, message_bus, {'title': title, 'ylabel': ylabel},
                          backend=backend)
 
-    def compute(self, message_bundle):
+    def compute(self, message):
         '''
         .. note::
             Since the histogram is computed by the visualization backend (there's no practical way
@@ -27,6 +27,6 @@ class HistogramSubscriber(PlotSubscriber):
             :class:`~ikkuna.export.messages.ModuleMessage`
         '''
 
-        module, name = message_bundle.key
-        data         = message_bundle.data[self._subscription.kinds[0]]
-        self._backend.add_histogram(name, data, message_bundle.global_step)
+        module, name = message.key
+        data         = message.data
+        self._backend.add_histogram(name, data, message.global_step)
