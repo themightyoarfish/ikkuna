@@ -16,7 +16,7 @@ class HistogramSubscriber(PlotSubscriber):
         subscription = Subscription(self, [kind], tag, subsample)
         title        = f'{kind} histogram'
         ylabel       = 'Frequency'
-        super().__init__(subscription, message_bus, {'title': title, 'ylabel': ylabel},
+        super().__init__([subscription], message_bus, {'title': title, 'ylabel': ylabel},
                          backend=backend)
 
     def compute(self, message):

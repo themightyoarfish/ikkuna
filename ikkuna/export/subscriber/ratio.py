@@ -28,7 +28,7 @@ class RatioSubscriber(PlotSubscriber):
         ylabel       = 'Ratio'
         xlabel       = 'Train step'
         subscription = SynchronizedSubscription(self, kinds, tag, subsample)
-        super().__init__(subscription, message_bus,
+        super().__init__([subscription], message_bus,
                          {'title': title,
                           'ylabel': ylabel,
                           'ylims': ylims,
@@ -48,8 +48,8 @@ class RatioSubscriber(PlotSubscriber):
 
         module, module_name = message_bundle.key
 
-        dividend            = message_bundle.data[self._subscription.kinds[0]]
-        divisor             = message_bundle.data[self._subscription.kinds[1]]
+        dividend            = message_bundle.data[message_bundle.kinds[0]]
+        divisor             = message_bundle.data[message_bundle.kinds[1]]
 
         scale1              = dividend.norm()
         scale2              = divisor.norm()
@@ -57,7 +57,7 @@ class RatioSubscriber(PlotSubscriber):
 
         self._backend.add_data(module_name, ratio, message_bundle.global_step)
 
-        kind = f'{self._subscription.kinds[0]}_{self._subscription.kinds[1]}_ratio'
+        kind = f'{message_bundle.kinds[0]}_{message_bundle.kinds[1]}_ratio'
         self.message_bus.publish_module_message(message_bundle.global_step,
                                                 message_bundle.train_step,
                                                 message_bundle.epoch, kind,

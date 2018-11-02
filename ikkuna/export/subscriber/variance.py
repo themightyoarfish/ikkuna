@@ -17,7 +17,7 @@ class VarianceSubscriber(PlotSubscriber):
         ylabel       = 'σ^2'
         xlabel       = 'Train step'
         subscription = Subscription(self, [kind], tag, subsample)
-        super().__init__(subscription, message_bus,
+        super().__init__([subscription], message_bus,
                          {'title': title,
                           'ylabel': ylabel,
                           'ylims': ylims,
@@ -35,7 +35,7 @@ class VarianceSubscriber(PlotSubscriber):
         var                 = data.var()
         self._backend.add_data(module_name, var, message.global_step)
 
-        kind = f'{self._subscription.kinds[0]}_variance'
+        kind = f'{message.kind}_variance'
         self.message_bus.publish_module_message(message.global_step,
                                                 message.train_step,
                                                 message.epoch, kind,

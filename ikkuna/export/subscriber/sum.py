@@ -12,7 +12,7 @@ class SumSubscriber(PlotSubscriber):
         ylabel       = 'Sum'
         xlabel       = 'Train step'
         subscription = Subscription(self, [kind], tag, subsample)
-        super().__init__(subscription, message_bus,
+        super().__init__([subscription], message_bus,
                          {'title': title,
                           'ylabel': ylabel,
                           'ylims': ylims,
@@ -30,7 +30,7 @@ class SumSubscriber(PlotSubscriber):
         sum = data.sum()
         self._backend.add_data(module_name, sum, message.global_step)
 
-        kind = f'{self._subscription.kinds[0]}_sum'
+        kind = f'{message.kind}_sum'
         self.message_bus.publish_module_message(message.global_step,
                                                 message.train_step,
                                                 message.epoch, kind,

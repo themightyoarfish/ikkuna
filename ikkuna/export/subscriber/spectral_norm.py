@@ -28,7 +28,7 @@ class SpectralNormSubscriber(PlotSubscriber):
         title = f'Spectral norms of {kind}'
         xlabel = 'Step'
         ylabel = 'Spectral norm'
-        super().__init__(subscription, message_bus,
+        super().__init__([subscription], message_bus,
                          {'title': title, 'xlabel': xlabel, 'ylims': ylims, 'ylabel': ylabel},
                          backend=backend, **tbx_params)
         self.u = dict()

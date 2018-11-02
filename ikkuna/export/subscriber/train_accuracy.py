@@ -16,7 +16,7 @@ class TrainAccuracySubscriber(PlotSubscriber):
         title  = f'Train batch accuracy'
         xlabel = 'Step'
         ylabel = 'Accuracy'
-        super().__init__(subscription,
+        super().__init__([subscription],
                          message_bus,
                          {'title': title, 'xlabel': xlabel, 'ylims': ylims, 'ylabel': ylabel},
                          backend=backend, **tbx_params)

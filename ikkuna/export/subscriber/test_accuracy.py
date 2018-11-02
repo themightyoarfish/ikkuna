@@ -42,7 +42,7 @@ class TestAccuracySubscriber(PlotSubscriber):
         ylabel = 'Accuracy'
         xlabel = 'Train step'
         subscription = Subscription(self, kinds, tag, subsample)
-        super().__init__(subscription,
+        super().__init__([subscription],
                          message_bus,
                          {'title': title, 'ylabel': ylabel, 'ylims': ylims, 'xlabel': xlabel},
                          backend=backend, **tbx_params)
@@ -59,8 +59,9 @@ class TestAccuracySubscriber(PlotSubscriber):
         '''Compute accuracy over the entire test set.
 
         A :class:`~ikkuna.export.messages.NetworkMessage` with the identifier
-        ``test_accuracy`` is published. '''
-        if self._subscription.counter['batch_finished'] % self._frequency == 0:
+        ``test_accuracy`` is published.
+        '''
+        if self._subscriptions['batch_finished'].counter['batch_finished'] % self._frequency == 0:
             n_batches = 0
             accuracy  = 0
             loader    = iter(self._data_loader)

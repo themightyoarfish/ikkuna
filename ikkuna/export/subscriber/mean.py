@@ -14,7 +14,7 @@ class MeanSubscriber(PlotSubscriber):
         ylabel       = 'Mean'
         xlabel       = 'Train step'
         subscription = Subscription(self, [kind], tag, subsample)
-        super().__init__(subscription, message_bus, {'title': title,
+        super().__init__([subscription], message_bus, {'title': title,
                                                      'ylabel': ylabel,
                                                      'ylims': ylims,
                                                      'xlabel': xlabel},
@@ -31,7 +31,7 @@ class MeanSubscriber(PlotSubscriber):
         mean = data.mean()
         self._backend.add_data(module_name, mean, message.global_step)
 
-        kind = f'{self._subscription.kinds[0]}_mean'
+        kind = f'{message.kind}_mean'
         self.message_bus.publish_module_message(message.global_step,
                                                 message.train_step,
                                                 message.epoch, kind,

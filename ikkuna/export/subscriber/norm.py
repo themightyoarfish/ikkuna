@@ -14,7 +14,7 @@ class NormSubscriber(PlotSubscriber):
         ylabel       = f'L{order} Norm'
         xlabel       = 'Train step'
         subscription = Subscription(self, [kind], tag, subsample)
-        super().__init__(subscription, message_bus, {'title': title,
+        super().__init__([subscription], message_bus, {'title': title,
                                                      'ylabel': ylabel,
                                                      'ylims': ylims,
                                                      'xlabel': xlabel},

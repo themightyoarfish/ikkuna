@@ -77,9 +77,6 @@ class Subscription(object):
         if not (self._tag is None or self._tag == message.tag):
             return
 
-        if message.kind not in self.kinds:
-            return
-
         if isinstance(message, ModuleMessage):
             key = (message.module, message.kind)
         else:
@@ -151,13 +148,14 @@ class Subscriber(abc.ABC):
     '''Base class for receiving and processing activations, gradients and other stuff into
     insightful metrics.'''
 
-    def __init__(self, subscription, message_bus):
+    def __init__(self, subscriptions, message_bus):
         '''
         Parameters
         ----------
-        subscription    :   Subscription
+        subscriptions    :   list(Subscription)
         '''
-        self._subscription     = subscription
+        self._subscriptions    = {kind: subscription
+                                  for subscription in subscriptions for kind in subscription.kinds}
         self._msg_bus          = message_bus
         self._published_topics = dict()
 
@@ -189,8 +187,8 @@ class Subscriber(abc.ABC):
                 self._msg_bus.deregister_meta_topic(topic)
 
     @property
-    def subscription(self):
-        return self._subscription
+    def subscriptions(self):
+        return self._subscriptions
 
     @property
     def message_bus(self):
@@ -219,7 +217,9 @@ class Subscriber(abc.ABC):
 
     def receive_message(self, message):
         '''Process a single message received from an :class:`~ikkuna.export.messages.MessageBus`.'''
-        self._subscription.handle_message(message)
+
+        if message.kind in self._subscriptions:
+            self._subscriptions[message.kind].handle_message(message)
 
     def process_messages(self, message_or_bundle):
         '''Callback for processing a single :class:`~ikkuna.export.messages.Message` or a
@@ -256,7 +256,7 @@ class PlotSubscriber(Subscriber):
                     Plotting backend
     '''
 
-    def __init__(self, subscription, message_bus, plot_config, backend='tb', **tbx_params):
+    def __init__(self, subscriptions, message_bus, plot_config, backend='tb', **tbx_params):
         '''
         Parameters
         ----------
@@ -269,7 +269,7 @@ class PlotSubscriber(Subscriber):
         **tbx_params    :   dict
                             Keywords for the :class:`tensorboardX.SummaryWriter`
         '''
-        super().__init__(subscription, message_bus)
+        super().__init__(subscriptions, message_bus)
 
         self._backend = ikkuna.visualization.get_backend(backend, plot_config, **tbx_params)
 
@@ -298,11 +298,11 @@ class CallbackSubscriber(Subscriber):
                         messages at once.
         '''
         subscription = SynchronizedSubscription(self, kinds, tag, subsample)
-        super().__init__(subscription, message_bus)
+        super().__init__([subscription], message_bus)
         self._callback = callback
 
     def compute(self, message_or_bundle):
-        kinds = self._subscription.kinds
+        kinds = self._subscriptions[0].kinds
         args  = (message_or_bundle.data[kind] for kind in kinds)
 
         id_ = message_or_bundle.key
