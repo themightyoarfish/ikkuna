@@ -11,7 +11,7 @@ with open('README.md') as f:
     readme = f.read()
 
 setup(name='ikkuna',
-      version='0.0.1.post1',
+      version='0.0.2',
       description='Ikkuna Neural Network Monitor',
       long_description=readme,
       author='Rasmus Diederichsen',
