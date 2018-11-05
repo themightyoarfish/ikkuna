@@ -3,7 +3,7 @@ import torch
 from ikkuna.export.subscriber import PlotSubscriber, SynchronizedSubscription
 from ikkuna.export.messages import get_default_bus
 
-ZERO_TENSOR = torch.tensor(0.0).cuda()
+ZERO_TENSOR = torch.tensor(0.0, device='cuda' if torch.cuda.is_available() else 'cpu')
 
 
 class RatioSubscriber(PlotSubscriber):

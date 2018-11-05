@@ -1,6 +1,8 @@
+import torch
+from torch.utils.data import DataLoader
+
 from ikkuna.export.subscriber import PlotSubscriber, Subscription
 from ikkuna.export.messages import get_default_bus
-from torch.utils.data import DataLoader
 
 
 class TestAccuracySubscriber(PlotSubscriber):
@@ -68,7 +70,9 @@ class TestAccuracySubscriber(PlotSubscriber):
             try:
                 while True:
                     X, labels   = next(loader)
-                    outputs     = self._forward_fn(X.cuda(), should_train=False)
+                    if torch.cuda.is_available():
+                        X = X.cuda()
+                    outputs     = self._forward_fn(X, should_train=False)
                     predictions = outputs.argmax(1)
                     n_correct   = (predictions.cpu() == labels).sum().item()
                     accuracy   += n_correct / X.shape[0]

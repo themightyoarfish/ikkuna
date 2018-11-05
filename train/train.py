@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 from ikkuna.utils import create_optimizer
@@ -161,8 +162,7 @@ class Trainer:
         string is passed.
 
         .. warning::
-            Currently, the function automatically calls :meth:`torch.nn.Module.cuda()` and hence a
-            GPU is necessary.
+            The function automatically calls :meth:`torch.nn.Module.cuda()` if cuda is available.
 
         Parameters
         ----------
@@ -184,7 +184,8 @@ class Trainer:
         else:
             self._model = model_or_str
 
-        self._model.cuda()
+        if torch.cuda.is_available():
+            self._model.cuda()
         if self._exporter._model is None:
             self._exporter.set_model(self._model)
 

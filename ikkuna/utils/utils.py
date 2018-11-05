@@ -14,8 +14,9 @@ def seed_everything(seed=1234):
     import random, torch, os, numpy as np       # noqa
     random.seed(seed)
     torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
-    torch.backends.cudnn.deterministic = True
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+        torch.backends.cudnn.deterministic = True
     np.random.seed(seed)
     os.environ['PYTHONHASHSEED'] = str(seed)
 

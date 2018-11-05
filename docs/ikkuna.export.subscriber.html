@@ -541,36 +541,6 @@ if the Subscriber is not interested in actual training artifacts, or
 </dd></dl>
 
 <dl class="class">
-<dt id="ikkuna.export.subscriber.DummyRatioSubscriber">
-<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">DummyRatioSubscriber</code><span class="sig-paren">(</span><em>kinds</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em>, <em>absolute=True</em>, <em>**tbx_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dummy/dummy_subscriber.html#DummyRatioSubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.DummyRatioSubscriber" title="Permalink to this definition">¶</a></dt>
-<dd><p>A <a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a> which computes the average ratio between two
-quantities.  The dividend will be the first element of the
-<a class="reference internal" href="#ikkuna.export.subscriber.Subscription.kinds" title="ikkuna.export.subscriber.Subscription.kinds"><code class="xref py py-attr docutils literal notranslate"><span class="pre">kinds</span></code></a> property, the divisor the second.
-Therefore it is vital to pass the message kinds to the
-<a class="reference internal" href="#ikkuna.export.subscriber.Subscription" title="ikkuna.export.subscriber.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscription</span></code></a> object in the correct order.</p>
-<dl class="method">
-<dt id="ikkuna.export.subscriber.DummyRatioSubscriber.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>kinds</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em>, <em>absolute=True</em>, <em>**tbx_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dummy/dummy_subscriber.html#DummyRatioSubscriber.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.DummyRatioSubscriber.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>absolute</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Whether to use absolute ratio</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.subscriber.DummyRatioSubscriber._metric">
-<code class="descname">_metric</code><span class="sig-paren">(</span><em>message_bundle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dummy/dummy_subscriber.html#DummyRatioSubscriber._metric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.DummyRatioSubscriber._metric" title="Permalink to this definition">¶</a></dt>
-<dd><p>The ratio between the two kinds is computed over the subset of not-NaN values and added
-to the record.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
 <dt id="ikkuna.export.subscriber.HistogramSubscriber">
 <em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">HistogramSubscriber</code><span class="sig-paren">(</span><em>kind</em>, <em>message_bus=&lt;ikkuna.export.messages.MessageBus object&gt;</em>, <em>tag=None</em>, <em>subsample=1</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/histogram.html#HistogramSubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber" title="Permalink to this definition">¶</a></dt>
 <dd><p>A <a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a> which subsamples training artifacts and
@@ -712,7 +682,7 @@ set).</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/data.html#torch.utils.data.DataLoader" title="(in PyTorch vmaster (1.0.0a0+bcb851a ))">torch.utils.data.DataLoader</a></td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/data.html#torch.utils.data.DataLoader" title="(in PyTorch vmaster (1.0.0a0+274f3c0 ))">torch.utils.data.DataLoader</a></td>
 </tr>
 </tbody>
 </table>
@@ -755,7 +725,7 @@ set).</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>dataset_meta</strong> (<a class="reference internal" href="train.html#train.DatasetMeta" title="train.DatasetMeta"><em>train.DatasetMeta</em></a>) – Test dataset</li>
-<li><strong>forward_fn</strong> (<em>function</em>) – Bound version of <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.forward" title="(in PyTorch vmaster (1.0.0a0+bcb851a ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.forward()</span></code></a>. This could be obtained
+<li><strong>forward_fn</strong> (<em>function</em>) – Bound version of <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.forward" title="(in PyTorch vmaster (1.0.0a0+274f3c0 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.forward()</span></code></a>. This could be obtained
 from the <a class="reference internal" href="train.html#train.Trainer.model" title="train.Trainer.model"><code class="xref py py-attr docutils literal notranslate"><span class="pre">train.Trainer.model</span></code></a> property.</li>
 <li><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Batch size to use for pushing the test data through the model. This doesn’t
 have to be the training batch size, but must be selected so that the forward
