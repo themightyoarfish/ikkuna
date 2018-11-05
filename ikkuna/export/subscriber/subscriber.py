@@ -21,7 +21,7 @@ class Subscription(object):
     _subscriber :   ikkuna.export.subscriber.Subscriber
                     The subscriber associated with the subscription
     counter :   dict(ikkuna.utils.NamedModule or str, int)
-                Number of times the subscriber was called for each module label or meta data
+                Number of times the Subscription was called for each module label or meta data
                 identifier. Since one :class:`ikkuna.export.subscriber.Subscriber` is associated
                 with only one configuration of :class:`ikkuna.export.messages.MessageBundle`, this
                 will enable proper subsampling of message streams.
@@ -39,9 +39,20 @@ class Subscription(object):
         ----------
         subscriber  :   ikkuna.export.subscriber.Subscriber
                         Object that wants to receive the messages
+        kinds   :   list
+                    List of message kinds to process
+        tag :   str
+                tag for filtering messages
+        subsample   :   int
+                        Number of messages to ignore before processing one. Note that this number if
+                        applied to every kind, regardless of frequency. So if ``subsample = 10``,
+                        every tenth ``weights`` message would be processed, but also only every
+                        tenth ``epoch_finished`` message.
         tag :   str or None
                 Optional tag for filtering messages. If ``None``, all messages will be relayed
         '''
+        if not isinstance(kinds, list):
+            raise ValueError(f'Expected list of kinds, got {type(kinds)}')
         self._tag        = tag
         self._subscriber = subscriber
 
@@ -229,7 +240,7 @@ class Subscriber(abc.ABC):
 
         Parameters
         ----------
-        message_or_bundle    :   ikkuna.export.messages.Message or ikkuna.export.messages.MessageBundle
+        message_or_bundle : ikkuna.export.messages.Message or ikkuna.export.messages.MessageBundle
                             The exact nature of this package is determined by the
                             :class:`ikkuna.export.subscriber.Subscription` attached to this
                             :class:`ikkuna.export.subscriber.Subscriber`.

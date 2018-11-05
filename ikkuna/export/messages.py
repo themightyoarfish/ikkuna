@@ -338,6 +338,7 @@ class MessageBus(object):
 
     def register_meta_topic(self, kind):
         '''Register a topic so it can be subscribed.'''
+        print(f'Registering topic {kind}')
         self._meta_kinds.add(kind)
 
     def deregister_meta_topic(self, kind):
@@ -347,6 +348,7 @@ class MessageBus(object):
 
     def register_data_topic(self, kind):
         '''Register a topic so it can be subscribed.'''
+        print(f'Registering topic {kind}')
         self._data_kinds.add(kind)
 
     def deregister_data_topic(self, kind):
