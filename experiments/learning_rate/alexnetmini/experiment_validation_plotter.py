@@ -10,6 +10,7 @@ runs      = sacred_db.runs
 # pipeline to get all accuracies with `_id`s
 accuracies_pipeline = [
     {'$match': {'result': {'$ne': None}}},                   # filter broken experiments
+    {'$match': {'config.schedule': {'$in': ['exponential_schedule_fn', 'identity_schedule_fn']}}},
     {'$match': {'config.base_lr': 0.2}},                     # use only lr=0.2
     {'$group': {'_id': '$config.schedule',                   # group schedule fn
                 'accuracies': {'$addToSet': '$result'}}}     # make array from all accuracies
@@ -36,4 +37,4 @@ for i in range(len(labels)):
     x = np.random.normal(i + 1, 0.04, size=len(y))  # tick locations are [1, 2, 3, ...] for boxplots
     ax.plot(x, y, '.', alpha=0.3, markersize=20)
 
-plt.show()
+plt.savefig('experiment_validation.pdf')

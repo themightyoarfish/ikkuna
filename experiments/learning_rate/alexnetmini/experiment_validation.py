@@ -1,11 +1,16 @@
 import torch
 from torch.utils.data import DataLoader
 
+import logging
+logger = logging.getLogger()
+
 ##################
 #  Ikkuna stuff  #
 ##################
 from ikkuna.models import AlexNetMini
 from ikkuna.utils import load_dataset
+from ikkuna.export import Exporter
+from ikkuna.export.subscriber import RatioSubscriber, TestAccuracySubscriber, TrainAccuracySubscriber
 from train import Trainer
 
 ##################
@@ -17,9 +22,25 @@ from sacred.observers import MongoObserver
 
 ex = Experiment(EXPERIMENT_NAME, interactive=True)
 ex.observers.append(MongoObserver.create())
+logger.setLevel(logging.WARNING)   # when run in sacred, log level seems to be higher
+ex.logger = logger
+
+from subscribers import RatioLRSubscriber, SacredLoggingSubscriber
+
+# we need this so we can define a function for the learning rate like the exponential and identity
+# fns. we will define the subscriber in the main function
+LR_SUBSCRIBER = None
 
 
-schedules = ['identity_schedule_fn', 'exponential_schedule_fn', 'oscillating_schedule_fn']
+schedules = [
+    'identity_schedule_fn',
+    'exponential_schedule_fn',
+    'ratio_adaptive_schedule_fn'
+]
+
+
+def ratio_adaptive_schedule_fn(epoch):
+    return LR_SUBSCRIBER(epoch)
 
 
 def identity_schedule_fn(epoch):
@@ -42,26 +63,38 @@ def cfg():
     batch_size = 128
     n_epochs   = 100
     loss       = 'CrossEntropyLoss'
-    schedule   = 'oscillating_schedule_fn'
+    schedule   = 'ratio_adaptive_schedule_fn'
+    dataset    = 'CIFAR10'
 
 
 @ex.automain
-def run(batch_size, loss, optimizer, base_lr, n_epochs, schedule):
+def run(batch_size, loss, optimizer, base_lr, n_epochs, schedule, dataset):
+    global LR_SUBSCRIBER
+    LR_SUBSCRIBER = RatioLRSubscriber(base_lr)
     # load the dataset
-    dataset_train_meta, dataset_test_meta = load_dataset('CIFAR10')
+    dataset_train_meta, dataset_test_meta = load_dataset(dataset)
 
+    exporter = Exporter(depth=-1, module_filter=[torch.nn.Conv2d, torch.nn.Linear])
     # instantiate model
-    model = AlexNetMini(dataset_train_meta.shape[1:],
-                        num_classes=dataset_train_meta.num_classes)
+    model = AlexNetMini(dataset_train_meta.shape[1:], num_classes=dataset_train_meta.num_classes,
+                        exporter=exporter)
 
     # get loss and scheduling function since sacred can only log strings
     loss_fn     = getattr(torch.nn, loss)()
     schedule_fn = globals()[schedule]
 
-    # set up the trainer. Will create its own exporter, but we don't use it
-    trainer = Trainer(dataset_train_meta, batch_size=batch_size, loss=loss_fn)
+    # set up the trainer
+    trainer = Trainer(dataset_train_meta, batch_size=batch_size, loss=loss_fn, exporter=exporter)
     trainer.set_model(model)
     trainer.optimize(name=optimizer, lr=base_lr)
+    trainer.add_subscriber(RatioSubscriber(['weight_updates', 'weights']))
+    trainer.add_subscriber(LR_SUBSCRIBER)
+    trainer.add_subscriber(TrainAccuracySubscriber())
+    trainer.add_subscriber(TestAccuracySubscriber(dataset_test_meta, trainer.model.forward,
+                                                  frequency=trainer.batches_per_epoch,
+                                                  batch_size=batch_size))
+
+    trainer.add_subscriber(SacredLoggingSubscriber(ex, ['test_accuracy', 'learning_rate']))
     trainer.set_schedule(torch.optim.lr_scheduler.LambdaLR, schedule_fn)
 
     # do n epochs of training

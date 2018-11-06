@@ -1,5 +1,6 @@
 from experiments.learning_rate.alexnetmini.experiment_validation import ex, schedules
 
+import itertools
 import os
 from subprocess import Popen, DEVNULL
 from argparse import ArgumentParser
@@ -9,15 +10,16 @@ import time
 def main():
     parser = ArgumentParser()
     parser.add_argument('-p', '--parallel', action='store_true', help='Run experiments to run')
-    parser.add_argument('-n', '--nruns', type=int, default=5, help='Number of runs per schedule')
-    parser.add_argument('-r', '--jobs', type=int, default=3, help='Number of processes to use')
+    parser.add_argument('-n', '--nruns', type=int, default=5, help='Number of runs per config')
+    parser.add_argument('-j', '--jobs', type=int, default=3, help='Number of processes to use')
     args = parser.parse_args()
-    runs = [schedule for schedule in schedules for _ in range(args.nruns)]
-    experiment_scriptname = os.path.join(os.path.dirname(__file__), 'experiment_validation.py')
 
-    # start 6 jobs
-    # while True: poll all jobs and sleep in between
-    #   if any one is empty, start new one
+    lrs = [0.05, 0.1, 0.2, 0.5]
+    batch_sizes = [128, 256, 1024]
+    runs = list(itertools.chain.from_iterable(itertools.product(schedules, lrs, batch_sizes)
+                                              for _ in range(args.nruns)))
+
+    experiment_scriptname = os.path.join(os.path.dirname(__file__), 'experiment_validation.py')
 
     if args.parallel:
         print('Running parallel')
@@ -25,7 +27,9 @@ def main():
 
         # shortcut to pop a run config from the list and start a process with it
         def start_job():
-            running.add(Popen(['python', experiment_scriptname, 'with', f'schedule={runs.pop()}'],
+            schedule, lr, bs = runs.pop()
+            running.add(Popen(['python', experiment_scriptname, 'with', f'schedule={schedule}',
+                               f'base_lr={lr}', f'batch_size={bs}'],
                               stdout=DEVNULL))
 
         # do not start more procs than configs
@@ -55,7 +59,8 @@ def main():
                         else:
                             running.remove(proc)
                 time.sleep(10)
-        except:
+        except Exception as e:
+            print(e)
             print('Attempting to cancel all processes...')
             for proc in running:
                 proc.terminate()
