@@ -249,8 +249,6 @@ class Exporter(object):
         if self._train_step == 0:
             self._msg_bus.publish_network_message(self._global_step, self._train_step,
                                                   self._epoch, 'epoch_started')
-            self._msg_bus.publish_network_message(self._global_step, self._train_step,
-                                                  self._epoch, 'batch_started')
 
         if hasattr(module, 'weight'):
 
@@ -392,11 +390,19 @@ class Exporter(object):
 
     def step(self):
         '''Increase batch counter (per epoch) and the global step counter.'''
+        # due to the fact that backprop happens after forward() was called, we need to step before
+        # the forward pass so acivation and gradient msgs have the same counter. therefore, the
+        # counters start at -1, but we publish a 'batch_finished' message only from the second
+        # iteration onwards
+        if self._train_step > -1:
+            self._msg_bus.publish_network_message(self._global_step, self._train_step, self._epoch,
+                                                  'batch_finished')
+
         self._train_step  += 1
         self._global_step += 1
 
         self._msg_bus.publish_network_message(self._global_step, self._train_step, self._epoch,
-                                              'batch_finished')
+                                              'batch_started')
 
     def _freeze_module(self, named_module):
         '''Convenience method for freezing training for a module.
