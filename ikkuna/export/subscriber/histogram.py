@@ -14,7 +14,7 @@ class HistogramSubscriber(PlotSubscriber):
             raise ValueError('HistogramSubscriber only accepts 1 kind')
 
         subscription = Subscription(self, [kind], tag, subsample)
-        title        = f'{kind} histogram'
+        title        = f'{kind}_histogram'
         ylabel       = 'Frequency'
         super().__init__([subscription], message_bus, {'title': title, 'ylabel': ylabel},
                          backend=backend)

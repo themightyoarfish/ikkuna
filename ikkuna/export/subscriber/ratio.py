@@ -24,7 +24,7 @@ class RatioSubscriber(PlotSubscriber):
         if len(kinds) != 2:
             raise ValueError(f'RatioSubscriber requires 2 kinds, got {len(kinds)}.')
 
-        title        = f'{kinds[0]}/{kinds[1]} ratio'
+        title        = f'{kinds[0]}_{kinds[1]}_ratio'
         ylabel       = 'Ratio'
         xlabel       = 'Train step'
         subscription = SynchronizedSubscription(self, kinds, tag, subsample)

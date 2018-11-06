@@ -40,7 +40,7 @@ class TestAccuracySubscriber(PlotSubscriber):
                         Inverse of the frequency with which to compute the accuracy
         '''
         kinds  = ['batch_finished']
-        title  = f'Test accuracy'
+        title  = f'test_accuracy'
         ylabel = 'Accuracy'
         xlabel = 'Train step'
         subscription = Subscription(self, kinds, tag, subsample)
@@ -79,7 +79,7 @@ class TestAccuracySubscriber(PlotSubscriber):
                     n_batches  += 1
             except StopIteration:
                 accuracy /= n_batches
-                self._backend.add_data('test accuracy', accuracy, message.global_step)
+                self._backend.add_data('test_accuracy', accuracy, message.global_step)
 
                 kind = 'test_accuracy'
                 self.message_bus.publish_network_message(message.global_step,

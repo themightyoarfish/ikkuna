@@ -13,7 +13,7 @@ class TrainAccuracySubscriber(PlotSubscriber):
         subscription = SynchronizedSubscription(self, ['network_output', 'input_labels'], tag,
                                                 subsample)
 
-        title  = f'Train batch accuracy'
+        title  = f'train_batch_accuracy'
         xlabel = 'Step'
         ylabel = 'Accuracy'
         super().__init__([subscription],
@@ -33,7 +33,7 @@ class TrainAccuracySubscriber(PlotSubscriber):
         predictions = Y.argmax(1)
         n_correct   = (predictions == labels).sum().item()
         accuracy    = n_correct / float(labels.numel())
-        self._backend.add_data('Train batch accuracy', accuracy, message.global_step)
+        self._backend.add_data('train_batch_accuracy', accuracy, message.global_step)
 
         kind = 'train_accuracy'
         self.message_bus.publish_network_message(message.global_step,

@@ -8,7 +8,7 @@ class SumSubscriber(PlotSubscriber):
                  backend='tb', **tbx_params):
         if not isinstance(kind, str):
             raise ValueError('SumSubscriber only accepts 1 kind')
-        title        = f'{kind[0]} sum'
+        title        = f'{kind}_sum'
         ylabel       = 'Sum'
         xlabel       = 'Train step'
         subscription = Subscription(self, [kind], tag, subsample)

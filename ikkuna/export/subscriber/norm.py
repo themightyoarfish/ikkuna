@@ -10,7 +10,7 @@ class NormSubscriber(PlotSubscriber):
         if not isinstance(kind, str):
             raise ValueError('NormSubscriber only accepts 1 kind')
 
-        title        = f'{kind} norm'
+        title        = f'{kind}_norm{order}'
         ylabel       = f'L{order} Norm'
         xlabel       = 'Train step'
         subscription = Subscription(self, [kind], tag, subsample)

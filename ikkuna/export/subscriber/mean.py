@@ -10,7 +10,7 @@ class MeanSubscriber(PlotSubscriber):
         if not isinstance(kind, str):
             raise ValueError('MeanSubscriber only accepts 1 kind')
 
-        title        = f'{kind} mean'
+        title        = f'{kind}_mean'
         ylabel       = 'Mean'
         xlabel       = 'Train step'
         subscription = Subscription(self, [kind], tag, subsample)

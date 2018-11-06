@@ -13,7 +13,7 @@ class VarianceSubscriber(PlotSubscriber):
         if not isinstance(kind, str):
             raise ValueError('VarianceSubscriber only accepts 1 kind')
 
-        title        = f'variance of {kind}'
+        title        = f'{kind}_variance'
         ylabel       = 'σ^2'
         xlabel       = 'Train step'
         subscription = Subscription(self, [kind], tag, subsample)

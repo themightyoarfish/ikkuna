@@ -25,7 +25,7 @@ class SpectralNormSubscriber(PlotSubscriber):
 
         subscription = Subscription(self, [kind], tag, subsample)
 
-        title = f'Spectral norms of {kind}'
+        title = f'{kind}_spectral_norm'
         xlabel = 'Step'
         ylabel = 'Spectral norm'
         super().__init__([subscription], message_bus,
