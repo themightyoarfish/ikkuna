@@ -132,7 +132,7 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">kinds</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;RatioSubscriber requires 2 kinds, got {len(kinds)}.&#39;</span><span class="p">)</span>
 
-        <span class="n">title</span>        <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{kinds[0]}</span><span class="s1">/</span><span class="si">{kinds[1]}</span><span class="s1"> ratio&#39;</span>
+        <span class="n">title</span>        <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{kinds[0]}</span><span class="s1">_</span><span class="si">{kinds[1]}</span><span class="s1">_ratio&#39;</span>
         <span class="n">ylabel</span>       <span class="o">=</span> <span class="s1">&#39;Ratio&#39;</span>
         <span class="n">xlabel</span>       <span class="o">=</span> <span class="s1">&#39;Train step&#39;</span>
         <span class="n">subscription</span> <span class="o">=</span> <span class="n">SynchronizedSubscription</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kinds</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">subsample</span><span class="p">)</span>

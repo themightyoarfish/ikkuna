@@ -446,6 +446,7 @@
 
 <div class="viewcode-block" id="MessageBus.register_meta_topic"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.messages.MessageBus.register_meta_topic">[docs]</a>    <span class="k">def</span> <span class="nf">register_meta_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Register a topic so it can be subscribed.&#39;&#39;&#39;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Registering topic </span><span class="si">{kind}</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_meta_kinds</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MessageBus.deregister_meta_topic"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.messages.MessageBus.deregister_meta_topic">[docs]</a>    <span class="k">def</span> <span class="nf">deregister_meta_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">):</span>
@@ -455,6 +456,7 @@
 
 <div class="viewcode-block" id="MessageBus.register_data_topic"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.messages.MessageBus.register_data_topic">[docs]</a>    <span class="k">def</span> <span class="nf">register_data_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Register a topic so it can be subscribed.&#39;&#39;&#39;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Registering topic </span><span class="si">{kind}</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_kinds</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MessageBus.deregister_data_topic"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.messages.MessageBus.deregister_data_topic">[docs]</a>    <span class="k">def</span> <span class="nf">deregister_data_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">):</span>

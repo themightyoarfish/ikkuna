@@ -157,9 +157,10 @@ For hooking this model up with the framework, you need only add three lines.
                 torch.nn.Conv2d(192, 192, kernel_size=3, padding=1),
                 torch.nn.ReLU(inplace=True),
             )
-    #.  Add :class:`~ikkuna.export.subscriber.Subscriber`\ s to the
-        :class:`~ikkuna.export.Exporter`. They take certain parameters which
-        you can look up in the documentation.
+    #.  Add :class:`~ikkuna.export.subscriber.Subscriber`\ s to the same
+        :class:`~ikkuna.export.messages.MessageBus` which the
+        :class:`~ikkuna.export.Exporter` uses. They take certain parameters
+        which you can look up in the documentation.
 
         .. code-block:: python
 
@@ -167,7 +168,7 @@ For hooking this model up with the framework, you need only add three lines.
             # and weights (for each layer that has them) as a tensorboard scalar
             ratio_subscriber = RatioSubscriber(['gradients', 'weights_'],
                                                backend='tb')
-            exporter.subscribe(ratio_subscriber)
+            exporter.message_bus.register_subscriber(ratio_subscriber)
 
 There are two optional steps
 
@@ -269,7 +270,9 @@ for one module and all desired kinds. As an example, consider the
 
 As you can see, the :class:`~ikkuna.export.subscriber.Subscriber` initialiser
 takes a ``plot_config`` dictionary to pass along some information to the
-visualisation backend.
+visualisation backend. If your subscriber in turn publishes further messages,
+you can use the :meth:`~ikkuna.export.subscriber.Subscriber._add_publication`
+method to announce it to the world.
 
 Installing the Subscriber
 .........................

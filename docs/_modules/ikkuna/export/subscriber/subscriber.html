@@ -129,7 +129,7 @@
 <span class="sd">    _subscriber :   ikkuna.export.subscriber.Subscriber</span>
 <span class="sd">                    The subscriber associated with the subscription</span>
 <span class="sd">    counter :   dict(ikkuna.utils.NamedModule or str, int)</span>
-<span class="sd">                Number of times the subscriber was called for each module label or meta data</span>
+<span class="sd">                Number of times the Subscription was called for each module label or meta data</span>
 <span class="sd">                identifier. Since one :class:`ikkuna.export.subscriber.Subscriber` is associated</span>
 <span class="sd">                with only one configuration of :class:`ikkuna.export.messages.MessageBundle`, this</span>
 <span class="sd">                will enable proper subsampling of message streams.</span>
@@ -147,9 +147,20 @@
 <span class="sd">        ----------</span>
 <span class="sd">        subscriber  :   ikkuna.export.subscriber.Subscriber</span>
 <span class="sd">                        Object that wants to receive the messages</span>
+<span class="sd">        kinds   :   list</span>
+<span class="sd">                    List of message kinds to process</span>
+<span class="sd">        tag :   str</span>
+<span class="sd">                tag for filtering messages</span>
+<span class="sd">        subsample   :   int</span>
+<span class="sd">                        Number of messages to ignore before processing one. Note that this number if</span>
+<span class="sd">                        applied to every kind, regardless of frequency. So if ``subsample = 10``,</span>
+<span class="sd">                        every tenth ``weights`` message would be processed, but also only every</span>
+<span class="sd">                        tenth ``epoch_finished`` message.</span>
 <span class="sd">        tag :   str or None</span>
 <span class="sd">                Optional tag for filtering messages. If ``None``, all messages will be relayed</span>
 <span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kinds</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Expected list of kinds, got {type(kinds)}&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span>        <span class="o">=</span> <span class="n">tag</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subscriber</span> <span class="o">=</span> <span class="n">subscriber</span>
 
@@ -337,7 +348,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        message_or_bundle    :   ikkuna.export.messages.Message or ikkuna.export.messages.MessageBundle</span>
+<span class="sd">        message_or_bundle : ikkuna.export.messages.Message or ikkuna.export.messages.MessageBundle</span>
 <span class="sd">                            The exact nature of this package is determined by the</span>
 <span class="sd">                            :class:`ikkuna.export.subscriber.Subscription` attached to this</span>
 <span class="sd">                            :class:`ikkuna.export.subscriber.Subscriber`.</span>

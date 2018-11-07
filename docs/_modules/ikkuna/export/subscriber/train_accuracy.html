@@ -121,7 +121,7 @@
         <span class="n">subscription</span> <span class="o">=</span> <span class="n">SynchronizedSubscription</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;network_output&#39;</span><span class="p">,</span> <span class="s1">&#39;input_labels&#39;</span><span class="p">],</span> <span class="n">tag</span><span class="p">,</span>
                                                 <span class="n">subsample</span><span class="p">)</span>
 
-        <span class="n">title</span>  <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;Train batch accuracy&#39;</span>
+        <span class="n">title</span>  <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;train_batch_accuracy&#39;</span>
         <span class="n">xlabel</span> <span class="o">=</span> <span class="s1">&#39;Step&#39;</span>
         <span class="n">ylabel</span> <span class="o">=</span> <span class="s1">&#39;Accuracy&#39;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">([</span><span class="n">subscription</span><span class="p">],</span>
@@ -141,7 +141,7 @@
         <span class="n">predictions</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">n_correct</span>   <span class="o">=</span> <span class="p">(</span><span class="n">predictions</span> <span class="o">==</span> <span class="n">labels</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
         <span class="n">accuracy</span>    <span class="o">=</span> <span class="n">n_correct</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">numel</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="s1">&#39;Train batch accuracy&#39;</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">global_step</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="s1">&#39;train_batch_accuracy&#39;</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">global_step</span><span class="p">)</span>
 
         <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;train_accuracy&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message_bus</span><span class="o">.</span><span class="n">publish_network_message</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">global_step</span><span class="p">,</span>
