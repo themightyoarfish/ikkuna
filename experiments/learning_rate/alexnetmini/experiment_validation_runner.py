@@ -52,7 +52,7 @@ def main():
                 for proc in running:
                     if proc.poll() is not None:
                         if runs:
-                            print('Found! Starting new job.')
+                            print('Starting new job.')
                             start_job()
                             running.remove(proc)
                             print(f'{len(runs)} left.')

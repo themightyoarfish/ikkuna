@@ -27,7 +27,7 @@ train_config = {
 
 
 def main():
-    dataset_train, dataset_test = load_dataset('MNIST')
+    dataset_train, dataset_test = load_dataset('CIFAR10')
     ikkuna.visualization.set_run_info('\n'.join(f'{k}: {v}' for k, v in train_config.items()))
 
     exporter = Exporter(depth=-1)
