@@ -5,8 +5,8 @@ import numpy as np
 from itertools import product
 
 # obtain runs collection created by sacred
-db_client = pymongo.MongoClient()
-sacred_db = db_client.get_database('sacred')
+db_client = pymongo.MongoClient('mongodb://rasmus:rasmus@localhost/sacred')
+sacred_db = db_client.sacred
 runs      = sacred_db.runs
 metrics   = sacred_db.metrics
 
