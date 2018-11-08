@@ -17,7 +17,7 @@ class RatioLRSubscriber(PlotSubscriber):
                          {'title': 'learning_rate',
                           'ylabel': 'Adjusted learning rate',
                           'ylims': ylims,
-                          'xlabel': 'Train step'})
+                          'xlabel': 'Train step'}, backend=backend, **tbx_params)
         self._ratios     = defaultdict(float)
         self._max_factor = max_factor
         self._smoothing  = smoothing
