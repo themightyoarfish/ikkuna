@@ -1,14 +1,17 @@
 from math import sqrt
 import pymongo
-import matplotlib.pyplot as plt
+import matplotlib
 import numpy as np
 from itertools import product
 
 # obtain runs collection created by sacred
-db_client = pymongo.MongoClient('mongodb://rasmus:rasmus@localhost/sacred')
+db_client = pymongo.MongoClient('mongodb://rasmus:rasmus@35.189.247.219/sacred')
 sacred_db = db_client.sacred
 runs      = sacred_db.runs
 metrics   = sacred_db.metrics
+colors    = {'ratio_adaptive_schedule_fn': '#254167',
+            'exponential_schedule_fn': '#ee5679',
+            'identity_schedule_fn': '#d9d874'}
 
 
 def uniquify_list(seq):
@@ -76,11 +79,20 @@ def accuracy_traces(save=False):
     w            = int(round(n / h + 0.5))
     assert h*w >= n, 'Too few plots!'
 
+    if save:
+        matplotlib.use('cairo')
+
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as mpatches
     f, axarr   = plt.subplots(h, w, sharey=True)
+    f.set_size_inches(7, 10)
     axarr_flat = axarr.flat
     ax_map   = {}
     for (b, l) in combinations:
         ax_map[(b, l)] = next(axarr_flat)
+
+    patches = [mpatches.Patch(color=c, label=schedule) for schedule, c in colors.items()]
+    f.legend(handles=patches, loc='upper center')
 
     for group in groups:
         batch_size = group['_id']['batch_size']
@@ -89,7 +101,6 @@ def accuracy_traces(save=False):
         idss       = group['_ids']      # lists of ideas for each s in schedules
         ax = ax_map[(batch_size, base_lr)]
         ax.set_title(f'b={batch_size} lr={base_lr}')
-        colors = iter(['r', 'g', 'b'])
 
         for schedule, ids in zip(schedules, idss):
             accuracies      = get_metric_for_ids('test_accuracy', ids)
@@ -100,12 +111,15 @@ def accuracy_traces(save=False):
             steps           = stepss[0]   # all steps vectors should be identical
             values          = np.array(list(valuess))
             mean            = values.mean(axis=0)
-            std             = values.std(axis=0)
-            color           = next(colors)
+            error           = [np.abs(values.min(axis=0) - mean), np.abs(values.max(axis=0) - mean)]
+            color           = colors[schedule]
             for run in accuracies:
-                ax.errorbar(steps, mean, yerr=std, label=schedule, color=color,
+                ax.errorbar(steps, mean, yerr=error, label=schedule, color=color,
                             errorevery=len(steps) // 20)
-    plt.show()
+    if save:
+        plt.savefig('accuracies.pdf')
+    else:
+        plt.show()
 
 
 def accuracy_boxplots(lr, batch_size, save=False):
@@ -131,6 +145,10 @@ def accuracy_boxplots(lr, batch_size, save=False):
         labels.append(d['_id'])
         accuracies.append(d['accuracies'])
 
+    if save:
+        matplotlib.use('cairo')
+
+    import matplotlib.pyplot as plt
     # show boxplots
     f  = plt.figure()
     ax = f.gca()
@@ -142,12 +160,17 @@ def accuracy_boxplots(lr, batch_size, save=False):
         y = accuracies[i]
         # tick locations are [1, 2, 3, ...] for boxplots
         x = np.random.normal(i + 1, 0.04, size=len(y))
-        ax.plot(x, y, '.', alpha=0.3, markersize=20)
+        ax.plot(x, y, '.', alpha=0.3, markersize=20, color=colors[labels[i]])
 
-    plt.show()
     if save:
         plt.savefig(f'accuracy_boxplots_{lr}_{batch_size}.pdf')
+    else:
+        plt.show()
 
 
 if __name__ == '__main__':
-    accuracy_traces()
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-s', '--save', action='store_true')
+    args = parser.parse_args()
+    accuracy_boxplots(lr=0.2, batch_size=128, save=args.save)
