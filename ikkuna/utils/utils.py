@@ -202,12 +202,12 @@ def load_dataset(name, train_transforms=None, test_transforms=None):
     test_transforms  = Compose(test_transforms) if test_transforms else ToTensor()
     try:
         dataset_cls   = getattr(torchvision.datasets, name)
-        dataset_train = dataset_cls('/home/share/data',
+        dataset_train = dataset_cls('/tmp/data',
                                     download=True,
                                     train=True,
                                     transform=train_transforms
                                     )
-        dataset_test  = dataset_cls('/home/share/data',
+        dataset_test  = dataset_cls('/tmp/data',
                                     download=True,
                                     train=False,
                                     transform=test_transforms
@@ -216,10 +216,7 @@ def load_dataset(name, train_transforms=None, test_transforms=None):
         raise NameError(f'Dataset {name} unknown.')
 
     def num_classes(dataset):
-        if dataset.train:
-            _, labels = dataset.train_data, dataset.train_labels  # noqa
-        else:
-            _, labels = dataset.test_data, dataset.test_labels  # noqa
+        labels = dataset.targets
 
         # infer number of classes from labels. will fail if not all classes occur in labels
         if isinstance(labels, np.ndarray):
@@ -232,10 +229,7 @@ def load_dataset(name, train_transforms=None, test_transforms=None):
             raise ValueError(f'Unexpected label storage {labels.__class__.__name__}')
 
     def shape(dataset):
-        if dataset.train:
-            data, _ = dataset.train_data, dataset.train_labels  # noqa
-        else:
-            data, _ = dataset.test_data, dataset.test_labels  # noqa
+        data = dataset.data
 
         # if only three dimensions, assume [N, H, W], else [N, H, W, C]
         N, H, W = data.shape[:3]

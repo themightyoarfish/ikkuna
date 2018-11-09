@@ -198,7 +198,10 @@ class Trainer:
         self._model.train(True)
 
         X, Y         = self._next_X, self._next_Y
-        data, labels = X.cuda(async=True), Y.cuda(async=True)
+        if torch.cuda.is_available():
+            data, labels = X.cuda(async=True), Y.cuda(async=True)
+        else:
+            data, labels = X, Y
         self._optimizer.zero_grad()
         output       = self._model(data)
         loss         = self._loss_function(output, labels)
