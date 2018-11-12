@@ -14,7 +14,7 @@ class RatioSubscriber(PlotSubscriber):
     :class:`~ikkuna.export.subscriber.Subscription` object in the correct order.'''
 
     def __init__(self, kinds, message_bus=get_default_bus(), tag=None, subsample=1, ylims=None,
-                 backend='tb', absolute=True, **tbx_params):
+                 backend='tb', absolute=True):
         '''
         Parameters
         ----------
@@ -33,7 +33,7 @@ class RatioSubscriber(PlotSubscriber):
                           'ylabel': ylabel,
                           'ylims': ylims,
                           'xlabel': xlabel},
-                         backend=backend, **tbx_params)
+                         backend=backend)
         if absolute:
             self._metric_postprocess = torch.abs
         else:

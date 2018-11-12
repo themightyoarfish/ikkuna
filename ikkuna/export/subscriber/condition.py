@@ -8,7 +8,7 @@ from ikkuna.export.messages import get_default_bus
 class ConditionNumberSubscriber(PlotSubscriber):
 
     def __init__(self, kind, message_bus=get_default_bus(), tag=None, subsample=1, ylims=None,
-                 backend='tb', **tbx_params):
+                 backend='tb'):
         '''
         Parameters
         ----------
@@ -31,7 +31,7 @@ class ConditionNumberSubscriber(PlotSubscriber):
         ylabel = 'Condition number'
         super().__init__([subscription], message_bus,
                          {'title': title, 'xlabel': xlabel, 'ylims': ylims, 'ylabel': ylabel},
-                         backend=backend, **tbx_params)
+                         backend=backend)
         self._add_publication(f'{kind}_condition_number', type='DATA')
         self.u = dict()
         self.u_inv = dict()
