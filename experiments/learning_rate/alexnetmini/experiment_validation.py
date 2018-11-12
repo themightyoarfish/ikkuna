@@ -7,10 +7,10 @@ logger = logging.getLogger()
 ##################
 #  Ikkuna stuff  #
 ##################
-from ikkuna.models import AlexNetMini
 from ikkuna.utils import load_dataset
 from ikkuna.export import Exporter
-from ikkuna.export.subscriber import RatioSubscriber, TestAccuracySubscriber, TrainAccuracySubscriber
+from ikkuna.export.subscriber import (RatioSubscriber, TestAccuracySubscriber,
+                                      TrainAccuracySubscriber)
 from train import Trainer
 
 ##################
@@ -28,7 +28,7 @@ ex.logger = logger
 from subscribers import RatioLRSubscriber, SacredLoggingSubscriber
 
 # we need this so we can define a function for the learning rate like the exponential and identity
-# fns. we will define the subscriber in the main function
+# fns. we will define the subscriber in the main function. I know, this hurts me too.
 LR_SUBSCRIBER = None
 
 
@@ -64,11 +64,12 @@ def cfg():
     n_epochs   = 100
     loss       = 'CrossEntropyLoss'
     schedule   = 'ratio_adaptive_schedule_fn'
-    dataset    = 'CIFAR10'
+    dataset    = 'CIFAR10',
+    model      = 'AlexNetMini',
 
 
 @ex.automain
-def run(batch_size, loss, optimizer, base_lr, n_epochs, schedule, dataset):
+def run(batch_size, loss, optimizer, base_lr, n_epochs, schedule, dataset, model):
     global LR_SUBSCRIBER
     LR_SUBSCRIBER = RatioLRSubscriber(base_lr)
     # load the dataset
@@ -76,8 +77,17 @@ def run(batch_size, loss, optimizer, base_lr, n_epochs, schedule, dataset):
 
     exporter = Exporter(depth=-1, module_filter=[torch.nn.Conv2d, torch.nn.Linear])
     # instantiate model
-    model = AlexNetMini(dataset_train_meta.shape[1:], num_classes=dataset_train_meta.num_classes,
-                        exporter=exporter)
+    from ikkuna import models
+    try:
+        if model.startswith('ResNet'):
+            model_fn = getattr(models, model.lower())
+            model = model_fn(exporter=exporter)
+        else:
+            Model = getattr(models, model)
+            model = Model(dataset_train_meta.shape[1:], num_classes=dataset_train_meta.num_classes,
+                          exporter=exporter)
+    except AttributeError:
+        raise ValueError(f'Unknown model {model}')
 
     # get loss and scheduling function since sacred can only log strings
     loss_fn     = getattr(torch.nn, loss)()
