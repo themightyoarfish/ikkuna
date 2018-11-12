@@ -4,7 +4,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>ikkuna.export.subscriber.spectral_norm &#8212; ikkuna 0 documentation</title>
+    <title>ikkuna.export.subscriber.condition &#8212; ikkuna 0 documentation</title>
     <link rel="stylesheet" href="../../../../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
@@ -105,7 +105,7 @@
   <div class="row">
     <div class="col-md-12 content">
       
-  <h1>Source code for ikkuna.export.subscriber.spectral_norm</h1><div class="highlight"><pre>
+  <h1>Source code for ikkuna.export.subscriber.condition</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.nn.functional</span> <span class="k">import</span> <span class="n">normalize</span>
 
@@ -113,15 +113,16 @@
 <span class="kn">from</span> <span class="nn">ikkuna.export.messages</span> <span class="k">import</span> <span class="n">get_default_bus</span>
 
 
-<div class="viewcode-block" id="SpectralNormSubscriber"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.SpectralNormSubscriber">[docs]</a><span class="k">class</span> <span class="nc">SpectralNormSubscriber</span><span class="p">(</span><span class="n">PlotSubscriber</span><span class="p">):</span>
+<div class="viewcode-block" id="ConditionNumberSubscriber"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.ConditionNumberSubscriber">[docs]</a><span class="k">class</span> <span class="nc">ConditionNumberSubscriber</span><span class="p">(</span><span class="n">PlotSubscriber</span><span class="p">):</span>
 
-<div class="viewcode-block" id="SpectralNormSubscriber.__init__"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.SpectralNormSubscriber.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">message_bus</span><span class="o">=</span><span class="n">get_default_bus</span><span class="p">(),</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ylims</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<div class="viewcode-block" id="ConditionNumberSubscriber.__init__"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.ConditionNumberSubscriber.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">message_bus</span><span class="o">=</span><span class="n">get_default_bus</span><span class="p">(),</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ylims</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;tb&#39;</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        kind    :   str</span>
-<span class="sd">                    Message kind to compute spectral norm on. Doesn&#39;t make sense with kinds of</span>
+<span class="sd">                    Message kind to compute condition number norm on. Not sure if it makes sense</span>
+<span class="sd">                    for non-2d matrices, which have to be reshaped to 2-d</span>
 <span class="sd">                    non-matrix type.</span>
 
 
@@ -129,37 +130,36 @@
 <span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;SpectralNormSubscriber only accepts 1 kind&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.__class__.__name__}</span><span class="s1"> only accepts 1 kind&#39;</span><span class="p">)</span>
 
         <span class="n">subscription</span> <span class="o">=</span> <span class="n">Subscription</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">[</span><span class="n">kind</span><span class="p">],</span> <span class="n">tag</span><span class="p">,</span> <span class="n">subsample</span><span class="p">)</span>
 
-        <span class="n">title</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{kind}</span><span class="s1">_spectral_norm&#39;</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{kind}</span><span class="s1">_condition_number&#39;</span>
         <span class="n">xlabel</span> <span class="o">=</span> <span class="s1">&#39;Step&#39;</span>
-        <span class="n">ylabel</span> <span class="o">=</span> <span class="s1">&#39;Spectral norm&#39;</span>
+        <span class="n">ylabel</span> <span class="o">=</span> <span class="s1">&#39;Condition number&#39;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">([</span><span class="n">subscription</span><span class="p">],</span> <span class="n">message_bus</span><span class="p">,</span>
                          <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span> <span class="s1">&#39;xlabel&#39;</span><span class="p">:</span> <span class="n">xlabel</span><span class="p">,</span> <span class="s1">&#39;ylims&#39;</span><span class="p">:</span> <span class="n">ylims</span><span class="p">,</span> <span class="s1">&#39;ylabel&#39;</span><span class="p">:</span> <span class="n">ylabel</span><span class="p">},</span>
                          <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_publication</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{kind}</span><span class="s1">_condition_number&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;DATA&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">u</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_add_publication</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{kind}</span><span class="s1">_spectral_norm&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;DATA&#39;</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">u_inv</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="SpectralNormSubscriber.compute"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.SpectralNormSubscriber.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;The spectral norm computation is taken from the `Pytorch implementation of spectral norm</span>
-<span class="sd">        &lt;https://pytorch.org/docs/master/_modules/torch/nn/utils/spectral_norm.html&gt;`_. It&#39;s</span>
-<span class="sd">        possible to use SVD instead, but we are not interested in the full matrix decomposition,</span>
-<span class="sd">        merely in the singular values.</span>
-
-<span class="sd">        A :class:`~ikkuna.export.messages.ModuleMessage`</span>
-<span class="sd">        with the identifier ``{kind}_spectral_norm`` is published. &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="ConditionNumberSubscriber.compute"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.ConditionNumberSubscriber.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;A :class:`~ikkuna.export.messages.ModuleMessage`</span>
+<span class="sd">        with the identifier ``{kind}_condition_number`` is published. &#39;&#39;&#39;</span>
 
         <span class="n">module</span><span class="p">,</span> <span class="n">module_name</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">key</span>
         <span class="c1"># get and reshape the weight tensor to 2d</span>
         <span class="n">weights</span>             <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">data</span>
         <span class="n">height</span>              <span class="o">=</span> <span class="n">weights</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">weights2d</span>           <span class="o">=</span> <span class="n">weights</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">width</span>               <span class="o">=</span> <span class="n">weights2d</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">weights2d_inv</span>       <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">pinverse</span><span class="p">(</span><span class="n">weights2d</span><span class="p">)</span>
 
         <span class="c1"># buffer for power iteration (don&#39;t know what the mahematical purpose is)</span>
         <span class="k">if</span> <span class="n">module_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">weights2d</span><span class="o">.</span><span class="n">new_empty</span><span class="p">(</span><span class="n">height</span><span class="p">)</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">u_inv</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">weights2d_inv</span><span class="o">.</span><span class="n">new_empty</span><span class="p">(</span><span class="n">width</span><span class="p">)</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
         <span class="c1"># estimate singular values</span>
         <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
@@ -167,15 +167,21 @@
                 <span class="n">v</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">weights2d</span><span class="o">.</span><span class="n">t</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="p">[</span><span class="n">module_name</span><span class="p">]),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">weights2d</span><span class="p">,</span> <span class="n">v</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
+                <span class="n">v_inv</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">weights2d_inv</span><span class="o">.</span><span class="n">t</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">u_inv</span><span class="p">[</span><span class="n">module_name</span><span class="p">]),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">u_inv</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">weights2d_inv</span><span class="p">,</span> <span class="n">v_inv</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
         <span class="n">norm</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="p">[</span><span class="n">module_name</span><span class="p">],</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">weights2d</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="n">norm_inv</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">u_inv</span><span class="p">[</span><span class="n">module_name</span><span class="p">],</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">weights2d_inv</span><span class="p">,</span> <span class="n">v_inv</span><span class="p">))</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">global_step</span><span class="p">)</span>
+        <span class="n">condition</span> <span class="o">=</span> <span class="n">norm</span> <span class="o">/</span> <span class="n">norm_inv</span>
 
-        <span class="n">kind</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{message.kind}</span><span class="s1">_spectral_norm&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">global_step</span><span class="p">)</span>
+
+        <span class="n">kind</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{message.kind}</span><span class="s1">_condition_number&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message_bus</span><span class="o">.</span><span class="n">publish_module_message</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">global_step</span><span class="p">,</span>
                                                 <span class="n">message</span><span class="o">.</span><span class="n">train_step</span><span class="p">,</span>
                                                 <span class="n">message</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span>
-                                                <span class="n">message</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">norm</span><span class="p">)</span></div></div>
+                                                <span class="n">message</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">condition</span><span class="p">)</span></div></div>
 </pre></div>
 
     </div>
