@@ -216,7 +216,12 @@ def load_dataset(name, train_transforms=None, test_transforms=None):
         raise NameError(f'Dataset {name} unknown.')
 
     def num_classes(dataset):
-        labels = dataset.targets
+        if hasattr(dataset, 'targets'):
+            labels = dataset.targets
+        elif hasattr(dataset, 'labels'):
+            labels = dataset.labels
+        else:
+            raise RuntimeError(f'{dataset_cls} has neither `targets` nor `labels` properties.')
 
         # infer number of classes from labels. will fail if not all classes occur in labels
         if isinstance(labels, np.ndarray):
