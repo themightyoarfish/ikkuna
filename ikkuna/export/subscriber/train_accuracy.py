@@ -6,7 +6,7 @@ class TrainAccuracySubscriber(PlotSubscriber):
     ''':class:`~ikkuna.export.subscriber.Subscriber` which computes the batch accuracy.'''
 
     def __init__(self, message_bus=get_default_bus(), tag=None, subsample=1, ylims=None,
-                 backend='tb', **tbx_params):
+                 backend='tb'):
         '''
         For parameters see :class:`~ikkuna.export.subscriber.PlotSubscriber`
         '''
@@ -19,7 +19,7 @@ class TrainAccuracySubscriber(PlotSubscriber):
         super().__init__([subscription],
                          message_bus,
                          {'title': title, 'xlabel': xlabel, 'ylims': ylims, 'ylabel': ylabel},
-                         backend=backend, **tbx_params)
+                         backend=backend)
 
         self._add_publication(f'train_accuracy', type='META')
 

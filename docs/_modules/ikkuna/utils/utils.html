@@ -193,6 +193,21 @@
     <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="p">,</span> <span class="n">name</span><span class="p">)(</span><span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
+<span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">ikkuna</span> <span class="k">import</span> <span class="n">models</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">model_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;ResNet&#39;</span><span class="p">):</span>
+            <span class="n">model_fn</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_name</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">model_fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Model</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_name</span><span class="p">)</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Unknown model </span><span class="si">{model}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">model</span>
+
+
 <div class="viewcode-block" id="initialize_model"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.initialize_model">[docs]</a><span class="k">def</span> <span class="nf">initialize_model</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">bias_val</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Perform weight initialization on `module`. This is somewhat hacky since</span>
 <span class="sd">    it assumes the presence of `weight` and/or `bias` fields on the module. Will</span>
@@ -295,12 +310,12 @@
     <span class="n">test_transforms</span>  <span class="o">=</span> <span class="n">Compose</span><span class="p">(</span><span class="n">test_transforms</span><span class="p">)</span> <span class="k">if</span> <span class="n">test_transforms</span> <span class="k">else</span> <span class="n">ToTensor</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">dataset_cls</span>   <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">torchvision</span><span class="o">.</span><span class="n">datasets</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-        <span class="n">dataset_train</span> <span class="o">=</span> <span class="n">dataset_cls</span><span class="p">(</span><span class="s1">&#39;/home/share/data&#39;</span><span class="p">,</span>
+        <span class="n">dataset_train</span> <span class="o">=</span> <span class="n">dataset_cls</span><span class="p">(</span><span class="s1">&#39;/tmp/data&#39;</span><span class="p">,</span>
                                     <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                                     <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                                     <span class="n">transform</span><span class="o">=</span><span class="n">train_transforms</span>
                                     <span class="p">)</span>
-        <span class="n">dataset_test</span>  <span class="o">=</span> <span class="n">dataset_cls</span><span class="p">(</span><span class="s1">&#39;/home/share/data&#39;</span><span class="p">,</span>
+        <span class="n">dataset_test</span>  <span class="o">=</span> <span class="n">dataset_cls</span><span class="p">(</span><span class="s1">&#39;/tmp/data&#39;</span><span class="p">,</span>
                                     <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                                     <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                                     <span class="n">transform</span><span class="o">=</span><span class="n">test_transforms</span>
@@ -309,10 +324,12 @@
         <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Dataset </span><span class="si">{name}</span><span class="s1"> unknown.&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">num_classes</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">train</span><span class="p">:</span>
-            <span class="n">_</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">train_data</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">train_labels</span>  <span class="c1"># noqa</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s1">&#39;targets&#39;</span><span class="p">):</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">targets</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s1">&#39;labels&#39;</span><span class="p">):</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">labels</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">_</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">test_data</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">test_labels</span>  <span class="c1"># noqa</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{dataset_cls}</span><span class="s1"> has neither `targets` nor `labels` properties.&#39;</span><span class="p">)</span>
 
         <span class="c1"># infer number of classes from labels. will fail if not all classes occur in labels</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
@@ -325,10 +342,7 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Unexpected label storage </span><span class="si">{labels.__class__.__name__}</span><span class="s1">&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">train</span><span class="p">:</span>
-            <span class="n">data</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">train_data</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">train_labels</span>  <span class="c1"># noqa</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">data</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">test_data</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">test_labels</span>  <span class="c1"># noqa</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">data</span>
 
         <span class="c1"># if only three dimensions, assume [N, H, W], else [N, H, W, C]</span>
         <span class="n">N</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>

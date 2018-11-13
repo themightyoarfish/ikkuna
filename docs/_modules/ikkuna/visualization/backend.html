@@ -113,6 +113,7 @@
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
 <span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="k">import</span> <span class="n">Axes3D</span>     <span class="c1"># noqa</span>
 <span class="kn">from</span> <span class="nn">ikkuna.utils</span> <span class="k">import</span> <span class="n">make_fill_polygons</span>
+<span class="kn">import</span> <span class="nn">torch</span>
 
 
 <div class="viewcode-block" id="Backend"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.Backend">[docs]</a><span class="k">class</span> <span class="nc">Backend</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
@@ -333,13 +334,14 @@
         <span class="c1">############################</span>
         <span class="c1">#  Line plot/general args  #</span>
         <span class="c1">############################</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_xlabel</span>         <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;xlabel&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ylabel</span>         <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ylabel&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ylims</span>          <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ylims&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_redraw_counter</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_figure</span>         <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_plots</span>          <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_axes</span>           <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xlabel</span>          <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;xlabel&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ylabel</span>          <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ylabel&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ylims</span>           <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ylims&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_redraw_interval</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;redraw_interval&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_redraw_counter</span>  <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_figure</span>          <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_plots</span>           <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_axes</span>            <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1">####################</span>
         <span class="c1">#  Histogram args  #</span>
@@ -424,6 +426,7 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_figure</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_figure</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_figure</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_plots</span>            <span class="o">=</span> <span class="p">{}</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_axis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="p">)</span>
 
@@ -434,13 +437,15 @@
         <span class="n">xdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plots</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span><span class="o">.</span><span class="n">get_xdata</span><span class="p">()</span>
         <span class="n">ydata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plots</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span><span class="o">.</span><span class="n">get_ydata</span><span class="p">()</span>
         <span class="n">xdata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="mi">1</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xdata</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">xdata</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">datum</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+            <span class="n">datum</span> <span class="o">=</span> <span class="n">datum</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
         <span class="n">ydata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ydata</span><span class="p">,</span> <span class="n">datum</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_plots</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span><span class="o">.</span><span class="n">set_xdata</span><span class="p">(</span><span class="n">xdata</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_plots</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span><span class="o">.</span><span class="n">set_ydata</span><span class="p">(</span><span class="n">ydata</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">ncol</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_redraw_counter</span> <span class="o">%</span> <span class="mi">50</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>      <span class="c1"># TODO: Make modulus a parameter</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_redraw_counter</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_redraw_interval</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">relim</span><span class="p">()</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ylims</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ylims</span><span class="p">)</span>
@@ -485,6 +490,7 @@
     <span class="k">global</span> <span class="n">prefix</span>
     <span class="n">prefix</span> <span class="o">=</span> <span class="n">p</span></div>
 
+
 <span class="k">def</span> <span class="nf">set_run_info</span><span class="p">(</span><span class="n">info</span><span class="p">):</span>
     <span class="n">TBBackend</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">info</span>
 
@@ -500,24 +506,20 @@
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    _writer :   tensorboardX.SummaryWriter</span>
-<span class="sd">    hist_bins   :   int</span>
-<span class="sd">                    Number of bins to use for histograms</span>
+<span class="sd">    _hist_bins   :   int</span>
+<span class="sd">                     Number of bins to use for histograms</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="c1"># TODO: make printing metadata non-hacky</span>
-    <span class="n">info</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">info</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;n/a&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">))</span>
-        <span class="c1"># remove args incompatible with TB</span>
-        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;xlabel&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;ylabel&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;ylims&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hist_bins</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;bins&#39;</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
         <span class="n">log_dir</span>         <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;log_dir&#39;</span><span class="p">,</span> <span class="s1">&#39;runs&#39;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">prefix</span> <span class="k">else</span> <span class="n">prefix</span><span class="p">)</span>
         <span class="n">index</span>           <span class="o">=</span> <span class="n">determine_run_index</span><span class="p">(</span><span class="n">log_dir</span><span class="p">)</span>
         <span class="n">log_dir</span>         <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{log_dir}</span><span class="s1">/run</span><span class="si">{index}</span><span class="s1">&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span>    <span class="o">=</span> <span class="n">SummaryWriter</span><span class="p">(</span><span class="n">log_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span>    <span class="o">=</span> <span class="n">SummaryWriter</span><span class="p">(</span><span class="n">log_dir</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">add_text</span><span class="p">(</span><span class="s1">&#39;run_conf&#39;</span><span class="p">,</span> <span class="n">TBBackend</span><span class="o">.</span><span class="n">info</span><span class="p">)</span>
 
 <div class="viewcode-block" id="TBBackend.add_data"><a class="viewcode-back" href="../../../ikkuna.visualization.html#ikkuna.visualization.TBBackend.add_data">[docs]</a>    <span class="k">def</span> <span class="nf">add_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">datum</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>

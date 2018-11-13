@@ -85,6 +85,21 @@ def create_optimizer(model, name, **kwargs):
     return getattr(torch.optim, name)(params, **kwargs)
 
 
+def get_model(model_name, *args, **kwargs):
+    from ikkuna import models
+    try:
+        if model_name.startswith('ResNet'):
+            model_fn = getattr(models, model_name.lower())
+            model = model_fn(*args, **kwargs)
+        else:
+            Model = getattr(models, model_name)
+            model = Model(*args, **kwargs)
+    except AttributeError:
+        raise ValueError(f'Unknown model {model}')
+    else:
+        return model
+
+
 def initialize_model(module, bias_val=0.01):
     '''Perform weight initialization on `module`. This is somewhat hacky since
     it assumes the presence of `weight` and/or `bias` fields on the module. Will
@@ -201,7 +216,12 @@ def load_dataset(name, train_transforms=None, test_transforms=None):
         raise NameError(f'Dataset {name} unknown.')
 
     def num_classes(dataset):
-        labels = dataset.targets
+        if hasattr(dataset, 'targets'):
+            labels = dataset.targets
+        elif hasattr(dataset, 'labels'):
+            labels = dataset.labels
+        else:
+            raise RuntimeError(f'{dataset_cls} has neither `targets` nor `labels` properties.')
 
         # infer number of classes from labels. will fail if not all classes occur in labels
         if isinstance(labels, np.ndarray):

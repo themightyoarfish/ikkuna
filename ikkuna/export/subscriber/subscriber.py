@@ -267,7 +267,7 @@ class PlotSubscriber(Subscriber):
                     Plotting backend
     '''
 
-    def __init__(self, subscriptions, message_bus, plot_config, backend='tb', **tbx_params):
+    def __init__(self, subscriptions, message_bus, plot_config, backend='tb'):
         '''
         Parameters
         ----------
@@ -277,12 +277,10 @@ class PlotSubscriber(Subscriber):
                         Configuration parameters for plotting. Relevant keys are ``title``,
                         ``xlabel``, ``ylabel`` and ``ylims``. Which of them are actually used
                         depends on the :class:`~ikkuna.visualization.Backend`
-        **tbx_params    :   dict
-                            Keywords for the :class:`tensorboardX.SummaryWriter`
         '''
         super().__init__(subscriptions, message_bus)
 
-        self._backend = ikkuna.visualization.get_backend(backend, plot_config, **tbx_params)
+        self._backend = ikkuna.visualization.get_backend(backend, plot_config)
 
     @property
     def backend(self):

@@ -5,7 +5,7 @@ from ikkuna.export.messages import get_default_bus
 class NormSubscriber(PlotSubscriber):
 
     def __init__(self, kind, message_bus=get_default_bus(), tag=None, subsample=1, ylims=None,
-                 backend='tb', order=2, **tbx_params):
+                 backend='tb', order=2):
 
         if not isinstance(kind, str):
             raise ValueError('NormSubscriber only accepts 1 kind')
@@ -18,7 +18,7 @@ class NormSubscriber(PlotSubscriber):
                                                      'ylabel': ylabel,
                                                      'ylims': ylims,
                                                      'xlabel': xlabel},
-                         backend=backend, **tbx_params)
+                         backend=backend)
         self._order  = order
         self._add_publication(f'{kind}_norm{order}', type='DATA')
 

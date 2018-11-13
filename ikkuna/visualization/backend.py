@@ -5,6 +5,7 @@ import numpy as np
 from collections import defaultdict
 from mpl_toolkits.mplot3d import Axes3D     # noqa
 from ikkuna.utils import make_fill_polygons
+import torch
 
 
 class Backend(abc.ABC):
@@ -225,13 +226,14 @@ class MPLBackend(Backend):
         ############################
         #  Line plot/general args  #
         ############################
-        self._xlabel         = kwargs.get('xlabel')
-        self._ylabel         = kwargs.get('ylabel')
-        self._ylims          = kwargs.get('ylims')
-        self._redraw_counter = 0
-        self._figure         = self._ax = None
-        self._plots          = None
-        self._axes           = None
+        self._xlabel          = kwargs.get('xlabel')
+        self._ylabel          = kwargs.get('ylabel')
+        self._ylims           = kwargs.get('ylims')
+        self._redraw_interval = kwargs.get('redraw_interval', 10)
+        self._redraw_counter  = 0
+        self._figure          = self._ax = None
+        self._plots           = None
+        self._axes            = None
 
         ####################
         #  Histogram args  #
@@ -316,6 +318,7 @@ class MPLBackend(Backend):
 
         if not self._figure:
             self._figure, self._ax = plt.subplots()
+            self._figure.suptitle(self.title)
             self._plots            = {}
             self._prepare_axis(self._ax)
 
@@ -326,13 +329,15 @@ class MPLBackend(Backend):
         xdata = self._plots[module_name].get_xdata()
         ydata = self._plots[module_name].get_ydata()
         xdata = np.append(xdata, 1 if len(xdata) == 0 else xdata[-1] + 1)
+        if isinstance(datum, torch.Tensor):
+            datum = datum.detach().cpu().numpy()
         ydata = np.append(ydata, datum)
 
         self._plots[module_name].set_xdata(xdata)
         self._plots[module_name].set_ydata(ydata)
         self._ax.legend(ncol=2)
 
-        if self._redraw_counter % 50 == 0:      # TODO: Make modulus a parameter
+        if self._redraw_counter % self._redraw_interval == 0:
             self._ax.relim()
             if self._ylims:
                 self._ax.set_ylim(self._ylims)
@@ -377,6 +382,7 @@ def configure_prefix(p):
     global prefix
     prefix = p
 
+
 def set_run_info(info):
     TBBackend.info = info
 
@@ -392,24 +398,20 @@ class TBBackend(Backend):
     Attributes
     ----------
     _writer :   tensorboardX.SummaryWriter
-    hist_bins   :   int
-                    Number of bins to use for histograms
+    _hist_bins   :   int
+                     Number of bins to use for histograms
     '''
 
     # TODO: make printing metadata non-hacky
-    info : str = ''
+    info : str = 'n/a'
 
     def __init__(self, **kwargs):
         super().__init__(kwargs.pop('title'))
-        # remove args incompatible with TB
-        kwargs.pop('xlabel', None)
-        kwargs.pop('ylabel', None)
-        kwargs.pop('ylims', None)
         self._hist_bins = kwargs.pop('bins', 50)
         log_dir         = kwargs.pop('log_dir', 'runs' if not prefix else prefix)
         index           = determine_run_index(log_dir)
         log_dir         = f'{log_dir}/run{index}'
-        self._writer    = SummaryWriter(log_dir, **kwargs)
+        self._writer    = SummaryWriter(log_dir)
         self._writer.add_text('run_conf', TBBackend.info)
 
     def add_data(self, module_name, datum, step):

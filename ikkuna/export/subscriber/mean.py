@@ -5,7 +5,7 @@ from ikkuna.export.messages import get_default_bus
 class MeanSubscriber(PlotSubscriber):
 
     def __init__(self, kind, message_bus=get_default_bus(), tag=None, subsample=1, ylims=None,
-                 backend='tb', **tbx_params):
+                 backend='tb'):
 
         if not isinstance(kind, str):
             raise ValueError('MeanSubscriber only accepts 1 kind')
@@ -18,7 +18,7 @@ class MeanSubscriber(PlotSubscriber):
                                                      'ylabel': ylabel,
                                                      'ylims': ylims,
                                                      'xlabel': xlabel},
-                         backend=backend, **tbx_params)
+                         backend=backend)
         self._add_publication(f'{kind}_mean', type='DATA')
 
     def compute(self, message):

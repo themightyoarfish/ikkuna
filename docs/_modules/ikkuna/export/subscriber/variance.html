@@ -116,7 +116,7 @@
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">message_bus</span><span class="o">=</span><span class="n">get_default_bus</span><span class="p">(),</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ylims</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;tb&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">tbx_params</span><span class="p">):</span>
+                 <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;tb&#39;</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;VarianceSubscriber only accepts 1 kind&#39;</span><span class="p">)</span>
@@ -130,7 +130,7 @@
                           <span class="s1">&#39;ylabel&#39;</span><span class="p">:</span> <span class="n">ylabel</span><span class="p">,</span>
                           <span class="s1">&#39;ylims&#39;</span><span class="p">:</span> <span class="n">ylims</span><span class="p">,</span>
                           <span class="s1">&#39;xlabel&#39;</span><span class="p">:</span> <span class="n">xlabel</span><span class="p">},</span>
-                         <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span> <span class="o">**</span><span class="n">tbx_params</span><span class="p">)</span>
+                         <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_publication</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{kind}</span><span class="s1">_variance&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;DATA&#39;</span><span class="p">)</span>
 
