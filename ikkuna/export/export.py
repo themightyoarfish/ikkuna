@@ -359,7 +359,7 @@ class Exporter(object):
         #########################################################
         forward_fn = model.forward
 
-        def new_forward_fn(this, *args, should_train=True):
+        def new_forward_fn(this, *args, should_train=True, should_publish=True):
             # In order for accuracy subscribers to not need the model access, we add a secret
             # parameter which they can use to temporarily set the training to False and have it
             # revert automatically. TODO: Check if this is inefficient
@@ -368,7 +368,8 @@ class Exporter(object):
             if this.training:
                 # we need to step before forward pass, else act and grads get different steps
                 self.step()
-            self.new_input_data(*args)               # do this after stepping
+            if should_publish:
+                self.new_input_data(*args)               # do this after stepping
             ret = forward_fn(*args)             # do forward pass w/o messages spawning
             this.train(was_training)            # restore previous state
             return ret

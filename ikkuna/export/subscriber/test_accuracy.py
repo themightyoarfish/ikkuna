@@ -73,7 +73,7 @@ class TestAccuracySubscriber(PlotSubscriber):
                     X, labels   = next(loader)
                     if torch.cuda.is_available():
                         X = X.cuda()
-                    outputs     = self._forward_fn(X, should_train=False)
+                    outputs     = self._forward_fn(X, should_train=False, should_publish=False)
                     predictions = outputs.argmax(1)
                     n_correct   = (predictions.cpu() == labels).sum().item()
                     accuracy   += n_correct / X.shape[0]
