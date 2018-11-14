@@ -17,7 +17,7 @@ import abc
 
 
 _META_KINDS = {
-    'batch_started', 'batch_finished', 'epoch_started', 'epoch_finished', 'input_data',
+    'batch_started', 'batch_finished', 'epoch_started', 'epoch_finished', 'input_data', 'loss',
     'input_labels', 'network_output'
 }
 

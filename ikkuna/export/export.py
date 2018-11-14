@@ -202,6 +202,11 @@ class Exporter(object):
         '''Switch to testing mode. This will turn off all publishing.'''
         self.train(not test)
 
+    def new_loss(self, loss):
+        '''Callback for publishing current training loss.'''
+        self._msg_bus.publish_network_message(self._global_step, self._train_step, self._epoch,
+                                              'loss', loss)
+
     def new_input_data(self, *args):
         '''Callback for new training input to the network.
 
@@ -386,6 +391,7 @@ class Exporter(object):
         def hook(mod, output_and_labels, loss):
             network_output, labels = output_and_labels
             self.new_output_and_labels(network_output, labels)
+            self.new_loss(loss)
 
         loss_function.register_forward_hook(hook)
 
