@@ -94,6 +94,11 @@ class Trainer:
         return self._batches_per_epoch
 
     @property
+    def loss(self):
+        '''torch.nn.Module: The loss function in use'''
+        return self._loss_function
+
+    @property
     def model(self):
         '''torch.nn.Module: Model'''
         return self._model
