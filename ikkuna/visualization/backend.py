@@ -418,6 +418,6 @@ class TBBackend(Backend):
         # Unfortunately, xlabels, ylabels and plot titles are not supported
         self._writer.add_scalars(f'{self.title}', {module_name: datum}, global_step=step)
 
-    def add_histogram(self, module_name, datum, step):
+    def add_histogram(self, module_name, datum, step, bins='auto'):
         self._writer.add_histogram(f'{self.title}: {module_name}', datum, global_step=step,
-                                   bins=self._hist_bins)
+                                   bins=bins)
