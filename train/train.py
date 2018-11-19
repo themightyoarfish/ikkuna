@@ -73,6 +73,7 @@ class Trainer:
         self._global_counter    = 0
         self._epoch             = 0
         self._scheduler         = None
+        self._create_graph      = kwargs.get('create_graph', False)
 
         # we use these to peek one step ahead in the data iterator to know an epoch has ended
         # already in the epoch's final iteration, not at the beginning of the next one
@@ -82,6 +83,14 @@ class Trainer:
         print(f'Data shape: {self._shape}')
         self._exporter = kwargs.get('exporter', Exporter(kwargs.get('depth', -1)))
         self._exporter.set_loss(self._loss_function)
+
+    @property
+    def create_graph(self):
+        return self._create_graph
+
+    @create_graph.setter
+    def create_graph(self, value):
+        self._create_graph = value
 
     @property
     def current_batch(self):
@@ -209,7 +218,7 @@ class Trainer:
         self._optimizer.zero_grad()
         output       = self._model(data)
         loss         = self._loss_function(output, labels)
-        loss.backward()
+        loss.backward(create_graph=self._create_graph)
         self._optimizer.step()
 
         try:
