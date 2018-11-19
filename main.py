@@ -23,10 +23,11 @@ from tqdm import tqdm
 #  1st party imports  #
 #######################
 from train import Trainer
-from ikkuna.utils import load_dataset
+from ikkuna.utils import load_dataset, seed_everything
 from ikkuna.export.subscriber import (RatioSubscriber, HistogramSubscriber, SpectralNormSubscriber,
                                       TestAccuracySubscriber, TrainAccuracySubscriber,
                                       NormSubscriber)
+from ikkuna.export.subscriber.hessian import HessianEigen
 from ikkuna.export import Exporter
 from ikkuna.export.messages import MessageBus
 import ikkuna.visualization
@@ -62,11 +63,17 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
     if 'exponential_decay' in kwargs:
         decay = kwargs['exponential_decay']
         if decay is not None:
-            import torch
             trainer.set_schedule(torch.optim.lr_scheduler.ExponentialLR, decay)
 
     subsample = kwargs['subsample']
     backend   = kwargs['visualisation']
+
+    if kwargs['hessian']:
+        from torch.utils.data import DataLoader
+        loader = DataLoader(dataset_train.dataset, batch_size=batch_size, shuffle=True)
+        trainer.add_subscriber(HessianEigen(trainer.model.forward, trainer.loss,
+                                            loader, batch_size, power_steps=25))
+        trainer.create_graph = True
 
     if kwargs['spectral_norm']:
         for kind in kwargs['spectral_norm']:
@@ -165,8 +172,14 @@ def get_parser():
                         help='Use 2-norm subscriber(s)')
     parser.add_argument('--depth', type=int, default=-1, help='Depth to which to add modules',
                         metavar='N')
+    parser.add_argument('--hessian', action='store_true',
+                        help='Use Hessian tracker (substantially increases training time)')
     parser.add_argument('--exponential-decay', type=float, required=False,
                         help='Decay parameter for exponential decay', metavar='GAMMA')
+    parser.add_argument('--log-dir', type=str, required=False, help='TensorBoard logdir',
+                        default='runs')
+    parser.add_argument('--seed', type=int, required=False, default=None,
+                        help='Seed to use. None means don\'t seed')
     return parser
 
 
@@ -175,6 +188,10 @@ def main():
     args = get_parser().parse_args()
     kwargs = vars(args)
     ikkuna.visualization.TBBackend.info = str(kwargs)
+    ikkuna.visualization.configure_prefix(args.log_dir)
+    seed = kwargs.pop('seed')
+    if seed is not None:
+        seed_everything(seed)
     _main(kwargs.pop('dataset'), kwargs.pop('model'), kwargs.pop('batch_size'),
           kwargs.pop('epochs'), kwargs.pop('optimizer'), **vars(args))
 
