@@ -25,8 +25,7 @@ def get_metric_for_ids(name, ids):
         {'$match': {'run_id': {'$in': ids}}},
         {'$project': {'steps': True,
                       'values': True,
-                      '_id': False,
-                      }
+                      '_id': False}
          }
     ]
     )

@@ -10,14 +10,14 @@ class RatioLRSubscriber(PlotSubscriber):
     (default is 1e-3).'''
 
     def __init__(self, base_lr, smoothing=0.9, target=1e-3, max_factor=500,
-                 ylims=None, backend='tb', **tbx_params):
+                 ylims=None, backend='tb'):
         subscription = Subscription(self, ['weight_updates_weights_ratio', 'batch_started'],
                                     tag=None, subsample=1)
         super().__init__([subscription], get_default_bus(),
                          {'title': 'learning_rate',
                           'ylabel': 'Adjusted learning rate',
                           'ylims': ylims,
-                          'xlabel': 'Train step'}, backend=backend, **tbx_params)
+                          'xlabel': 'Train step'}, backend=backend)
         self._ratios     = defaultdict(float)
         self._max_factor = max_factor
         self._smoothing  = smoothing
@@ -73,3 +73,31 @@ class SacredLoggingSubscriber(Subscriber):
         if message.key != 'META':
             raise ValueError('Logging `ModuleMessage`s doesn\'t make sense')
         self._experiment.log_scalar(message.kind, message.data, message.global_step)
+
+
+class ExponentialRatioLRSubscriber(RatioLRSubscriber):
+    '''A subscriber that computes learning rate mutliplicatives based on an exponential decay and
+    the average update/weight ratio of the previous batches. It uses exponential smoothing on the
+    ratios and averages them over all layers. It outputs a factor to get the ratio of change towards
+    a target (default is 1e-3).'''
+
+    def __init__(self, base_lr, decay=0.98, smoothing=0.9, target=1e-3, max_factor=500,
+                 ylims=None, backend='tb'):
+        super().__init__(base_lr, smoothing, target, max_factor, ylims, backend)
+        self._decay = decay
+
+    def compute(self, message):
+        if message.kind == 'weight_updates_weights_ratio':
+            self._ratios[message.key] = (self._smoothing * message.data
+                                         + (1 - self._smoothing) * self._ratios[message.key])
+        else:
+            self._factor = 0.5 * self._compute_lr_multiplier() + 0.5 * self._decay ** message.epoch
+            self._backend.add_data('learning_rate', self._base_lr * self._factor,
+                                   message.global_step)
+            self.message_bus.publish_network_message(message.global_step,
+                                                     message.train_step,
+                                                     message.epoch, 'learning_rate',
+                                                     self._factor * self._base_lr)
+
+    def __call__(self, epoch):
+        return self._factor
