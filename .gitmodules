@@ -1,3 +1,0 @@
-[submodule "ikkuna/export/subscriber/hessian/pytorch-hessian-eigenthings"]
-	path = ikkuna/export/subscriber/hessian/pytorch-hessian-eigenthings
-	url = git@github.com:themightyoarfish/pytorch-hessian-eigenthings.git
