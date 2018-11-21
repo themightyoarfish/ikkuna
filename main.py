@@ -27,7 +27,7 @@ from ikkuna.utils import load_dataset, seed_everything
 from ikkuna.export.subscriber import (RatioSubscriber, HistogramSubscriber, SpectralNormSubscriber,
                                       TestAccuracySubscriber, TrainAccuracySubscriber,
                                       NormSubscriber)
-from ikkuna.export.subscriber.hessian import HessianEigen
+from ikkuna.export.subscriber.hessian import HessianEigenSubscriber
 from ikkuna.export import Exporter
 from ikkuna.export.messages import MessageBus
 import ikkuna.visualization
@@ -71,8 +71,10 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
     if kwargs['hessian']:
         from torch.utils.data import DataLoader
         loader = DataLoader(dataset_train.dataset, batch_size=batch_size, shuffle=True)
-        trainer.add_subscriber(HessianEigen(trainer.model.forward, trainer.loss,
-                                            loader, batch_size, power_steps=25))
+        trainer.add_subscriber(HessianEigenSubscriber(trainer.model.forward, trainer.loss, loader,
+                                                      batch_size,
+                                                      frequency=trainer.batches_per_epoch,
+                                                      num_eig=1, power_steps=25))
         trainer.create_graph = True
 
     if kwargs['spectral_norm']:
