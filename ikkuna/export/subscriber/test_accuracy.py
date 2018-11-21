@@ -64,7 +64,7 @@ class TestAccuracySubscriber(PlotSubscriber):
         A :class:`~ikkuna.export.messages.NetworkMessage` with the identifier
         ``test_accuracy`` is published.
         '''
-        if self._subscriptions['batch_finished'].counter['batch_finished'] % self._frequency == 0:
+        if self.subscriptions['batch_finished'].counter['batch_finished'] % self._frequency == 0:
             n_batches = 0
             accuracy  = 0
             loader    = iter(self._data_loader)
