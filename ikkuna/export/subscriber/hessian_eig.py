@@ -15,10 +15,38 @@ class HessianEigenSubscriber(PlotSubscriber):
     This is done by using defalted power iteration from Noah Golmant's ``hessian_eigenthings``
     module, which has to be installed. This operation is _very_ expensive, since it involves
     differentiating twice over a subset of the training data. Since the weights must be fixed,
-    gradients from training cannot be reused.'''
+    gradients from training cannot be reused.
+
+    .. warning::
+        In my experiments, the power iteration from ``hessian_eigenthings`` does not really work;
+        the estimates do not converge to a single value when increasing the number of steps, but
+        rather are all over the place. Investigation needed.
+    '''
 
     def __init__(self, forward_fn, loss_fn, data_loader, batch_size, frequency=1, num_eig=1,
                  power_steps=20, message_bus=get_default_bus(), ylims=None, backend='tb'):
+        '''
+        Parameters
+        ----------
+        forward_fn  :   function
+                        Function to obtain predictions. You probably want to pass the model's
+                        ``forward()`` routine here
+        loss_fn     :   torch.nn.Module
+                        Loss function (such as :class:`torch.nn.CrossEntropyLoss`)
+        data_loader :   torch.utils.data.DataLoader
+                        Loader for the dataset to compute gradients over
+        batch_finished  :   int
+                            Number of samples to compute gradients for in one step of power iteration
+                            More should lead to a better estimate
+        frequency   :   int
+                        How often to compute the eigenvalues (after every nth batch)
+        num_eig :   int
+                    Number of top eigenvalues to compute
+        power_iter_steps    :   int
+                                Number of steps in the power iteration for computing a singular value.
+                                The total number of batches read is then ``power_iter_steps * num_eig``
+                                More steps should lead to a better estimate.
+        '''
         title  = f'Top hessian Eigenvalues'
         ylabel = 'tbd'
         xlabel = 'Train step'

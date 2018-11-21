@@ -193,7 +193,7 @@
 <span class="sd">        ----------</span>
 <span class="sd">        message    :   ikkuna.export.messages.ModuleMessage</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tag</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span> <span class="o">==</span> <span class="n">message</span><span class="o">.</span><span class="n">tag</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tag</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span> <span class="o">!=</span> <span class="n">message</span><span class="o">.</span><span class="n">tag</span> <span class="ow">or</span> <span class="n">message</span><span class="o">.</span><span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kinds</span><span class="p">):</span>
             <span class="k">return</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">ModuleMessage</span><span class="p">):</span>

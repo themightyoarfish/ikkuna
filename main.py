@@ -26,8 +26,7 @@ from train import Trainer
 from ikkuna.utils import load_dataset, seed_everything
 from ikkuna.export.subscriber import (RatioSubscriber, HistogramSubscriber, SpectralNormSubscriber,
                                       TestAccuracySubscriber, TrainAccuracySubscriber,
-                                      NormSubscriber)
-from ikkuna.export.subscriber.hessian import HessianEigenSubscriber
+                                      NormSubscriber, HessianEigenSubscriber)
 from ikkuna.export import Exporter
 from ikkuna.export.messages import MessageBus
 import ikkuna.visualization

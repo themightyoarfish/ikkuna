@@ -134,8 +134,7 @@
 <span class="kn">from</span> <span class="nn">ikkuna.utils</span> <span class="k">import</span> <span class="n">load_dataset</span><span class="p">,</span> <span class="n">seed_everything</span>
 <span class="kn">from</span> <span class="nn">ikkuna.export.subscriber</span> <span class="k">import</span> <span class="p">(</span><span class="n">RatioSubscriber</span><span class="p">,</span> <span class="n">HistogramSubscriber</span><span class="p">,</span> <span class="n">SpectralNormSubscriber</span><span class="p">,</span>
                                       <span class="n">TestAccuracySubscriber</span><span class="p">,</span> <span class="n">TrainAccuracySubscriber</span><span class="p">,</span>
-                                      <span class="n">NormSubscriber</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">ikkuna.export.subscriber.hessian</span> <span class="k">import</span> <span class="n">HessianEigen</span>
+                                      <span class="n">NormSubscriber</span><span class="p">,</span> <span class="n">HessianEigenSubscriber</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">ikkuna.export</span> <span class="k">import</span> <span class="n">Exporter</span>
 <span class="kn">from</span> <span class="nn">ikkuna.export.messages</span> <span class="k">import</span> <span class="n">MessageBus</span>
 <span class="kn">import</span> <span class="nn">ikkuna.visualization</span>
@@ -179,8 +178,10 @@
     <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;hessian&#39;</span><span class="p">]:</span>
         <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">DataLoader</span>
         <span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset_train</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">trainer</span><span class="o">.</span><span class="n">add_subscriber</span><span class="p">(</span><span class="n">HessianEigen</span><span class="p">(</span><span class="n">trainer</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span> <span class="n">trainer</span><span class="o">.</span><span class="n">loss</span><span class="p">,</span>
-                                            <span class="n">loader</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">power_steps</span><span class="o">=</span><span class="mi">25</span><span class="p">))</span>
+        <span class="n">trainer</span><span class="o">.</span><span class="n">add_subscriber</span><span class="p">(</span><span class="n">HessianEigenSubscriber</span><span class="p">(</span><span class="n">trainer</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span> <span class="n">trainer</span><span class="o">.</span><span class="n">loss</span><span class="p">,</span> <span class="n">loader</span><span class="p">,</span>
+                                                      <span class="n">batch_size</span><span class="p">,</span>
+                                                      <span class="n">frequency</span><span class="o">=</span><span class="n">trainer</span><span class="o">.</span><span class="n">batches_per_epoch</span><span class="p">,</span>
+                                                      <span class="n">num_eig</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">power_steps</span><span class="o">=</span><span class="mi">25</span><span class="p">))</span>
         <span class="n">trainer</span><span class="o">.</span><span class="n">create_graph</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;spectral_norm&#39;</span><span class="p">]:</span>

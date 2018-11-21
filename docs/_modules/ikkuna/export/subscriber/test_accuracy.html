@@ -172,7 +172,7 @@
 <span class="sd">        A :class:`~ikkuna.export.messages.NetworkMessage` with the identifier</span>
 <span class="sd">        ``test_accuracy`` is published.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subscriptions</span><span class="p">[</span><span class="s1">&#39;batch_finished&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">counter</span><span class="p">[</span><span class="s1">&#39;batch_finished&#39;</span><span class="p">]</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frequency</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">subscriptions</span><span class="p">[</span><span class="s1">&#39;batch_finished&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">counter</span><span class="p">[</span><span class="s1">&#39;batch_finished&#39;</span><span class="p">]</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frequency</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">n_batches</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">accuracy</span>  <span class="o">=</span> <span class="mi">0</span>
             <span class="n">loader</span>    <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_loader</span><span class="p">)</span>

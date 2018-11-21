@@ -6,6 +6,8 @@ from ikkuna.export.messages import get_default_bus
 
 
 class ConditionNumberSubscriber(PlotSubscriber):
+    '''A Subscriber which computes the condition number of a matrix. Not sure what this is useful
+    for, but maybe for Linear layers.'''
 
     def __init__(self, kind, message_bus=get_default_bus(), tag=None, subsample=1, ylims=None,
                  backend='tb'):
