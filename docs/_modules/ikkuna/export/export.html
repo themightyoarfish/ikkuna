@@ -310,6 +310,11 @@
         <span class="sd">&#39;&#39;&#39;Switch to testing mode. This will turn off all publishing.&#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="ow">not</span> <span class="n">test</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="Exporter.new_loss"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.new_loss">[docs]</a>    <span class="k">def</span> <span class="nf">new_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Callback for publishing current training loss.&#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">publish_network_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">,</span>
+                                              <span class="s1">&#39;loss&#39;</span><span class="p">,</span> <span class="n">loss</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="Exporter.new_input_data"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.new_input_data">[docs]</a>    <span class="k">def</span> <span class="nf">new_input_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Callback for new training input to the network.</span>
 
@@ -467,7 +472,7 @@
         <span class="c1">#########################################################</span>
         <span class="n">forward_fn</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">forward</span>
 
-        <span class="k">def</span> <span class="nf">new_forward_fn</span><span class="p">(</span><span class="n">this</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">should_train</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">new_forward_fn</span><span class="p">(</span><span class="n">this</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">should_train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">should_publish</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
             <span class="c1"># In order for accuracy subscribers to not need the model access, we add a secret</span>
             <span class="c1"># parameter which they can use to temporarily set the training to False and have it</span>
             <span class="c1"># revert automatically. TODO: Check if this is inefficient</span>
@@ -476,7 +481,8 @@
             <span class="k">if</span> <span class="n">this</span><span class="o">.</span><span class="n">training</span><span class="p">:</span>
                 <span class="c1"># we need to step before forward pass, else act and grads get different steps</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">new_input_data</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>               <span class="c1"># do this after stepping</span>
+            <span class="k">if</span> <span class="n">should_publish</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">new_input_data</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>               <span class="c1"># do this after stepping</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="n">forward_fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>             <span class="c1"># do forward pass w/o messages spawning</span>
             <span class="n">this</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">was_training</span><span class="p">)</span>            <span class="c1"># restore previous state</span>
             <span class="k">return</span> <span class="n">ret</span>
@@ -493,6 +499,7 @@
         <span class="k">def</span> <span class="nf">hook</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">output_and_labels</span><span class="p">,</span> <span class="n">loss</span><span class="p">):</span>
             <span class="n">network_output</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">output_and_labels</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">new_output_and_labels</span><span class="p">(</span><span class="n">network_output</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">new_loss</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
 
         <span class="n">loss_function</span><span class="o">.</span><span class="n">register_forward_hook</span><span class="p">(</span><span class="n">hook</span><span class="p">)</span></div>
 

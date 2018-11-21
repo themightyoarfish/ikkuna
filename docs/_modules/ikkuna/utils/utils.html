@@ -291,45 +291,93 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 
 
-<div class="viewcode-block" id="load_dataset"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.load_dataset">[docs]</a><span class="k">def</span> <span class="nf">load_dataset</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">train_transforms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">test_transforms</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_load_imagenet_dogs</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">formats</span><span class="p">,</span> <span class="n">train_transforms</span><span class="p">,</span> <span class="n">test_transforms</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Load the ImageNetDogs dataset from disk&#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">torchvision.datasets</span> <span class="k">import</span> <span class="n">DatasetFolder</span>
+    <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">random_split</span>
+    <span class="kn">from</span> <span class="nn">PIL</span> <span class="k">import</span> <span class="n">Image</span>
+    <span class="kn">import</span> <span class="nn">copy</span>
+
+    <span class="k">def</span> <span class="nf">loader</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Load image from fs path&#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">DatasetFolder</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">loader</span><span class="p">,</span> <span class="n">formats</span><span class="p">)</span>
+
+    <span class="n">size</span>                        <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+    <span class="n">size_train</span>                  <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">0.7</span> <span class="o">*</span> <span class="n">size</span><span class="p">)</span>
+    <span class="n">size_test</span>                   <span class="o">=</span> <span class="n">size</span> <span class="o">-</span> <span class="n">size_train</span>
+    <span class="n">dataset_train</span><span class="p">,</span> <span class="n">dataset_test</span> <span class="o">=</span> <span class="n">random_split</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">[</span><span class="n">size_train</span><span class="p">,</span> <span class="n">size_test</span><span class="p">])</span>
+
+    <span class="c1"># set the transforms</span>
+    <span class="c1"># we need to make a copy for the test set to have different transforms</span>
+    <span class="n">dataset_test</span><span class="o">.</span><span class="n">dataset</span>            <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+    <span class="n">dataset_train</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">train_transforms</span>
+    <span class="n">dataset_test</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">transform</span>  <span class="o">=</span> <span class="n">test_transforms</span>
+    <span class="k">return</span> <span class="n">dataset_train</span><span class="p">,</span> <span class="n">dataset_test</span>
+
+
+<div class="viewcode-block" id="load_dataset"><a class="viewcode-back" href="../../../ikkuna.utils.html#ikkuna.utils.load_dataset">[docs]</a><span class="k">def</span> <span class="nf">load_dataset</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">train_transforms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">test_transforms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Retrieve a dataset and determine the number of classes. This estimate is</span>
 <span class="sd">    obtained from the number of different values in the training labels.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    name    :   str</span>
-<span class="sd">                Dataset name in :mod:`torchvision.datasets`</span>
+<span class="sd">                Currently, dataset names in :mod:`torchvision.datasets` and ``ImageNetDogs`` are</span>
+<span class="sd">                supported.</span>
+<span class="sd">    train_transforms    :   list</span>
+<span class="sd">                            List of transforms on the train data. Defaults to</span>
+<span class="sd">                            :class:`torchvision.transforms.ToTensor`</span>
+<span class="sd">    test_transforms    :   list</span>
+<span class="sd">                            List of transforms on the test data. Defaults to</span>
+<span class="sd">                            :class:`torchvision.transforms.ToTensor`</span>
+
+<span class="sd">    Keyword Arguments</span>
+<span class="sd">    -----------------</span>
+<span class="sd">    root    :   str</span>
+<span class="sd">                Root directory for dataset folders. Defaults to</span>
+<span class="sd">                ``/home/share/software/data/&lt;name&gt;/Images``</span>
+<span class="sd">    formats :   list</span>
+<span class="sd">                List of file extensions for dataset folders. Defaults to ``[&#39;jpg&#39;, &#39;png&#39;]``</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    tuple</span>
 <span class="sd">        2 :class:`~train.DatasetMeta`\ s are returned, one for train and one test set</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="kn">from</span> <span class="nn">train</span> <span class="k">import</span> <span class="n">DatasetMeta</span>
     <span class="n">train_transforms</span> <span class="o">=</span> <span class="n">Compose</span><span class="p">(</span><span class="n">train_transforms</span><span class="p">)</span> <span class="k">if</span> <span class="n">train_transforms</span> <span class="k">else</span> <span class="n">ToTensor</span><span class="p">()</span>
     <span class="n">test_transforms</span>  <span class="o">=</span> <span class="n">Compose</span><span class="p">(</span><span class="n">test_transforms</span><span class="p">)</span> <span class="k">if</span> <span class="n">test_transforms</span> <span class="k">else</span> <span class="n">ToTensor</span><span class="p">()</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">dataset_cls</span>   <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">torchvision</span><span class="o">.</span><span class="n">datasets</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-        <span class="n">dataset_train</span> <span class="o">=</span> <span class="n">dataset_cls</span><span class="p">(</span><span class="s1">&#39;/tmp/data&#39;</span><span class="p">,</span>
-                                    <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                    <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                    <span class="n">transform</span><span class="o">=</span><span class="n">train_transforms</span>
-                                    <span class="p">)</span>
-        <span class="n">dataset_test</span>  <span class="o">=</span> <span class="n">dataset_cls</span><span class="p">(</span><span class="s1">&#39;/tmp/data&#39;</span><span class="p">,</span>
-                                    <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                    <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                                    <span class="n">transform</span><span class="o">=</span><span class="n">test_transforms</span>
-                                    <span class="p">)</span>
-    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Dataset </span><span class="si">{name}</span><span class="s1"> unknown.&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;ImageNetDogs&#39;</span><span class="p">:</span>
+        <span class="n">root</span>    <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;/home/share/software/data/</span><span class="si">{name}</span><span class="s1">/Images/&#39;</span><span class="p">)</span>
+        <span class="n">formats</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;formats&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;jpg&#39;</span><span class="p">,</span> <span class="s1">&#39;png&#39;</span><span class="p">])</span>
+        <span class="n">dataset_train</span><span class="p">,</span> <span class="n">dataset_test</span> <span class="o">=</span> <span class="n">_load_imagenet_dogs</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">formats</span><span class="p">,</span> <span class="n">train_transforms</span><span class="p">,</span>
+                                                          <span class="n">test_transforms</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">dataset_cls</span>   <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">torchvision</span><span class="o">.</span><span class="n">datasets</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="n">dataset_train</span> <span class="o">=</span> <span class="n">dataset_cls</span><span class="p">(</span><span class="s1">&#39;/tmp/data&#39;</span><span class="p">,</span>
+                                        <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                        <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                        <span class="n">transform</span><span class="o">=</span><span class="n">train_transforms</span>
+                                        <span class="p">)</span>
+            <span class="n">dataset_test</span>  <span class="o">=</span> <span class="n">dataset_cls</span><span class="p">(</span><span class="s1">&#39;/tmp/data&#39;</span><span class="p">,</span>
+                                        <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                        <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                        <span class="n">transform</span><span class="o">=</span><span class="n">test_transforms</span>
+                                        <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Dataset </span><span class="si">{name}</span><span class="s1"> unknown.&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">num_classes</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s1">&#39;dataset&#39;</span><span class="p">):</span>     <span class="c1"># is a Subset</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">dataset</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s1">&#39;targets&#39;</span><span class="p">):</span>
             <span class="n">labels</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">targets</span>
         <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s1">&#39;labels&#39;</span><span class="p">):</span>
             <span class="n">labels</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">labels</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{dataset_cls}</span><span class="s1"> has neither `targets` nor `labels` properties.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{dataset}</span><span class="s1"> has neither `targets` nor `labels` properties.&#39;</span><span class="p">)</span>
 
         <span class="c1"># infer number of classes from labels. will fail if not all classes occur in labels</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
@@ -342,13 +390,18 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Unexpected label storage </span><span class="si">{labels.__class__.__name__}</span><span class="s1">&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="n">sample</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">dataset</span><span class="p">))</span>
 
         <span class="c1"># if only three dimensions, assume [N, H, W], else [N, H, W, C]</span>
-        <span class="n">N</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
-        <span class="n">C</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span> <span class="k">else</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">sample</span><span class="o">.</span><span class="n">ndimension</span><span class="p">()</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">C</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">H</span><span class="p">,</span> <span class="n">W</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">shape</span>
+            <span class="n">C</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">C</span><span class="p">)</span>
 
+    <span class="kn">from</span> <span class="nn">train</span> <span class="k">import</span> <span class="n">DatasetMeta</span>
     <span class="n">meta_train</span> <span class="o">=</span> <span class="n">DatasetMeta</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">dataset_train</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">(</span><span class="n">dataset_train</span><span class="p">),</span>
                              <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">(</span><span class="n">dataset_train</span><span class="p">))</span>
     <span class="n">meta_test</span>  <span class="o">=</span> <span class="n">DatasetMeta</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">dataset_test</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">(</span><span class="n">dataset_test</span><span class="p">),</span>

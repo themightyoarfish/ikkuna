@@ -183,45 +183,93 @@ import numpy as np
 import torch
 
 
-def load_dataset(name, train_transforms=None, test_transforms=None):
+def _load_imagenet_dogs(root, formats, train_transforms, test_transforms):
+    '''Load the ImageNetDogs dataset from disk'''
+    from torchvision.datasets import DatasetFolder
+    from torch.utils.data import random_split
+    from PIL import Image
+    import copy
+
+    def loader(path):
+        '''Load image from fs path'''
+        return Image.open(path)
+
+    dataset = DatasetFolder(root, loader, formats)
+
+    size                        = len(dataset)
+    size_train                  = int(0.7 * size)
+    size_test                   = size - size_train
+    dataset_train, dataset_test = random_split(dataset, [size_train, size_test])
+
+    # set the transforms
+    # we need to make a copy for the test set to have different transforms
+    dataset_test.dataset            = copy.copy(dataset)
+    dataset_train.dataset.transform = train_transforms
+    dataset_test.dataset.transform  = test_transforms
+    return dataset_train, dataset_test
+
+
+def load_dataset(name, train_transforms=None, test_transforms=None, **kwargs):
     '''Retrieve a dataset and determine the number of classes. This estimate is
     obtained from the number of different values in the training labels.
 
     Parameters
     ----------
     name    :   str
-                Dataset name in :mod:`torchvision.datasets`
+                Currently, dataset names in :mod:`torchvision.datasets` and ``ImageNetDogs`` are
+                supported.
+    train_transforms    :   list
+                            List of transforms on the train data. Defaults to
+                            :class:`torchvision.transforms.ToTensor`
+    test_transforms    :   list
+                            List of transforms on the test data. Defaults to
+                            :class:`torchvision.transforms.ToTensor`
+
+    Keyword Arguments
+    -----------------
+    root    :   str
+                Root directory for dataset folders. Defaults to
+                ``/home/share/software/data/<name>/Images``
+    formats :   list
+                List of file extensions for dataset folders. Defaults to ``['jpg', 'png']``
 
     Returns
     -------
     tuple
         2 :class:`~train.DatasetMeta`\ s are returned, one for train and one test set
     '''
-    from train import DatasetMeta
     train_transforms = Compose(train_transforms) if train_transforms else ToTensor()
     test_transforms  = Compose(test_transforms) if test_transforms else ToTensor()
-    try:
-        dataset_cls   = getattr(torchvision.datasets, name)
-        dataset_train = dataset_cls('/tmp/data',
-                                    download=True,
-                                    train=True,
-                                    transform=train_transforms
-                                    )
-        dataset_test  = dataset_cls('/tmp/data',
-                                    download=True,
-                                    train=False,
-                                    transform=test_transforms
-                                    )
-    except AttributeError:
-        raise NameError(f'Dataset {name} unknown.')
+    if name == 'ImageNetDogs':
+        root    = kwargs.get('root', f'/home/share/software/data/{name}/Images/')
+        formats = kwargs.get('formats', ['jpg', 'png'])
+        dataset_train, dataset_test = _load_imagenet_dogs(root, formats, train_transforms,
+                                                          test_transforms)
+    else:
+        try:
+            dataset_cls   = getattr(torchvision.datasets, name)
+            dataset_train = dataset_cls('/tmp/data',
+                                        download=True,
+                                        train=True,
+                                        transform=train_transforms
+                                        )
+            dataset_test  = dataset_cls('/tmp/data',
+                                        download=True,
+                                        train=False,
+                                        transform=test_transforms
+                                        )
+        except AttributeError:
+            raise NameError(f'Dataset {name} unknown.')
 
     def num_classes(dataset):
+        if hasattr(dataset, 'dataset'):     # is a Subset
+            dataset = dataset.dataset
         if hasattr(dataset, 'targets'):
             labels = dataset.targets
         elif hasattr(dataset, 'labels'):
             labels = dataset.labels
         else:
-            raise RuntimeError(f'{dataset_cls} has neither `targets` nor `labels` properties.')
+            raise RuntimeError(f'{dataset} has neither `targets` nor `labels` properties.')
 
         # infer number of classes from labels. will fail if not all classes occur in labels
         if isinstance(labels, np.ndarray):
@@ -234,13 +282,18 @@ def load_dataset(name, train_transforms=None, test_transforms=None):
             raise ValueError(f'Unexpected label storage {labels.__class__.__name__}')
 
     def shape(dataset):
-        data = dataset.data
+        N = len(dataset)
+        sample, _ = next(iter(dataset))
 
         # if only three dimensions, assume [N, H, W], else [N, H, W, C]
-        N, H, W = data.shape[:3]
-        C = data.shape[-1] if len(data.shape) == 4 else 1
+        if sample.ndimension() == 3:
+            C, H, W = sample.shape
+        else:
+            H, W = sample.shape
+            C = 1
         return (N, H, W, C)
 
+    from train import DatasetMeta
     meta_train = DatasetMeta(dataset=dataset_train, num_classes=num_classes(dataset_train),
                              shape=shape(dataset_train))
     meta_test  = DatasetMeta(dataset=dataset_test, num_classes=num_classes(dataset_test),

@@ -190,7 +190,7 @@ with underscores due to the fact that it becomes part of a file name.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of module which emitted the data</li>
-<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+8752214 ))"><em>torch.Tensor</em></a>) – Payload</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+166ee86 ))"><em>torch.Tensor</em></a>) – Payload</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
 </ul>
 </td>
@@ -201,7 +201,7 @@ with underscores due to the fact that it becomes part of a file name.</p>
 
 <dl class="method">
 <dt id="ikkuna.visualization.TBBackend.add_histogram">
-<code class="descname">add_histogram</code><span class="sig-paren">(</span><em>module_name</em>, <em>datum</em>, <em>step</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/visualization/backend.html#TBBackend.add_histogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.visualization.TBBackend.add_histogram" title="Permalink to this definition">¶</a></dt>
+<code class="descname">add_histogram</code><span class="sig-paren">(</span><em>module_name</em>, <em>datum</em>, <em>step</em>, <em>bins='auto'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/visualization/backend.html#TBBackend.add_histogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.visualization.TBBackend.add_histogram" title="Permalink to this definition">¶</a></dt>
 <dd><p>Display histogram data (i.e. a line plot)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -209,7 +209,7 @@ with underscores due to the fact that it becomes part of a file name.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of module which emitted the data</li>
-<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+8752214 ))"><em>torch.Tensor</em></a>) – Payload, not the histogram itself</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+166ee86 ))"><em>torch.Tensor</em></a>) – Payload, not the histogram itself</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
 </ul>
 </td>
@@ -400,7 +400,7 @@ abundance.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of module which emitted the data</li>
-<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+8752214 ))"><em>torch.Tensor</em></a>) – Payload, not the histogram itself</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+166ee86 ))"><em>torch.Tensor</em></a>) – Payload, not the histogram itself</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
 </ul>
 </td>
@@ -419,7 +419,7 @@ abundance.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of module which emitted the data</li>
-<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+8752214 ))"><em>torch.Tensor</em></a>) – Payload</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+166ee86 ))"><em>torch.Tensor</em></a>) – Payload</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
 </ul>
 </td>
@@ -473,7 +473,7 @@ this class to dispatch their metrics to have them visualised.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of module which emitted the data</li>
-<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+8752214 ))"><em>torch.Tensor</em></a>) – Payload</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+166ee86 ))"><em>torch.Tensor</em></a>) – Payload</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
 </ul>
 </td>
@@ -492,7 +492,7 @@ this class to dispatch their metrics to have them visualised.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of module which emitted the data</li>
-<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+8752214 ))"><em>torch.Tensor</em></a>) – Payload, not the histogram itself</li>
+<li><strong>datum</strong> (<a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.0.0a0+166ee86 ))"><em>torch.Tensor</em></a>) – Payload, not the histogram itself</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Global step</li>
 </ul>
 </td>

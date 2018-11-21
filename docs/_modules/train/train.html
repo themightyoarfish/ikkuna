@@ -181,6 +181,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_global_counter</span>    <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span>             <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span>         <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_graph</span>      <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;create_graph&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
         <span class="c1"># we use these to peek one step ahead in the data iterator to know an epoch has ended</span>
         <span class="c1"># already in the epoch&#39;s final iteration, not at the beginning of the next one</span>
@@ -192,6 +193,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_exporter</span><span class="o">.</span><span class="n">set_loss</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_function</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">create_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_graph</span>
+
+    <span class="nd">@create_graph</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">create_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_graph</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">current_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;int: 0-based batch index&#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_counter</span>
@@ -200,6 +209,11 @@
     <span class="k">def</span> <span class="nf">batches_per_epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;int: number of batches in an epoch (assuming only full batches, I think)&#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batches_per_epoch</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">loss</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;torch.nn.Module: The loss function in use&#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_function</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -306,14 +320,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">X</span><span class="p">,</span> <span class="n">Y</span>         <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_Y</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span>
         <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
-            <span class="n">data</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="k">async</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">Y</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="k">async</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">data</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="k">async</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">labels</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="k">async</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
         <span class="n">output</span>       <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="n">loss</span>         <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_function</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
-        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">create_graph</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_create_graph</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 
         <span class="k">try</span><span class="p">:</span>
