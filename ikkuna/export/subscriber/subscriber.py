@@ -85,7 +85,7 @@ class Subscription(object):
         ----------
         message    :   ikkuna.export.messages.ModuleMessage
         '''
-        if not (self._tag is None or self._tag != message.tag):
+        if not (self._tag is None or self._tag != message.tag or message.kind not in self.kinds):
             return
 
         if isinstance(message, ModuleMessage):
