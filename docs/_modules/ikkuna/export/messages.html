@@ -476,7 +476,14 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        sub :   ikkuna.export.subscriber.Subscriber</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If any of the kinds the Subscriber is interested in wasn&#39;t previously registered</span>
 <span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta_kinds</span> <span class="ow">or</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_kinds</span><span class="p">,</span> <span class="n">sub</span><span class="o">.</span><span class="n">kinds</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Some kinds were not registered.&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subscribers</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sub</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MessageBus.publish_network_message"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.messages.MessageBus.publish_network_message">[docs]</a>    <span class="k">def</span> <span class="nf">publish_network_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">global_step</span><span class="p">,</span> <span class="n">train_step</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
