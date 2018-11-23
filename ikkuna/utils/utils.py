@@ -240,6 +240,10 @@ def load_dataset(name, train_transforms=None, test_transforms=None, **kwargs):
     '''
     train_transforms = Compose(train_transforms) if train_transforms else ToTensor()
     test_transforms  = Compose(test_transforms) if test_transforms else ToTensor()
+
+    ##########################################
+    #  Get the datasets in train/test split  #
+    ##########################################
     if name == 'ImageNetDogs':
         root    = kwargs.get('root', f'/home/share/software/data/{name}/Images/')
         formats = kwargs.get('formats', ['jpg', 'png'])
@@ -261,6 +265,9 @@ def load_dataset(name, train_transforms=None, test_transforms=None, **kwargs):
         except AttributeError:
             raise NameError(f'Dataset {name} unknown.')
 
+    ########################
+    #  Determine metadata  #
+    ########################
     def num_classes(dataset):
         if hasattr(dataset, 'dataset'):     # is a Subset
             dataset = dataset.dataset
