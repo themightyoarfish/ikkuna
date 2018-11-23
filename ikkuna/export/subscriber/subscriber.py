@@ -198,6 +198,10 @@ class Subscriber(abc.ABC):
                 self._msg_bus.deregister_meta_topic(topic)
 
     @property
+    def kinds(self):
+        return list(set(self.subscriptions.keys()))
+
+    @property
     def subscriptions(self):
         return self._subscriptions
 

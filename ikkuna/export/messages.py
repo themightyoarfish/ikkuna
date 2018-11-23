@@ -368,7 +368,14 @@ class MessageBus(object):
         Parameters
         ----------
         sub :   ikkuna.export.subscriber.Subscriber
+
+        Raises
+        ------
+        ValueError
+            If any of the kinds the Subscriber is interested in wasn't previously registered
         '''
+        if not all(map(lambda k: k in self._meta_kinds or k in self._data_kinds, sub.kinds)):
+            raise ValueError('Some kinds were not registered.')
         self._subscribers.add(sub)
 
     def publish_network_message(self, global_step, train_step, epoch, kind, data=None):
