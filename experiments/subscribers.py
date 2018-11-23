@@ -71,8 +71,10 @@ class SacredLoggingSubscriber(Subscriber):
 
     def compute(self, message):
         if message.key != 'META':
-            raise ValueError('Logging `ModuleMessage`s doesn\'t make sense')
-        self._experiment.log_scalar(message.kind, message.data, message.global_step)
+            name = f'{message.kind}.{message.key.name}'
+        else:
+            name = message.kind
+        self._experiment.log_scalar(name, float(message.data), message.global_step)
 
 
 class ExponentialRatioLRSubscriber(RatioLRSubscriber):
