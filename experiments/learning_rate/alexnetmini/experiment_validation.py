@@ -25,7 +25,7 @@ ex.observers.append(MongoObserver.create())
 logger.setLevel(logging.WARNING)   # when run in sacred, log level seems to be higher
 ex.logger = logger
 
-from subscribers import RatioLRSubscriber, SacredLoggingSubscriber
+from experiment.subscribers import RatioLRSubscriber, SacredLoggingSubscriber
 
 # we need this so we can define a function for the learning rate like the exponential and identity
 # fns. we will define the subscriber in the main function. I know, this hurts me too.
