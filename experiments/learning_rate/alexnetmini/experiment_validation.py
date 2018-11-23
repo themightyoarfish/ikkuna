@@ -64,8 +64,8 @@ def cfg():
     n_epochs   = 100
     loss       = 'CrossEntropyLoss'
     schedule   = 'ratio_adaptive_schedule_fn'
-    dataset    = 'CIFAR10',
-    model      = 'AlexNetMini',
+    dataset    = 'CIFAR10'
+    model      = 'AlexNetMini'
 
 
 @ex.automain
