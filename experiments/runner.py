@@ -10,7 +10,8 @@ class Job(object):
         self._process    = None
 
     def create(self):
-        self._process = Popen(['python', self._scriptname, 'with'] + self._updates, stdout=DEVNULL)
+        self._process = Popen(['python', self._scriptname, '-l', 'ERROR', 'with'] + self._updates,
+                              stdout=DEVNULL)
 
     def poll(self):
         return self._process.poll()
