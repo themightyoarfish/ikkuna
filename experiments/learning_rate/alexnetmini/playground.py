@@ -13,7 +13,7 @@ from ikkuna.export.subscriber import (ConditionNumberSubscriber,
                                       VarianceSubscriber)
 from ikkuna.models import AlexNetMini
 from ikkuna.utils import load_dataset
-from experiments.learning_rate.alexnetmini.subscribers import RatioLRSubscriber
+from experiments.subscribers import RatioLRSubscriber
 from train import Trainer
 
 sys.path.append('.')

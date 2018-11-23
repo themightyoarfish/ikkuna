@@ -3,6 +3,7 @@ import pymongo
 import matplotlib
 import numpy as np
 from itertools import product
+from experiments.sacred_utils import get_metric_for_ids
 
 # obtain runs collection created by sacred
 db_client = pymongo.MongoClient('mongodb://rasmus:rasmus@35.189.247.219/sacred')
@@ -10,26 +11,13 @@ sacred_db = db_client.sacred
 runs      = sacred_db.runs
 metrics   = sacred_db.metrics
 colors    = {'ratio_adaptive_schedule_fn': '#254167',
-            'exponential_schedule_fn': '#ee5679',
-            'identity_schedule_fn': '#d9d874'}
+             'exponential_schedule_fn': '#ee5679',
+             'identity_schedule_fn': '#d9d874'}
 
 
 def uniquify_list(seq):
     unique_data = [list(x) for x in set(tuple(x) for x in seq)]
     return unique_data
-
-
-def get_metric_for_ids(name, ids):
-    metric = sacred_db.metrics.aggregate([
-        {'$match': {'name': name}},
-        {'$match': {'run_id': {'$in': ids}}},
-        {'$project': {'steps': True,
-                      'values': True,
-                      '_id': False}
-         }
-    ]
-    )
-    return list(metric)
 
 
 def accuracy_traces(save=False):
