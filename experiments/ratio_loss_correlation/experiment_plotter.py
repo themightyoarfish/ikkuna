@@ -1,8 +1,9 @@
 import pymongo
 import numpy as np
 from experiments.sacred_utils import get_metric_for_ids
-from mpl_toolkits.mplot3d import Axes3D
+from mpl_toolkits.mplot3d import Axes3D     # noqa
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 from colors import Color
 import scipy.ndimage
 
@@ -119,6 +120,11 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
 
             # plot update ratios
             ax_ratio.plot(np.arange(start, end-1), ratio_trace, color=shaded_blue, linewidth=0.8)
+
+        loss_patch = mpatches.Patch(color=Color.YELLOW.hex(), label='Loss')
+        loss_decrease_patch = mpatches.Patch(color=Color.SLATE.hex(), label='Loss decrease')
+        ax_loss.legend(handles=[loss_patch, loss_decrease_patch], loc='upper right')
+        ax_loss2.yaxis.label.set_color(Color.SLATE.hex())
 
     plt.show()
 
