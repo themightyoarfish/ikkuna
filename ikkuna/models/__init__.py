@@ -23,11 +23,11 @@ def get_model(name, *args, **kwargs):
     '''
     try:
         if name.startswith('ResNet'):
-            model_fn = getattr(globals()[name.lower()])
-            model = model_fn(**kwargs)
+            model_fn = globals()[name.lower()]
+            model    = model_fn(**kwargs)
         else:
-            Model = globals()[name]
-            model = Model(*args, **kwargs)
+            Model    = globals()[name]
+            model    = Model(*args, **kwargs)
         return model
     except AttributeError:
         raise ValueError(f'Unknown model {model}')
