@@ -8,7 +8,7 @@ metrics   = sacred_db.metrics
 
 def get_metric_for_ids(name, ids):
     metric = sacred_db.metrics.aggregate([
-        {'$match': {'name': name}},
+        {'$match': {'name': {'$regex': name}}},
         {'$match': {'run_id': {'$in': ids}}},
         {'$project': {'steps': True,
                       'values': True,
@@ -20,11 +20,14 @@ def get_metric_for_ids(name, ids):
 
 
 def delete_invalid():
+    '''Delete all experiments and associated metrics for which the result was None'''
+
     print('DO NOT CALL THIS WHEN THERE ARE EXPERIMENTS RUNNING! Continue? ')
     if input('[yN]') != 'y':
         return
     else:
         print('I warned you')
+
     pipeline = [
         {'$match': {'result': None}},
         {'$project': {'_id': True}},
