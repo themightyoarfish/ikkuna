@@ -1,6 +1,15 @@
 import pymongo
 
-db_client = pymongo.MongoClient('mongodb://rasmus:rasmus@35.189.247.219/sacred')
+import os
+
+try:
+    pwd = os.environ['MONGOPWD']
+except KeyError:
+    print('You need to set the MONGOPWD variable to connect to the database.')
+    import sys
+    sys.exit(1)
+
+db_client = pymongo.MongoClient(f'mongodb://rasmus:{pwd}@35.189.247.219/sacred')
 sacred_db = db_client.sacred
 runs      = sacred_db.runs
 metrics   = sacred_db.metrics
