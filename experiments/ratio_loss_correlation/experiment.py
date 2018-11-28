@@ -59,10 +59,19 @@ def run(batch_size, loss, optimizer, base_lr, n_epochs, schedule, dataset, model
                                                   frequency=trainer.batches_per_epoch,
                                                   batch_size=batch_size))
 
-    trainer.add_subscriber(SacredLoggingSubscriber(ex, ['weight_updates_weights_ratio',
-                                                        'loss',
-                                                        'test_accuracy',
-                                                        'train_accuracy']))
+    logged_metrics = ['weight_updates_weights_ratio',
+                      'loss',
+                      'test_accuracy',
+                      'train_accuracy']
+
+    if schedule == 'ratio_loss_adaptive_schedule_fn':
+        from experiments.subscribers import RatioLRSubscriber
+        lr_sub = RatioLRSubscriber(base_lr)
+        trainer.add_subscriber(lr_sub)
+        trainer.set_schedule(torch.optim.lr_scheduler.LambdaLR, lr_sub)
+        logged_metrics.append('learning_rate')
+
+    trainer.add_subscriber(SacredLoggingSubscriber(ex, logged_metrics))
 
     # do n epochs of training
     batches_per_epoch = trainer.batches_per_epoch

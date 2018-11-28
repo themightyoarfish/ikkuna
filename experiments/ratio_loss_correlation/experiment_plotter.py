@@ -1,9 +1,7 @@
 import pymongo
 import numpy as np
 from experiments.sacred_utils import get_metric_for_ids
-from mpl_toolkits.mplot3d import Axes3D     # noqa
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
+import matplotlib
 from colors import Color
 import scipy.ndimage
 
@@ -20,7 +18,7 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
         # get only experiments which returned 0
         {'$match': {'result': 0}},
         # I know I didn't run more than 75
-        {'$match': {'config.n_epochs': 75}},
+        {'$match': {'config.n_epochs': kwargs.get('n_epochs', 75)}},
         # filter models
         {'$match': {'config.model': {'$in': models}}},
         # filter opts
@@ -41,9 +39,21 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
 
     groups = list(sacred_db.runs.aggregate(pipeline))
 
+    if kwargs.get('save', False):
+        matplotlib.use('cairo')
+        save = True
+    else:
+        save = False
+
+    from mpl_toolkits.mplot3d import Axes3D     # noqa
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as mpatches
+
+    ax_corrs = []
+
     for group in groups:
         # create figure for group
-        f         = plt.figure(figsize=kwargs.get('figsize', (12.80, 8.00)))
+        f         = plt.figure(figsize=kwargs.get('figsize', (4*12.80, 4*8.00)))
         ax_corr   = f.add_subplot(121, projection='3d')
         ax_loss   = f.add_subplot(222)
         ax_loss2  = ax_loss.twinx()
@@ -125,9 +135,26 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
         loss_decrease_patch = mpatches.Patch(color=Color.SLATE.hex(), label='Loss decrease')
         ax_loss.legend(handles=[loss_patch, loss_decrease_patch], loc='upper right')
         ax_loss2.yaxis.label.set_color(Color.SLATE.hex())
+        ax_corrs.append(ax_corr)
 
-    plt.show()
+        if save:
+            # the problem is that this takes forever with all these points
+            f.savefig(f'{model.lower()}_{optimizer.lower()}_{str(base_lr).replace(".","")}.png', dpi=25)
+
+    xlims = [ax.get_xlim() for ax in ax_corrs]
+    ylims = [ax.get_ylim() for ax in ax_corrs]
+    lower_x = min(x[0] for x in xlims)
+    upper_x = max(x[1] for x in xlims)
+    lower_y = min(y[0] for y in ylims)
+    upper_y = max(y[1] for y in ylims)
+    for ax in ax_corrs:
+        ax.set_xlim((lower_x, upper_x))
+        ax.set_ylim((lower_y, upper_y))
+
+    if not save:
+        plt.show()
+
 
 
 if __name__ == '__main__':
-    scatter_ratio_v_loss_decrease(['VGG'], ['SGD'], [0.01, 0.05, 0.1], end=15000)
+    scatter_ratio_v_loss_decrease(['VGG'], ['SGD'], [0.01, 0.05, 0.1], filter=True, save=True)
