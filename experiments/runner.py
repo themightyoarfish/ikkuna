@@ -1,8 +1,11 @@
 from subprocess import Popen, DEVNULL
 import time
+import torch
+import itertools
 
 
 class Job(object):
+    gpu_cycler = itertools.cycle(range(torch.cuda.device_count()))
 
     def __init__(self, scriptname, updates):
         self._scriptname = scriptname
@@ -10,7 +13,8 @@ class Job(object):
         self._process    = None
 
     def create(self):
-        self._process = Popen(['python', self._scriptname, '-l', 'ERROR', 'with'] + self._updates,
+        gpu_index = next(Job.gpu_cycler)
+        self._process = Popen([f'CUDA_VISIBLE_DEVICES={gpu_index}', 'python', self._scriptname, '-l', 'ERROR', 'with'] + self._updates,
                               stdout=DEVNULL)
 
     def poll(self):
