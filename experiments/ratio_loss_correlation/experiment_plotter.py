@@ -4,9 +4,17 @@ from experiments.sacred_utils import get_metric_for_ids
 import matplotlib
 from colors import Color
 import scipy.ndimage
+import os
+
+try:
+    pwd = os.environ['MONGOPWD']
+except KeyError:
+    print('You need to set the MONGOPWD variable to connect to the database.')
+    import sys
+    sys.exit(1)
 
 # obtain runs collection created by sacred
-db_client = pymongo.MongoClient('mongodb://rasmus:rasmus@35.189.247.219/sacred')
+db_client = pymongo.MongoClient(f'mongodb://rasmus:{pwd}@35.189.247.219/sacred')
 sacred_db = db_client.sacred
 runs      = sacred_db.runs
 metrics   = sacred_db.metrics
@@ -94,8 +102,8 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
         #  Apply gaussian smoothing. Not sure if this introduces artifacts  #
         #####################################################################
         if kwargs.get('filter', False):
-            filter_size = kwargs.get('filter_size', 20)
-            loss_traces = scipy.ndimage.filters.gaussian_filter1d(loss_traces, filter_size)
+            filter_size  = kwargs.get('filter_size', 20)
+            loss_traces  = scipy.ndimage.filters.gaussian_filter1d(loss_traces, filter_size)
             ratio_traces = scipy.ndimage.filters.gaussian_filter1d(ratio_traces, filter_size)
 
         # determine size of time slice and set boundaries
@@ -117,12 +125,16 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
             # the final ratio does not have an associated value
             ratio_trace   = ratio_traces[i, start:end-1]
             # compute color with alpha proportional to run index, for visual clarity
-            shaded_blue   = np.array(Color.DARKBLUE).squeeze() * [1, 1, 1, 0.7**i]
-            shaded_yellow = np.array(Color.YELLOW).squeeze() * [1, 1, 1, 0.7**i]
-            shaded_slate  = np.array(Color.SLATE).squeeze() * [1, 1, 1, 0.7**i]
+            multiplier    = [1, 1, 1, 0.7**i]
+            shaded_blue   = np.array(Color.DARKBLUE).squeeze() * multiplier
+            shaded_yellow = np.array(Color.YELLOW).squeeze() * multiplier
+            shaded_slate  = np.array(Color.SLATE).squeeze() * multiplier
 
             # 3d scatter with time step as z height
-            ax_corr.scatter(ratio_trace, loss_trace, np.arange(start, end-1), s=0.33,
+            ax_corr.scatter(ratio_trace,
+                            loss_trace,
+                            np.arange(start, end-1),
+                            s=0.33,
                             c=color_sequence)
             # plot loss and decrease
             ax_loss.plot(np.arange(start, end), loss_traces[i, start:end], color=shaded_yellow)
@@ -131,7 +143,7 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
             # plot update ratios
             ax_ratio.plot(np.arange(start, end-1), ratio_trace, color=shaded_blue, linewidth=0.8)
 
-        loss_patch = mpatches.Patch(color=Color.YELLOW.hex(), label='Loss')
+        loss_patch          = mpatches.Patch(color=Color.YELLOW.hex(), label='Loss')
         loss_decrease_patch = mpatches.Patch(color=Color.SLATE.hex(), label='Loss decrease')
         ax_loss.legend(handles=[loss_patch, loss_decrease_patch], loc='upper right')
         ax_loss2.yaxis.label.set_color(Color.SLATE.hex())
@@ -139,10 +151,11 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
 
         if save:
             # the problem is that this takes forever with all these points
-            f.savefig(f'{model.lower()}_{optimizer.lower()}_{str(base_lr).replace(".","")}.png', dpi=25)
+            f.savefig(f'{model.lower()}_{optimizer.lower()}_{str(base_lr).replace(".","")}.png')
 
-    xlims = [ax.get_xlim() for ax in ax_corrs]
-    ylims = [ax.get_ylim() for ax in ax_corrs]
+    # Iterate over all limits in the scatterplot to give all the same axis limits
+    xlims   = [ax.get_xlim() for ax in ax_corrs]
+    ylims   = [ax.get_ylim() for ax in ax_corrs]
     lower_x = min(x[0] for x in xlims)
     upper_x = max(x[1] for x in xlims)
     lower_y = min(y[0] for y in ylims)
@@ -155,6 +168,5 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
         plt.show()
 
 
-
 if __name__ == '__main__':
-    scatter_ratio_v_loss_decrease(['VGG'], ['SGD'], [0.01, 0.05, 0.1], filter=True, save=True)
+    scatter_ratio_v_loss_decrease(['VGG'], ['SGD'], [0.01, 0.05, 0.1], filter=True)
