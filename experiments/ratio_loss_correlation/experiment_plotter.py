@@ -20,6 +20,28 @@ runs      = sacred_db.runs
 metrics   = sacred_db.metrics
 
 
+def inverse_probability_for_sequence(ary, bins=50):
+    '''Compute a probability vector from the histogram for subsampling a sequence according to
+    density.'''
+    # create a probability distribution from the histogram for subsampling the 3d plot. we
+    # sample from the indices 0…steps-1 according to the inverse probability given by the ratio
+    # histogram. this means more points are removed where the density is higher.
+    count, bin_edges = np.histogram(ary, bins=bins)
+    # get index of each bin. -1 because the leftmost one somehow doesn't count. I don't understand
+    # np.digitize
+    bin_indices = np.digitize(ary, bin_edges, right=False) - 1
+    # put everything beyond the last bin into last. I think this happens for ary.max() because
+    # np.hist has a right-closed last bin whereas all the others are half-open on the right
+    bin_indices[bin_indices == bins] = bins - 1
+    # probability distribution / frquency
+    p = count[bin_indices].astype('float')
+    p /= p.sum()
+    # by adding a small constant, we avoid collapsing probs to zero
+    p = p.max() - p + p.min()
+    p /= p.sum()
+    return p
+
+
 def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
     '''Plot percentage in loss decrease vs current ratio.'''
     pipeline = [
@@ -58,10 +80,11 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
     import matplotlib.patches as mpatches
 
     ax_corrs = []
+    samples = kwargs.get('samples', 3000)
 
     for group in groups:
         # create figure for group
-        f         = plt.figure(figsize=kwargs.get('figsize', (4*12.80, 4*8.00)))
+        f         = plt.figure(figsize=kwargs.get('figsize', (12.80, 8.00)))
         ax_corr   = f.add_subplot(121, projection='3d')
         ax_loss   = f.add_subplot(222)
         ax_loss2  = ax_loss.twinx()
@@ -111,8 +134,6 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
         start            = kwargs.get('start', 0)
         end              = kwargs.get('end', max_step)
         steps            = end - start
-        samples          = kwargs.get('samples', 3000)
-
 
         # create a color sequence interpolating steps-1 values between two colors
         factors        = np.linspace(0, 1, steps-1)
@@ -122,20 +143,21 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
         # make individual plot for each group
         for i in range(n_runs):
             # inverse gradient of loss; absolute decrease in value
-            loss_trace    = -np.ediff1d(loss_traces[i, start:end])
+            loss_trace     = loss_traces[i, start:end]
+            loss_trace_inv = -np.ediff1d(loss_trace)
             # we use start:end-1 here since the ratio at time step t influences the loss at t+1, so
             # the final ratio does not have an associated value
-            ratio_trace   = ratio_traces[i, start:end-1]
+            ratio_trace    = ratio_traces[i, start:end-1]
 
-            # create a probability distribution from the histogram for subsampling the 3d plot. we
-            # sample from the indices 0…steps-1 according to the probability given by the ratio
-            # histogram. this means more points are selected where the density is higher.
-            count, bin_edges = np.histogram(ratio_trace, bins=50)
-            bin_indices = 50 - (ratio_trace // (bin_edges[1]-bin_edges[0])).astype(int)
-            bin_indices[bin_indices >= 50] = 49
-            p = count[bin_indices]
-            p = 1.0 * p / p.sum()
-            indices = np.random.choice(np.arange(steps-1), size=samples, replace=False, p=p)
+            p = inverse_probability_for_sequence(ratio_trace)
+            indices = np.random.choice(np.arange(len(ratio_trace)), size=samples, replace=False, p=p)
+            indices.sort()
+
+            all_x = np.arange(start, end)[indices]
+            all_x_but_last = np.arange(start, end-1)[indices]
+            ratio_trace = ratio_trace[indices]
+            loss_trace = loss_trace[indices]
+            loss_trace_inv = loss_trace_inv[indices]
 
             # compute color with alpha proportional to run index, for visual clarity
             multiplier    = [1, 1, 1, 0.7**i]
@@ -144,17 +166,18 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
             shaded_slate  = np.array(Color.SLATE).squeeze() * multiplier
 
             # 3d scatter with time step as z height
-            ax_corr.scatter(ratio_trace[indices],
-                            loss_trace[indices],
-                            np.arange(start, end-1)[indices],
-                            s=0.33,
-                            c=color_sequence[indices, :])
+            ax_corr.scatter(ratio_trace,
+                            loss_trace_inv,
+                            all_x_but_last,
+                            s=0.5,
+                            c=color_sequence[indices, :],
+                            depthshade=False)
             # plot loss and decrease
-            ax_loss.plot(np.arange(start, end), loss_traces[i, start:end], color=shaded_yellow)
-            ax_loss2.plot(np.arange(start, end-1), loss_trace, color=shaded_slate, linewidth=0.8)
+            ax_loss.plot(all_x, loss_trace, color=shaded_yellow)
+            ax_loss2.plot(all_x_but_last, loss_trace_inv, color=shaded_slate, linewidth=0.8, marker='o', markersize=1)
 
             # plot update ratios
-            ax_ratio.plot(np.arange(start, end-1), ratio_trace, color=shaded_blue, linewidth=0.8)
+            ax_ratio.plot(all_x_but_last, ratio_trace, color=shaded_blue, linewidth=0.8)
 
         loss_patch          = mpatches.Patch(color=Color.YELLOW.hex(), label='Loss')
         loss_decrease_patch = mpatches.Patch(color=Color.SLATE.hex(), label='Loss decrease')
@@ -164,7 +187,7 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
 
         if save:
             # the problem is that this takes forever with all these points
-            f.savefig(f'{model.lower()}_{optimizer.lower()}_{str(base_lr).replace(".","")}.png')
+            f.savefig(f'{model.lower()}_{optimizer.lower()}_{str(base_lr).replace(".","")}.pdf')
 
     # Iterate over all limits in the scatterplot to give all the same axis limits
     xlims   = [ax.get_xlim() for ax in ax_corrs]
