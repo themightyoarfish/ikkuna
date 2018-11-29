@@ -12,7 +12,7 @@ def main():
     args = parser.parse_args()
 
     lrs = [0.01, 0.05, 0.1]
-    architectures = ['AlexNetMini', 'VGG']
+    architectures = ['ResNet18']
     optimizers = ['SGD', 'Adam']
     runs = list(itertools.chain.from_iterable(itertools.product(lrs, architectures, optimizers)
                                               for _ in range(args.nruns)))

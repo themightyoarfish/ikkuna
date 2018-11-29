@@ -2,6 +2,7 @@ from subprocess import Popen, DEVNULL
 import time
 import torch
 import itertools
+import os
 
 
 class Job(object):
@@ -14,8 +15,10 @@ class Job(object):
 
     def create(self):
         gpu_index = next(Job.gpu_cycler)
-        self._process = Popen([f'CUDA_VISIBLE_DEVICES={gpu_index}', 'python', self._scriptname, '-l', 'ERROR', 'with'] + self._updates,
-                              stdout=DEVNULL)
+        env = os.environ.copy()
+        env['CUDA_VISIBLE_DEVICES'] = f'{gpu_index}'
+        self._process = Popen(['python', self._scriptname, '-l', 'ERROR', 'with'] + self._updates,
+                              stdout=DEVNULL, env=env)
 
     def poll(self):
         return self._process.poll()
