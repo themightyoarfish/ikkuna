@@ -35,10 +35,10 @@ def inverse_probability_for_sequence(ary, bins=50):
     bin_indices[bin_indices == bins] = bins - 1
     # probability distribution / frquency
     p = count[bin_indices].astype('float')
+    # normalize
     p /= p.sum()
-    # by adding a small constant, we avoid collapsing probs to zero
-    p = p.max() - p + p.min()
-    p /= p.sum()
+    # invert
+    p = p[::-1]
     return p
 
 
@@ -149,9 +149,21 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
             # the final ratio does not have an associated value
             ratio_trace    = ratio_traces[i, start:end-1]
 
-            p = inverse_probability_for_sequence(ratio_trace)
-            indices = np.random.choice(np.arange(len(ratio_trace)), size=samples, replace=False, p=p)
-            indices.sort()
+            # this didn't end up working
+            # p = inverse_probability_for_sequence(ratio_trace)
+            # indices = np.random.choice(np.arange(len(ratio_trace)), size=samples, replace=False, p=p)
+            # indices.sort()
+            # since I know where the density is higher (at least for vgg), I can generate log spaced
+            # indices instead. this will fail on arbitrary distributions, of course
+            if kwargs.get('subsample', False):
+                subsample = kwargs['subsample']
+                if subsample == 'log':
+                    indices = np.unique(np.geomspace(1, steps-1, num=samples).astype(int))
+                else:
+                    indices = np.unique(np.linspace(0, steps-2, num=samples).astype(int))
+
+            else:
+                indices = np.arange(0, steps-1)
 
             all_x = np.arange(start, end)[indices]
             all_x_but_last = np.arange(start, end-1)[indices]
@@ -174,7 +186,7 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
                             depthshade=False)
             # plot loss and decrease
             ax_loss.plot(all_x, loss_trace, color=shaded_yellow)
-            ax_loss2.plot(all_x_but_last, loss_trace_inv, color=shaded_slate, linewidth=0.8, marker='o', markersize=1)
+            ax_loss2.plot(all_x_but_last, loss_trace_inv, color=shaded_slate, linewidth=0.8)
 
             # plot update ratios
             ax_ratio.plot(all_x_but_last, ratio_trace, color=shaded_blue, linewidth=0.8)
