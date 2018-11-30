@@ -79,16 +79,24 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
     import matplotlib.pyplot as plt
     import matplotlib.patches as mpatches
 
-    ax_corrs = []
+    ax_corrs   = []
+    ax_losses  = []
+    ax_losses2 = []
+    ax_ratios  = []
+    figures = dict()
     samples = kwargs.get('samples', 3000)
 
     for group in groups:
         # create figure for group
         f         = plt.figure(figsize=kwargs.get('figsize', (12.80, 8.00)))
         ax_corr   = f.add_subplot(121, projection='3d')
+        ax_corrs.append(ax_corr)
         ax_loss   = f.add_subplot(222)
+        ax_losses.append(ax_loss)
         ax_loss2  = ax_loss.twinx()
+        ax_losses2.append(ax_loss2)
         ax_ratio  = f.add_subplot(224, sharex=ax_loss)
+        ax_ratios.append(ax_ratio)
         model     = group['_id']['model']
         optimizer = group['_id']['optimizer']
         base_lr   = group['_id']['base_lr']
@@ -158,7 +166,7 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
             if kwargs.get('subsample', False):
                 subsample = kwargs['subsample']
                 if subsample == 'log':
-                    indices = np.unique(np.geomspace(1, steps-1, num=samples).astype(int))
+                    indices = np.unique(np.geomspace(1, steps-1, num=samples).astype(int)) - 1
                 else:
                     indices = np.unique(np.linspace(0, steps-2, num=samples).astype(int))
 
@@ -195,26 +203,37 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
         loss_decrease_patch = mpatches.Patch(color=Color.SLATE.hex(), label='Loss decrease')
         ax_loss.legend(handles=[loss_patch, loss_decrease_patch], loc='upper right')
         ax_loss2.yaxis.label.set_color(Color.SLATE.hex())
-        ax_corrs.append(ax_corr)
 
-        if save:
-            # the problem is that this takes forever with all these points
-            f.savefig(f'{model.lower()}_{optimizer.lower()}_{str(base_lr).replace(".","")}.pdf')
+        figures[f'{model.lower()}_{optimizer.lower()}_{str(base_lr).replace(".","")}.pdf'] = f
 
-    # Iterate over all limits in the scatterplot to give all the same axis limits
-    xlims   = [ax.get_xlim() for ax in ax_corrs]
-    ylims   = [ax.get_ylim() for ax in ax_corrs]
-    lower_x = min(x[0] for x in xlims)
-    upper_x = max(x[1] for x in xlims)
-    lower_y = min(y[0] for y in ylims)
-    upper_y = max(y[1] for y in ylims)
-    for ax in ax_corrs:
-        ax.set_xlim((lower_x, upper_x))
-        ax.set_ylim((lower_y, upper_y))
+    def unify_limits(axes, x=True, y=True):
+        # Iterate over all limits in the plots to give all the same axis limits
+        if x:
+            xlims   = [ax.get_xlim() for ax in axes]
+            lower_x = min(x[0] for x in xlims)
+            upper_x = max(x[1] for x in xlims)
+        if y:
+            ylims   = [ax.get_ylim() for ax in axes]
+            lower_y = min(y[0] for y in ylims)
+            upper_y = max(y[1] for y in ylims)
+        for ax in axes:
+            if x:
+                ax.set_xlim((lower_x, upper_x))
+            if y:
+                ax.set_ylim((lower_y, upper_y))
+
+    unify_limits(ax_corrs)
+    unify_limits(ax_losses, x=False)
+    unify_limits(ax_losses2, x=False)
+    unify_limits(ax_ratios, x=False)
 
     if not save:
         plt.show()
+    else:
+        for name, f in figures.items():
+            f.savefig(name)
 
 
 if __name__ == '__main__':
-    scatter_ratio_v_loss_decrease(['VGG'], ['SGD'], [0.01, 0.05, 0.1], filter=True)
+    scatter_ratio_v_loss_decrease(['VGG'], ['SGD'], [0.01, 0.05, 0.1], n_epochs=75, filter=True,
+                                  save=True, end=10000, samples=5000, subsample='log')

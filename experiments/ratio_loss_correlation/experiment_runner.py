@@ -21,7 +21,7 @@ def main():
 
     runner = Runner(args.jobs)
     for (lr, arch, opt) in runs:
-        runner.submit(experiment_scriptname, base_lr=lr, model=arch, optimizer=opt)
+        runner.submit(experiment_scriptname, base_lr=lr, model=arch, optimizer=opt, n_epochs=30)
 
     runner.run()
 
