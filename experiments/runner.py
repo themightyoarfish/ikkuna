@@ -4,17 +4,19 @@ import torch
 import itertools
 import os
 
+gpu_cycler = itertools.cycle(range(torch.cuda.device_count()))
+
 
 class Job(object):
-    gpu_cycler = itertools.cycle(range(torch.cuda.device_count()))
 
     def __init__(self, scriptname, updates):
         self._scriptname = scriptname
         self._updates    = [f'{name}={value}' for name, value in updates.items()]
         self._process    = None
+        self.gpu_index   = None
 
-    def create(self):
-        gpu_index = next(Job.gpu_cycler)
+    def create(self, gpu_index):
+        self.gpu_index = gpu_index
         env = os.environ.copy()
         env['CUDA_VISIBLE_DEVICES'] = f'{gpu_index}'
         self._process = Popen(['python', self._scriptname, '-l', 'ERROR', 'with'] + self._updates,
@@ -41,16 +43,16 @@ class Runner(object):
         # do not start more procs than configs
         procs_to_start = min(len(self._jobs), self._n_parallel)
 
-        def start_job():
+        def start_job(gpu_index):
             job = self._jobs.pop()
-            job.create()
+            job.create(gpu_index)
             self._running.add(job)
 
         try:
             # run initial batch
             print(f'Starting {procs_to_start} jobs')
             for i in range(procs_to_start):
-                start_job()
+                start_job(next(gpu_cycler))
 
             # keep polling the list of running processes. if one has terminated, remove it and start
             # a new one, unless the list of run configs is empty. In that case, if there are no more
@@ -65,7 +67,7 @@ class Runner(object):
                     if proc.poll() is not None:
                         if len(self._jobs) > 0:
                             print('Starting new job.')
-                            start_job()
+                            start_job(proc.gpu_index)
                             to_remove.add(proc)
                             print(f'{len(self._jobs)} left.')
                         else:
