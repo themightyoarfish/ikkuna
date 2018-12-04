@@ -252,12 +252,17 @@ def load_dataset(name, train_transforms=None, test_transforms=None, **kwargs):
     else:
         try:
             dataset_cls   = getattr(torchvision.datasets, name)
-            dataset_train = dataset_cls('/tmp/data',
+            import os
+            if os.path.exists('/home/share/'):
+                path = '/home/share/data'
+            else:
+                path = '/tmp/data'
+            dataset_train = dataset_cls(path,
                                         download=True,
                                         train=True,
                                         transform=train_transforms
                                         )
-            dataset_test  = dataset_cls('/tmp/data',
+            dataset_test  = dataset_cls(path,
                                         download=True,
                                         train=False,
                                         transform=test_transforms
