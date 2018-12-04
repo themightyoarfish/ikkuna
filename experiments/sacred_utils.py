@@ -28,21 +28,51 @@ def get_metric_for_ids(name, ids):
     return list(metric)
 
 
-def delete_invalid():
-    '''Delete all experiments and associated metrics for which the result was None'''
+def prompt_delete(ids):
+    '''Ask user if they __really__ want to delete.
 
+    Parameters
+    ----------
+    ids :   list
+            List of ids about to be deleted from `runs` along with their associated metrics.
+    '''
+
+    print(f'The following ids will be deleted: {ids}')
     print('DO NOT CALL THIS WHEN THERE ARE EXPERIMENTS RUNNING! Continue? ')
     if input('[yN]') != 'y':
-        return
+        return False
     else:
         print('I warned you')
+        return True
+
+
+def delete_where(**kwargs):
+    '''Delete runs and metrics where condition is met.
+
+    Parameters
+    ----------
+    kwargs  :   dict
+                The key-value pairs to be deleted. For conditioning based on dotted names (e.g.
+                ``config.n_epochs = 30``), you can pass a dict directly:
+                    ``delete_where(**{'config.n_epochs': 30})``
+    '''
+    pipeline = [{'$match': {k: v}} for k, v in kwargs.items()] + [{'$project': {'_id': True}}]
+    ids_to_delete = list(map(lambda d: d['_id'], runs.aggregate(pipeline)))
+    if prompt_delete(ids_to_delete):
+        runs.delete_many({'_id': {'$in': ids_to_delete}})
+        metrics.delete_many({'run_id': {'$in': ids_to_delete}})
+
+
+def delete_invalid():
+    '''Delete all experiments and associated metrics for which the result was ``None``'''
 
     pipeline = [
         {'$match': {'result': None}},
         {'$project': {'_id': True}},
     ]
     invalid_ids = list(map(lambda dickt: dickt['_id'], runs.aggregate(pipeline)))
-    deleted_runs = runs.delete_many({'_id': {'$in': invalid_ids}})
-    deleted_metrics = metrics.delete_many({'run_id': {'$in': invalid_ids}})
+    if prompt_delete(invalid_ids):
+        deleted_runs = runs.delete_many({'_id': {'$in': invalid_ids}})
+        deleted_metrics = metrics.delete_many({'run_id': {'$in': invalid_ids}})
 
-    print(f'Deleted {deleted_runs.deleted_count} runs and {deleted_metrics.deleted_count} metrics.')
+        print(f'Deleted {deleted_runs.deleted_count} runs and {deleted_metrics.deleted_count} metrics.')
