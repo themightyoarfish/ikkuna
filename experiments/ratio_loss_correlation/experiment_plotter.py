@@ -48,7 +48,8 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
         # get only experiments which returned 0
         {'$match': {'result': 0}},
         # I know I didn't run more than 75
-        {'$match': {'config.n_epochs': kwargs.get('n_epochs', 75)}},
+        {'$match': {'config.n_epochs': kwargs.get('n_epochs', 30)}},
+        {'$match': {'config.schedule': 'ratio_adaptive_schedule_fn'}},
         # filter models
         {'$match': {'config.model': {'$in': models}}},
         # filter opts
@@ -204,7 +205,12 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
         ax_loss.legend(handles=[loss_patch, loss_decrease_patch], loc='upper right')
         ax_loss2.yaxis.label.set_color(Color.SLATE.hex())
 
-        figures[f'{model.lower()}_{optimizer.lower()}_{str(base_lr).replace(".","")}.pdf'] = f
+        # save figure for serialization
+        m_str        = model.lower()
+        o_str        = optimizer.lower()
+        lr_str       = str(base_lr).replace('.', '')
+        key          = f'{m_str}_{o_str}_{lr_str}_{start}_{end}.pdf'
+        figures[key] = f
 
     def unify_limits(axes, x=True, y=True):
         # Iterate over all limits in the plots to give all the same axis limits
@@ -235,5 +241,5 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
 
 
 if __name__ == '__main__':
-    scatter_ratio_v_loss_decrease(['VGG'], ['SGD'], [0.01, 0.05, 0.1], n_epochs=75, filter=True,
-                                  save=True, end=10000, samples=5000, subsample='log')
+    scatter_ratio_v_loss_decrease(['VGG'], ['Adam'], [0.01, 0.05, 0.1], n_epochs=75, filter=True,
+                                  save=True, start=500, samples=2000, subsample='log')

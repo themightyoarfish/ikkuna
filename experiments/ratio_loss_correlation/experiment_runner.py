@@ -11,9 +11,9 @@ def main():
     parser.add_argument('-j', '--jobs', type=int, default=3, help='Number of processes to use')
     args = parser.parse_args()
 
-    lrs = [0.01, 0.05, 0.1]
-    architectures = ['ResNet18']
-    optimizers = ['SGD', 'Adam']
+    lrs = [0.001, 0.01, 0.05, 0.1]
+    architectures = ['VGG']
+    optimizers = ['SGD']
     runs = list(itertools.chain.from_iterable(itertools.product(lrs, architectures, optimizers)
                                               for _ in range(args.nruns)))
 
@@ -21,7 +21,8 @@ def main():
 
     runner = Runner(args.jobs)
     for (lr, arch, opt) in runs:
-        runner.submit(experiment_scriptname, base_lr=lr, model=arch, optimizer=opt, n_epochs=30)
+        runner.submit(experiment_scriptname, base_lr=lr, model=arch, optimizer=opt, n_epochs=30,
+                      schedule='ratio_adaptive_schedule_fn')
 
     runner.run()
 
