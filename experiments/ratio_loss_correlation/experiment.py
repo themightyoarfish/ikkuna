@@ -1,5 +1,4 @@
 import torch
-from torch.utils.data import DataLoader
 
 ##################
 #  Ikkuna stuff  #
@@ -7,7 +6,7 @@ from torch.utils.data import DataLoader
 from ikkuna.utils import load_dataset
 from ikkuna.export import Exporter
 from ikkuna.export.subscriber import (RatioSubscriber, TestAccuracySubscriber,
-                                      TrainAccuracySubscriber)
+                                      TrainAccuracySubscriber, NormSubscriber, VarianceSubscriber)
 from train import Trainer
 
 ##################
@@ -54,6 +53,11 @@ def run(batch_size, loss, optimizer, base_lr, n_epochs, schedule, dataset, model
     trainer.set_model(model)
     trainer.optimize(name=optimizer, lr=base_lr)
     trainer.add_subscriber(RatioSubscriber(['weight_updates', 'weights']))
+    trainer.add_subscriber(NormSubscriber('layer_gradients'))
+    trainer.add_subscriber(NormSubscriber('weights'))
+    trainer.add_subscriber(VarianceSubscriber('weight_updates'))
+    trainer.add_subscriber(VarianceSubscriber('layer_gradients'))
+    trainer.add_subscriber(VarianceSubscriber('weight_gradients'))
     trainer.add_subscriber(TrainAccuracySubscriber())
     trainer.add_subscriber(TestAccuracySubscriber(dataset_test_meta, trainer.model.forward,
                                                   frequency=trainer.batches_per_epoch,
@@ -64,7 +68,7 @@ def run(batch_size, loss, optimizer, base_lr, n_epochs, schedule, dataset, model
                       'test_accuracy',
                       'train_accuracy']
 
-    if schedule == 'ratio_loss_adaptive_schedule_fn':
+    if schedule == 'ratio_adaptive_schedule_fn':
         from experiments.subscribers import RatioLRSubscriber
         lr_sub = RatioLRSubscriber(base_lr)
         trainer.add_subscriber(lr_sub)
