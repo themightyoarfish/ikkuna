@@ -43,16 +43,16 @@ class Runner(object):
         # do not start more procs than configs
         procs_to_start = min(len(self._jobs), self._n_parallel)
 
-        def start_job(gpu_index):
+        def get_job(gpu_index):
             job = self._jobs.pop()
             job.create(gpu_index)
-            self._running.add(job)
+            return job
 
         try:
             # run initial batch
             print(f'Starting {procs_to_start} jobs')
             for i in range(procs_to_start):
-                start_job(next(gpu_cycler))
+                self._running.add(get_job(next(gpu_cycler)))
 
             # keep polling the list of running processes. if one has terminated, remove it and start
             # a new one, unless the list of run configs is empty. In that case, if there are no more
@@ -62,18 +62,23 @@ class Runner(object):
                 if len(self._jobs) == 0 and not self._running:
                     break
 
+                # we can't change the _running set during iteration, so we keep track of what to do
+                # during the loop and do it after
                 to_remove = set()
+                to_start = set()
                 for proc in self._running:
                     if proc.poll() is not None:
                         if len(self._jobs) > 0:
                             print('Starting new job.')
-                            start_job(proc.gpu_index)
+                            to_start.add(get_job(proc.gpu_index))
                             to_remove.add(proc)
                             print(f'{len(self._jobs)} left.')
                         else:
                             to_remove.add(proc)
                 for p in to_remove:
                     self._running.remove(p)
+                for p in to_start:
+                    self._running.add(p)
                 time.sleep(5)
         except Exception as e:
             print(e)
