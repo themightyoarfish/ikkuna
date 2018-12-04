@@ -60,15 +60,18 @@ class Runner(object):
                 if len(self._jobs) == 0 and not self._running:
                     break
 
+                to_remove = set()
                 for proc in self._running:
                     if proc.poll() is not None:
                         if len(self._jobs) > 0:
                             print('Starting new job.')
                             start_job()
-                            self._running.remove(proc)
+                            to_remove.add(proc)
                             print(f'{len(self._jobs)} left.')
                         else:
-                            self._running.remove(proc)
+                            to_remove.add(proc)
+                for p in to_remove:
+                    self._running.remove(p)
                 time.sleep(5)
         except Exception as e:
             print(e)
