@@ -54,7 +54,7 @@ def run(batch_size, loss, optimizer, base_lr, n_epochs, schedule, dataset, model
     trainer.optimize(name=optimizer, lr=base_lr)
     trainer.add_subscriber(RatioSubscriber(['weight_updates', 'weights']))
     trainer.add_subscriber(NormSubscriber('layer_gradients'))
-    trainer.add_subscriber(NormSubscriber('weights'))
+    trainer.add_subscriber(NormSubscriber('weight_gradients'))
     trainer.add_subscriber(VarianceSubscriber('weight_updates'))
     trainer.add_subscriber(VarianceSubscriber('layer_gradients'))
     trainer.add_subscriber(VarianceSubscriber('weight_gradients'))
@@ -66,7 +66,12 @@ def run(batch_size, loss, optimizer, base_lr, n_epochs, schedule, dataset, model
     logged_metrics = ['weight_updates_weights_ratio',
                       'loss',
                       'test_accuracy',
-                      'train_accuracy']
+                      'train_accuracy',
+                      'layer_gradients_norm2',
+                      'weight_gradients_norm2',
+                      'weight_gradients_variance',
+                      'layer_gradients_variance',
+                      'weight_gradients_variance']
 
     if schedule == 'ratio_adaptive_schedule_fn':
         from experiments.subscribers import RatioLRSubscriber

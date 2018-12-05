@@ -65,7 +65,8 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
             },
             # add field with all run ids belonging to this group
             '_member_ids': {'$addToSet': '$_id'}
-        }}
+        }},
+        {'$sort': {'_id.base_lr': 1}}
     ]
 
     groups = list(sacred_db.runs.aggregate(pipeline))
@@ -84,6 +85,7 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
     ax_losses  = []
     ax_losses2 = []
     ax_ratios  = []
+    ax_lrs     = []
     figures = dict()
     samples = kwargs.get('samples', 3000)
 
@@ -113,10 +115,15 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
         ax_loss2.spines['right'].set_position(('outward', 0))
         ax_loss2.set_ylabel(r'$loss_{t+1} - loss_t$')
 
+        ######################################################################################
+        #  We get the data for each run, but average over the runs to smooth out some noise  #
+        ######################################################################################
         # now get the data
         ids = group['_member_ids']
         # there is one loss trace for each id …
-        loss_traces  = np.array([trace['values'] for trace in get_metric_for_ids('loss', ids)])
+        loss_trace  = np.array([
+            trace['values'] for trace in get_metric_for_ids('loss', ids)
+        ]).mean(axis=0)
         # we filter out the batchnorm2d\d traces because I'm unsure if their 'weights' should be
         # included
         #               begin of string             dot slash   anything not eqal to batchnorm2d\d
@@ -125,21 +132,37 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
         # … but n_layers ratio traces for each id … so we have to average them elementwise during
         # aggregation or do it with numpy. For now, obtain a 3d-array of (nruns, nlayers, nsteps)
         # and average over the second axis
-        ratio_traces = np.array([
+        ratio_trace = np.array([
             [trace['values'] for trace in get_metric_for_ids(layer_ratio_regex, [_id])]
             for _id in ids
-        ]).mean(axis=1)     # second axis is the layer axis over which we want to average for now
+        ]).mean(axis=(0, 1))   # second axis is the layer axis over which we want to average for now
+
+        # get the learning rates
+        lr_trace = np.array([
+            trace['values'] for _id in ids for trace in get_metric_for_ids('learning_rate', [_id])
+        ]).mean(axis=0)
+        if lr_trace.size > 0:
+            plot_lr = True
+            ax_lr   = ax_ratio.twinx()
+            ax_lrs.append(ax_lr)
+            ax_ratio.set_title('UW-Ratio and LR')
+            ax_lr.spines['right'].set_position(('outward', 0))
+            ax_lr.set_ylabel('Learning Rate')
+        else:
+            plot_lr = False
 
         #####################################################################
         #  Apply gaussian smoothing. Not sure if this introduces artifacts  #
         #####################################################################
         if kwargs.get('filter', False):
             filter_size  = kwargs.get('filter_size', 20)
-            loss_traces  = scipy.ndimage.filters.gaussian_filter1d(loss_traces, filter_size)
-            ratio_traces = scipy.ndimage.filters.gaussian_filter1d(ratio_traces, filter_size)
+            loss_trace   = scipy.ndimage.filters.gaussian_filter1d(loss_trace, filter_size)
+            ratio_trace  = scipy.ndimage.filters.gaussian_filter1d(ratio_trace, filter_size)
+            if plot_lr:
+                lr_trace = scipy.ndimage.filters.gaussian_filter1d(lr_trace, filter_size)
 
         # determine size of time slice and set boundaries
-        n_runs, max_step = loss_traces.shape
+        max_step = len(loss_trace)
         start            = kwargs.get('start', 0)
         end              = kwargs.get('end', max_step)
         steps            = end - start
@@ -149,61 +172,71 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
         color_sequence = (Color.RED - Color.DARKBLUE) * factors + Color.DARKBLUE
         color_sequence = color_sequence.T
 
-        # make individual plot for each group
-        for i in range(n_runs):
-            # inverse gradient of loss; absolute decrease in value
-            loss_trace     = loss_traces[i, start:end]
-            loss_trace_inv = -np.ediff1d(loss_trace)
-            # we use start:end-1 here since the ratio at time step t influences the loss at t+1, so
-            # the final ratio does not have an associated value
-            ratio_trace    = ratio_traces[i, start:end-1]
+        # inverse gradient of loss; absolute decrease in value
+        loss_trace     = loss_trace[start:end]
+        loss_trace_inv = -np.ediff1d(loss_trace)
+        # we use start:end-1 here since the ratio at time step t influences the loss at t+1, so
+        # the final ratio does not have an associated value
+        ratio_trace    = ratio_trace[start:end-1]
+        if plot_lr:
+            lr_trace   = lr_trace[start:end-1]
 
-            # this didn't end up working
-            # p = inverse_probability_for_sequence(ratio_trace)
-            # indices = np.random.choice(np.arange(len(ratio_trace)), size=samples, replace=False, p=p)
-            # indices.sort()
-            # since I know where the density is higher (at least for vgg), I can generate log spaced
-            # indices instead. this will fail on arbitrary distributions, of course
-            if kwargs.get('subsample', False):
-                subsample = kwargs['subsample']
-                if subsample == 'log':
-                    indices = np.unique(np.geomspace(1, steps-1, num=samples).astype(int)) - 1
-                else:
-                    indices = np.unique(np.linspace(0, steps-2, num=samples).astype(int))
-
+        # this didn't end up working
+        # p = inverse_probability_for_sequence(ratio_trace)
+        # indices = np.random.choice(np.arange(len(ratio_trace)), size=samples, replace=False, p=p)
+        # indices.sort()
+        # since I know where the density is higher (at least for vgg), I can generate log spaced
+        # indices instead. this will fail on arbitrary distributions, of course
+        if kwargs.get('subsample', False):
+            subsample = kwargs['subsample']
+            if subsample == 'log':
+                indices = np.unique(np.geomspace(1, steps-1, num=samples).astype(int)) - 1
             else:
-                indices = np.arange(0, steps-1)
+                indices = np.unique(np.linspace(0, steps-2, num=samples).astype(int))
 
-            all_x = np.arange(start, end)[indices]
-            all_x_but_last = np.arange(start, end-1)[indices]
-            ratio_trace = ratio_trace[indices]
-            loss_trace = loss_trace[indices]
-            loss_trace_inv = loss_trace_inv[indices]
+        else:
+            indices = np.arange(0, steps-1)
 
-            # compute color with alpha proportional to run index, for visual clarity
-            multiplier    = [1, 1, 1, 0.7**i]
-            shaded_blue   = np.array(Color.DARKBLUE).squeeze() * multiplier
-            shaded_yellow = np.array(Color.YELLOW).squeeze() * multiplier
-            shaded_slate  = np.array(Color.SLATE).squeeze() * multiplier
+        all_x          = np.arange(start, end)[indices]
+        all_x_but_last = np.arange(start, end-1)[indices]
+        ratio_trace    = ratio_trace[indices]
+        loss_trace     = loss_trace[indices]
+        loss_trace_inv = loss_trace_inv[indices]
+        lr_trace       = lr_trace[indices]
 
-            # 3d scatter with time step as z height
-            ax_corr.scatter(ratio_trace,
-                            loss_trace_inv,
-                            all_x_but_last,
-                            s=0.5,
-                            c=color_sequence[indices, :],
-                            depthshade=False)
-            # plot loss and decrease
-            ax_loss.plot(all_x, loss_trace, color=shaded_yellow)
-            ax_loss2.plot(all_x_but_last, loss_trace_inv, color=shaded_slate, linewidth=0.8)
+        blue   = np.array(Color.DARKBLUE).squeeze()
+        yellow = np.array(Color.YELLOW).squeeze()
+        slate  = np.array(Color.SLATE).squeeze()
+        red    = np.array(Color.RED).squeeze()
 
-            # plot update ratios
-            ax_ratio.plot(all_x_but_last, ratio_trace, color=shaded_blue, linewidth=0.8)
+        # 3d scatter with time step as z height
+        ax_corr.scatter(ratio_trace,
+                        loss_trace_inv,
+                        all_x_but_last,
+                        s=0.5,
+                        c=color_sequence[indices, :],
+                        depthshade=False)
+        # plot loss and decrease
+        ax_loss.plot(all_x, loss_trace, color=yellow)
+        ax_loss2.plot(all_x_but_last, loss_trace_inv, color=slate, linewidth=0.8)
 
+        ax_lr.plot(all_x_but_last, lr_trace, color=red, linewidth=0.8)
+        # plot update ratios
+        ax_ratio.plot(all_x_but_last, ratio_trace, color=blue, linewidth=0.8)
+
+        # we could instead use label='…' in the plot calls and fetch the labels via
+        # get_handles_and_labels, but for now this is easier.
+        # make legend for loss plot
         loss_patch          = mpatches.Patch(color=Color.YELLOW.hex(), label='Loss')
         loss_decrease_patch = mpatches.Patch(color=Color.SLATE.hex(), label='Loss decrease')
         ax_loss.legend(handles=[loss_patch, loss_decrease_patch], loc='upper right')
         ax_loss2.yaxis.label.set_color(Color.SLATE.hex())
+
+        # make legend for ratio/lr plot
+        ratio_patch = mpatches.Patch(color=Color.DARKBLUE.hex(), label='UW-Ratio')
+        lr_patch    = mpatches.Patch(color=Color.RED.hex(), label='LR')
+        ax_ratio.legend(handles=[ratio_patch, lr_patch], loc='upper right')
+        ax_lr.yaxis.label.set_color(Color.RED.hex())
 
         # save figure for serialization
         m_str        = model.lower()
@@ -232,6 +265,7 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
     unify_limits(ax_losses, x=False)
     unify_limits(ax_losses2, x=False)
     unify_limits(ax_ratios, x=False)
+    unify_limits(ax_lrs, x=False)
 
     if not save:
         plt.show()
@@ -241,5 +275,4 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
 
 
 if __name__ == '__main__':
-    scatter_ratio_v_loss_decrease(['VGG'], ['Adam'], [0.01, 0.05, 0.1], n_epochs=75, filter=True,
-                                  save=True, start=500, samples=2000, subsample='log')
+    scatter_ratio_v_loss_decrease(['VGG'], ['SGD'], [0.001], n_epochs=30)
