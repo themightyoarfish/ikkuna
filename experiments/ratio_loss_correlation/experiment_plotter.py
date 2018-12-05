@@ -30,6 +30,7 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
         # I know I didn't run more than 75
         {'$match': {'config.n_epochs': kwargs.get('n_epochs', 30)}},
         {'$match': {'config.schedule': 'ratio_adaptive_schedule_fn'}},
+        {'$match': {'config.batch_size': 128}},
         # filter models
         {'$match': {'config.model': {'$in': models}}},
         # filter opts
@@ -71,7 +72,7 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
 
     for group in groups:
         # create figure for group
-        f         = plt.figure(figsize=kwargs.get('figsize', (12.80, 8.00)))
+        f         = plt.figure(figsize=kwargs.get('figsize', (0.8 * 12.80, 0.8 * 8.00)))
         ax_corr   = f.add_subplot(121, projection='3d')
         ax_corrs.append(ax_corr)
         ax_loss   = f.add_subplot(222)

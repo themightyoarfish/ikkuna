@@ -9,8 +9,7 @@ class RatioLRSubscriber(PlotSubscriber):
     averages them over all layers. It outputs a factor to get the ratio of change towards a target
     (default is 1e-3).'''
 
-    def __init__(self, base_lr, smoothing=0.9, target=1e-3, max_factor=500,
-                 ylims=None, backend='tb'):
+    def __init__(self, base_lr, smoothing=0.9, target=1e-3, ylims=None, backend='tb'):
         subscription = Subscription(self, ['weight_updates_weights_ratio', 'batch_started'],
                                     tag=None, subsample=1)
         super().__init__([subscription], get_default_bus(),
@@ -19,7 +18,6 @@ class RatioLRSubscriber(PlotSubscriber):
                           'ylims': ylims,
                           'xlabel': 'Train step'}, backend=backend)
         self._ratios     = defaultdict(float)
-        self._max_factor = max_factor
         self._smoothing  = smoothing
         self._target     = target
         self._factor     = 1
@@ -28,8 +26,7 @@ class RatioLRSubscriber(PlotSubscriber):
 
     def _compute_lr_multiplier(self):
         '''Compute learning rate multiplicative. Will output 1 for the first batch since no layer
-        ratios have been recorded yet. Will also output 1 if the average ratio is close to 0.
-        Will clip the factor to some max limit'''
+        ratios have been recorded yet. Will also output 1 if the average ratio is close to 0.'''
         n_layers = len(self._ratios)
         if n_layers == 0:   # before first batch
             return 1
@@ -38,11 +35,7 @@ class RatioLRSubscriber(PlotSubscriber):
             if mean_ratio <= 1e-9:
                 return 1
             else:
-                factor = self._target / mean_ratio
-                if factor > self._max_factor:
-                    return self._max_factor
-                else:
-                    return factor
+                return self._target / mean_ratio
 
     def compute(self, message):
         if message.kind == 'weight_updates_weights_ratio':
