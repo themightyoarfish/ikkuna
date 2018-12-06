@@ -26,7 +26,7 @@ from train import Trainer
 from ikkuna.utils import load_dataset, seed_everything
 from ikkuna.export.subscriber import (RatioSubscriber, HistogramSubscriber, SpectralNormSubscriber,
                                       TestAccuracySubscriber, TrainAccuracySubscriber,
-                                      NormSubscriber, HessianEigenSubscriber)
+                                      NormSubscriber, HessianEigenSubscriber, MessageMeanSubscriber)
 from ikkuna.export import Exporter
 from ikkuna.export.messages import MessageBus
 import ikkuna.visualization
@@ -99,6 +99,9 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
                                                subsample=subsample,
                                                backend=backend)
             trainer.add_subscriber(ratio_subscriber)
+            pubs = ratio_subscriber.publications
+            type, topic = pubs.popitem()    # i kno there is only one
+            trainer.add_subscriber(MessageMeanSubscriber(topic))
 
     if kwargs['histogram']:
         for kind in kwargs['histogram']:

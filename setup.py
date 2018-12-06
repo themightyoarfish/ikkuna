@@ -41,6 +41,7 @@ setup(name='ikkuna',
               'MeanSubscriber = ikkuna.export.subscriber.mean:MeanSubscriber',
               'ConditionNumberSubscriber = ikkuna.export.subscriber.condition:ConditionNumberSubscriber',
               'HessianEigenSubscriber = ikkuna.export.subscriber.hessian_eig:HessianEigenSubscriber',
+              'MessageMeanSubscriber = ikkuna.export.subscriber.message_mean:MessageMeanSubscriber',
           ]
       },
       zip_safe=False,   # don't install egg, but source
