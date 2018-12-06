@@ -24,12 +24,10 @@ metrics   = sacred_db.metrics
 def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
     '''Plot percentage in loss decrease vs current ratio, plus other stuffs.'''
 
-    pipeline = [
+    conditions = [
         # get only experiments which returned 0
         {'$match': {'result': 0}},
-        # I know I didn't run more than 75
         {'$match': {'config.n_epochs': kwargs.get('n_epochs', 30)}},
-        {'$match': {'config.schedule': 'ratio_adaptive_schedule_fn'}},
         {'$match': {'config.batch_size': 128}},
         # filter models
         {'$match': {'config.model': {'$in': models}}},
@@ -37,6 +35,12 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
         {'$match': {'config.optimizer': {'$in': optimizers}}},
         # filter lrs
         {'$match': {'config.base_lr': {'$in': learning_rates}}},
+    ]
+
+    if 'schedule' in kwargs:
+        conditions.append({'$match': {'config.schedule': kwargs['schedule']}})
+
+    pipeline = conditions + [
         # group into groups keyed by (model, optimizer, lr)
         {'$group': {
             '_id': {
@@ -86,11 +90,10 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
         base_lr   = group['_id']['base_lr']
 
         # set title and labels
-        f.suptitle(f'{model}: {optimizer} with lr={base_lr}')
-        ax_corr.set_title('Correlation of UW-Ratio averaged over layers v loss decrease')
+        ax_corr.set_title('Correlation of UW-Ratio averaged\nover layers v loss decrease')
         ax_corr.set_xlabel('Update-Weight-Ratio')
         ax_corr.set_ylabel(r'$loss_{t+1} - loss_t$')
-        ax_loss.set_title('Loss and its derivative')
+        ax_loss.set_title('Loss and inverse derivative')
         ax_ratio.set_title('UW-Ratio')
         ax_ratio.set_xlabel('Train step')
         ax_loss2.spines['right'].set_position(('outward', 0))
@@ -113,18 +116,22 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
         # … but n_layers ratio traces for each id … so we have to average them elementwise during
         # aggregation or do it with numpy. For now, obtain a 3d-array of (nruns, nlayers, nsteps)
         # and average over the second axis
-        ratio_trace = np.array([
+        ratio_traces = [
             [trace['values'] for trace in get_metric_for_ids(layer_ratio_regex, [_id])]
             for _id in ids
-        ]).mean(axis=(0, 1))   # second axis is the layer axis over which we want to average for now
+        ]
+        ratio_array = np.array(ratio_traces)
+        # second axis is the layer axis over which we want to average for now
+        ratio_trace = ratio_array.mean(axis=(0, 1))
 
         # get the learning rates
-        lr_trace = np.array([
+        lr_traces = np.array([
             trace['values'] for _id in ids for trace in get_metric_for_ids('learning_rate', [_id])
-        ]).mean(axis=0)
-        if lr_trace.size > 0:
-            plot_lr = True
-            ax_lr   = ax_ratio.twinx()
+        ])
+        if lr_traces.size > 0:
+            lr_trace = lr_traces.mean(axis=0)
+            plot_lr  = True
+            ax_lr    = ax_ratio.twinx()
             ax_lrs.append(ax_lr)
             ax_ratio.set_title('UW-Ratio and LR')
             ax_lr.spines['right'].set_position(('outward', 0))
@@ -183,7 +190,8 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
         ratio_trace    = ratio_trace[indices]
         loss_trace     = loss_trace[indices]
         loss_trace_inv = loss_trace_inv[indices]
-        lr_trace       = lr_trace[indices]
+        if plot_lr:
+            lr_trace   = lr_trace[indices]
 
         blue   = np.array(Color.DARKBLUE).squeeze()
         yellow = np.array(Color.YELLOW).squeeze()
@@ -201,7 +209,8 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
         ax_loss.plot(all_x, loss_trace, color=yellow)
         ax_loss2.plot(all_x_but_last, loss_trace_inv, color=slate, linewidth=0.8)
 
-        ax_lr.plot(all_x_but_last, lr_trace, color=red, linewidth=0.8)
+        if plot_lr:
+            ax_lr.plot(all_x_but_last, lr_trace, color=red, linewidth=0.8)
         # plot update ratios
         ax_ratio.plot(all_x_but_last, ratio_trace, color=blue, linewidth=0.8)
 
@@ -215,22 +224,27 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
 
         # make legend for ratio/lr plot
         ratio_patch = mpatches.Patch(color=Color.DARKBLUE.hex(), label='UW-Ratio')
-        lr_patch    = mpatches.Patch(color=Color.RED.hex(), label='LR')
-        ax_ratio.legend(handles=[ratio_patch, lr_patch], loc='upper right')
-        ax_lr.yaxis.label.set_color(Color.RED.hex())
+        handles = [ratio_patch]
+        if plot_lr:
+            lr_patch    = mpatches.Patch(color=Color.RED.hex(), label='LR')
+            handles.append(lr_patch)
+            ax_lr.yaxis.label.set_color(Color.RED.hex())
+        ax_ratio.legend(handles=handles, loc='upper right')
 
         # save figure for serialization
         m_str        = model.lower()
         o_str        = optimizer.lower()
         lr_str       = str(base_lr).replace('.', '')
-        key          = f'{m_str}_{o_str}_{lr_str}_{start}_{end}.pdf'
-        figures[key] = f
+        key          = f'{m_str}_{o_str}_{lr_str}_{start}_{end}'
+        key         += '_' + kwargs['schedule'] if 'schedule' in kwargs else ''
+        figures[key] = f + '.pdf'
 
-    unify_limits(ax_corrs)
+    # unify_limits(ax_corrs)
     unify_limits(ax_losses, x=False)
     unify_limits(ax_losses2, x=False)
-    unify_limits(ax_ratios, x=False)
-    unify_limits(ax_lrs, x=False)
+    # unify_limits(ax_ratios, x=False)
+    # if ax_lrs:
+    #     unify_limits(ax_lrs, x=False)
 
     if not save:
         plt.show()
@@ -240,4 +254,6 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
 
 
 if __name__ == '__main__':
-    scatter_ratio_v_loss_decrease(['VGG'], ['SGD'], [0.001], n_epochs=30)
+    scatter_ratio_v_loss_decrease(['VGG'], ['SGD'], [0.001, 0.01, 0.05, 0.1], n_epochs=30,
+                                  filter=True, save=True, subsample='linear', samples=5000,
+                                  schedule='ratio_adaptive_schedule_fn')

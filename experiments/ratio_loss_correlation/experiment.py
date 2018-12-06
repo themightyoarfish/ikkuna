@@ -6,7 +6,8 @@ import torch
 from ikkuna.utils import load_dataset
 from ikkuna.export import Exporter
 from ikkuna.export.subscriber import (RatioSubscriber, TestAccuracySubscriber,
-                                      TrainAccuracySubscriber, NormSubscriber, VarianceSubscriber)
+                                      TrainAccuracySubscriber, NormSubscriber, VarianceSubscriber,
+                                      MessageMeanSubscriber)
 from train import Trainer
 
 ##################
@@ -40,7 +41,7 @@ def run(batch_size, loss, optimizer, base_lr, n_epochs, schedule, dataset, model
     # load the dataset
     dataset_train_meta, dataset_test_meta = load_dataset(dataset)
 
-    exporter = Exporter(depth=-1)
+    exporter = Exporter(depth=-1, module_filter=[torch.nn.Conv2d, torch.nn.Linear],)
     # instantiate model
     from ikkuna.models import get_model
     model = get_model(model, dataset_train_meta.shape[1:],
@@ -62,6 +63,7 @@ def run(batch_size, loss, optimizer, base_lr, n_epochs, schedule, dataset, model
     trainer.add_subscriber(TestAccuracySubscriber(dataset_test_meta, trainer.model.forward,
                                                   frequency=trainer.batches_per_epoch,
                                                   batch_size=batch_size))
+    trainer.add_subscriber(MessageMeanSubscriber('weight_updates_weights_ratio'))
 
     logged_metrics = ['weight_updates_weights_ratio',
                       'loss',
