@@ -105,6 +105,17 @@ class Exporter(object):
         self._modules[module] = named_module
         module.register_forward_hook(self.new_activations)
 
+        # for a new module, immediately cache the weights and biases. This is necessary, because
+        # weights and updates need to be published in step() as only at the end of a batch (here the
+        # beginning of the next one) the updates can be computed. but since we call step before the
+        # forward pass, the new_activations() method has had no chance to cache the current weights
+        # before the first batch starts. so we do it here.
+        if hasattr(module, 'weight'):
+            self._weight_cache[module] = module.weight
+
+        if hasattr(module, 'bias') and module.bias is not None:
+            self._bias_cache[module] = module.bias
+
         def layer_grad_hook(module, grad_in, grad_out):
             self.new_layer_gradients(module, grad_out)
 
@@ -255,7 +266,7 @@ class Exporter(object):
             self._msg_bus.publish_network_message(self._global_step, self._train_step,
                                                   self._epoch, 'epoch_started')
 
-        # save weights an biases to publish just before current step ends (in step()). this ensures
+        # save weights and biases to publish just before current step ends (in step()). this ensures
         # we can publish the proper updates
         if hasattr(module, 'weight'):
             self._weight_cache[module] = torch.tensor(module.weight)
