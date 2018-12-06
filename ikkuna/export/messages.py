@@ -396,7 +396,8 @@ class MessageBus(object):
                     Payload, if necessary
         '''
         if kind not in self._meta_kinds:
-            raise ValueError(f'Unknown kind "{kind}"')
+            raise ValueError(f'Unknown META kind "{kind}". '
+                             'Check spelling and kind of your publications.')
 
         msg = NetworkMessage(global_step=global_step, tag=None, kind=kind, train_step=train_step,
                              epoch=epoch, data=data)
@@ -423,7 +424,8 @@ class MessageBus(object):
                     Payload
         '''
         if kind not in self._data_kinds:
-            raise ValueError(f'Unknown kind "{kind}"')
+            raise ValueError(f'Unknown DATA kind "{kind}". '
+                             'Check spelling and kind of your publications.')
         msg = ModuleMessage(global_step=global_step, tag=None, kind=kind, named_module=named_module,
                             train_step=train_step, epoch=epoch, data=data)
 
