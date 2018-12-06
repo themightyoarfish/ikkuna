@@ -168,6 +168,7 @@ class Subscriber(abc.ABC):
         self._subscriptions    = {kind: subscription
                                   for subscription in subscriptions for kind in subscription.kinds}
         self._msg_bus          = message_bus
+        message_bus.register_subscriber(self)
         self._published_topics = dict()
 
     def _add_publication(self, topic, type='DATA'):
@@ -196,6 +197,10 @@ class Subscriber(abc.ABC):
                 self._msg_bus.deregister_data_topic(topic)
             else:
                 self._msg_bus.deregister_meta_topic(topic)
+
+    @property
+    def publications(self):
+        return {k: v for k, v in self._published_topics.items()}
 
     @property
     def kinds(self):
