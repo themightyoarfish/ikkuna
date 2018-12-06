@@ -255,40 +255,12 @@ class Exporter(object):
             self._msg_bus.publish_network_message(self._global_step, self._train_step,
                                                   self._epoch, 'epoch_started')
 
+        # save weights an biases to publish just before current step ends (in step()). this ensures
+        # we can publish the proper updates
         if hasattr(module, 'weight'):
-
-            if module in self._weight_cache:
-                self._msg_bus.publish_module_message(self._global_step, self._train_step,
-                                                     self._epoch, 'weight_updates',
-                                                     self._modules[module],
-                                                     module.weight - self._weight_cache[module])
-            else:
-                self._msg_bus.publish_module_message(self._global_step, self._train_step,
-                                                     self._epoch, 'weight_updates',
-                                                     self._modules[module],
-                                                     torch.zeros_like(module.weight))
-
-            self._msg_bus.publish_module_message(self._global_step, self._train_step, self._epoch,
-                                                 'weights', self._modules[module], module.weight)
             self._weight_cache[module] = torch.tensor(module.weight)
 
         if hasattr(module, 'bias') and module.bias is not None:   # bias can be present, but be None
-
-            # in the first train step, there can be no updates, so we just publish zeros,
-            # otherwise clients would error out since they don't receive the expected messages
-            if module in self._bias_cache:
-                self._msg_bus.publish_module_message(self._global_step, self._train_step,
-                                                     self._epoch, 'bias_updates',
-                                                     self._modules[module],
-                                                     module.bias - self._bias_cache[module])
-            else:
-                self._msg_bus.publish_module_message(self._global_step, self._train_step,
-                                                     self._epoch, 'bias_updates',
-                                                     self._modules[module],
-                                                     torch.zeros_like(module.bias))
-
-            self._msg_bus.publish_module_message(self._global_step, self._train_step, self._epoch,
-                                                 'biases', self._modules[module], module.bias)
             self._bias_cache[module] = torch.tensor(module.bias)
 
         self._msg_bus.publish_module_message(self._global_step, self._train_step, self._epoch,
@@ -398,7 +370,7 @@ class Exporter(object):
     def step(self):
         '''Increase batch counter (per epoch) and the global step counter.'''
         # due to the fact that backprop happens after forward() was called, we need to step before
-        # the forward pass so acivation and gradient msgs have the same counter. therefore, the
+        # the forward pass so activation and gradient msgs have the same counter. therefore, the
         # counters start at -1, but we publish a 'batch_finished' message only from the second
         # iteration onwards
         if self._train_step > -1:
@@ -407,6 +379,22 @@ class Exporter(object):
 
         self._train_step  += 1
         self._global_step += 1
+
+        for module, weight in self._weight_cache.items():
+            self._msg_bus.publish_module_message(self._global_step, self._train_step,
+                                                 self._epoch, 'weight_updates',
+                                                 self._modules[module],
+                                                 module.weight - weight)
+            self._msg_bus.publish_module_message(self._global_step, self._train_step, self._epoch,
+                                                 'weights', self._modules[module], weight)
+
+        for module, bias in self._bias_cache.items():
+            self._msg_bus.publish_module_message(self._global_step, self._train_step,
+                                                 self._epoch, 'bias_updates',
+                                                 self._modules[module],
+                                                 module.bias - bias)
+            self._msg_bus.publish_module_message(self._global_step, self._train_step, self._epoch,
+                                                 'biases', self._modules[module], bias)
 
         self._msg_bus.publish_network_message(self._global_step, self._train_step, self._epoch,
                                               'batch_started')

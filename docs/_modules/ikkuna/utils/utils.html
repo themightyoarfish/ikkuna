@@ -360,12 +360,17 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">dataset_cls</span>   <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">torchvision</span><span class="o">.</span><span class="n">datasets</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-            <span class="n">dataset_train</span> <span class="o">=</span> <span class="n">dataset_cls</span><span class="p">(</span><span class="s1">&#39;/tmp/data&#39;</span><span class="p">,</span>
+            <span class="kn">import</span> <span class="nn">os</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s1">&#39;/home/share/&#39;</span><span class="p">):</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/home/share/data&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/tmp/data&#39;</span>
+            <span class="n">dataset_train</span> <span class="o">=</span> <span class="n">dataset_cls</span><span class="p">(</span><span class="n">path</span><span class="p">,</span>
                                         <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                                         <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                                         <span class="n">transform</span><span class="o">=</span><span class="n">train_transforms</span>
                                         <span class="p">)</span>
-            <span class="n">dataset_test</span>  <span class="o">=</span> <span class="n">dataset_cls</span><span class="p">(</span><span class="s1">&#39;/tmp/data&#39;</span><span class="p">,</span>
+            <span class="n">dataset_test</span>  <span class="o">=</span> <span class="n">dataset_cls</span><span class="p">(</span><span class="n">path</span><span class="p">,</span>
                                         <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                                         <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                                         <span class="n">transform</span><span class="o">=</span><span class="n">test_transforms</span>
