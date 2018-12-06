@@ -504,7 +504,8 @@
 <span class="sd">                    Payload, if necessary</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta_kinds</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Unknown kind &quot;</span><span class="si">{kind}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Unknown META kind &quot;</span><span class="si">{kind}</span><span class="s1">&quot;. &#39;</span>
+                             <span class="s1">&#39;Check spelling and kind of your publications.&#39;</span><span class="p">)</span>
 
         <span class="n">msg</span> <span class="o">=</span> <span class="n">NetworkMessage</span><span class="p">(</span><span class="n">global_step</span><span class="o">=</span><span class="n">global_step</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">,</span> <span class="n">train_step</span><span class="o">=</span><span class="n">train_step</span><span class="p">,</span>
                              <span class="n">epoch</span><span class="o">=</span><span class="n">epoch</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
@@ -531,7 +532,8 @@
 <span class="sd">                    Payload</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_kinds</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Unknown kind &quot;</span><span class="si">{kind}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Unknown DATA kind &quot;</span><span class="si">{kind}</span><span class="s1">&quot;. &#39;</span>
+                             <span class="s1">&#39;Check spelling and kind of your publications.&#39;</span><span class="p">)</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="n">ModuleMessage</span><span class="p">(</span><span class="n">global_step</span><span class="o">=</span><span class="n">global_step</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">,</span> <span class="n">named_module</span><span class="o">=</span><span class="n">named_module</span><span class="p">,</span>
                             <span class="n">train_step</span><span class="o">=</span><span class="n">train_step</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="n">epoch</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
 

@@ -4,7 +4,8 @@ from ikkuna.export.messages import get_default_bus
 
 
 class MessageMeanSubscriber(PlotSubscriber):
-    '''Compute the mean over all messages with scalar data of a given kind in one train step.'''
+    '''Compute the mean over all messages with scalar data of a given kind in one train step. This
+    is useful for displaying summary statistics.'''
 
     def __init__(self, kind, message_bus=get_default_bus(), tag=None, subsample=1, ylims=None,
                  backend='tb'):
