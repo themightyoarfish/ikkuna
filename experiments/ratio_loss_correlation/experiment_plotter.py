@@ -112,7 +112,7 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
         # included
         #               begin of string             dot slash   anything not eqal to batchnorm2d\d
         #                    |                            |-||-----------------|
-        layer_ratio_regex = '^weight_gradients_norm2\./((?!batchnorm2d).)*$'
+        layer_ratio_regex = '^weight_updates_weights_ratio\./((?!batchnorm2d).)*$'
         # … but n_layers ratio traces for each id … so we have to average them elementwise during
         # aggregation or do it with numpy. For now, obtain a 3d-array of (nruns, nlayers, nsteps)
         # and average over the second axis
