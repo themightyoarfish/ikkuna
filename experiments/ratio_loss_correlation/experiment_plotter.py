@@ -112,7 +112,7 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
         # included
         #               begin of string             dot slash   anything not eqal to batchnorm2d\d
         #                    |                            |-||-----------------|
-        layer_ratio_regex = '^weight_updates_weights_ratio\./((?!batchnorm2d).)*$'
+        layer_ratio_regex = '^weight_gradients_norm2\./((?!batchnorm2d).)*$'
         # … but n_layers ratio traces for each id … so we have to average them elementwise during
         # aggregation or do it with numpy. For now, obtain a 3d-array of (nruns, nlayers, nsteps)
         # and average over the second axis
@@ -237,7 +237,7 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
         lr_str       = str(base_lr).replace('.', '')
         key          = f'{m_str}_{o_str}_{lr_str}_{start}_{end}'
         key         += '_' + kwargs['schedule'] if 'schedule' in kwargs else ''
-        figures[key] = f + '.pdf'
+        figures[key] = key + '.pdf'
 
     # unify_limits(ax_corrs)
     unify_limits(ax_losses, x=False)
@@ -255,5 +255,4 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
 
 if __name__ == '__main__':
     scatter_ratio_v_loss_decrease(['VGG'], ['SGD'], [0.001, 0.01, 0.05, 0.1], n_epochs=30,
-                                  filter=True, save=True, subsample='linear', samples=5000,
-                                  schedule='ratio_adaptive_schedule_fn')
+                                  filter=True)
