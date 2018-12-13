@@ -24,6 +24,10 @@ class BiasCorrectedMomentsSubscriber(PlotSubscriber):
         self._means = dict()
         self._vars  = dict()
 
+        self._add_publication('bias_corrected_gradient_mean', type='DATA')
+        self._add_publication('bias_corrected_gradient_var', type='DATA')
+        self._add_publication('lr_multiplier', type='DATA')
+
     def compute(self, message):
 
         named_module  = message.key
@@ -49,9 +53,22 @@ class BiasCorrectedMomentsSubscriber(PlotSubscriber):
 
         lr_multiplier = m_t_corrected / (v_t_corrected.sqrt() + self._eps)
 
-        self._backend.add_data(f'{named_module.name}/mean', self._means[named_module].norm(),
+        self.message_bus.publish_module_message(message.global_step,
+                                                message.train_step,
+                                                message.epoch, 'bias_corrected_gradient_mean',
+                                                message.key, m_t_corrected.norm())
+        self.message_bus.publish_module_message(message.global_step,
+                                                message.train_step,
+                                                message.epoch, 'bias_corrected_gradient_var',
+                                                message.key, v_t_corrected.norm())
+        self.message_bus.publish_module_message(message.global_step,
+                                                message.train_step,
+                                                message.epoch, 'lr_multiplier',
+                                                message.key, lr_multiplier.norm())
+
+        self._backend.add_data(f'{named_module.name}/mean', m_t_corrected.norm(),
                                message.global_step)
-        self._backend.add_data(f'{named_module.name}/var', self._vars[named_module].norm(),
+        self._backend.add_data(f'{named_module.name}/var', v_t_corrected.norm(),
                                message.global_step)
         self._backend.add_data(f'{named_module.name}/multiplier', lr_multiplier.norm(),
                                message.global_step)
