@@ -128,11 +128,12 @@
 <span class="sd">                Tag for filtering the processed messages</span>
 <span class="sd">    _subscriber :   ikkuna.export.subscriber.Subscriber</span>
 <span class="sd">                    The subscriber associated with the subscription</span>
-<span class="sd">    counter :   dict(ikkuna.utils.NamedModule or str, int)</span>
-<span class="sd">                Number of times the Subscription was called for each module label or meta data</span>
-<span class="sd">                identifier. Since one :class:`ikkuna.export.subscriber.Subscriber` is associated</span>
-<span class="sd">                with only one configuration of :class:`ikkuna.export.messages.MessageBundle`, this</span>
-<span class="sd">                will enable proper subsampling of message streams.</span>
+<span class="sd">    counter :   dict(tuple(ikkuna.utils.NamedModule, str) or str, int)</span>
+<span class="sd">                Number of times the Subscription was called for each pair of module and kind or meta</span>
+<span class="sd">                data identifier. Since one :class:`ikkuna.export.subscriber.Subscriber` is</span>
+<span class="sd">                associated with only one configuration of</span>
+<span class="sd">                :class:`ikkuna.export.messages.MessageBundle`, this will enable proper subsampling</span>
+<span class="sd">                of message streams.</span>
 <span class="sd">    kinds   :   list(str)</span>
 <span class="sd">                List of string identifiers for different message kinds. These are all the</span>
 <span class="sd">                message kinds the subscriber wishes to receive</span>

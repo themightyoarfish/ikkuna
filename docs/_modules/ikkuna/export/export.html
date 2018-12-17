@@ -213,6 +213,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_modules</span><span class="p">[</span><span class="n">module</span><span class="p">]</span> <span class="o">=</span> <span class="n">named_module</span>
         <span class="n">module</span><span class="o">.</span><span class="n">register_forward_hook</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">new_activations</span><span class="p">)</span>
 
+        <span class="c1"># for a new module, immediately cache the weights and biases. This is necessary, because</span>
+        <span class="c1"># weights and updates need to be published in step() as only at the end of a batch (here the</span>
+        <span class="c1"># beginning of the next one) the updates can be computed. but since we call step before the</span>
+        <span class="c1"># forward pass, the new_activations() method has had no chance to cache the current weights</span>
+        <span class="c1"># before the first batch starts. so we do it here.</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s1">&#39;weight&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_weight_cache</span><span class="p">[</span><span class="n">module</span><span class="p">]</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">weight</span>
+
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s1">&#39;bias&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">module</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bias_cache</span><span class="p">[</span><span class="n">module</span><span class="p">]</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">bias</span>
+
         <span class="k">def</span> <span class="nf">layer_grad_hook</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">grad_in</span><span class="p">,</span> <span class="n">grad_out</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">new_layer_gradients</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">grad_out</span><span class="p">)</span>
 
@@ -363,7 +374,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">publish_network_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span><span class="p">,</span>
                                                   <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">,</span> <span class="s1">&#39;epoch_started&#39;</span><span class="p">)</span>
 
-        <span class="c1"># save weights an biases to publish just before current step ends (in step()). this ensures</span>
+        <span class="c1"># save weights and biases to publish just before current step ends (in step()). this ensures</span>
         <span class="c1"># we can publish the proper updates</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s1">&#39;weight&#39;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_weight_cache</span><span class="p">[</span><span class="n">module</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
