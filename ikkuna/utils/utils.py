@@ -49,13 +49,19 @@ def available_optimizers():
         A list of all optimizer names.
     '''
     import torch
+    import experiments.optimizers
     # get all module properties which aren't magic
-    available_optimizers = set(getattr(torch.optim, name) for name in dir(torch.optim) if
-                               not name.startswith('__'))
+    available_optimizers = set(getattr(torch.optim, name)
+                               for name in dir(torch.optim)
+                               if not name.startswith('__'))
+    available_optimizers = available_optimizers.union(set(getattr(experiments.optimizers, name)
+                                                          for name in dir(experiments.optimizers)
+                                                          if not name.startswith('__')))
     # remove everything which is a module and not a class (looking at you, lr_scheduler o_o)
     available_optimizers = filter(lambda o: isinstance(o, type), available_optimizers)
     # map them to their class name (w/o module)
     available_optimizers = map(lambda o: o.__name__, available_optimizers)
+
     return list(available_optimizers)
 
 
@@ -78,11 +84,15 @@ def create_optimizer(model, name, **kwargs):
 
     '''
     import torch
+    import experiments.optimizers
     if name not in available_optimizers():
         raise ValueError(f'Unknown optimizer {name}')
 
     params = [p for p in model.parameters() if p.requires_grad]
-    return getattr(torch.optim, name)(params, **kwargs)
+    try:
+        return getattr(torch.optim, name)(params, **kwargs)
+    except AttributeError:
+        return getattr(experiments.optimizers, name)(params, **kwargs)
 
 
 def get_model(model_name, *args, **kwargs):
