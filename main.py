@@ -55,7 +55,7 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
     bus = MessageBus('main')
     trainer = Trainer(dataset_train, batch_size=batch_size,
                       exporter=Exporter(depth=kwargs['depth'],
-                                        # module_filter=[torch.nn.Conv2d, torch.nn.Linear],
+                                        module_filter=[torch.nn.Conv2d, torch.nn.Linear],
                                         message_bus=bus))
     trainer.set_model(model_str)
     trainer.optimize(name=optimizer, lr=kwargs.get('learning_rate', 0.01))
@@ -146,7 +146,7 @@ def get_parser():
 
     parser = ArgumentParser()
     parser.add_argument('-m', '--model', type=str, required=True, help='Model class to train')
-    data_choices = ['MNIST', 'FashionMNIST', 'CIFAR10', 'CIFAR100']
+    data_choices = ['MNIST', 'FashionMNIST', 'CIFAR10', 'CIFAR100', 'ImageNetDogs']
     parser.add_argument('-d', '--dataset', type=str, choices=data_choices, required=True,
                         help='Dataset to train on')
     parser.add_argument('-b', '--batch-size', type=int, default=128)
@@ -161,19 +161,20 @@ def get_parser():
     #                     help='Y-axis limits for plots')
     parser.add_argument('-v', '--visualisation', type=str, choices=['tb', 'mpl'], default='tb',
                         help='Visualisation backend to use.')
-    parser.add_argument('-V', '--verbose', action='store_true', help='Print training progress')
+    parser.add_argument('-V', '--verbose', action='store_true', default=True,
+                        help='Show training progress bar')
     parser.add_argument('--spectral-norm', nargs='+', type=str, default=None, metavar='TOPIC',
                         help='Use spectral norm subscriber(s)')
     parser.add_argument('--histogram', nargs='+', type=str, default=None, metavar='TOPIC',
                         help='Use histogram subscriber(s)')
-    parser.add_argument('--ratio', type=list_of_tuples, nargs='+', default=None, metavar='TOPIC',
-                        help='Use ratio subscriber(s)')
+    parser.add_argument('--ratio', type=list_of_tuples, nargs='+', default=None,
+                        metavar='TOPIC,TOPIC', help='Use ratio subscriber(s)')
+    parser.add_argument('--norm', nargs='+', type=str, default=None, metavar='TOPIC',
+                        help='Use 2-norm subscriber(s)')
     parser.add_argument('--test-accuracy', action='store_true',
                         help='Use test set accuracy subscriber')
     parser.add_argument('--train-accuracy', action='store_true',
                         help='Use train accuracy subscriber')
-    parser.add_argument('--norm', nargs='+', type=str, default=None, metavar='TOPIC',
-                        help='Use 2-norm subscriber(s)')
     parser.add_argument('--depth', type=int, default=-1, help='Depth to which to add modules',
                         metavar='N')
     parser.add_argument('--hessian', action='store_true',
