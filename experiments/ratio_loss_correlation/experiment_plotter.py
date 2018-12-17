@@ -27,6 +27,9 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
     conditions = [
         # get only experiments which returned 0
         {'$match': {'result': 0}},
+        # for the original experiments with VGG and AlexNetMini, I used 75 epochs
+        # for resnet it was 30
+        # for the UW-ratio scheduler experiments, I used 30 epochs as well
         {'$match': {'config.n_epochs': kwargs.get('n_epochs', 30)}},
         {'$match': {'config.batch_size': 128}},
         # filter models
@@ -239,12 +242,13 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
         key         += '_' + kwargs['schedule'] if 'schedule' in kwargs else ''
         figures[key] = key + '.pdf'
 
-    # unify_limits(ax_corrs)
-    unify_limits(ax_losses, x=False)
-    unify_limits(ax_losses2, x=False)
-    # unify_limits(ax_ratios, x=False)
-    # if ax_lrs:
-    #     unify_limits(ax_lrs, x=False)
+    if kwargs.get('unify_limits', True):
+        unify_limits(ax_corrs)
+        unify_limits(ax_losses, x=False)
+        unify_limits(ax_losses2, x=False)
+        unify_limits(ax_ratios, x=False)
+    if ax_lrs:
+        unify_limits(ax_lrs, x=False)
 
     if not save:
         plt.show()
