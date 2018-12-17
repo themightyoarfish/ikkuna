@@ -20,11 +20,12 @@ class Subscription(object):
                 Tag for filtering the processed messages
     _subscriber :   ikkuna.export.subscriber.Subscriber
                     The subscriber associated with the subscription
-    counter :   dict(ikkuna.utils.NamedModule or str, int)
-                Number of times the Subscription was called for each module label or meta data
-                identifier. Since one :class:`ikkuna.export.subscriber.Subscriber` is associated
-                with only one configuration of :class:`ikkuna.export.messages.MessageBundle`, this
-                will enable proper subsampling of message streams.
+    counter :   dict(tuple(ikkuna.utils.NamedModule, str) or str, int)
+                Number of times the Subscription was called for each pair of module and kind or meta
+                data identifier. Since one :class:`ikkuna.export.subscriber.Subscriber` is
+                associated with only one configuration of
+                :class:`ikkuna.export.messages.MessageBundle`, this will enable proper subsampling
+                of message streams.
     kinds   :   list(str)
                 List of string identifiers for different message kinds. These are all the
                 message kinds the subscriber wishes to receive
