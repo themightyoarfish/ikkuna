@@ -48,13 +48,13 @@ class AlexNetMini(torch.nn.Module):     # Pytorch Sphinx-doc is buggy here, so u
         )
         # for each conv or padding layer, apply the output size formula ((length - filter_size +
         # 2*padding)/ stride) + 1
-        H_conv1 =  (H - 3 + 2 * 0) // 1 + 1
-        H_conv2 =  (H_conv1 - 3 + 2 * 0) // 1 + 1
-        self.H_out =  (H_conv2 - 2 + 2 * 0) // 2 + 1
+        H_conv1    = (H - 3 + 2 * 0) // 1 + 1
+        H_conv2    = (H_conv1 - 3 + 2 * 0) // 1 + 1
+        self.H_out = (H_conv2 - 2 + 2 * 0) // 2 + 1
 
-        W_conv1 =  (W - 3 + 2 * 0) // 1 + 1
-        W_conv2 =  (W_conv1 - 3 + 2 * 0) // 1 + 1
-        self.W_out =  (W_conv2 - 2 + 2 * 0) // 2 + 1
+        W_conv1    = (W - 3 + 2 * 0) // 1 + 1
+        W_conv2    = (W_conv1 - 3 + 2 * 0) // 1 + 1
+        self.W_out = (W_conv2 - 2 + 2 * 0) // 2 + 1
 
         self.classifier = torch.nn.Sequential(
             torch.nn.Dropout(0.25),
