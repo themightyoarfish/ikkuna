@@ -1,14 +1,17 @@
 import torch
 from torchvision.transforms import ToTensor, LinearTransformation
+from torch.utils.data import TensorDataset
 import numpy as np
 
 ##################
 #  Ikkuna stuff  #
 ##################
-from ikkuna.utils import load_dataset
+from ikkuna.utils import load_dataset, get_model
 from ikkuna.export import Exporter
-from ikkuna.export.subscriber import (TestAccuracySubscriber,
-                                      TrainAccuracySubscriber, BiasCorrectedMomentsSubscriber)
+from ikkuna.export.subscriber import (TestAccuracySubscriber, TrainAccuracySubscriber,
+                                      VarianceSubscriber, MeanSubscriber, SpectralNormSubscriber,
+                                      RatioSubscriber, NormSubscriber)
+from ikkuna.export.subscriber.loss import LossSubscriber
 from train import Trainer
 
 ##################
@@ -23,12 +26,13 @@ ex.observers.append(MongoObserver.create())
 
 from experiments.subscribers import SacredLoggingSubscriber
 from adam_model import AdamModel
+from running_grad_moments import BiasCorrectedMomentsSubscriber
 
 
 @ex.config
 def cfg():
     base_lr    = 0.001
-    optimizer  = 'SGD'
+    optimizer  = 'Adam'
     batch_size = 128
     n_epochs   = 45
     loss       = 'CrossEntropyLoss'
@@ -40,30 +44,38 @@ def cfg():
 
 @ex.automain
 def run(batch_size, loss, optimizer, base_lr, n_epochs, dataset, model):
-
-    cifar_whitening_matrix = np.load('zca_matrix.npy')
-    train_transforms = [LinearTransformation(cifar_whitening_matrix), ToTensor()]
     # load the dataset
-    dataset_train_meta, dataset_test_meta = load_dataset(dataset,
-                                                         train_transforms=train_transforms,
-                                                         test_transforms=train_transforms)
+    dataset_train_meta, dataset_test_meta = load_dataset(dataset)
+    # whitening doesn't seem to work ???
+    # if dataset == 'CIFAR10':
+    #     whitened_cifar_train = np.load('whitened_cifar_train.npy').transpose([0, 2, 3, 1])
+    #     whitened_cifar_test = np.load('whitened_cifar_test.npy').transpose([0, 2, 3, 1])
+    #     dataset_train_meta.dataset.data = whitened_cifar_train
+    #     dataset_test_meta.dataset.data = whitened_cifar_test
 
     exporter = Exporter(depth=-1, module_filter=[torch.nn.Conv2d, torch.nn.Linear],)
     # instantiate model
     if model == 'AdamModel':
-        model = AdamModel(exporter=exporter)
+        model = AdamModel(dataset_test_meta.shape[1:],
+                          num_classes=dataset_train_meta.num_classes, exporter=exporter)
     else:
-        from ikkuna.models import get_model
         model = get_model(model, dataset_train_meta.shape[1:],
                           num_classes=dataset_train_meta.num_classes, exporter=exporter)
 
     loss_fn = getattr(torch.nn, loss)()
 
     # set up the trainer
-    trainer = Trainer(dataset_train_meta, batch_size=batch_size, loss=loss_fn, exporter=exporter)
+    trainer = Trainer(dataset_train_meta, batch_size=batch_size, loss=loss_fn,
+                      exporter=exporter)
     trainer.set_model(model)
     trainer.optimize(name=optimizer, lr=base_lr)
     trainer.add_subscriber(BiasCorrectedMomentsSubscriber(0.9, 0.999, 1e-8))
+    trainer.add_subscriber(LossSubscriber())
+    trainer.add_subscriber(RatioSubscriber(['weight_updates', 'weights']))
+    trainer.add_subscriber(NormSubscriber('weight_gradients'))
+    trainer.add_subscriber(SpectralNormSubscriber('weights'))
+    trainer.add_subscriber(VarianceSubscriber('weight_gradients'))
+    trainer.add_subscriber(MeanSubscriber('weight_gradients'))
     trainer.add_subscriber(TrainAccuracySubscriber())
     trainer.add_subscriber(TestAccuracySubscriber(dataset_test_meta, trainer.model.forward,
                                                   frequency=trainer.batches_per_epoch,
@@ -72,11 +84,10 @@ def run(batch_size, loss, optimizer, base_lr, n_epochs, dataset, model):
     logged_metrics = ['loss',
                       'test_accuracy',
                       'train_accuracy',
-                      'layer_gradients_norm2',
-                      'weight_gradients_norm2',
+                      'weight_gradients_mean',
                       'weight_gradients_variance',
-                      'layer_gradients_variance',
-                      'weight_gradients_variance',
+                      'weights_spectral_norm',
+                      'weight_updates_weights_ratio',
                       'bias_corrected_gradient_mean',
                       'bias_corrected_gradient_var',
                       'lr_multiplier']
