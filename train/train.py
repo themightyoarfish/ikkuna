@@ -184,17 +184,9 @@ class Trainer:
                             Model or name of the model (must exist in :mod:`ikkuna.models`)
         '''
         if isinstance(model_or_str, str):
-            from ikkuna import models
-            try:
-                if model_or_str.startswith('ResNet'):
-                    model_fn = getattr(models, model_or_str.lower())
-                    self._model = model_fn(exporter=self._exporter)
-                else:
-                    Model = getattr(models, model_or_str)
-                    self._model = Model(self._shape[1:], num_classes=self._num_classes,
-                                        exporter=self._exporter)
-            except AttributeError:
-                raise ValueError(f'Unknown model {model_or_str}')
+            from ikkuna.utils import get_model
+            self._model = get_model(model_or_str, self._shape[1:], num_classes=self._num_classes,
+                                    exporter=self._exporter)
         else:
             self._model = model_or_str
 
