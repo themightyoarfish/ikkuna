@@ -71,7 +71,9 @@ def delete_invalid():
         {'$project': {'_id': True}},
     ]
     invalid_ids = list(map(lambda dickt: dickt['_id'], runs.aggregate(pipeline)))
-    if prompt_delete(invalid_ids):
+    if not invalid_ids:
+        print('Nothing to delete.')
+    elif prompt_delete(invalid_ids):
         deleted_runs = runs.delete_many({'_id': {'$in': invalid_ids}})
         deleted_metrics = metrics.delete_many({'run_id': {'$in': invalid_ids}})
 
