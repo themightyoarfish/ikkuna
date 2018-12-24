@@ -62,6 +62,21 @@ class Backend(abc.ABC):
         return self._title
 
 
+class NullBackend(Backend):
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def add_data(self, *args, **kwargs):
+        pass
+
+    def add_histogram(self, *args, **kwargs):
+        pass
+
+    def title(self):
+        return ''
+
+
+
 class UpdatableHistogram(object):
     '''A utility class to wrap a single histogram subplot of a figure which can display up to a
     number of histograms. New data displaces old one. This emulates tensorboard histogram traces
