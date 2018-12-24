@@ -100,7 +100,12 @@ def get_model(model_name, *args, **kwargs):
     try:
         if model_name.startswith('ResNet'):
             model_fn = getattr(models, model_name.lower())
-            model = model_fn(*args, **kwargs)
+            if args:
+                print(f'Warning: Ignored args for {model_name} ({args})')
+            model = model_fn(**kwargs)
+        elif model_name == 'AdamModel':
+            from experiments.adam.adam_model import AdamModel
+            model = AdamModel(*args, **kwargs)
         else:
             Model = getattr(models, model_name)
             model = Model(*args, **kwargs)
