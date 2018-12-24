@@ -69,17 +69,17 @@ def run(batch_size, loss, optimizer, base_lr, n_epochs, dataset, model):
                       exporter=exporter)
     trainer.set_model(model)
     trainer.optimize(name=optimizer, lr=base_lr)
-    trainer.add_subscriber(BiasCorrectedMomentsSubscriber(0.9, 0.999, 1e-8))
-    trainer.add_subscriber(LossSubscriber())
-    trainer.add_subscriber(RatioSubscriber(['weight_updates', 'weights']))
-    trainer.add_subscriber(NormSubscriber('weight_gradients'))
-    trainer.add_subscriber(SpectralNormSubscriber('weights'))
-    trainer.add_subscriber(VarianceSubscriber('weight_gradients'))
-    trainer.add_subscriber(MeanSubscriber('weight_gradients'))
-    trainer.add_subscriber(TrainAccuracySubscriber())
+    trainer.add_subscriber(BiasCorrectedMomentsSubscriber(0.9, 0.999, 1e-8, backend=None))
+    trainer.add_subscriber(LossSubscriber(backend=None))
+    trainer.add_subscriber(RatioSubscriber(['weight_updates', 'weights'], backend=None))
+    trainer.add_subscriber(NormSubscriber('weight_gradients', backend=None))
+    trainer.add_subscriber(SpectralNormSubscriber('weights', backend=None))
+    trainer.add_subscriber(VarianceSubscriber('weight_gradients', backend=None))
+    trainer.add_subscriber(MeanSubscriber('weight_gradients', backend=None))
+    trainer.add_subscriber(TrainAccuracySubscriber(backend=None))
     trainer.add_subscriber(TestAccuracySubscriber(dataset_test_meta, trainer.model.forward,
                                                   frequency=trainer.batches_per_epoch,
-                                                  batch_size=batch_size))
+                                                  batch_size=batch_size, backend=None))
 
     logged_metrics = ['loss',
                       'test_accuracy',
