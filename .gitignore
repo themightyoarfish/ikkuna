@@ -106,3 +106,4 @@ runs
 *.swp
 *.swo
 experiments/learning_rate/alexnetmini/playground/
+PlotPlayground.ipynb
