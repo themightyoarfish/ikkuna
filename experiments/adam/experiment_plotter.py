@@ -3,6 +3,7 @@ import numpy as np
 from experiments.sacred_utils import get_metric_for_ids
 from experiments.utils import unify_limits
 import matplotlib
+matplotlib.rcParams['lines.linewidth'] = 0.8
 from colors import Color
 import scipy.ndimage
 import os
@@ -26,7 +27,7 @@ def get_layer_metric_map(metric_regex, ids):
     import re
 
     name_metric_map = defaultdict(list)
-    for trace in get_metric_for_ids(metric_regex, ids):
+    for trace in get_metric_for_ids(metric_regex, ids, per_module=True):
         name_metric_map[trace['name']].append(trace['values'])
 
     return {
@@ -76,9 +77,6 @@ def plot_moments(models, optimizers, learning_rates, **kwargs):
 
     import matplotlib.pyplot as plt
 
-    ax_means = []
-    ax_vars = []
-    ax_lrs = []
     figures = dict()
     start = kwargs.get('start', 0)
     end = kwargs.get('end', -1)
@@ -90,27 +88,39 @@ def plot_moments(models, optimizers, learning_rates, **kwargs):
         base_lr   = group['_id']['base_lr']
 
         # create figure for group
-        f         = plt.figure(figsize=kwargs.get('figsize', (6, 10)))
+        f         = plt.figure(figsize=kwargs.get('figsize', (8, 10)))
         f.suptitle(f'{model}, {optimizer}, {base_lr}')
-        f.subplots_adjust(hspace=0.5)
-        ax_mean   = f.add_subplot(311)
-        ax_var = f.add_subplot(312, sharex=ax_mean)
-        ax_lr = f.add_subplot(313, sharex=ax_mean)
-        ax_means.append(ax_mean)
-        ax_vars.append(ax_var)
-        ax_lrs.append(ax_lr)
+        ax_loss = f.add_subplot(122)
+        ax_acc = ax_loss.twinx()
+        ax_mean   = f.add_subplot(321)
+        ax_var = f.add_subplot(323, sharex=ax_mean)
+        ax_lr = f.add_subplot(325, sharex=ax_mean)
 
         # set title and labels
         ax_mean.set_title('Bias-Corrected Running Mean estimate')
         ax_var.set_title('Bias-Corrected Running Variance estimate')
         ax_lr.set_title('LR multiplier')
         ax_lr.set_xlabel('Train step')
+        ax_loss.set_title('Train Loss & Validation Accuracy')
 
         ids = group['_member_ids']
 
         layer_mean_map = get_layer_metric_map('^bias_corrected_gradient_mean', ids)
         layer_var_map = get_layer_metric_map('^bias_corrected_gradient_var', ids)
         layer_lr_multiplier_map = get_layer_metric_map('^lr_multiplier', ids)
+
+        loss_trace  = np.array([
+            trace['values'] for trace in get_metric_for_ids('loss', ids, per_module=False)
+        ]).mean(axis=0)
+
+        test_accuracy_steps = None
+        values = []
+        for trace in get_metric_for_ids('test_accuracy', ids, per_module=False):
+            test_accuracy_steps = test_accuracy_steps or trace['steps']
+            values.append(trace['values'])
+
+        test_accuracy_steps = np.array(test_accuracy_steps)
+        test_accuracy_trace = np.mean(values, axis=0)
 
         for layer_name, mean_trace in layer_mean_map.items():
             data = mean_trace[start:end]
@@ -122,17 +132,28 @@ def plot_moments(models, optimizers, learning_rates, **kwargs):
             if steps is None:
                 steps = np.arange(start, end)
 
-            ax_mean.plot(steps, data, label=layer_name, linewidth=0.8)
+            ax_mean.plot(steps, data, label=layer_name)
 
         for layer_name, var_trace in layer_var_map.items():
             data = var_trace[start:end]
-            ax_var.plot(steps, data, label=layer_name, linewidth=0.8)
+            ax_var.plot(steps, data, label=layer_name)
 
         for layer_name, lr_multiplier_trace in layer_lr_multiplier_map.items():
             data = lr_multiplier_trace[start:end]
-            ax_lr.plot(steps, data, label=layer_name, linewidth=0.8)
+            ax_lr.plot(steps, data, label=layer_name)
+
+        ax_loss.plot(steps, loss_trace[start:end], label='loss')
+
+        valid_test_accuracy_indices = np.logical_and(test_accuracy_steps >= start,
+                                                     test_accuracy_steps < end)
+        ax_acc.plot(test_accuracy_steps[valid_test_accuracy_indices],
+                    test_accuracy_trace[valid_test_accuracy_indices], label='test-accuracy', c='red')
 
         ax_mean.legend()
+        for label in ax_var.get_xticklabels():
+            label.set_visible(False)
+        for label in ax_mean.get_xticklabels():
+            label.set_visible(False)
 
         m_str        = model.lower()
         o_str        = optimizer.lower()
