@@ -109,7 +109,7 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
         ids = group['_member_ids']
         # there is one loss trace for each id …
         loss_trace  = np.array([
-            trace['values'] for trace in get_metric_for_ids('loss', ids)
+            trace['values'] for trace in get_metric_for_ids('loss', ids, per_module=False)
         ]).mean(axis=0)
         # we filter out the batchnorm2d\d traces because I'm unsure if their 'weights' should be
         # included
@@ -120,7 +120,7 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
         # aggregation or do it with numpy. For now, obtain a 3d-array of (nruns, nlayers, nsteps)
         # and average over the second axis
         ratio_traces = [
-            [trace['values'] for trace in get_metric_for_ids(layer_ratio_regex, [_id])]
+            [trace['values'] for trace in get_metric_for_ids(layer_ratio_regex, [_id], per_module=False)]
             for _id in ids
         ]
         ratio_array = np.array(ratio_traces)
@@ -129,7 +129,7 @@ def scatter_ratio_v_loss_decrease(models, optimizers, learning_rates, **kwargs):
 
         # get the learning rates
         lr_traces = np.array([
-            trace['values'] for _id in ids for trace in get_metric_for_ids('learning_rate', [_id])
+            trace['values'] for _id in ids for trace in get_metric_for_ids('learning_rate', [_id], per_module=False)
         ])
         if lr_traces.size > 0:
             lr_trace = lr_traces.mean(axis=0)

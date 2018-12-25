@@ -15,16 +15,30 @@ runs      = sacred_db.runs
 metrics   = sacred_db.metrics
 
 
-def get_metric_for_ids(name, ids):
-    metric = sacred_db.metrics.aggregate([
-        {'$match': {'name': {'$regex': name}}},
-        {'$match': {'run_id': {'$in': ids}}},
-        {'$project': {'steps': True,
-                      'values': True,
-                      '_id': False}
-         }
-    ]
-    )
+def get_metric_for_ids(name, ids, per_module=True):
+    if per_module:
+        metric = sacred_db.metrics.aggregate([
+            {'$match': {'name': {'$regex': name}}},
+            {'$match': {'run_id': {'$in': ids}}},
+            {'$project': {'steps': True,
+                          'values': True,
+                          '_id': False,
+                          'name': True}
+             },
+            {'$sort': {'name': 1}}
+        ]
+        )
+    else:
+        metric = sacred_db.metrics.aggregate([
+            {'$match': {'name': {'$regex': name}}},
+            {'$match': {'run_id': {'$in': ids}}},
+            {'$project': {'steps': True,
+                          'values': True,
+                          '_id': False}
+             }
+        ]
+        )
+
     return list(metric)
 
 
