@@ -12,10 +12,11 @@ def main():
     args = parser.parse_args()
 
     lrs = [0.0005, 0.001, 0.05]
-    architectures = ['AdamModel', 'VGG', 'ResNet18']
+    architectures = ['FullyConnectedModel', 'AdamModel', 'VGG', 'ResNet18']
     optimizers = ['Adam', 'SGD']
     runs = list(itertools.chain.from_iterable(itertools.product(lrs, architectures, optimizers)
                                               for _ in range(args.nruns)))
+    print(f'Total number of jobs: {len(runs)}')
 
     experiment_scriptname = os.path.join(os.path.dirname(__file__), 'experiment.py')
 
