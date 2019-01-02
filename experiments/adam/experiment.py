@@ -88,9 +88,18 @@ def run(batch_size, loss, optimizer, base_lr, n_epochs, dataset, model):
                       'weight_gradients_variance',
                       'weights_spectral_norm',
                       'weight_updates_weights_ratio',
-                      'bias_corrected_gradient_mean',
-                      'bias_corrected_gradient_var',
-                      'lr_multiplier']
+                      'lr_multiplier',
+                      'biased_grad_mean_estimate_mean',
+                      'biased_grad_mean_estimate_var',
+                      'biased_grad_var_estimate_mean',
+                      'biased_grad_var_estimate_var',
+                      'grad_mean_estimate_mean',
+                      'grad_mean_estimate_var',
+                      'grad_var_estimate_mean',
+                      'grad_var_estimate_var',
+                      'lr_multiplier_mean',
+                      'lr_multiplier_var',
+                      ]
 
     trainer.add_subscriber(SacredLoggingSubscriber(ex, logged_metrics))
 

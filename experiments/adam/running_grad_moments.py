@@ -55,20 +55,58 @@ class BiasCorrectedMomentsSubscriber(PlotSubscriber):
 
         self.message_bus.publish_module_message(message.global_step,
                                                 message.train_step,
-                                                message.epoch, 'bias_corrected_gradient_mean',
-                                                message.key, m_t_corrected.norm())
+                                                message.epoch, 'biased_grad_mean_estimate_mean',
+                                                message.key, m_t.mean())
         self.message_bus.publish_module_message(message.global_step,
                                                 message.train_step,
-                                                message.epoch, 'bias_corrected_gradient_var',
-                                                message.key, v_t_corrected.norm())
-        self.message_bus.publish_module_message(message.global_step,
-                                                message.train_step,
-                                                message.epoch, 'lr_multiplier',
-                                                message.key, lr_multiplier.norm())
+                                                message.epoch, 'biased_grad_mean_estimate_var',
+                                                message.key, m_t.var())
 
-        self._backend.add_data(f'{named_module.name}/mean', m_t_corrected.norm(),
+        self.message_bus.publish_module_message(message.global_step,
+                                                message.train_step,
+                                                message.epoch, 'biased_grad_var_estimate_mean',
+                                                message.key, v_t.mean())
+        self.message_bus.publish_module_message(message.global_step,
+                                                message.train_step,
+                                                message.epoch, 'biased_grad_var_estimate_var',
+                                                message.key, v_t.var())
+
+        self.message_bus.publish_module_message(message.global_step,
+                                                message.train_step,
+                                                message.epoch, 'grad_mean_estimate_mean',
+                                                message.key, m_t_corrected.mean())
+        self.message_bus.publish_module_message(message.global_step,
+                                                message.train_step,
+                                                message.epoch, 'grad_mean_estimate_var',
+                                                message.key, m_t_corrected.var())
+
+        self.message_bus.publish_module_message(message.global_step,
+                                                message.train_step,
+                                                message.epoch, 'grad_var_estimate_mean',
+                                                message.key, v_t_corrected.mean())
+        self.message_bus.publish_module_message(message.global_step,
+                                                message.train_step,
+                                                message.epoch, 'grad_var_estimate_var',
+                                                message.key, v_t_corrected.var())
+
+        self.message_bus.publish_module_message(message.global_step,
+                                                message.train_step,
+                                                message.epoch, 'lr_multiplier_mean',
+                                                message.key, lr_multiplier.mean())
+        self.message_bus.publish_module_message(message.global_step,
+                                                message.train_step,
+                                                message.epoch, 'lr_multiplier_var',
+                                                message.key, lr_multiplier.var())
+
+        self._backend.add_data(f'{named_module.name}/mean', m_t_corrected.mean(),
                                message.global_step)
-        self._backend.add_data(f'{named_module.name}/var', v_t_corrected.norm(),
+        self._backend.add_data(f'{named_module.name}/var', v_t_corrected.mean(),
                                message.global_step)
-        self._backend.add_data(f'{named_module.name}/multiplier', lr_multiplier.norm(),
+
+        self._backend.add_data(f'{named_module.name}/mean_biased', m_t.mean(),
+                               message.global_step)
+        self._backend.add_data(f'{named_module.name}/var_biased', v_t.mean(),
+                               message.global_step)
+
+        self._backend.add_data(f'{named_module.name}/multiplier', lr_multiplier.mean(),
                                message.global_step)
