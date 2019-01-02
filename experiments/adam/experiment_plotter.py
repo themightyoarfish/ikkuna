@@ -22,6 +22,11 @@ runs      = sacred_db.runs
 metrics   = sacred_db.metrics
 
 
+def median_pool_array(array, ksize, stride):
+    from scipy.ndimage.filters import median_filter
+    return median_filter(array, size=(ksize,), mode='reflect')[::stride]
+
+
 def get_layer_metric_map(metric_regex, ids):
     from collections import defaultdict
     import re
@@ -88,13 +93,14 @@ def plot_moments(models, optimizers, learning_rates, **kwargs):
         base_lr   = group['_id']['base_lr']
 
         # create figure for group
-        f         = plt.figure(figsize=kwargs.get('figsize', (8, 10)))
+        f       = plt.figure(figsize=kwargs.get('figsize', (9, 6)))
         f.suptitle(f'{model}, {optimizer}, {base_lr}')
-        ax_loss = f.add_subplot(122)
-        ax_acc = ax_loss.twinx()
-        ax_mean   = f.add_subplot(321)
-        ax_var = f.add_subplot(323, sharex=ax_mean)
-        ax_lr = f.add_subplot(325, sharex=ax_mean)
+        ax_loss = f.add_subplot(326)
+        ax_legend = f.add_subplot(222)
+        ax_acc  = ax_loss.twinx()
+        ax_mean = f.add_subplot(321)
+        ax_var  = f.add_subplot(323, sharex=ax_mean)
+        ax_lr   = f.add_subplot(325, sharex=ax_mean)
 
         # set title and labels
         ax_mean.set_title('Bias-Corrected Running Mean estimate')
@@ -122,6 +128,7 @@ def plot_moments(models, optimizers, learning_rates, **kwargs):
         test_accuracy_steps = np.array(test_accuracy_steps)
         test_accuracy_trace = np.mean(values, axis=0)
 
+        ksize = 50
         for layer_name, mean_trace in layer_mean_map.items():
             data = mean_trace[start:end]
 
@@ -130,26 +137,38 @@ def plot_moments(models, optimizers, learning_rates, **kwargs):
             if end == -1:
                 end = start + n
             if steps is None:
-                steps = np.arange(start, end)
+                steps = np.arange(start, end)[::ksize]
 
-            ax_mean.plot(steps, data, label=layer_name)
+            ax_mean.plot(steps, median_pool_array(data, ksize, ksize), label=layer_name)
 
         for layer_name, var_trace in layer_var_map.items():
-            data = var_trace[start:end]
+            data = median_pool_array(var_trace[start:end], ksize, ksize)
             ax_var.plot(steps, data, label=layer_name)
 
         for layer_name, lr_multiplier_trace in layer_lr_multiplier_map.items():
-            data = lr_multiplier_trace[start:end]
+            data = median_pool_array(lr_multiplier_trace[start:end], ksize, ksize)
             ax_lr.plot(steps, data, label=layer_name)
 
-        ax_loss.plot(steps, loss_trace[start:end], label='loss')
+        ax_mean.set_yscale('log')
+        ax_var.set_yscale('log')
+        ax_lr.set_yscale('log')
+
+        ax_loss.plot(steps, median_pool_array(loss_trace[start:end], ksize, ksize), label='loss')
 
         valid_test_accuracy_indices = np.logical_and(test_accuracy_steps >= start,
                                                      test_accuracy_steps < end)
         ax_acc.plot(test_accuracy_steps[valid_test_accuracy_indices],
                     test_accuracy_trace[valid_test_accuracy_indices], label='test-accuracy', c='red')
 
-        ax_mean.legend()
+        handles, labels = ax_mean.get_legend_handles_labels()
+        ax_legend.legend(handles, labels, loc='upper right')
+        ax_legend.spines['top'].set_visible(False)
+        ax_legend.spines['right'].set_visible(False)
+        ax_legend.spines['bottom'].set_visible(False)
+        ax_legend.spines['left'].set_visible(False)
+        ax_legend.xaxis.set_visible(False)
+        ax_legend.yaxis.set_visible(False)
+
         for label in ax_var.get_xticklabels():
             label.set_visible(False)
         for label in ax_mean.get_xticklabels():
@@ -169,4 +188,4 @@ def plot_moments(models, optimizers, learning_rates, **kwargs):
 
 
 if __name__ == '__main__':
-    plot_moments(['AdamModel'], ['Adam'], [0.0005, 0.001, 0.05], start=200)
+    plot_moments(['FullyConnectedModel'], ['Adam'], [0.0005, 0.001, 0.05], start=300)
