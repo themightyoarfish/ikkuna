@@ -253,8 +253,11 @@ def load_dataset(name, train_transforms=None, test_transforms=None, **kwargs):
     tuple
         2 :class:`~train.DatasetMeta`\ s are returned, one for train and one test set
     '''
-    train_transforms = Compose(train_transforms) if train_transforms else ToTensor()
-    test_transforms  = Compose(test_transforms) if test_transforms else ToTensor()
+    def identity(img):
+        return img
+
+    train_transforms = Compose(train_transforms) if train_transforms else identity
+    test_transforms  = Compose(test_transforms) if test_transforms else identity
 
     ##########################################
     #  Get the datasets in train/test split  #
@@ -266,7 +269,12 @@ def load_dataset(name, train_transforms=None, test_transforms=None, **kwargs):
                                                           test_transforms)
     else:
         try:
-            dataset_cls   = getattr(torchvision.datasets, name)
+            if name == 'WhitenedCIFAR10':
+                from experiments.adam.cifar_dataset import WhitenedCIFAR10
+                dataset_cls = WhitenedCIFAR10
+            else:
+                dataset_cls   = getattr(torchvision.datasets, name)
+
             import os
             if os.path.exists('/home/share/'):
                 path = '/home/share/data'
@@ -297,6 +305,7 @@ def load_dataset(name, train_transforms=None, test_transforms=None, **kwargs):
             labels = dataset.labels
         else:
             raise RuntimeError(f'{dataset} has neither `targets` nor `labels` properties.')
+
 
         # infer number of classes from labels. will fail if not all classes occur in labels
         if isinstance(labels, np.ndarray):
