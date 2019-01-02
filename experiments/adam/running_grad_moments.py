@@ -24,9 +24,21 @@ class BiasCorrectedMomentsSubscriber(PlotSubscriber):
         self._means = dict()
         self._vars  = dict()
 
-        self._add_publication('bias_corrected_gradient_mean', type='DATA')
-        self._add_publication('bias_corrected_gradient_var', type='DATA')
-        self._add_publication('lr_multiplier', type='DATA')
+        self._add_publication('biased_grad_mean_estimate_mean', type='DATA')
+        self._add_publication('biased_grad_mean_estimate_var', type='DATA')
+        self._add_publication('biased_grad_var_estimate_mean', type='DATA')
+        self._add_publication('biased_grad_var_estimate_var', type='DATA')
+        self._add_publication('grad_mean_estimate_mean', type='DATA')
+        self._add_publication('grad_mean_estimate_var', type='DATA')
+        self._add_publication('grad_var_estimate_mean', type='DATA')
+        self._add_publication('grad_var_estimate_var', type='DATA')
+        self._add_publication('lr_multiplier_mean', type='DATA')
+        self._add_publication('lr_multiplier_var', type='DATA')
+
+        self._add_publication('biased_grad_mean_estimate_norm', type='DATA')
+        self._add_publication('biased_grad_var_estimate_norm', type='DATA')
+        self._add_publication('grad_mean_estimate_norm', type='DATA')
+        self._add_publication('grad_var_estimate_norm', type='DATA')
 
     def compute(self, message):
 
@@ -97,6 +109,24 @@ class BiasCorrectedMomentsSubscriber(PlotSubscriber):
                                                 message.train_step,
                                                 message.epoch, 'lr_multiplier_var',
                                                 message.key, lr_multiplier.var())
+
+        self.message_bus.publish_module_message(message.global_step,
+                                                message.train_step,
+                                                message.epoch, 'biased_grad_mean_estimate_norm',
+                                                message.key, m_t.norm())
+        self.message_bus.publish_module_message(message.global_step,
+                                                message.train_step,
+                                                message.epoch, 'biased_grad_var_estimate_norm',
+                                                message.key, v_t.norm())
+
+        self.message_bus.publish_module_message(message.global_step,
+                                                message.train_step,
+                                                message.epoch, 'grad_mean_estimate_norm',
+                                                message.key, m_t_corrected.norm())
+        self.message_bus.publish_module_message(message.global_step,
+                                                message.train_step,
+                                                message.epoch, 'grad_var_estimate_norm',
+                                                message.key, v_t_corrected.norm())
 
         self._backend.add_data(f'{named_module.name}/mean', m_t_corrected.mean(),
                                message.global_step)

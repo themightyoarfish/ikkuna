@@ -36,7 +36,7 @@ def cfg():
     batch_size = 128
     n_epochs   = 45
     loss       = 'CrossEntropyLoss'
-    dataset    = 'CIFAR10'
+    dataset    = 'WhitenedCIFAR10'
     model      = 'AdamModel'
     schedule   = None
     identifier = EXPERIMENT_NAME
@@ -45,7 +45,10 @@ def cfg():
 @ex.automain
 def run(batch_size, loss, optimizer, base_lr, n_epochs, dataset, model):
     # load the dataset
-    dataset_train_meta, dataset_test_meta = load_dataset(dataset)
+    from torchvision.transforms import ToTensor
+    transforms = [ToTensor()] if not dataset == 'WhitenedCIFAR10' else None
+    dataset_train_meta, dataset_test_meta = load_dataset(dataset, train_transforms=transforms,
+                                                         test_transforms=transforms)
     # whitening doesn't seem to work ???
     # if dataset == 'CIFAR10':
     #     whitened_cifar_train = np.load('whitened_cifar_train.npy').transpose([0, 2, 3, 1])
@@ -88,7 +91,6 @@ def run(batch_size, loss, optimizer, base_lr, n_epochs, dataset, model):
                       'weight_gradients_variance',
                       'weights_spectral_norm',
                       'weight_updates_weights_ratio',
-                      'lr_multiplier',
                       'biased_grad_mean_estimate_mean',
                       'biased_grad_mean_estimate_var',
                       'biased_grad_var_estimate_mean',
@@ -99,6 +101,10 @@ def run(batch_size, loss, optimizer, base_lr, n_epochs, dataset, model):
                       'grad_var_estimate_var',
                       'lr_multiplier_mean',
                       'lr_multiplier_var',
+                      'biased_grad_mean_estimate_norm',
+                      'biased_grad_var_estimate_norm',
+                      'grad_mean_estimate_norm',
+                      'grad_var_estimate_norm',
                       ]
 
     trainer.add_subscriber(SacredLoggingSubscriber(ex, logged_metrics))
