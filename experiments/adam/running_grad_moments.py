@@ -9,7 +9,7 @@ class BiasCorrectedMomentsSubscriber(PlotSubscriber):
                  ylims=None, backend='tb'):
 
         title        = f'bias-corrected_running_gradient_moments'
-        ylabel       = f'Gradient Mean'
+        ylabel       = f'Gradient Moments'
         xlabel       = 'Train step'
         subscription = Subscription(self, ['weight_gradients'], tag, subsample)
         super().__init__([subscription], message_bus, {'title': title,
