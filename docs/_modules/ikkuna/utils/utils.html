@@ -361,8 +361,11 @@
 <span class="sd">    tuple</span>
 <span class="sd">        2 :class:`~train.DatasetMeta`\ s are returned, one for train and one test set</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="n">train_transforms</span> <span class="o">=</span> <span class="n">Compose</span><span class="p">(</span><span class="n">train_transforms</span><span class="p">)</span> <span class="k">if</span> <span class="n">train_transforms</span> <span class="k">else</span> <span class="n">ToTensor</span><span class="p">()</span>
-    <span class="n">test_transforms</span>  <span class="o">=</span> <span class="n">Compose</span><span class="p">(</span><span class="n">test_transforms</span><span class="p">)</span> <span class="k">if</span> <span class="n">test_transforms</span> <span class="k">else</span> <span class="n">ToTensor</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">img</span>
+
+    <span class="n">train_transforms</span> <span class="o">=</span> <span class="n">Compose</span><span class="p">(</span><span class="n">train_transforms</span><span class="p">)</span> <span class="k">if</span> <span class="n">train_transforms</span> <span class="k">else</span> <span class="n">identity</span>
+    <span class="n">test_transforms</span>  <span class="o">=</span> <span class="n">Compose</span><span class="p">(</span><span class="n">test_transforms</span><span class="p">)</span> <span class="k">if</span> <span class="n">test_transforms</span> <span class="k">else</span> <span class="n">identity</span>
 
     <span class="c1">##########################################</span>
     <span class="c1">#  Get the datasets in train/test split  #</span>
@@ -374,7 +377,12 @@
                                                           <span class="n">test_transforms</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">dataset_cls</span>   <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">torchvision</span><span class="o">.</span><span class="n">datasets</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;WhitenedCIFAR10&#39;</span><span class="p">:</span>
+                <span class="kn">from</span> <span class="nn">experiments.adam.cifar_dataset</span> <span class="k">import</span> <span class="n">WhitenedCIFAR10</span>
+                <span class="n">dataset_cls</span> <span class="o">=</span> <span class="n">WhitenedCIFAR10</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">dataset_cls</span>   <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">torchvision</span><span class="o">.</span><span class="n">datasets</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
             <span class="kn">import</span> <span class="nn">os</span>
             <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s1">&#39;/home/share/&#39;</span><span class="p">):</span>
                 <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/home/share/data&#39;</span>
@@ -405,6 +413,7 @@
             <span class="n">labels</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">labels</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{dataset}</span><span class="s1"> has neither `targets` nor `labels` properties.&#39;</span><span class="p">)</span>
+
 
         <span class="c1"># infer number of classes from labels. will fail if not all classes occur in labels</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
