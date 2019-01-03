@@ -193,9 +193,9 @@ class Subscriber(abc.ABC):
     def __del__(self):
         '''If for whatever reason a subscriber ceases to exist before the interpreter ends, delete
         the registered topics'''
-        for topics in self._published_topics['DATA']:
+        for topic in self._published_topics['DATA']:
             self._msg_bus.deregister_data_topic(topic)
-        for topics in self._published_topics['META']:
+        for topic in self._published_topics['META']:
             self._msg_bus.deregister_meta_topic(topic)
 
     @property
