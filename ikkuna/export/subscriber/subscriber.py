@@ -170,7 +170,7 @@ class Subscriber(abc.ABC):
                                   for subscription in subscriptions for kind in subscription.kinds}
         self._msg_bus          = message_bus
         message_bus.register_subscriber(self)
-        self._published_topics = dict()
+        self._published_topics = defaultdict(list)
 
     def _add_publication(self, topic, type='DATA'):
         '''
@@ -184,7 +184,7 @@ class Subscriber(abc.ABC):
         if type not in ('DATA', 'META'):
             raise ValueError(f'Unknown message type "{type}"')
 
-        self._published_topics[type] = topic
+        self._published_topics[type].append(topic)
         if type == 'DATA':
             self._msg_bus.register_data_topic(topic)
         else:
@@ -193,11 +193,10 @@ class Subscriber(abc.ABC):
     def __del__(self):
         '''If for whatever reason a subscriber ceases to exist before the interpreter ends, delete
         the registered topics'''
-        for type, topic in self._published_topics.items():
-            if type == 'DATA':
-                self._msg_bus.deregister_data_topic(topic)
-            else:
-                self._msg_bus.deregister_meta_topic(topic)
+        for topics in self._published_topics['DATA']:
+            self._msg_bus.deregister_data_topic(topic)
+        for topics in self._published_topics['META']:
+            self._msg_bus.deregister_meta_topic(topic)
 
     @property
     def publications(self):
