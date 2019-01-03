@@ -68,7 +68,7 @@ class BiasCorrectedMomentsSubscriber(PlotSubscriber):
 
         # instead of repeating the call to publish_module_message for each topic, look at
         # all topic names and infer the local variable from the topic name
-        for topic in self._published_topics:
+        for topic in self.publications['DATA']:
             if topic.startswith('biased_grad_mean'):
                 data = m_t
             elif topic.startswith('biased_grad_var'):
