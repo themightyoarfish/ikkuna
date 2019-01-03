@@ -24,21 +24,22 @@ class BiasCorrectedMomentsSubscriber(PlotSubscriber):
         self._means = dict()
         self._vars  = dict()
 
-        self._add_publication('biased_grad_mean_estimate_mean', type='DATA')
-        self._add_publication('biased_grad_mean_estimate_var', type='DATA')
-        self._add_publication('biased_grad_var_estimate_mean', type='DATA')
-        self._add_publication('biased_grad_var_estimate_var', type='DATA')
-        self._add_publication('grad_mean_estimate_mean', type='DATA')
-        self._add_publication('grad_mean_estimate_var', type='DATA')
-        self._add_publication('grad_var_estimate_mean', type='DATA')
-        self._add_publication('grad_var_estimate_var', type='DATA')
-        self._add_publication('lr_multiplier_mean', type='DATA')
-        self._add_publication('lr_multiplier_var', type='DATA')
-
-        self._add_publication('biased_grad_mean_estimate_norm', type='DATA')
-        self._add_publication('biased_grad_var_estimate_norm', type='DATA')
-        self._add_publication('grad_mean_estimate_norm', type='DATA')
-        self._add_publication('grad_var_estimate_norm', type='DATA')
+        for pub_name in {
+            'biased_grad_mean_estimate_mean',
+            'biased_grad_mean_estimate_var',
+            'biased_grad_var_estimate_mean',
+            'biased_grad_var_estimate_var',
+            'biased_grad_mean_estimate_norm',
+            'biased_grad_var_estimate_norm',
+            'grad_mean_estimate_mean',
+            'grad_mean_estimate_var',
+            'grad_var_estimate_mean',
+            'grad_var_estimate_var',
+            'grad_mean_estimate_norm',
+            'grad_var_estimate_norm',
+            'lr_multiplier_mean',
+            'lr_multiplier_var'}:
+            self._add_publication(pub_name, type='DATA')
 
     def compute(self, message):
 
@@ -65,68 +66,35 @@ class BiasCorrectedMomentsSubscriber(PlotSubscriber):
 
         lr_multiplier = m_t_corrected / (v_t_corrected.sqrt() + self._eps)
 
-        self.message_bus.publish_module_message(message.global_step,
-                                                message.train_step,
-                                                message.epoch, 'biased_grad_mean_estimate_mean',
-                                                message.key, m_t.mean())
-        self.message_bus.publish_module_message(message.global_step,
-                                                message.train_step,
-                                                message.epoch, 'biased_grad_mean_estimate_var',
-                                                message.key, m_t.var())
+        # instead of repeating the call to publish_module_message for each topic, look at
+        # all topic names and infer the local variable from the topic name
+        for topic in self._published_topics:
+            if topic.startswith('biased_grad_mean'):
+                data = m_t
+            elif topic.startswith('biased_grad_var'):
+                data = v_t
+            elif topic.startswith('grad_mean'):
+                data = m_t_corrected
+            elif topic.startswith('grad_var'):
+                data = v_t_corrected
+            elif topic.startswith('lr_multiplier'):
+                data = lr_multiplier
+            else:
+                raise ValueError(f'Unexpected topic "{topic}"')
 
-        self.message_bus.publish_module_message(message.global_step,
-                                                message.train_step,
-                                                message.epoch, 'biased_grad_var_estimate_mean',
-                                                message.key, v_t.mean())
-        self.message_bus.publish_module_message(message.global_step,
-                                                message.train_step,
-                                                message.epoch, 'biased_grad_var_estimate_var',
-                                                message.key, v_t.var())
+            if topic.endswith('norm'):
+                data = data.norm()
+            elif topic.endswith('mean'):
+                data = data.mean()
+            elif topic.endswith('var'):
+                data = data.var()
+            else:
+                raise ValueError(f'Unexpected topic "{topic}"')
 
-        self.message_bus.publish_module_message(message.global_step,
-                                                message.train_step,
-                                                message.epoch, 'grad_mean_estimate_mean',
-                                                message.key, m_t_corrected.mean())
-        self.message_bus.publish_module_message(message.global_step,
-                                                message.train_step,
-                                                message.epoch, 'grad_mean_estimate_var',
-                                                message.key, m_t_corrected.var())
-
-        self.message_bus.publish_module_message(message.global_step,
-                                                message.train_step,
-                                                message.epoch, 'grad_var_estimate_mean',
-                                                message.key, v_t_corrected.mean())
-        self.message_bus.publish_module_message(message.global_step,
-                                                message.train_step,
-                                                message.epoch, 'grad_var_estimate_var',
-                                                message.key, v_t_corrected.var())
-
-        self.message_bus.publish_module_message(message.global_step,
-                                                message.train_step,
-                                                message.epoch, 'lr_multiplier_mean',
-                                                message.key, lr_multiplier.mean())
-        self.message_bus.publish_module_message(message.global_step,
-                                                message.train_step,
-                                                message.epoch, 'lr_multiplier_var',
-                                                message.key, lr_multiplier.var())
-
-        self.message_bus.publish_module_message(message.global_step,
-                                                message.train_step,
-                                                message.epoch, 'biased_grad_mean_estimate_norm',
-                                                message.key, m_t.norm())
-        self.message_bus.publish_module_message(message.global_step,
-                                                message.train_step,
-                                                message.epoch, 'biased_grad_var_estimate_norm',
-                                                message.key, v_t.norm())
-
-        self.message_bus.publish_module_message(message.global_step,
-                                                message.train_step,
-                                                message.epoch, 'grad_mean_estimate_norm',
-                                                message.key, m_t_corrected.norm())
-        self.message_bus.publish_module_message(message.global_step,
-                                                message.train_step,
-                                                message.epoch, 'grad_var_estimate_norm',
-                                                message.key, v_t_corrected.norm())
+            self.message_bus.publish_module_message(message.global_step,
+                                                    message.train_step,
+                                                    message.epoch, topic,
+                                                    message.key, data)
 
         self._backend.add_data(f'{named_module.name}/mean', m_t_corrected.mean(),
                                message.global_step)
