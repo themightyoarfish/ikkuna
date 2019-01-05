@@ -18,6 +18,7 @@ from argparse import ArgumentParser, ArgumentTypeError
 #  3rd party imports  #
 #######################
 from tqdm import tqdm
+from torchvision.transforms import ToTensor
 
 #######################
 #  1st party imports  #
@@ -47,7 +48,8 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
                     Name of the optimizer to use
     '''
 
-    dataset_train, dataset_test = load_dataset(dataset_str)
+    dataset_train, dataset_test = load_dataset(dataset_str, train_transforms=[ToTensor()],
+                                               test_transforms=[ToTensor()])
 
     # for some strange reason, python claims 'torch referenced before assignment' when importing at
     # the top. hahaaaaa
