@@ -1,3 +1,4 @@
+import math
 import torch
 from ikkuna.export.subscriber import PlotSubscriber, Subscription
 from ikkuna.export.messages import get_default_bus
@@ -5,7 +6,7 @@ from ikkuna.export.messages import get_default_bus
 
 class BiasCorrectedMomentsSubscriber(PlotSubscriber):
 
-    def __init__(self, beta1, beta2, eps, message_bus=get_default_bus(), tag=None, subsample=1,
+    def __init__(self, lr, beta1, beta2, eps, message_bus=get_default_bus(), tag=None, subsample=1,
                  ylims=None, backend='tb'):
 
         title        = f'bias-corrected_running_gradient_moments'
@@ -18,6 +19,7 @@ class BiasCorrectedMomentsSubscriber(PlotSubscriber):
                                                        'xlabel': xlabel},
                          backend=backend)
 
+        self._lr    = lr
         self._beta1 = beta1
         self._beta2 = beta2
         self._eps   = eps
@@ -26,59 +28,71 @@ class BiasCorrectedMomentsSubscriber(PlotSubscriber):
 
         for pub_name in {
             'biased_grad_mean_estimate_mean',
+            'biased_grad_mean_estimate_median',
             'biased_grad_mean_estimate_var',
             'biased_grad_var_estimate_mean',
+            'biased_grad_var_estimate_median',
             'biased_grad_var_estimate_var',
             'biased_grad_mean_estimate_norm',
             'biased_grad_var_estimate_norm',
             'grad_mean_estimate_mean',
+            'grad_mean_estimate_median',
             'grad_mean_estimate_var',
             'grad_var_estimate_mean',
+            'grad_var_estimate_median',
             'grad_var_estimate_var',
             'grad_mean_estimate_norm',
             'grad_var_estimate_norm',
-            'lr_multiplier_mean',
-            'lr_multiplier_var'}:
+            'effective_lr_mean',
+            'effective_lr_median',
+            'effective_lr_var',
+            'effective_lr_norm',
+        }:
             self._add_publication(pub_name, type='DATA')
 
     def compute(self, message):
 
         named_module  = message.key
 
-        g_t = message.data
+        grad = message.data
         t   = self._subscriptions['weight_gradients'].counter[(named_module, message.kind)] + 1
-        β1  = self._beta1
-        β2  = self._beta2
 
+        # init moving avgs if not present
         if named_module not in self._means:
-            self._means[named_module] = torch.zeros_like(g_t)
+            self._means[named_module] = torch.zeros_like(grad)
         if named_module not in self._vars:
-            self._vars[named_module] = torch.zeros_like(g_t)
+            self._vars[named_module] = torch.zeros_like(grad)
 
-        m_t = self._means[named_module]
-        v_t = self._vars[named_module]
+        exp_avg, exp_avg_sq = self._means[named_module], self._vars[named_module]
+        beta1, beta2 = self._beta1, self._beta2
 
-        self._means[named_module] = (β1 * m_t + (1 - β1) * g_t) / (1 - β1 ** t)
-        m_t_corrected = self._means[named_module] / (1 - β1 ** t)
-
-        self._vars[named_module] = (β2 * v_t  + (1 - β2) * g_t.pow(2))
-        v_t_corrected = self._vars[named_module] / (1 - β2 ** t)
-
-        lr_multiplier = m_t_corrected / (v_t_corrected.sqrt() + self._eps)
+        exp_avg.mul_(beta1).add_(1 - beta1, grad)
+        exp_avg_sq.mul_(beta2).addcmul_(1 - beta2, grad, grad)
+        bias_correction1     = 1 - beta1 ** t
+        bias_correction2     = 1 - beta2 ** t
+        unbuiased_exp_avg    = exp_avg / bias_correction1
+        unbuiased_exp_avg_sq = exp_avg_sq / bias_correction2
+        step_size            = self._lr * math.sqrt(bias_correction2) / bias_correction1
+        denom                = exp_avg_sq.sqrt().add_(self._eps)
+        update               = step_size * exp_avg / denom
+        update.div_(grad)
+        nan_tensor           = torch.isnan(update)
+        inf_tensor           = torch.isinf(update)
+        effective_lr         = update[(1 - nan_tensor) & (1 - inf_tensor)]
 
         # instead of repeating the call to publish_module_message for each topic, look at
         # all topic names and infer the local variable from the topic name
         for topic in self.publications['DATA']:
             if topic.startswith('biased_grad_mean'):
-                data = m_t
+                data = exp_avg
             elif topic.startswith('biased_grad_var'):
-                data = v_t
+                data = exp_avg_sq
             elif topic.startswith('grad_mean'):
-                data = m_t_corrected
+                data = unbuiased_exp_avg
             elif topic.startswith('grad_var'):
-                data = v_t_corrected
-            elif topic.startswith('lr_multiplier'):
-                data = lr_multiplier
+                data = unbuiased_exp_avg_sq
+            elif topic.startswith('effective_lr'):
+                data = effective_lr
             else:
                 raise ValueError(f'Unexpected topic "{topic}"')
 
@@ -86,6 +100,8 @@ class BiasCorrectedMomentsSubscriber(PlotSubscriber):
                 data = data.norm()
             elif topic.endswith('mean'):
                 data = data.mean()
+            elif topic.endswith('median'):
+                data = data.median()
             elif topic.endswith('var'):
                 data = data.var()
             else:
@@ -96,15 +112,15 @@ class BiasCorrectedMomentsSubscriber(PlotSubscriber):
                                                     message.epoch, topic,
                                                     message.key, data)
 
-        self._backend.add_data(f'{named_module.name}/mean', m_t_corrected.mean(),
+        self._backend.add_data(f'{named_module.name}/grad_mean', unbuiased_exp_avg.median(),
                                message.global_step)
-        self._backend.add_data(f'{named_module.name}/var', v_t_corrected.mean(),
-                               message.global_step)
-
-        self._backend.add_data(f'{named_module.name}/mean_biased', m_t.mean(),
-                               message.global_step)
-        self._backend.add_data(f'{named_module.name}/var_biased', v_t.mean(),
+        self._backend.add_data(f'{named_module.name}/grad_var', unbuiased_exp_avg_sq.median(),
                                message.global_step)
 
-        self._backend.add_data(f'{named_module.name}/multiplier', lr_multiplier.mean(),
+        self._backend.add_data(f'{named_module.name}/grad_mean_biased', exp_avg.median(),
+                               message.global_step)
+        self._backend.add_data(f'{named_module.name}/grad_var_biased', exp_avg_sq.median(),
+                               message.global_step)
+
+        self._backend.add_data(f'{named_module.name}/lr', effective_lr.median(),
                                message.global_step)

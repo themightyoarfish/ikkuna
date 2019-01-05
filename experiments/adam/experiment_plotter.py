@@ -111,9 +111,9 @@ def plot_moments(models, optimizers, learning_rates, **kwargs):
 
         ids = group['_member_ids']
 
-        layer_mean_map = get_layer_metric_map('^bias_corrected_gradient_mean', ids)
-        layer_var_map = get_layer_metric_map('^bias_corrected_gradient_var', ids)
-        layer_lr_multiplier_map = get_layer_metric_map('^lr_multiplier', ids)
+        layer_mean_map = get_layer_metric_map('^grad_mean_estimate_mean', ids)
+        layer_var_map = get_layer_metric_map('^grad_var_estimate_mean', ids)
+        layer_lr_multiplier_map = get_layer_metric_map('^lr_multiplier_mean', ids)
 
         loss_trace  = np.array([
             trace['values'] for trace in get_metric_for_ids('loss', ids, per_module=False)
@@ -149,9 +149,9 @@ def plot_moments(models, optimizers, learning_rates, **kwargs):
             data = median_pool_array(lr_multiplier_trace[start:end], ksize, ksize)
             ax_lr.plot(steps, data, label=layer_name)
 
-        ax_mean.set_yscale('log')
-        ax_var.set_yscale('log')
-        ax_lr.set_yscale('log')
+        # ax_mean.set_yscale('log')
+        # ax_var.set_yscale('log')
+        # ax_lr.set_yscale('log')
 
         ax_loss.plot(steps, median_pool_array(loss_trace[start:end], ksize, ksize), label='loss')
 

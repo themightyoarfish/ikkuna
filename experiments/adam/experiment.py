@@ -1,7 +1,5 @@
 import torch
-from torchvision.transforms import ToTensor, LinearTransformation
-from torch.utils.data import TensorDataset
-import numpy as np
+from torchvision.transforms import ToTensor
 
 ##################
 #  Ikkuna stuff  #
@@ -45,17 +43,9 @@ def cfg():
 @ex.automain
 def run(batch_size, loss, optimizer, base_lr, n_epochs, dataset, model):
     # load the dataset
-    from torchvision.transforms import ToTensor
     transforms = [ToTensor()] if not dataset == 'WhitenedCIFAR10' else None
     dataset_train_meta, dataset_test_meta = load_dataset(dataset, train_transforms=transforms,
                                                          test_transforms=transforms)
-    # whitening doesn't seem to work ???
-    # if dataset == 'CIFAR10':
-    #     whitened_cifar_train = np.load('whitened_cifar_train.npy').transpose([0, 2, 3, 1])
-    #     whitened_cifar_test = np.load('whitened_cifar_test.npy').transpose([0, 2, 3, 1])
-    #     dataset_train_meta.dataset.data = whitened_cifar_train
-    #     dataset_test_meta.dataset.data = whitened_cifar_test
-
     exporter = Exporter(depth=-1, module_filter=[torch.nn.Conv2d, torch.nn.Linear],)
     # instantiate model
     if model == 'AdamModel':
@@ -67,22 +57,24 @@ def run(batch_size, loss, optimizer, base_lr, n_epochs, dataset, model):
 
     loss_fn = getattr(torch.nn, loss)()
 
+    backend = 'tb'
     # set up the trainer
     trainer = Trainer(dataset_train_meta, batch_size=batch_size, loss=loss_fn,
                       exporter=exporter)
     trainer.set_model(model)
     trainer.optimize(name=optimizer, lr=base_lr)
-    trainer.add_subscriber(BiasCorrectedMomentsSubscriber(0.9, 0.999, 1e-8, backend=None))
-    trainer.add_subscriber(LossSubscriber(backend=None))
-    trainer.add_subscriber(RatioSubscriber(['weight_updates', 'weights'], backend=None))
-    trainer.add_subscriber(NormSubscriber('weight_gradients', backend=None))
-    trainer.add_subscriber(SpectralNormSubscriber('weights', backend=None))
-    trainer.add_subscriber(VarianceSubscriber('weight_gradients', backend=None))
-    trainer.add_subscriber(MeanSubscriber('weight_gradients', backend=None))
-    trainer.add_subscriber(TrainAccuracySubscriber(backend=None))
+    trainer.add_subscriber(BiasCorrectedMomentsSubscriber(base_lr, 0.9, 0.999, 1e-8,
+                                                          backend=backend))
+    trainer.add_subscriber(LossSubscriber(backend=backend))
+    trainer.add_subscriber(RatioSubscriber(['weight_updates', 'weights'], backend=backend))
+    trainer.add_subscriber(NormSubscriber('weight_gradients', backend=backend))
+    trainer.add_subscriber(SpectralNormSubscriber('weights', backend=backend))
+    trainer.add_subscriber(VarianceSubscriber('weight_gradients', backend=backend))
+    trainer.add_subscriber(MeanSubscriber('weight_gradients', backend=backend))
+    trainer.add_subscriber(TrainAccuracySubscriber(backend=backend))
     trainer.add_subscriber(TestAccuracySubscriber(dataset_test_meta, trainer.model.forward,
                                                   frequency=trainer.batches_per_epoch,
-                                                  batch_size=batch_size, backend=None))
+                                                  batch_size=batch_size, backend=backend))
 
     logged_metrics = ['loss',
                       'test_accuracy',
@@ -92,19 +84,25 @@ def run(batch_size, loss, optimizer, base_lr, n_epochs, dataset, model):
                       'weights_spectral_norm',
                       'weight_updates_weights_ratio',
                       'biased_grad_mean_estimate_mean',
+                      'biased_grad_mean_estimate_median',
                       'biased_grad_mean_estimate_var',
                       'biased_grad_var_estimate_mean',
+                      'biased_grad_var_estimate_median',
                       'biased_grad_var_estimate_var',
-                      'grad_mean_estimate_mean',
-                      'grad_mean_estimate_var',
-                      'grad_var_estimate_mean',
-                      'grad_var_estimate_var',
-                      'lr_multiplier_mean',
-                      'lr_multiplier_var',
                       'biased_grad_mean_estimate_norm',
                       'biased_grad_var_estimate_norm',
+                      'grad_mean_estimate_mean',
+                      'grad_mean_estimate_median',
+                      'grad_mean_estimate_var',
+                      'grad_var_estimate_mean',
+                      'grad_var_estimate_median',
+                      'grad_var_estimate_var',
                       'grad_mean_estimate_norm',
                       'grad_var_estimate_norm',
+                      'effective_lr_mean',
+                      'effective_lr_median',
+                      'effective_lr_var',
+                      'effective_lr_norm',
                       ]
 
     trainer.add_subscriber(SacredLoggingSubscriber(ex, logged_metrics))
