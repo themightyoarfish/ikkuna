@@ -48,7 +48,7 @@ class AdamModel(torch.nn.Module):
             torch.nn.ReLU(inplace=True),
             # torch.nn.Dropout(),
             torch.nn.Linear(1000, num_classes),
-            torch.nn.Softmax()
+            # torch.nn.Softmax()
         )
 
         if exporter:

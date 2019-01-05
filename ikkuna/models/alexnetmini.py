@@ -62,7 +62,7 @@ class AlexNetMini(torch.nn.Module):     # Pytorch Sphinx-doc is buggy here, so u
             torch.nn.ReLU(inplace=True),
             torch.nn.Dropout(0.5),
             torch.nn.Linear(16, num_classes),
-            torch.nn.Softmax()
+            # torch.nn.Softmax()
         )
 
         if exporter:
