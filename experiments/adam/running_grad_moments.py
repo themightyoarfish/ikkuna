@@ -6,10 +6,10 @@ from ikkuna.export.messages import get_default_bus
 
 class BiasCorrectedMomentsSubscriber(PlotSubscriber):
 
-    def __init__(self, lr, beta1, beta2, eps, message_bus=get_default_bus(), tag=None, subsample=1,
+    def __init__(self, lr, beta1, beta2, eps, message_bus=get_default_bus(), tag=None, subsample=40,
                  ylims=None, backend='tb'):
 
-        title        = f'bias-corrected_running_gradient_moments'
+        title        = f'gradient_moments'
         ylabel       = f'Gradient Moments'
         xlabel       = 'Train step'
         subscription = Subscription(self, ['weight_gradients'], tag, subsample)
@@ -55,7 +55,7 @@ class BiasCorrectedMomentsSubscriber(PlotSubscriber):
         named_module  = message.key
 
         grad = message.data
-        t   = self._subscriptions['weight_gradients'].counter[(named_module, message.kind)] + 1
+        t    = message.global_step + 1
 
         # init moving avgs if not present
         if named_module not in self._means:
@@ -68,10 +68,11 @@ class BiasCorrectedMomentsSubscriber(PlotSubscriber):
 
         exp_avg.mul_(beta1).add_(1 - beta1, grad)
         exp_avg_sq.mul_(beta2).addcmul_(1 - beta2, grad, grad)
+
         bias_correction1     = 1 - beta1 ** t
         bias_correction2     = 1 - beta2 ** t
-        unbuiased_exp_avg    = exp_avg / bias_correction1
-        unbuiased_exp_avg_sq = exp_avg_sq / bias_correction2
+        unbiased_exp_avg    = exp_avg / bias_correction1
+        unbiased_exp_avg_sq = exp_avg_sq / bias_correction2
         step_size            = self._lr * math.sqrt(bias_correction2) / bias_correction1
         denom                = exp_avg_sq.sqrt().add_(self._eps)
         update               = step_size * exp_avg / denom
@@ -79,18 +80,23 @@ class BiasCorrectedMomentsSubscriber(PlotSubscriber):
         nan_tensor           = torch.isnan(update)
         inf_tensor           = torch.isinf(update)
         effective_lr         = update[(1 - nan_tensor) & (1 - inf_tensor)]
+        if grad.sum() == torch.tensor(0.0).cuda():
+            # this would mean all entries are nan or inf because the current gradient was
+            # zero
+            effective_lr = torch.tensor(0.0).cuda()
 
         # instead of repeating the call to publish_module_message for each topic, look at
         # all topic names and infer the local variable from the topic name
         for topic in self.publications['DATA']:
+
             if topic.startswith('biased_grad_mean'):
                 data = exp_avg
             elif topic.startswith('biased_grad_var'):
                 data = exp_avg_sq
             elif topic.startswith('grad_mean'):
-                data = unbuiased_exp_avg
+                data = unbiased_exp_avg
             elif topic.startswith('grad_var'):
-                data = unbuiased_exp_avg_sq
+                data = unbiased_exp_avg_sq
             elif topic.startswith('effective_lr'):
                 data = effective_lr
             else:
@@ -112,9 +118,9 @@ class BiasCorrectedMomentsSubscriber(PlotSubscriber):
                                                     message.epoch, topic,
                                                     message.key, data)
 
-        self._backend.add_data(f'{named_module.name}/grad_mean', unbuiased_exp_avg.median(),
+        self._backend.add_data(f'{named_module.name}/grad_mean', unbiased_exp_avg.median(),
                                message.global_step)
-        self._backend.add_data(f'{named_module.name}/grad_var', unbuiased_exp_avg_sq.median(),
+        self._backend.add_data(f'{named_module.name}/grad_var', unbiased_exp_avg_sq.median(),
                                message.global_step)
 
         self._backend.add_data(f'{named_module.name}/grad_mean_biased', exp_avg.median(),
@@ -122,5 +128,6 @@ class BiasCorrectedMomentsSubscriber(PlotSubscriber):
         self._backend.add_data(f'{named_module.name}/grad_var_biased', exp_avg_sq.median(),
                                message.global_step)
 
-        self._backend.add_data(f'{named_module.name}/lr', effective_lr.median(),
-                               message.global_step)
+        if not grad.sum() == torch.tensor(0.0).cuda():
+            self._backend.add_data(f'{named_module.name}/lr', effective_lr.median(),
+                                   message.global_step)
