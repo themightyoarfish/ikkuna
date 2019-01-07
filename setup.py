@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from distutils.core import setup
-import setuptools  # noqa
+import setuptools
 import os
 
 with open('requirements.txt', mode='r') as f:

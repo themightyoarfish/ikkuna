@@ -11,8 +11,8 @@ def main():
     parser.add_argument('-j', '--jobs', type=int, default=3, help='Number of processes to use')
     args = parser.parse_args()
 
-    lrs = [0.0005, 0.001]
-    architectures = ['FullyConnectedModel', 'AdamModel']
+    lrs = [0.0005, 0.001, 0.01]
+    architectures = ['FullyConnectedModel', 'AdamModel', 'ResNet18','VGG']
     optimizers = ['Adam', 'SGD']
     runs = list(itertools.chain.from_iterable(itertools.product(lrs, architectures, optimizers)
                                               for _ in range(args.nruns)))
