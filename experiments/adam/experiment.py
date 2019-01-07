@@ -57,7 +57,7 @@ def run(batch_size, loss, optimizer, base_lr, n_epochs, dataset, model):
 
     loss_fn = getattr(torch.nn, loss)()
 
-    backend = 'tb'
+    backend = None
     # set up the trainer
     trainer = Trainer(dataset_train_meta, batch_size=batch_size, loss=loss_fn,
                       exporter=exporter)
@@ -66,11 +66,11 @@ def run(batch_size, loss, optimizer, base_lr, n_epochs, dataset, model):
     trainer.add_subscriber(BiasCorrectedMomentsSubscriber(base_lr, 0.9, 0.999, 1e-8,
                                                           backend=backend))
     trainer.add_subscriber(LossSubscriber(backend=backend))
-    trainer.add_subscriber(RatioSubscriber(['weight_updates', 'weights'], backend=backend))
-    trainer.add_subscriber(NormSubscriber('weight_gradients', backend=backend))
-    trainer.add_subscriber(SpectralNormSubscriber('weights', backend=backend))
-    trainer.add_subscriber(VarianceSubscriber('weight_gradients', backend=backend))
-    trainer.add_subscriber(MeanSubscriber('weight_gradients', backend=backend))
+    # trainer.add_subscriber(RatioSubscriber(['weight_updates', 'weights'], backend=backend))
+    # trainer.add_subscriber(NormSubscriber('weight_gradients', backend=backend))
+    # trainer.add_subscriber(SpectralNormSubscriber('weights', backend=backend))
+    # trainer.add_subscriber(VarianceSubscriber('weight_gradients', backend=backend))
+    # trainer.add_subscriber(MeanSubscriber('weight_gradients', backend=backend))
     trainer.add_subscriber(TrainAccuracySubscriber(backend=backend))
     trainer.add_subscriber(TestAccuracySubscriber(dataset_test_meta, trainer.model.forward,
                                                   frequency=trainer.batches_per_epoch,
@@ -79,10 +79,10 @@ def run(batch_size, loss, optimizer, base_lr, n_epochs, dataset, model):
     logged_metrics = ['loss',
                       'test_accuracy',
                       'train_accuracy',
-                      'weight_gradients_mean',
-                      'weight_gradients_variance',
-                      'weights_spectral_norm',
-                      'weight_updates_weights_ratio',
+                      # 'weight_gradients_mean',
+                      # 'weight_gradients_variance',
+                      # 'weights_spectral_norm',
+                      # 'weight_updates_weights_ratio',
                       'biased_grad_mean_estimate_mean',
                       'biased_grad_mean_estimate_median',
                       'biased_grad_mean_estimate_var',
