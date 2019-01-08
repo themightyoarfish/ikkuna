@@ -5,7 +5,6 @@ from experiments.utils import unify_limits
 import matplotlib
 matplotlib.rcParams['lines.linewidth'] = 0.8
 from colors import Color
-import scipy.ndimage
 import os
 
 try:
@@ -81,6 +80,8 @@ def plot_moments(models, optimizers, learning_rates, **kwargs):
     ]
 
     groups = list(sacred_db.runs.aggregate(pipeline))
+    if not groups:
+        raise RuntimeError('No data found. Did you mistype something?')
 
     if kwargs.get('save', False):
         matplotlib.use('cairo')
@@ -94,6 +95,12 @@ def plot_moments(models, optimizers, learning_rates, **kwargs):
     start = kwargs.get('start', 0)
     end = kwargs.get('end', -1)
 
+    ax_means  = []
+    ax_vars   = []
+    ax_lrs    = []
+    ax_losses = []
+    ax_accs   = []
+
     for group in groups:
         model     = group['_id']['model']
         optimizer = group['_id']['optimizer']
@@ -101,7 +108,7 @@ def plot_moments(models, optimizers, learning_rates, **kwargs):
 
         # create figure for group
         f       = plt.figure(figsize=kwargs.get('figsize', (9, 6)))
-        f.suptitle(f'{model}, {optimizer}, {base_lr}')
+        # f.suptitle(f'{model}, {optimizer}, {base_lr}')
         ax_loss = f.add_subplot(326)
         ax_loss.locator_params(nbins=8, axis='y')
         ax_legend = f.add_subplot(222)
@@ -109,6 +116,12 @@ def plot_moments(models, optimizers, learning_rates, **kwargs):
         ax_mean = f.add_subplot(321)
         ax_var  = f.add_subplot(323, sharex=ax_mean)
         ax_lr   = f.add_subplot(325, sharex=ax_mean)
+
+        ax_losses.append(ax_loss)
+        ax_accs.append(ax_acc)
+        ax_means.append(ax_mean)
+        ax_vars.append(ax_var)
+        ax_lrs.append(ax_lr)
 
         # set title and labels
         ax_mean.set_title('Bias-Corrected Running Mean estimate')
@@ -158,6 +171,7 @@ def plot_moments(models, optimizers, learning_rates, **kwargs):
 
         for layer_name, effective_lr_trace in layer_effective_lr_map.items():
             data = median_pool_array(effective_lr_trace[valid_idx_lr], k_sparse, k_sparse)
+            data[data <= 0] = np.nan
             ax_lr.plot(steps_lr[valid_idx_lr][::k_sparse], data, label=layer_name)
 
         # ax_mean.set_yscale('log')
@@ -165,10 +179,12 @@ def plot_moments(models, optimizers, learning_rates, **kwargs):
         ax_lr.set_yscale('log')
 
         ax_loss.plot(steps_loss[valid_idx_loss][::k_full],
-                     median_pool_array(loss_trace[valid_idx_loss], k_full, k_full), label='loss')
+                     median_pool_array(loss_trace[valid_idx_loss], k_full, k_full), label='loss',
+                     c=np.array(Color.YELLOW).squeeze())
 
         ax_acc.plot(test_accuracy_steps[valid_idx_test_acc],
-                    test_accuracy_trace[valid_idx_test_acc], label='test-accuracy', c='red')
+                    test_accuracy_trace[valid_idx_test_acc], label='test-accuracy',
+                    c=np.array(Color.RED).squeeze())
 
         handles, labels = ax_mean.get_legend_handles_labels()
         ax_legend.legend(handles, labels, loc='upper right')
@@ -190,6 +206,11 @@ def plot_moments(models, optimizers, learning_rates, **kwargs):
         key          = f'{m_str}_{o_str}_{lr_str}_{start}_{end}.pdf'
         figures[key] = f
 
+    unify_limits(ax_lrs, x=False)
+    unify_limits(ax_means, x=False)
+    unify_limits(ax_vars, x=False)
+    unify_limits(ax_accs, x=False)
+    unify_limits(ax_losses, x=False)
     if not save:
         plt.show()
     else:
@@ -197,5 +218,15 @@ def plot_moments(models, optimizers, learning_rates, **kwargs):
             f.savefig(name)
 
 
+def plots_for_thesis():
+    plot_moments(['AdamModel'], ['Adam'], [0.001], start=0, end=1200, save=True)
+    plot_moments(['AdamModel'], ['Adam'], [0.001], start=0, end=-1, save=True)
+
+    for model in ['AdamModel', 'FullyConnectedModel', 'VGG']:
+        for opt in ['Adam', 'SGD']:
+            plot_moments([model], [opt], [0.0005, 0.001, 0.01], start=300, end=-1, save=True)
+
+
 if __name__ == '__main__':
+    # plots_for_thesis()
     plot_moments(['AdamModel'], ['Adam'], [0.001], start=0, end=-1, save=True)
