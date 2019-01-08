@@ -124,15 +124,15 @@ def plot_moments(models, optimizers, learning_rates, **kwargs):
         ax_lrs.append(ax_lr)
 
         # set title and labels
-        ax_mean.set_title('Bias-Corrected Running Mean estimate')
-        ax_var.set_title('Bias-Corrected Running Variance estimate')
-        ax_lr.set_title('Effective LR')
-        ax_lr.set_xlabel('Train step')
+        ax_mean.set_title('Norm of running mean')
+        ax_var.set_title('Median of running variance')
+        ax_lr.set_title('Median of effective LR')
+        ax_lr.set_xlabel('$t$')
         ax_loss.set_title('Train Loss & Validation Accuracy')
 
         ids = group['_member_ids']
 
-        layer_mean_map, steps_mean = get_layer_metric_map('^grad_mean_estimate_median', ids)
+        layer_mean_map, steps_mean = get_layer_metric_map('^grad_mean_estimate_norm', ids)
         layer_var_map, steps_var = get_layer_metric_map('^grad_var_estimate_median', ids)
         layer_effective_lr_map, steps_lr = get_layer_metric_map('^effective_lr_median', ids)
         valid_idx_mean = between(steps_mean, start, end)
@@ -180,11 +180,13 @@ def plot_moments(models, optimizers, learning_rates, **kwargs):
 
         ax_loss.plot(steps_loss[valid_idx_loss][::k_full],
                      median_pool_array(loss_trace[valid_idx_loss], k_full, k_full), label='loss',
-                     c=np.array(Color.YELLOW).squeeze())
+                     c=np.array(Color.YELLOW).squeeze(),
+                    linewidth=1)
 
         ax_acc.plot(test_accuracy_steps[valid_idx_test_acc],
                     test_accuracy_trace[valid_idx_test_acc], label='test-accuracy',
-                    c=np.array(Color.RED).squeeze())
+                    c=np.array(Color.RED).squeeze(),
+                    linewidth=1)
 
         handles, labels = ax_mean.get_legend_handles_labels()
         ax_legend.legend(handles, labels, loc='upper right')
@@ -222,11 +224,13 @@ def plots_for_thesis():
     plot_moments(['AdamModel'], ['Adam'], [0.001], start=0, end=1200, save=True)
     plot_moments(['AdamModel'], ['Adam'], [0.001], start=0, end=-1, save=True)
 
+    # plot separately so unify_limits only considers all plots for one model and optimizer as
+    # opposed to all of them
     for model in ['AdamModel', 'FullyConnectedModel', 'VGG']:
         for opt in ['Adam', 'SGD']:
-            plot_moments([model], [opt], [0.0005, 0.001, 0.01], start=300, end=-1, save=True)
+            plot_moments([model], [opt], [0.0005, 0.001, 0.01], start=0, end=-1, save=True)
 
 
 if __name__ == '__main__':
-    # plots_for_thesis()
-    plot_moments(['AdamModel'], ['Adam'], [0.001], start=0, end=-1, save=True)
+    plots_for_thesis()
+    # plot_moments(['AdamModel'], ['Adam'], [0.001], start=0, end=-1, save=True)
