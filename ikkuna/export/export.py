@@ -79,6 +79,7 @@ class Exporter(object):
         self._frozen            = set()
         self._module_filter     = module_filter
         self._msg_bus           = message_bus
+        self._current_publish_tag = 'default'
 
     @property
     def message_bus(self):
@@ -216,7 +217,8 @@ class Exporter(object):
     def new_loss(self, loss):
         '''Callback for publishing current training loss.'''
         self._msg_bus.publish_network_message(self._global_step, self._train_step, self._epoch,
-                                              'loss', loss)
+                                              'loss', loss,
+                                              tag=self._current_publish_tag)
 
     def new_input_data(self, *args):
         '''Callback for new training input to the network.
@@ -232,7 +234,8 @@ class Exporter(object):
             input_data = args
 
         self._msg_bus.publish_network_message(self._global_step, self._train_step, self._epoch,
-                                              'input_data', input_data)
+                                              'input_data', input_data,
+                                              tag=self._current_publish_tag)
 
     def new_output_and_labels(self, network_output, labels):
         '''Callback for final network output.
@@ -243,9 +246,11 @@ class Exporter(object):
                     The final layer's output
         '''
         self._msg_bus.publish_network_message(self._global_step, self._train_step, self._epoch,
-                                              'network_output', network_output)
+                                              'network_output', network_output,
+                                              tag=self._current_publish_tag)
         self._msg_bus.publish_network_message(self._global_step, self._train_step, self._epoch,
-                                              'input_labels', labels)
+                                              'input_labels', labels,
+                                              tag=self._current_publish_tag)
 
     def new_activations(self, module, in_, out_):
         '''Callback for newly arriving activations. Registered as a hook to the tracked modules.
@@ -264,7 +269,8 @@ class Exporter(object):
 
         if self._train_step == 0:
             self._msg_bus.publish_network_message(self._global_step, self._train_step,
-                                                  self._epoch, 'epoch_started')
+                                                  self._epoch, 'epoch_started',
+                                                 tag=self._current_publish_tag)
 
         # save weights and biases to publish just before current step ends (in step()). this ensures
         # we can publish the proper updates
@@ -275,7 +281,8 @@ class Exporter(object):
             self._bias_cache[module] = torch.tensor(module.bias)
 
         self._msg_bus.publish_module_message(self._global_step, self._train_step, self._epoch,
-                                             'activations', self._modules[module], out_)
+                                             'activations', self._modules[module], out_,
+                                             tag=self._current_publish_tag)
 
     def new_layer_gradients(self, module, gradients):
         '''Callback for newly arriving layer gradients (loss wrt layer output). Registered as a hook
@@ -302,7 +309,8 @@ class Exporter(object):
                 gradients = gradients[0]
 
         self._msg_bus.publish_module_message(self._global_step, self._train_step, self._epoch,
-                                             'layer_gradients', self._modules[module], gradients)
+                                             'layer_gradients', self._modules[module], gradients,
+                                             tag=self._current_publish_tag)
 
     def new_parameter_gradients(self, module, gradients):
         '''Callback for newly arriving gradients wrt weight and/or bias. Registered as a hook to the
@@ -316,12 +324,14 @@ class Exporter(object):
         '''
         self._msg_bus.publish_module_message(self._global_step, self._train_step, self._epoch,
                                              'weight_gradients', self._modules[module],
-                                             gradients[0])
+                                             gradients[0],
+                                             tag=self._current_publish_tag)
 
         if gradients[1] is not None:
             self._msg_bus.publish_module_message(self._global_step, self._train_step, self._epoch,
                                                  'bias_gradients', self._modules[module],
-                                                 gradients[1])
+                                                 gradients[1],
+                                                 tag=self._current_publish_tag)
 
     def set_model(self, model):
         '''Set the model for direct access for some metrics.
@@ -347,7 +357,15 @@ class Exporter(object):
         #########################################################
         forward_fn = model.forward
 
-        def new_forward_fn(this, *args, should_train=True, should_publish=True):
+        def new_forward_fn(this, *args, should_train=True, tag=self._current_publish_tag):
+            '''When subscribers need to push data through the net, they should be given access to
+            model.forward() to control the Exporter's behaviour until their compute() method ends.
+            The `should_train` parameter can be used to temporarily have the model in validation
+            mode. The `tag` parameter can be used to temporarily have all messages be published with
+            a different tag.
+            '''
+            previous_tag = self._current_publish_tag
+            self._current_publish_tag = tag
             # In order for accuracy subscribers to not need the model access, we add a secret
             # parameter which they can use to temporarily set the training to False and have it
             # revert automatically. TODO: Check if this is inefficient
@@ -356,9 +374,10 @@ class Exporter(object):
             if this.training:
                 # we need to step before forward pass, else act and grads get different steps
                 self.step()
-            if should_publish:
                 self.new_input_data(*args)               # do this after stepping
             ret = forward_fn(*args)             # do forward pass w/o messages spawning
+
+            self._current_publish_tag = previous_tag
             this.train(was_training)            # restore previous state
             return ret
         model.forward = MethodType(new_forward_fn, model)
@@ -386,7 +405,8 @@ class Exporter(object):
         # iteration onwards
         if self._train_step > -1:
             self._msg_bus.publish_network_message(self._global_step, self._train_step, self._epoch,
-                                                  'batch_finished')
+                                                  'batch_finished',
+                                                  tag=self._current_publish_tag)
 
         self._train_step  += 1
         self._global_step += 1
@@ -395,20 +415,25 @@ class Exporter(object):
             self._msg_bus.publish_module_message(self._global_step, self._train_step,
                                                  self._epoch, 'weight_updates',
                                                  self._modules[module],
-                                                 module.weight - weight)
+                                                 module.weight - weight,
+                                                 tag=self._current_publish_tag)
             self._msg_bus.publish_module_message(self._global_step, self._train_step, self._epoch,
-                                                 'weights', self._modules[module], weight)
+                                                 'weights', self._modules[module], weight,
+                                                 tag=self._current_publish_tag)
 
         for module, bias in self._bias_cache.items():
             self._msg_bus.publish_module_message(self._global_step, self._train_step,
                                                  self._epoch, 'bias_updates',
                                                  self._modules[module],
-                                                 module.bias - bias)
+                                                 module.bias - bias,
+                                                 tag=self._current_publish_tag)
             self._msg_bus.publish_module_message(self._global_step, self._train_step, self._epoch,
-                                                 'biases', self._modules[module], bias)
+                                                 'biases', self._modules[module], bias,
+                                                 tag=self._current_publish_tag)
 
         self._msg_bus.publish_network_message(self._global_step, self._train_step, self._epoch,
-                                              'batch_started')
+                                              'batch_started',
+                                              tag=self._current_publish_tag)
 
     def _freeze_module(self, named_module):
         '''Convenience method for freezing training for a module.
@@ -431,6 +456,7 @@ class Exporter(object):
     def epoch_finished(self):
         '''Increase the epoch counter and reset the batch counter.'''
         self._msg_bus.publish_network_message(self._global_step, self._train_step, self._epoch,
-                                              'epoch_finished')
+                                              'epoch_finished',
+                                              tag=self._current_publish_tag)
         self._epoch     += 1
         self._train_step = 0
