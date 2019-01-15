@@ -370,7 +370,7 @@ class MPLBackend(Backend):
 import functools
 
 
-# use lru cache to generate nwe result only once per experiment run
+# use lru cache to generate new result only once per experiment run
 # TODO: remove this hack
 @functools.lru_cache(None)
 def determine_run_index(log_dir):
