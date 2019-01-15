@@ -27,7 +27,8 @@ from train import Trainer
 from ikkuna.utils import load_dataset, seed_everything
 from ikkuna.export.subscriber import (RatioSubscriber, HistogramSubscriber, SpectralNormSubscriber,
                                       TestAccuracySubscriber, TrainAccuracySubscriber,
-                                      NormSubscriber, HessianEigenSubscriber, MessageMeanSubscriber)
+                                      NormSubscriber, HessianEigenSubscriber, MessageMeanSubscriber,
+                                      VarianceSubscriber)
 from ikkuna.export import Exporter
 from ikkuna.export.messages import MessageBus
 import ikkuna.visualization
@@ -83,6 +84,11 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
             spectral_norm_subscriber = SpectralNormSubscriber(kind, backend=backend)
             trainer.add_subscriber(spectral_norm_subscriber)
 
+    if kwargs['variance']:
+        for kind in kwargs['variance']:
+            var_sub = VarianceSubscriber(kind, backend=backend)
+            trainer.add_subscriber(var_sub)
+
     if kwargs['test_accuracy']:
         test_accuracy_subscriber = TestAccuracySubscriber(dataset_test, trainer.model.forward,
                                                           frequency=trainer.batches_per_epoch,
@@ -101,9 +107,11 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
                                                subsample=subsample,
                                                backend=backend)
             trainer.add_subscriber(ratio_subscriber)
-            pubs = ratio_subscriber.publications
-            type, topic = pubs.popitem()    # i kno there is only one
-            trainer.add_subscriber(MessageMeanSubscriber(topic))
+            # pubs = ratio_subscriber.publications
+            # type, topics = pubs.popitem()
+            # # there can be multiple publications per type, but we know the RatioSubscriber only
+            # # publishes one
+            # trainer.add_subscriber(MessageMeanSubscriber(topics[0]))
 
     if kwargs['histogram']:
         for kind in kwargs['histogram']:
@@ -167,6 +175,8 @@ def get_parser():
                         help='Show training progress bar')
     parser.add_argument('--spectral-norm', nargs='+', type=str, default=None, metavar='TOPIC',
                         help='Use spectral norm subscriber(s)')
+    parser.add_argument('--variance', nargs='+', type=str, default=None, metavar='TOPIC',
+                        help='Use variance norm subscriber(s)')
     parser.add_argument('--histogram', nargs='+', type=str, default=None, metavar='TOPIC',
                         help='Use histogram subscriber(s)')
     parser.add_argument('--ratio', type=list_of_tuples, nargs='+', default=None,
