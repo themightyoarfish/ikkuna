@@ -142,7 +142,7 @@
 <span class="sd">                    message will be processed.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-<div class="viewcode-block" id="Subscription.__init__"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscription.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscriber</span><span class="p">,</span> <span class="n">kinds</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="Subscription.__init__"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscription.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscriber</span><span class="p">,</span> <span class="n">kinds</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -157,8 +157,8 @@
 <span class="sd">                        applied to every kind, regardless of frequency. So if ``subsample = 10``,</span>
 <span class="sd">                        every tenth ``weights`` message would be processed, but also only every</span>
 <span class="sd">                        tenth ``epoch_finished`` message.</span>
-<span class="sd">        tag :   str or None</span>
-<span class="sd">                Optional tag for filtering messages. If ``None``, all messages will be relayed</span>
+<span class="sd">        tag :   str</span>
+<span class="sd">                Optional tag for filtering messages.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kinds</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Expected list of kinds, got {type(kinds)}&#39;</span><span class="p">)</span>
@@ -194,7 +194,7 @@
 <span class="sd">        ----------</span>
 <span class="sd">        message    :   ikkuna.export.messages.ModuleMessage</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tag</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span> <span class="o">!=</span> <span class="n">message</span><span class="o">.</span><span class="n">tag</span> <span class="ow">or</span> <span class="n">message</span><span class="o">.</span><span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kinds</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">message</span><span class="o">.</span><span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kinds</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span> <span class="o">!=</span> <span class="n">message</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span>
             <span class="k">return</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">ModuleMessage</span><span class="p">):</span>
@@ -211,7 +211,7 @@
 <span class="sd">    kind, when one round (a train step) is over. This is useful for receiving several kinds of</span>
 <span class="sd">    messages in each train step and always have them be processed together.&#39;&#39;&#39;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscriber</span><span class="p">,</span> <span class="n">kinds</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscriber</span><span class="p">,</span> <span class="n">kinds</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subscriber</span><span class="p">,</span> <span class="n">kinds</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">subsample</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_current_global_step</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_open_bundles</span>        <span class="o">=</span> <span class="p">{}</span>
@@ -301,9 +301,9 @@
 <div class="viewcode-block" id="Subscriber.__del__"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.Subscriber.__del__">[docs]</a>    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;If for whatever reason a subscriber ceases to exist before the interpreter ends, delete</span>
 <span class="sd">        the registered topics&#39;&#39;&#39;</span>
-        <span class="k">for</span> <span class="n">topics</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_published_topics</span><span class="p">[</span><span class="s1">&#39;DATA&#39;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">topic</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_published_topics</span><span class="p">[</span><span class="s1">&#39;DATA&#39;</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">deregister_data_topic</span><span class="p">(</span><span class="n">topic</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">topics</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_published_topics</span><span class="p">[</span><span class="s1">&#39;META&#39;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">topic</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_published_topics</span><span class="p">[</span><span class="s1">&#39;META&#39;</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">deregister_meta_topic</span><span class="p">(</span><span class="n">topic</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
@@ -413,7 +413,7 @@
     <span class="sd">&#39;&#39;&#39;Subscriber class for subscribing to :class:`~ikkuna.export.messages.ModuleMessage`\ s and</span>
 <span class="sd">    running a callback with them.&#39;&#39;&#39;</span>
 
-<div class="viewcode-block" id="CallbackSubscriber.__init__"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.CallbackSubscriber.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kinds</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">message_bus</span><span class="o">=</span><span class="n">get_default_bus</span><span class="p">(),</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="CallbackSubscriber.__init__"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.CallbackSubscriber.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kinds</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">message_bus</span><span class="o">=</span><span class="n">get_default_bus</span><span class="p">(),</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
