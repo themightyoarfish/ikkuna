@@ -374,11 +374,14 @@ class MessageBus(object):
         ValueError
             If any of the kinds the Subscriber is interested in wasn't previously registered
         '''
-        if not all(map(lambda k: k in self._meta_kinds or k in self._data_kinds, sub.kinds)):
-            raise ValueError('Some kinds were not registered.')
+        known_kinds = self._meta_kinds.union(self._data_kinds)
+        for kind in sub.kinds:
+            if kind not in known_kinds:
+                raise ValueError(f'"{kind}" was not registered.')
         self._subscribers.add(sub)
 
-    def publish_network_message(self, global_step, train_step, epoch, kind, data=None):
+    def publish_network_message(self, global_step, train_step, epoch, kind, data=None,
+                                tag='default'):
         '''Publish an update of type :class:`~ikkuna.export.messages.NetworkMessage` to all
         registered subscribers.
 
@@ -399,12 +402,13 @@ class MessageBus(object):
             raise ValueError(f'Unknown META kind "{kind}". '
                              'Check spelling and kind of your publications.')
 
-        msg = NetworkMessage(global_step=global_step, tag=None, kind=kind, train_step=train_step,
+        msg = NetworkMessage(global_step=global_step, tag=tag, kind=kind, train_step=train_step,
                              epoch=epoch, data=data)
         for sub in self._subscribers:
             sub.receive_message(msg)
 
-    def publish_module_message(self, global_step, train_step, epoch, kind, named_module, data):
+    def publish_module_message(self, global_step, train_step, epoch, kind, named_module, data,
+                               tag='default'):
         '''Publish an update of type :class:`~ikkuna.export.messages.ModuleMessage` to all
         registered subscribers.
 
@@ -426,7 +430,7 @@ class MessageBus(object):
         if kind not in self._data_kinds:
             raise ValueError(f'Unknown DATA kind "{kind}". '
                              'Check spelling and kind of your publications.')
-        msg = ModuleMessage(global_step=global_step, tag=None, kind=kind, named_module=named_module,
+        msg = ModuleMessage(global_step=global_step, tag=tag, kind=kind, named_module=named_module,
                             train_step=train_step, epoch=epoch, data=data)
 
         for sub in self._subscribers:
