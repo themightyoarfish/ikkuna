@@ -134,7 +134,7 @@ accepts the following arguments:</p>
                <span class="p">[</span><span class="o">-</span><span class="n">b</span> <span class="n">BATCH_SIZE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">e</span> <span class="n">EPOCHS</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">o</span> <span class="n">OPTIMIZER</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">l</span> <span class="n">LEARNING_RATE</span><span class="p">]</span>
                <span class="p">[</span><span class="o">-</span><span class="n">a</span> <span class="n">N</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">s</span> <span class="n">SUBSAMPLE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span> <span class="p">{</span><span class="n">tb</span><span class="p">,</span><span class="n">mpl</span><span class="p">}]</span> <span class="p">[</span><span class="o">-</span><span class="n">V</span><span class="p">]</span>
                <span class="p">[</span><span class="o">--</span><span class="n">spectral</span><span class="o">-</span><span class="n">norm</span> <span class="n">TOPIC</span> <span class="p">[</span><span class="n">TOPIC</span> <span class="o">...</span><span class="p">]]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">histogram</span> <span class="n">TOPIC</span> <span class="p">[</span><span class="n">TOPIC</span> <span class="o">...</span><span class="p">]]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">variance</span> <span class="n">TOPIC</span> <span class="p">[</span><span class="n">TOPIC</span> <span class="o">...</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">histogram</span> <span class="n">TOPIC</span> <span class="p">[</span><span class="n">TOPIC</span> <span class="o">...</span><span class="p">]]</span>
                <span class="p">[</span><span class="o">--</span><span class="n">ratio</span> <span class="n">TOPIC</span><span class="p">,</span><span class="n">TOPIC</span> <span class="p">[</span><span class="n">TOPIC</span><span class="p">,</span><span class="n">TOPIC</span> <span class="o">...</span><span class="p">]]</span>
                <span class="p">[</span><span class="o">--</span><span class="n">norm</span> <span class="n">TOPIC</span> <span class="p">[</span><span class="n">TOPIC</span> <span class="o">...</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">test</span><span class="o">-</span><span class="n">accuracy</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">train</span><span class="o">-</span><span class="n">accuracy</span><span class="p">]</span>
                <span class="p">[</span><span class="o">--</span><span class="n">depth</span> <span class="n">N</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">hessian</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">exponential</span><span class="o">-</span><span class="n">decay</span> <span class="n">GAMMA</span><span class="p">]</span>
@@ -202,6 +202,9 @@ accepts the following arguments:</p>
 <kbd>--spectral-norm</kbd></td>
 </tr>
 <tr><td>&#160;</td><td>Use spectral norm subscriber(s)</td></tr>
+<tr><td class="option-group">
+<kbd>--variance</kbd></td>
+<td>Use variance norm subscriber(s)</td></tr>
 <tr><td class="option-group">
 <kbd>--histogram</kbd></td>
 <td>Use histogram subscriber(s)</td></tr>

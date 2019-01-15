@@ -126,6 +126,7 @@
 <span class="c1">#  3rd party imports  #</span>
 <span class="c1">#######################</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="nn">torchvision.transforms</span> <span class="k">import</span> <span class="n">ToTensor</span>
 
 <span class="c1">#######################</span>
 <span class="c1">#  1st party imports  #</span>
@@ -134,7 +135,8 @@
 <span class="kn">from</span> <span class="nn">ikkuna.utils</span> <span class="k">import</span> <span class="n">load_dataset</span><span class="p">,</span> <span class="n">seed_everything</span>
 <span class="kn">from</span> <span class="nn">ikkuna.export.subscriber</span> <span class="k">import</span> <span class="p">(</span><span class="n">RatioSubscriber</span><span class="p">,</span> <span class="n">HistogramSubscriber</span><span class="p">,</span> <span class="n">SpectralNormSubscriber</span><span class="p">,</span>
                                       <span class="n">TestAccuracySubscriber</span><span class="p">,</span> <span class="n">TrainAccuracySubscriber</span><span class="p">,</span>
-                                      <span class="n">NormSubscriber</span><span class="p">,</span> <span class="n">HessianEigenSubscriber</span><span class="p">,</span> <span class="n">MessageMeanSubscriber</span><span class="p">)</span>
+                                      <span class="n">NormSubscriber</span><span class="p">,</span> <span class="n">HessianEigenSubscriber</span><span class="p">,</span> <span class="n">MessageMeanSubscriber</span><span class="p">,</span>
+                                      <span class="n">VarianceSubscriber</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">ikkuna.export</span> <span class="k">import</span> <span class="n">Exporter</span>
 <span class="kn">from</span> <span class="nn">ikkuna.export.messages</span> <span class="k">import</span> <span class="n">MessageBus</span>
 <span class="kn">import</span> <span class="nn">ikkuna.visualization</span>
@@ -155,7 +157,8 @@
 <span class="sd">                    Name of the optimizer to use</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="n">dataset_train</span><span class="p">,</span> <span class="n">dataset_test</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="n">dataset_str</span><span class="p">)</span>
+    <span class="n">dataset_train</span><span class="p">,</span> <span class="n">dataset_test</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="n">dataset_str</span><span class="p">,</span> <span class="n">train_transforms</span><span class="o">=</span><span class="p">[</span><span class="n">ToTensor</span><span class="p">()],</span>
+                                               <span class="n">test_transforms</span><span class="o">=</span><span class="p">[</span><span class="n">ToTensor</span><span class="p">()])</span>
 
     <span class="c1"># for some strange reason, python claims &#39;torch referenced before assignment&#39; when importing at</span>
     <span class="c1"># the top. hahaaaaa</span>
@@ -189,6 +192,11 @@
             <span class="n">spectral_norm_subscriber</span> <span class="o">=</span> <span class="n">SpectralNormSubscriber</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
             <span class="n">trainer</span><span class="o">.</span><span class="n">add_subscriber</span><span class="p">(</span><span class="n">spectral_norm_subscriber</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;variance&#39;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">kind</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;variance&#39;</span><span class="p">]:</span>
+            <span class="n">var_sub</span> <span class="o">=</span> <span class="n">VarianceSubscriber</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
+            <span class="n">trainer</span><span class="o">.</span><span class="n">add_subscriber</span><span class="p">(</span><span class="n">var_sub</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;test_accuracy&#39;</span><span class="p">]:</span>
         <span class="n">test_accuracy_subscriber</span> <span class="o">=</span> <span class="n">TestAccuracySubscriber</span><span class="p">(</span><span class="n">dataset_test</span><span class="p">,</span> <span class="n">trainer</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span>
                                                           <span class="n">frequency</span><span class="o">=</span><span class="n">trainer</span><span class="o">.</span><span class="n">batches_per_epoch</span><span class="p">,</span>
@@ -207,9 +215,11 @@
                                                <span class="n">subsample</span><span class="o">=</span><span class="n">subsample</span><span class="p">,</span>
                                                <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
             <span class="n">trainer</span><span class="o">.</span><span class="n">add_subscriber</span><span class="p">(</span><span class="n">ratio_subscriber</span><span class="p">)</span>
-            <span class="n">pubs</span> <span class="o">=</span> <span class="n">ratio_subscriber</span><span class="o">.</span><span class="n">publications</span>
-            <span class="nb">type</span><span class="p">,</span> <span class="n">topic</span> <span class="o">=</span> <span class="n">pubs</span><span class="o">.</span><span class="n">popitem</span><span class="p">()</span>    <span class="c1"># i kno there is only one</span>
-            <span class="n">trainer</span><span class="o">.</span><span class="n">add_subscriber</span><span class="p">(</span><span class="n">MessageMeanSubscriber</span><span class="p">(</span><span class="n">topic</span><span class="p">))</span>
+            <span class="c1"># pubs = ratio_subscriber.publications</span>
+            <span class="c1"># type, topics = pubs.popitem()</span>
+            <span class="c1"># # there can be multiple publications per type, but we know the RatioSubscriber only</span>
+            <span class="c1"># # publishes one</span>
+            <span class="c1"># trainer.add_subscriber(MessageMeanSubscriber(topics[0]))</span>
 
     <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;histogram&#39;</span><span class="p">]:</span>
         <span class="k">for</span> <span class="n">kind</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;histogram&#39;</span><span class="p">]:</span>
@@ -273,6 +283,8 @@
                         <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Show training progress bar&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--spectral-norm&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;TOPIC&#39;</span><span class="p">,</span>
                         <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Use spectral norm subscriber(s)&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--variance&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;TOPIC&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Use variance norm subscriber(s)&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--histogram&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;TOPIC&#39;</span><span class="p">,</span>
                         <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Use histogram subscriber(s)&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--ratio&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">list_of_tuples</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
