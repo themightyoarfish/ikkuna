@@ -171,7 +171,7 @@ def get_parser():
     #                     help='Y-axis limits for plots')
     parser.add_argument('-v', '--visualisation', type=str, choices=['tb', 'mpl'], default='tb',
                         help='Visualisation backend to use.')
-    parser.add_argument('-V', '--verbose', action='store_true', default=True,
+    parser.add_argument('-V', '--verbose', action='store_true', default=False,
                         help='Show training progress bar')
     parser.add_argument('--spectral-norm', nargs='+', type=str, default=None, metavar='TOPIC',
                         help='Use spectral norm subscriber(s)')
