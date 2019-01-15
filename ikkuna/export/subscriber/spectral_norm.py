@@ -7,7 +7,7 @@ from ikkuna.export.messages import get_default_bus
 
 class SpectralNormSubscriber(PlotSubscriber):
 
-    def __init__(self, kind, message_bus=get_default_bus(), tag=None, subsample=1, ylims=None,
+    def __init__(self, kind, message_bus=get_default_bus(), tag='default', subsample=1, ylims=None,
                  backend='tb'):
         '''
         Parameters
@@ -28,8 +28,12 @@ class SpectralNormSubscriber(PlotSubscriber):
         title = f'{kind}_spectral_norm'
         xlabel = 'Step'
         ylabel = 'Spectral norm'
-        super().__init__([subscription], message_bus,
-                         {'title': title, 'xlabel': xlabel, 'ylims': ylims, 'ylabel': ylabel},
+        super().__init__([subscription],
+                         message_bus,
+                         {'title': title,
+                          'xlabel': xlabel,
+                          'ylims': ylims,
+                          'ylabel': ylabel},
                          backend=backend)
         self.u = dict()
         self._add_publication(f'{kind}_spectral_norm', type='DATA')

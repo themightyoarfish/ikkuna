@@ -7,7 +7,7 @@ class MessageMeanSubscriber(PlotSubscriber):
     '''Compute the mean over all messages with scalar data of a given kind in one train step. This
     is useful for displaying summary statistics.'''
 
-    def __init__(self, kind, message_bus=get_default_bus(), tag=None, subsample=1, ylims=None,
+    def __init__(self, kind, message_bus=get_default_bus(), tag='default', subsample=1, ylims=None,
                  backend='tb'):
 
         if not isinstance(kind, str):
@@ -16,11 +16,12 @@ class MessageMeanSubscriber(PlotSubscriber):
         title        = f'message_means'
         ylabel       = 'Mean'
         xlabel       = 'Train step'
-        subscription = Subscription(self, [kind, 'batch_finished'], tag, subsample)
-        super().__init__([subscription], message_bus, {'title': title,
-                                                       'ylabel': ylabel,
-                                                       'ylims': ylims,
-                                                       'xlabel': xlabel},
+        subscription = Subscription(self, [kind, 'batch_finished'], tag=tag, subsample=subsample)
+        super().__init__([subscription], message_bus,
+                         {'title': title,
+                          'ylabel': ylabel,
+                          'ylims': ylims,
+                          'xlabel': xlabel},
                          backend=backend)
         self._add_publication(f'{kind}_message_mean', type='META')
         # kind -> list

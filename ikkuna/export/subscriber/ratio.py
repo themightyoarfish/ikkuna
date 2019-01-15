@@ -13,7 +13,7 @@ class RatioSubscriber(PlotSubscriber):
     Therefore it is vital to pass the message kinds to the
     :class:`~ikkuna.export.subscriber.Subscription` object in the correct order.'''
 
-    def __init__(self, kinds, message_bus=get_default_bus(), tag=None, subsample=1, ylims=None,
+    def __init__(self, kinds, message_bus=get_default_bus(), tag='default', subsample=1, ylims=None,
                  backend='tb', absolute=True):
         '''
         Parameters
@@ -27,8 +27,9 @@ class RatioSubscriber(PlotSubscriber):
         title        = f'{kinds[0]}_{kinds[1]}_ratio'
         ylabel       = 'Ratio'
         xlabel       = 'Train step'
-        subscription = SynchronizedSubscription(self, kinds, tag, subsample)
-        super().__init__([subscription], message_bus,
+        subscription = SynchronizedSubscription(self, kinds, tag=tag, subsample=subsample)
+        super().__init__([subscription],
+                         message_bus,
                          {'title': title,
                           'ylabel': ylabel,
                           'ylims': ylims,

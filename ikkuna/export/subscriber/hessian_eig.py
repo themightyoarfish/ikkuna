@@ -24,7 +24,8 @@ class HessianEigenSubscriber(PlotSubscriber):
     '''
 
     def __init__(self, forward_fn, loss_fn, data_loader, batch_size, frequency=1, num_eig=1,
-                 power_steps=20, message_bus=get_default_bus(), ylims=None, backend='tb'):
+                 power_steps=20, tag='default', message_bus=get_default_bus(), ylims=None,
+                 backend='tb'):
         '''
         Parameters
         ----------
@@ -50,10 +51,13 @@ class HessianEigenSubscriber(PlotSubscriber):
         title  = f'Top hessian Eigenvalues'
         ylabel = 'tbd'
         xlabel = 'Train step'
-        subscription = Subscription(self, ['batch_finished', 'activations'])
+        subscription = Subscription(self, ['batch_finished', 'activations'], tag=tag)
         super().__init__([subscription],
                          message_bus,
-                         {'title': title, 'ylabel': ylabel, 'ylims': ylims, 'xlabel': xlabel},
+                         {'title': title,
+                          'ylabel': ylabel,
+                          'ylims': ylims,
+                          'xlabel': xlabel},
                          backend=backend)
 
         self._forward_fn = forward_fn

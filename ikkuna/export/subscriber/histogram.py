@@ -8,12 +8,12 @@ class HistogramSubscriber(PlotSubscriber):
     computes histograms per epoch.  Histograms are non-normalized.
     '''
 
-    def __init__(self, kind, message_bus=get_default_bus(), tag=None, subsample=1, backend='tb'):
+    def __init__(self, kind, message_bus=get_default_bus(), tag='default', subsample=1, backend='tb'):
 
         if not isinstance(kind, str):
             raise ValueError('HistogramSubscriber only accepts 1 kind')
 
-        subscription = Subscription(self, [kind], tag, subsample)
+        subscription = Subscription(self, [kind], tag=tag, subsample=subsample)
         title        = f'{kind}_histogram'
         ylabel       = 'Frequency'
         super().__init__([subscription], message_bus, {'title': title, 'ylabel': ylabel},

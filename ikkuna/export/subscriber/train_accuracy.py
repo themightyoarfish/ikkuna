@@ -5,20 +5,23 @@ from ikkuna.export.messages import get_default_bus
 class TrainAccuracySubscriber(PlotSubscriber):
     ''':class:`~ikkuna.export.subscriber.Subscriber` which computes the batch accuracy.'''
 
-    def __init__(self, message_bus=get_default_bus(), tag=None, subsample=1, ylims=None,
+    def __init__(self, message_bus=get_default_bus(), tag='default', subsample=1, ylims=None,
                  backend='tb'):
         '''
         For parameters see :class:`~ikkuna.export.subscriber.PlotSubscriber`
         '''
-        subscription = SynchronizedSubscription(self, ['network_output', 'input_labels'], tag,
-                                                subsample)
+        subscription = SynchronizedSubscription(self, ['network_output', 'input_labels'], tag=tag,
+                                                subsample=subsample)
 
         title  = f'train_batch_accuracy'
         xlabel = 'Step'
         ylabel = 'Accuracy'
         super().__init__([subscription],
                          message_bus,
-                         {'title': title, 'xlabel': xlabel, 'ylims': ylims, 'ylabel': ylabel},
+                         {'title': title,
+                          'xlabel': xlabel,
+                          'ylims': ylims,
+                          'ylabel': ylabel},
                          backend=backend)
 
         self._add_publication(f'train_accuracy', type='META')

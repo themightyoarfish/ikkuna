@@ -23,7 +23,7 @@ class TestAccuracySubscriber(PlotSubscriber):
     '''
 
     def __init__(self, dataset_meta, forward_fn, batch_size, message_bus=get_default_bus(),
-                 frequency=100, ylims=None, tag=None, subsample=1, backend='tb'):
+                 frequency=100, ylims=None, tag='default', subsample=1, backend='tb'):
         '''
         Parameters
         ----------
@@ -43,10 +43,13 @@ class TestAccuracySubscriber(PlotSubscriber):
         title  = f'test_accuracy'
         ylabel = 'Accuracy'
         xlabel = 'Train step'
-        subscription = Subscription(self, kinds, tag, subsample)
+        subscription = Subscription(self, kinds, tag=tag, subsample=subsample)
         super().__init__([subscription],
                          message_bus,
-                         {'title': title, 'ylabel': ylabel, 'ylims': ylims, 'xlabel': xlabel,
+                         {'title': title,
+                          'ylabel': ylabel,
+                          'ylims': ylims,
+                          'xlabel': xlabel,
                           'redraw_interval': 1},
                          backend=backend)
 

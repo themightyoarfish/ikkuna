@@ -34,7 +34,7 @@ class Subscription(object):
                     message will be processed.
     '''
 
-    def __init__(self, subscriber, kinds, tag=None, subsample=1):
+    def __init__(self, subscriber, kinds, tag='default', subsample=1):
         '''
         Parameters
         ----------
@@ -49,8 +49,8 @@ class Subscription(object):
                         applied to every kind, regardless of frequency. So if ``subsample = 10``,
                         every tenth ``weights`` message would be processed, but also only every
                         tenth ``epoch_finished`` message.
-        tag :   str or None
-                Optional tag for filtering messages. If ``None``, all messages will be relayed
+        tag :   str
+                Optional tag for filtering messages.
         '''
         if not isinstance(kinds, list):
             raise ValueError(f'Expected list of kinds, got {type(kinds)}')
@@ -86,7 +86,7 @@ class Subscription(object):
         ----------
         message    :   ikkuna.export.messages.ModuleMessage
         '''
-        if not (self._tag is None or self._tag != message.tag or message.kind not in self.kinds):
+        if message.kind not in self.kinds or self._tag != message.tag:
             return
 
         if isinstance(message, ModuleMessage):
@@ -103,7 +103,7 @@ class SynchronizedSubscription(Subscription):
     kind, when one round (a train step) is over. This is useful for receiving several kinds of
     messages in each train step and always have them be processed together.'''
 
-    def __init__(self, subscriber, kinds, tag=None, subsample=1):
+    def __init__(self, subscriber, kinds, tag='default', subsample=1):
         super().__init__(subscriber, kinds, tag, subsample)
         self._current_global_step = None
         self._open_bundles        = {}
@@ -305,7 +305,7 @@ class CallbackSubscriber(Subscriber):
     '''Subscriber class for subscribing to :class:`~ikkuna.export.messages.ModuleMessage`\ s and
     running a callback with them.'''
 
-    def __init__(self, kinds, callback, message_bus=get_default_bus(), tag=None, subsample=1):
+    def __init__(self, kinds, callback, message_bus=get_default_bus(), tag='default', subsample=1):
         '''
         Parameters
         ----------

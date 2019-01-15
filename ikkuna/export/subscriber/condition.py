@@ -9,7 +9,7 @@ class ConditionNumberSubscriber(PlotSubscriber):
     '''A Subscriber which computes the condition number of a matrix. Not sure what this is useful
     for, but maybe for Linear layers.'''
 
-    def __init__(self, kind, message_bus=get_default_bus(), tag=None, subsample=1, ylims=None,
+    def __init__(self, kind, message_bus=get_default_bus(), tag='default', subsample=1, ylims=None,
                  backend='tb'):
         '''
         Parameters
@@ -26,13 +26,17 @@ class ConditionNumberSubscriber(PlotSubscriber):
         if not isinstance(kind, str):
             raise ValueError(f'{self.__class__.__name__} only accepts 1 kind')
 
-        subscription = Subscription(self, [kind], tag, subsample)
+        subscription = Subscription(self, [kind], tag=tag, subsample=subsample)
 
         title = f'{kind}_condition_number'
         xlabel = 'Step'
         ylabel = 'Condition number'
-        super().__init__([subscription], message_bus,
-                         {'title': title, 'xlabel': xlabel, 'ylims': ylims, 'ylabel': ylabel},
+        super().__init__([subscription],
+                         message_bus,
+                         {'title': title,
+                          'xlabel': xlabel,
+                          'ylims': ylims,
+                          'ylabel': ylabel},
                          backend=backend)
         self._add_publication(f'{kind}_condition_number', type='DATA')
         self.u = dict()

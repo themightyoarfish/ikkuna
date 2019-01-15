@@ -7,7 +7,7 @@ class VarianceSubscriber(PlotSubscriber):
     variance of quantity for the current batch.
     '''
 
-    def __init__(self, kind, message_bus=get_default_bus(), tag=None, subsample=1, ylims=None,
+    def __init__(self, kind, message_bus=get_default_bus(), tag='default', subsample=1, ylims=None,
                  backend='tb'):
 
         if not isinstance(kind, str):
@@ -16,7 +16,7 @@ class VarianceSubscriber(PlotSubscriber):
         title        = f'{kind}_variance'
         ylabel       = 'σ^2'
         xlabel       = 'Train step'
-        subscription = Subscription(self, [kind], tag, subsample)
+        subscription = Subscription(self, [kind], tag=tag, subsample=subsample)
         super().__init__([subscription], message_bus,
                          {'title': title,
                           'ylabel': ylabel,

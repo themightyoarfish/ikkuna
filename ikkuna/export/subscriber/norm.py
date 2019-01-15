@@ -4,7 +4,7 @@ from ikkuna.export.messages import get_default_bus
 
 class NormSubscriber(PlotSubscriber):
 
-    def __init__(self, kind, message_bus=get_default_bus(), tag=None, subsample=1, ylims=None,
+    def __init__(self, kind, message_bus=get_default_bus(), tag='default', subsample=1, ylims=None,
                  backend='tb', order=2):
 
         if not isinstance(kind, str):
@@ -13,11 +13,12 @@ class NormSubscriber(PlotSubscriber):
         title        = f'{kind}_norm{order}'
         ylabel       = f'L{order} Norm'
         xlabel       = 'Train step'
-        subscription = Subscription(self, [kind], tag, subsample)
-        super().__init__([subscription], message_bus, {'title': title,
-                                                     'ylabel': ylabel,
-                                                     'ylims': ylims,
-                                                     'xlabel': xlabel},
+        subscription = Subscription(self, [kind], tag=tag, subsample=subsample)
+        super().__init__([subscription], message_bus,
+                         {'title': title,
+                          'ylabel': ylabel,
+                          'ylims': ylims,
+                          'xlabel': xlabel},
                          backend=backend)
         self._order  = order
         self._add_publication(f'{kind}_norm{order}', type='DATA')

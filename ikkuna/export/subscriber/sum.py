@@ -4,14 +4,14 @@ from ikkuna.export.messages import get_default_bus
 
 class SumSubscriber(PlotSubscriber):
 
-    def __init__(self, kind, message_bus=get_default_bus(), tag=None, subsample=1, ylims=None,
+    def __init__(self, kind, message_bus=get_default_bus(), tag='default', subsample=1, ylims=None,
                  backend='tb'):
         if not isinstance(kind, str):
             raise ValueError('SumSubscriber only accepts 1 kind')
         title        = f'{kind}_sum'
         ylabel       = 'Sum'
         xlabel       = 'Train step'
-        subscription = Subscription(self, [kind], tag, subsample)
+        subscription = Subscription(self, [kind], tag=tag, subsample=subsample)
         super().__init__([subscription], message_bus,
                          {'title': title,
                           'ylabel': ylabel,
