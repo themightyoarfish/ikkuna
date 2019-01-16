@@ -34,9 +34,10 @@ class Exporter(object):
         #. :meth:`~Exporter.set_model()` to have the :class:`Exporter` wire up the appropriate
            callbacks.
         #. :meth:`~Exporter.set_loss()` should be called with the loss function so that
-           labels can be extracted during training.
+           labels can be extracted during training if if any
+           :class:`~ikkuna.export.subscriber.Subscriber`\ s rely on the ``'input_labels'`` message
         #. :meth:`~Exporter.epoch_finished()` should be called if any
-           :class:`~ikkuna.export.subscriber.Subscriber`\ s rely on the ``'epoch_finished'`` signal
+           :class:`~ikkuna.export.subscriber.Subscriber`\ s rely on the ``'epoch_finished'`` message
 
     Attributes
     ----------
@@ -80,6 +81,8 @@ class Exporter(object):
         self._module_filter     = module_filter
         self._msg_bus           = message_bus
         self._current_publish_tag = 'default'
+
+        self._epoch_started_marker = False
 
     @property
     def message_bus(self):
@@ -264,13 +267,11 @@ class Exporter(object):
         out_    :   torch.Tensor
                     The new activations
         '''
-        if not self._is_training:
-            return
-
-        if self._train_step == 0:
+        if not self._epoch_started_marker:
             self._msg_bus.publish_network_message(self._global_step, self._train_step,
                                                   self._epoch, 'epoch_started',
-                                                 tag=self._current_publish_tag)
+                                                  tag=self._current_publish_tag)
+            self._epoch_started_marker = True
 
         # save weights and biases to publish just before current step ends (in step()). this ensures
         # we can publish the proper updates
@@ -460,3 +461,4 @@ class Exporter(object):
                                               tag=self._current_publish_tag)
         self._epoch     += 1
         self._train_step = 0
+        self._epoch_started_marker = False
