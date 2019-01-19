@@ -11,6 +11,7 @@ class VGG(nn.Module):
         super(VGG, self).__init__()
         self.in_channels = input_shape[-1]
         assert 1 <= self.in_channels <= 3, 'Expected 1-3 channels'
+        assert input_shape[0] >= 32 and input_shape[1] >= 32, 'Images too small (min 32px per side)'
 
         self.features = self._make_layers()
         feature_outputs = 512 * (input_shape[0] // 2**5)  * (input_shape[1] // 2**5)
