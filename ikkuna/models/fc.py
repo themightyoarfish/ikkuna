@@ -13,15 +13,15 @@ class FullyConnectedModel(torch.nn.Module):
 
         self.features = torch.nn.Sequential(
             torch.nn.Linear(H * W * C, 4000),
-            torch.nn.ReLU(inplace=True),
+            torch.nn.ReLU(inplace=False),
             torch.nn.Linear(4000, 4000),
-            torch.nn.ReLU(inplace=True),
+            torch.nn.ReLU(inplace=False),
             torch.nn.Linear(4000, 4000),
-            torch.nn.ReLU(inplace=True)
+            torch.nn.ReLU(inplace=False)
         )
         self.classifier = torch.nn.Sequential(
             torch.nn.Linear(4000, 1000),
-            torch.nn.ReLU(inplace=True),
+            torch.nn.ReLU(inplace=False),
             torch.nn.Linear(1000, num_classes),
         )
 

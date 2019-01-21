@@ -41,9 +41,9 @@ class AlexNetMini(torch.nn.Module):     # Pytorch Sphinx-doc is buggy here, so u
 
         self.features = torch.nn.Sequential(
             torch.nn.Conv2d(C, 4, kernel_size=3, padding=0),
-            torch.nn.ReLU(inplace=True),
+            torch.nn.ReLU(inplace=False),
             torch.nn.Conv2d(4, 8, kernel_size=3, padding=0),
-            torch.nn.ReLU(inplace=True),
+            torch.nn.ReLU(inplace=False),
             torch.nn.MaxPool2d(kernel_size=2, stride=2),
         )
         # for each conv or padding layer, apply the output size formula ((length - filter_size +
@@ -59,7 +59,7 @@ class AlexNetMini(torch.nn.Module):     # Pytorch Sphinx-doc is buggy here, so u
         self.classifier = torch.nn.Sequential(
             torch.nn.Dropout(0.25),
             torch.nn.Linear(8 * self.H_out * self.W_out, 16),
-            torch.nn.ReLU(inplace=True),
+            torch.nn.ReLU(inplace=False),
             torch.nn.Dropout(0.5),
             torch.nn.Linear(16, num_classes),
             # torch.nn.Softmax()
