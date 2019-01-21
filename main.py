@@ -29,6 +29,7 @@ from ikkuna.export.subscriber import (RatioSubscriber, HistogramSubscriber, Spec
                                       TestAccuracySubscriber, TrainAccuracySubscriber,
                                       NormSubscriber, HessianEigenSubscriber, MessageMeanSubscriber,
                                       VarianceSubscriber)
+from ikkuna.export.subscriber.svcca import SVCCASubscriber
 from ikkuna.export import Exporter
 from ikkuna.export.messages import MessageBus
 import ikkuna.visualization
@@ -123,8 +124,17 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
             norm_subscriber = NormSubscriber(kind, backend=backend)
             trainer.add_subscriber(norm_subscriber)
 
+    if kwargs['svcca']:
+        svcca_subscriber = SVCCASubscriber(dataset_test, 500, trainer.model.forward,
+                                           subsample=trainer.batches_per_epoch, backend=backend)
+        trainer.add_subscriber(svcca_subscriber)
+
     batches_per_epoch = trainer.batches_per_epoch
     print(f'Batches per epoch: {batches_per_epoch}')
+
+    # exporter = trainer.exporter
+    # modules = exporter.modules
+    # n_modules = len(modules)
 
     epoch_range = range(epochs)
     batch_range = range(batches_per_epoch)
@@ -133,6 +143,10 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
         batch_range = tqdm(batch_range, desc='Batch')
 
     for e in epoch_range:
+
+        # freeze_idx = int(e/epochs * n_modules) - 1
+        # if freeze_idx >= 0:
+        #     exporter.freeze_module(modules[freeze_idx])
         for batch_idx in batch_range:
             trainer.train_batch()
 
@@ -187,6 +201,8 @@ def get_parser():
                         help='Use test set accuracy subscriber')
     parser.add_argument('--train-accuracy', action='store_true',
                         help='Use train accuracy subscriber')
+    parser.add_argument('--svcca', action='store_true',
+                        help='Use SVCCA subscriber')
     parser.add_argument('--depth', type=int, default=-1, help='Depth to which to add modules',
                         metavar='N')
     parser.add_argument('--hessian', action='store_true',
