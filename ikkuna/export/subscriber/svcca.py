@@ -15,6 +15,10 @@ class ChunkedDict(object):
         self._received_n = defaultdict(int)
         self._data = dict()
 
+    def clear(self):
+        self._received_n.clear()
+        self._data.clear()
+
     def append(self, module, data):
         if module not in self._data:
             self._data[module] = torch.zeros(self._expected_n, *data.shape[1:], device=data.device)
@@ -32,6 +36,12 @@ class ChunkedDict(object):
         for module in self._data:
             size += self._data[module].numel() * 4
         return size
+
+    def __setitem__(self, module, data):
+        if module in self._data:
+            del self._data[module]
+            del self._received_n[module]
+        self.append(module, data)
 
     def __getitem__(self, key):
         if not self.complete(key):
@@ -55,7 +65,7 @@ class SVCCASubscriber(PlotSubscriber):
 
     def __init__(self, dataset_meta, n, forward_fn,
                  message_bus=get_default_bus(), tag='default', subsample=1, ylims=None,
-                 backend='tb'):
+                 backend='tb', freeze_at=10):
 
         self._forward_fn = forward_fn
         self._previous_acts = ChunkedDict(n)
@@ -63,6 +73,9 @@ class SVCCASubscriber(PlotSubscriber):
         indices = np.random.randint(0, dataset_meta.size, size=n)
         dataset = Subset(dataset_meta.dataset, indices)
         self._loader = DataLoader(dataset, batch_size=256, shuffle=False, pin_memory=True)
+
+        self._freeze_at = freeze_at
+        self._ignore_modules = set()
 
         title        = f'self_similarity'
         ylabel       = 'Similarity'
@@ -78,6 +91,13 @@ class SVCCASubscriber(PlotSubscriber):
                           'xlabel': xlabel},
                          backend=backend)
         self._add_publication(f'self_similarity', type='DATA')
+        self
+
+    def _module_complete_previous(self, module):
+        return not (module not in self._previous_acts or not self._previous_acts.complete(module))
+
+    def _module_complete_current(self, module):
+        return not (module not in self._current_acts or not self._current_acts.complete(module))
 
     def compute(self, message):
         if message.tag == 'default' and message.kind == 'batch_finished':
@@ -92,22 +112,21 @@ class SVCCASubscriber(PlotSubscriber):
 
         elif message.tag == 'svcca_testing':
             module, name = message.key
-            if module not in self._previous_acts or not self._previous_acts.complete(module):
-                # print(f'Updating module {name} in previous_acts')
-                self._previous_acts.append(module, message.data)
-            elif module not in self._current_acts or not self._current_acts.complete(module):
-                    # print(f'Updating module {name} in current')
-                    self._current_acts.append(module, message.data)
+            if module in self._ignore_modules:
+                return
 
-            if self._current_acts.complete(module) and self._previous_acts.complete(module):
+            if not self._module_complete_previous(module):
+                self._previous_acts.append(module, message.data)
+            elif not self._module_complete_current(module):
+                self._current_acts.append(module, message.data)
+
+            if self._module_complete_current(module) and self._module_complete_previous(module):
                 # now both current and previous acts are complete and we can compute
                 # print(f'Computing similarity for {name}')
-                previous_acts = self._previous_acts[module]
-                current_acts = self._current_acts[module]
+                previous_acts = self._previous_acts.pop(module)
+                current_acts = self._current_acts.pop(module)
 
-                self._previous_acts.pop(module)
-                self._current_acts.pop(module)
-                self._previous_acts.append(module, current_acts)
+                self._previous_acts[module] = current_acts
 
                 if previous_acts.ndimension() > 2:
                     c = previous_acts.shape[1]  # channel dim
@@ -118,22 +137,31 @@ class SVCCASubscriber(PlotSubscriber):
                     current_acts = current_acts.permute([0, 2, 3, 1]).reshape(-1, c)
 
                 try:
-                    result_dict = svcca.cca_core.robust_cca_similarity(previous_acts.t(),
-                                                                       current_acts.t(),
-                                                                       epsilon=1e-6,
-                                                                       threshold=0.95,
+                    previous_acts = previous_acts.detach().cpu().numpy()
+                    current_acts = current_acts.detach().cpu().numpy()
+                    result_dict = svcca.cca_core.robust_cca_similarity(previous_acts.T,
+                                                                       current_acts.T,
+                                                                       epsilon=1e-8,
+                                                                       threshold=0.98,
                                                                        verbose=False,
-                                                                       normal_epsilon=1e-5)
+                                                                       normal_epsilon=1e-6,
+                                                                       compute_dirns=False)
                     mean = result_dict['mean'][0]
-                    # if mean > 0.99:
-                    #     def freeze(mod):
-                    #         for p in mod.parameters():
-                    #             p.requires_grad = False
-
-                    #     print(f'Freezing {name}')
-                    #     module.apply(freeze)
                     self._backend.add_data(name, mean, message.global_step)
+
+                    if mean > self._freeze_at:
+                        def freeze(mod):
+                            for p in mod.parameters():
+                                p.requires_grad = False
+
+                        print(f'Freezing {name}')
+                        module.apply(freeze)
+                        self._ignore_modules.add(module)
+                        if module in self._previous_acts:
+                            self._previous_acts.pop(module)
+                        if module in self._current_acts:
+                            self._current_acts.pop(module)
+
                 except RuntimeError as e:
-                    raise e
                     print('Could not compute cca. Probably highly ill-conditioned covariance.')
-                    self._previous_acts = None
+                    self._previous_acts.clear()
