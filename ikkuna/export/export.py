@@ -436,23 +436,23 @@ class Exporter(object):
                                               'batch_started',
                                               tag=self._current_publish_tag)
 
-    def _freeze_module(self, named_module):
+    def freeze_module(self, module):
         '''Convenience method for freezing training for a module.
 
         Parameters
         ----------
-        named_module    :   ikkuna.utils.NamedModule
-                            Module to freeze
+        module    :   torch.nn.Module
+                      Module to freeze
         '''
 
         def freeze(mod):
             for p in mod.parameters():
                 p.requires_grad = False
 
-        if named_module not in self._frozen:
-            self._frozen.add(named_module)
-            print(f'Freezing {named_module.name}')
-            named_module.module.apply(freeze)
+        if module not in self._frozen:
+            self._frozen.add(module)
+            print(f'Freezing {module}')
+            module.apply(freeze)
 
     def epoch_finished(self):
         '''Increase the epoch counter and reset the batch counter.'''
