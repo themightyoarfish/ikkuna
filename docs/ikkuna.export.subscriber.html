@@ -557,31 +557,30 @@ if the Subscriber is not interested in actual training artifacts, or
 </dd></dl>
 
 <dl class="class">
-<dt id="ikkuna.export.subscriber.ConditionNumberSubscriber">
-<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">ConditionNumberSubscriber</code><span class="sig-paren">(</span><em>kind</em>, <em>message_bus=&lt;ikkuna.export.messages.MessageBus object&gt;</em>, <em>tag='default'</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/condition.html#ConditionNumberSubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.ConditionNumberSubscriber" title="Permalink to this definition">¶</a></dt>
-<dd><p>A Subscriber which computes the condition number of a matrix. Not sure what this is useful
-for, but maybe for Linear layers.</p>
-<dl class="method">
-<dt id="ikkuna.export.subscriber.ConditionNumberSubscriber.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>kind</em>, <em>message_bus=&lt;ikkuna.export.messages.MessageBus object&gt;</em>, <em>tag='default'</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/condition.html#ConditionNumberSubscriber.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.ConditionNumberSubscriber.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<dt id="ikkuna.export.subscriber.BatchedSVCCASubscriber">
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">BatchedSVCCASubscriber</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>n</em>, <em>forward_fn</em>, <em>message_bus=&lt;ikkuna.export.messages.MessageBus object&gt;</em>, <em>tag='default'</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em>, <em>freeze_at=10</em>, <em>batch_size=256</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/svcca.html#BatchedSVCCASubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.BatchedSVCCASubscriber" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="ikkuna.export.subscriber.BatchedSVCCASubscriber.compute">
+<code class="descname">compute</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/svcca.html#BatchedSVCCASubscriber.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.BatchedSVCCASubscriber.compute" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is where the magic happens. Subclasses should override this method so that they can
+compute their metric upon reception of their desired messages or do whatever else they want.
+If interested in plotting, they should then use their
+<a class="reference internal" href="#ikkuna.export.subscriber.PlotSubscriber.backend" title="ikkuna.export.subscriber.PlotSubscriber.backend"><code class="xref py py-attr docutils literal notranslate"><span class="pre">backend</span></code></a> property to plot the metric (if
+they display line plots) and their <code class="docutils literal notranslate"><span class="pre">message_bus</span></code> to publish a new message with the metric.</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Message kind to compute condition number norm on. Not sure if it makes sense
-for non-2d matrices, which have to be reshaped to 2-d
-non-matrix type.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message_or_bundle</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><em>ikkuna.export.messages.Message</em></a><em> or </em><a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MessageBundle" title="ikkuna.export.messages.MessageBundle"><em>ikkuna.export.messages.MessageBundle</em></a>) – <p>If the subscriber uses a <a class="reference internal" href="#ikkuna.export.subscriber.SynchronizedSubscription" title="ikkuna.export.subscriber.SynchronizedSubscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">SynchronizedSubscription</span></code></a>, a bundle is
+received in each call, otherwise just a
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code></a>.</p>
+<p>Messages can either be <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.NetworkMessage" title="ikkuna.export.messages.NetworkMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">NetworkMessage</span></code></a>
+if the Subscriber is not interested in actual training artifacts, or
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleMessage" title="ikkuna.export.messages.ModuleMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleMessage</span></code></a></p>
+</td>
 </tr>
 </tbody>
 </table>
-<p>For other parameters, see <a class="reference internal" href="#ikkuna.export.subscriber.PlotSubscriber" title="ikkuna.export.subscriber.PlotSubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotSubscriber</span></code></a></p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.subscriber.ConditionNumberSubscriber.compute">
-<code class="descname">compute</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/condition.html#ConditionNumberSubscriber.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.ConditionNumberSubscriber.compute" title="Permalink to this definition">¶</a></dt>
-<dd><p>A <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleMessage" title="ikkuna.export.messages.ModuleMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleMessage</span></code></a>
-with the identifier <code class="docutils literal notranslate"><span class="pre">{kind}_condition_number</span></code> is published.</p>
 </dd></dl>
 
 </dd></dl>
@@ -610,8 +609,8 @@ rather are all over the place. Investigation needed.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>forward_fn</strong> (<em>function</em>) – Function to obtain predictions. You probably want to pass the model’s
 <code class="docutils literal notranslate"><span class="pre">forward()</span></code> routine here</li>
-<li><strong>loss_fn</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (1.1.0a0+964732f ))"><em>torch.nn.Module</em></a>) – Loss function (such as <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.CrossEntropyLoss" title="(in PyTorch vmaster (1.1.0a0+964732f ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.CrossEntropyLoss</span></code></a>)</li>
-<li><strong>data_loader</strong> (<a class="reference external" href="https://pytorch.org/docs/master/data.html#torch.utils.data.DataLoader" title="(in PyTorch vmaster (1.1.0a0+964732f ))"><em>torch.utils.data.DataLoader</em></a>) – Loader for the dataset to compute gradients over</li>
+<li><strong>loss_fn</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (1.1.0a0+866c4e3 ))"><em>torch.nn.Module</em></a>) – Loss function (such as <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.CrossEntropyLoss" title="(in PyTorch vmaster (1.1.0a0+866c4e3 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.CrossEntropyLoss</span></code></a>)</li>
+<li><strong>data_loader</strong> (<a class="reference external" href="https://pytorch.org/docs/master/data.html#torch.utils.data.DataLoader" title="(in PyTorch vmaster (1.1.0a0+866c4e3 ))"><em>torch.utils.data.DataLoader</em></a>) – Loader for the dataset to compute gradients over</li>
 <li><strong>batch_finished</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of samples to compute gradients for in one step of power iteration
 More should lead to a better estimate</li>
 <li><strong>frequency</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – How often to compute the eigenvalues (after every nth batch)</li>
@@ -740,6 +739,11 @@ A <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.
 </dd></dl>
 
 <dl class="class">
+<dt id="ikkuna.export.subscriber.SVCCASubscriber">
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">SVCCASubscriber</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>n</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/svcca.html#SVCCASubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.SVCCASubscriber" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
 <dt id="ikkuna.export.subscriber.SpectralNormSubscriber">
 <em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">SpectralNormSubscriber</code><span class="sig-paren">(</span><em>kind</em>, <em>message_bus=&lt;ikkuna.export.messages.MessageBus object&gt;</em>, <em>tag='default'</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/spectral_norm.html#SpectralNormSubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.SpectralNormSubscriber" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
@@ -765,18 +769,6 @@ possible to use SVD instead, but we are not interested in the full matrix decomp
 merely in the singular values.</p>
 <p>A <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleMessage" title="ikkuna.export.messages.ModuleMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleMessage</span></code></a>
 with the identifier <code class="docutils literal notranslate"><span class="pre">{kind}_spectral_norm</span></code> is published.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="ikkuna.export.subscriber.SumSubscriber">
-<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">SumSubscriber</code><span class="sig-paren">(</span><em>kind</em>, <em>message_bus=&lt;ikkuna.export.messages.MessageBus object&gt;</em>, <em>tag='default'</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/sum.html#SumSubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.SumSubscriber" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="ikkuna.export.subscriber.SumSubscriber.compute">
-<code class="descname">compute</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/sum.html#SumSubscriber.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.SumSubscriber.compute" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the sum of a quantity. A <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleMessage" title="ikkuna.export.messages.ModuleMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleMessage</span></code></a>
-with the identifier <code class="docutils literal notranslate"><span class="pre">{kind}_sum</span></code> is published.</p>
 </dd></dl>
 
 </dd></dl>
@@ -808,7 +800,7 @@ set).</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/data.html#torch.utils.data.DataLoader" title="(in PyTorch vmaster (1.1.0a0+964732f ))">torch.utils.data.DataLoader</a></td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/data.html#torch.utils.data.DataLoader" title="(in PyTorch vmaster (1.1.0a0+866c4e3 ))">torch.utils.data.DataLoader</a></td>
 </tr>
 </tbody>
 </table>
@@ -851,7 +843,7 @@ set).</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>dataset_meta</strong> (<a class="reference internal" href="train.html#train.DatasetMeta" title="train.DatasetMeta"><em>train.DatasetMeta</em></a>) – Test dataset</li>
-<li><strong>forward_fn</strong> (<em>function</em>) – Bound version of <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.forward" title="(in PyTorch vmaster (1.1.0a0+964732f ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.forward()</span></code></a>. This could be obtained
+<li><strong>forward_fn</strong> (<em>function</em>) – Bound version of <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.forward" title="(in PyTorch vmaster (1.1.0a0+866c4e3 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.forward()</span></code></a>. This could be obtained
 from the <a class="reference internal" href="train.html#train.Trainer.model" title="train.Trainer.model"><code class="xref py py-attr docutils literal notranslate"><span class="pre">train.Trainer.model</span></code></a> property.</li>
 <li><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Batch size to use for pushing the test data through the model. This doesn’t
 have to be the training batch size, but must be selected so that the forward

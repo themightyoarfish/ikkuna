@@ -142,9 +142,10 @@
 <span class="sd">        #. :meth:`~Exporter.set_model()` to have the :class:`Exporter` wire up the appropriate</span>
 <span class="sd">           callbacks.</span>
 <span class="sd">        #. :meth:`~Exporter.set_loss()` should be called with the loss function so that</span>
-<span class="sd">           labels can be extracted during training.</span>
+<span class="sd">           labels can be extracted during training if if any</span>
+<span class="sd">           :class:`~ikkuna.export.subscriber.Subscriber`\ s rely on the ``&#39;input_labels&#39;`` message</span>
 <span class="sd">        #. :meth:`~Exporter.epoch_finished()` should be called if any</span>
-<span class="sd">           :class:`~ikkuna.export.subscriber.Subscriber`\ s rely on the ``&#39;epoch_finished&#39;`` signal</span>
+<span class="sd">           :class:`~ikkuna.export.subscriber.Subscriber`\ s rely on the ``&#39;epoch_finished&#39;`` message</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
@@ -188,6 +189,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_module_filter</span>     <span class="o">=</span> <span class="n">module_filter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span>           <span class="o">=</span> <span class="n">message_bus</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_current_publish_tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_epoch_started_marker</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">message_bus</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -372,21 +375,19 @@
 <span class="sd">        out_    :   torch.Tensor</span>
 <span class="sd">                    The new activations</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_training</span><span class="p">:</span>
-            <span class="k">return</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch_started_marker</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">publish_network_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span><span class="p">,</span>
                                                   <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">,</span> <span class="s1">&#39;epoch_started&#39;</span><span class="p">,</span>
-                                                 <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_publish_tag</span><span class="p">)</span>
+                                                  <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_publish_tag</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_epoch_started_marker</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="c1"># save weights and biases to publish just before current step ends (in step()). this ensures</span>
         <span class="c1"># we can publish the proper updates</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s1">&#39;weight&#39;</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_weight_cache</span><span class="p">[</span><span class="n">module</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_weight_cache</span><span class="p">[</span><span class="n">module</span><span class="p">]</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">weight</span>
 
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s1">&#39;bias&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">module</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>   <span class="c1"># bias can be present, but be None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_bias_cache</span><span class="p">[</span><span class="n">module</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">bias</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bias_cache</span><span class="p">[</span><span class="n">module</span><span class="p">]</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">bias</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">publish_module_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">,</span>
                                              <span class="s1">&#39;activations&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modules</span><span class="p">[</span><span class="n">module</span><span class="p">],</span> <span class="n">out_</span><span class="p">,</span>
@@ -543,23 +544,23 @@
                                               <span class="s1">&#39;batch_started&#39;</span><span class="p">,</span>
                                               <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_publish_tag</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Exporter._freeze_module"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter._freeze_module">[docs]</a>    <span class="k">def</span> <span class="nf">_freeze_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">named_module</span><span class="p">):</span>
+<div class="viewcode-block" id="Exporter.freeze_module"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.freeze_module">[docs]</a>    <span class="k">def</span> <span class="nf">freeze_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Convenience method for freezing training for a module.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        named_module    :   ikkuna.utils.NamedModule</span>
-<span class="sd">                            Module to freeze</span>
+<span class="sd">        module    :   torch.nn.Module</span>
+<span class="sd">                      Module to freeze</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="k">def</span> <span class="nf">freeze</span><span class="p">(</span><span class="n">mod</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">mod</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
                 <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
 
-        <span class="k">if</span> <span class="n">named_module</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frozen</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_frozen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">named_module</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Freezing </span><span class="si">{named_module.name}</span><span class="s1">&#39;</span><span class="p">)</span>
-            <span class="n">named_module</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">freeze</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">module</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frozen</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_frozen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Freezing </span><span class="si">{module}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">module</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">freeze</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Exporter.epoch_finished"><a class="viewcode-back" href="../../../ikkuna.export.html#ikkuna.export.Exporter.epoch_finished">[docs]</a>    <span class="k">def</span> <span class="nf">epoch_finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Increase the epoch counter and reset the batch counter.&#39;&#39;&#39;</span>
@@ -567,7 +568,8 @@
                                               <span class="s1">&#39;epoch_finished&#39;</span><span class="p">,</span>
                                               <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_publish_tag</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span>     <span class="o">+=</span> <span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span> <span class="o">=</span> <span class="mi">0</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_epoch_started_marker</span> <span class="o">=</span> <span class="kc">False</span></div></div>
 </pre></div>
 
     </div>

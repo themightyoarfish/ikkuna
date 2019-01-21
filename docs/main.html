@@ -137,7 +137,7 @@ accepts the following arguments:</p>
                <span class="p">[</span><span class="o">--</span><span class="n">variance</span> <span class="n">TOPIC</span> <span class="p">[</span><span class="n">TOPIC</span> <span class="o">...</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">histogram</span> <span class="n">TOPIC</span> <span class="p">[</span><span class="n">TOPIC</span> <span class="o">...</span><span class="p">]]</span>
                <span class="p">[</span><span class="o">--</span><span class="n">ratio</span> <span class="n">TOPIC</span><span class="p">,</span><span class="n">TOPIC</span> <span class="p">[</span><span class="n">TOPIC</span><span class="p">,</span><span class="n">TOPIC</span> <span class="o">...</span><span class="p">]]</span>
                <span class="p">[</span><span class="o">--</span><span class="n">norm</span> <span class="n">TOPIC</span> <span class="p">[</span><span class="n">TOPIC</span> <span class="o">...</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">test</span><span class="o">-</span><span class="n">accuracy</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">train</span><span class="o">-</span><span class="n">accuracy</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">depth</span> <span class="n">N</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">hessian</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">exponential</span><span class="o">-</span><span class="n">decay</span> <span class="n">GAMMA</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">svcca</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">depth</span> <span class="n">N</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">hessian</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">exponential</span><span class="o">-</span><span class="n">decay</span> <span class="n">GAMMA</span><span class="p">]</span>
                <span class="p">[</span><span class="o">--</span><span class="n">log</span><span class="o">-</span><span class="nb">dir</span> <span class="n">LOG_DIR</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">seed</span> <span class="n">SEED</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -224,6 +224,11 @@ accepts the following arguments:</p>
 <kbd>--train-accuracy</kbd></td>
 </tr>
 <tr><td>&#160;</td><td><p class="first">Use train accuracy subscriber</p>
+<p class="last">Default: False</p>
+</td></tr>
+<tr><td class="option-group">
+<kbd>--svcca</kbd></td>
+<td><p class="first">Use SVCCA subscriber</p>
 <p class="last">Default: False</p>
 </td></tr>
 <tr><td class="option-group">
