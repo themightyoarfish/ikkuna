@@ -28,8 +28,7 @@ from ikkuna.utils import load_dataset, seed_everything
 from ikkuna.export.subscriber import (RatioSubscriber, HistogramSubscriber, SpectralNormSubscriber,
                                       TestAccuracySubscriber, TrainAccuracySubscriber,
                                       NormSubscriber, HessianEigenSubscriber, MessageMeanSubscriber,
-                                      VarianceSubscriber)
-from ikkuna.export.subscriber.svcca import SVCCASubscriber
+                                      VarianceSubscriber, SVCCASubscriber)
 from ikkuna.export import Exporter
 from ikkuna.export.messages import MessageBus
 import ikkuna.visualization
@@ -108,11 +107,11 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
                                                subsample=subsample,
                                                backend=backend)
             trainer.add_subscriber(ratio_subscriber)
-            # pubs = ratio_subscriber.publications
-            # type, topics = pubs.popitem()
-            # # there can be multiple publications per type, but we know the RatioSubscriber only
-            # # publishes one
-            # trainer.add_subscriber(MessageMeanSubscriber(topics[0]))
+            pubs = ratio_subscriber.publications
+            type, topics = pubs.popitem()
+            # there can be multiple publications per type, but we know the RatioSubscriber only
+            # publishes one
+            trainer.add_subscriber(MessageMeanSubscriber(topics[0]))
 
     if kwargs['histogram']:
         for kind in kwargs['histogram']:

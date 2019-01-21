@@ -5,7 +5,10 @@ import setuptools
 import os
 
 with open('requirements.txt', mode='r') as f:
-    requirements = f.read().split()
+    requirements = f.read()
+    required_pkgs, required_repos = requirements.split('# git repos')
+    required_pkgs = required_pkgs.split()
+    required_repos = required_repos.split()
 
 with open('README.md') as f:
     readme = f.read()
@@ -27,7 +30,8 @@ setup(name='ikkuna',
                    ],
       keywords=['deep-learning pytorch neural-networks machine-learning'],
       packages=setuptools.find_packages('.', include=['ikkuna.*']),
-      install_requires=requirements,
+      install_requires=required_pkgs,
+      dependency_links=required_repos,
       entry_points={
           'ikkuna.export.subscriber': [
               'HistogramSubscriber = ikkuna.export.subscriber.histogram:HistogramSubscriber',
@@ -36,12 +40,12 @@ setup(name='ikkuna',
               'TestAccuracySubscriber = ikkuna.export.subscriber.test_accuracy:TestAccuracySubscriber',
               'TrainAccuracySubscriber = ikkuna.export.subscriber.train_accuracy:TrainAccuracySubscriber',
               'VarianceSubscriber = ikkuna.export.subscriber.variance:VarianceSubscriber',
-              'SumSubscriber = ikkuna.export.subscriber.sum:SumSubscriber',
               'NormSubscriber = ikkuna.export.subscriber.norm:NormSubscriber',
               'MeanSubscriber = ikkuna.export.subscriber.mean:MeanSubscriber',
-              'ConditionNumberSubscriber = ikkuna.export.subscriber.condition:ConditionNumberSubscriber',
               'HessianEigenSubscriber = ikkuna.export.subscriber.hessian_eig:HessianEigenSubscriber',
               'MessageMeanSubscriber = ikkuna.export.subscriber.message_mean:MessageMeanSubscriber',
+              'SVCCASubscriber = ikkuna.export.subscriber.svcca:SVCCASubscriber',
+              'BatchedSVCCASubscriber = ikkuna.export.subscriber.svcca:BatchedSVCCASubscriber',
           ]
       },
       zip_safe=False,   # don't install egg, but source
