@@ -2,6 +2,7 @@ import torch
 
 from ikkuna.export.messages import get_default_bus
 from ikkuna.utils import ModuleTree
+from ikkuna.utils import freeze_module
 
 
 class Exporter(object):
@@ -445,14 +446,10 @@ class Exporter(object):
                       Module to freeze
         '''
 
-        def freeze(mod):
-            for p in mod.parameters():
-                p.requires_grad = False
-
         if module not in self._frozen:
             self._frozen.add(module)
             print(f'Freezing {module}')
-            module.apply(freeze)
+            freeze_module(module)
 
     def epoch_finished(self):
         '''Increase the epoch counter and reset the batch counter.'''

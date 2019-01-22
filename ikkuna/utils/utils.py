@@ -336,3 +336,11 @@ def load_dataset(name, train_transforms=None, test_transforms=None, **kwargs):
                              shape=shape(dataset_test))
 
     return meta_train, meta_test
+
+
+def freeze_module(module):
+    def freeze(m):
+        for p in m.parameters():
+            m.requires_grad = False
+
+    module.apply(freeze)
