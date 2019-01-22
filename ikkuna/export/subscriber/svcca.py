@@ -6,6 +6,7 @@ import svcca
 
 from ikkuna.export.subscriber import PlotSubscriber, Subscription
 from ikkuna.export.messages import get_default_bus
+from ikkuna.utils import freeze_module
 
 
 class ChunkedDict(object):
@@ -177,7 +178,6 @@ class BatchedSVCCASubscriber(PlotSubscriber):
                           'xlabel': xlabel},
                          backend=backend)
         self._add_publication(f'self_similarity', type='DATA')
-        # TODO: Publish messages in compute()
 
     def _module_complete_previous(self, module_name):
         '''Check if activations for module are completely buffered from the previous step.'''
@@ -238,6 +238,9 @@ class BatchedSVCCASubscriber(PlotSubscriber):
         return result_dict['mean'][0]
 
     def compute(self, message):
+        '''A :class:`~ikkuna.export.messages.NetworkMessage` with the identifier ``self_similarity``
+        will be published.'''
+
         if message.tag == 'default' and message.kind == 'batch_finished':
             self._do_forward_pass()
 
@@ -254,14 +257,15 @@ class BatchedSVCCASubscriber(PlotSubscriber):
             if self._module_complete_current(name) and self._module_complete_previous(name):
                 mean = self._compute_similarity(name)
                 self._backend.add_data(name, mean, message.global_step)
+                self.message_bus.publish_module_message(message.global_step,
+                                                        message.train_step,
+                                                        message.epoch,
+                                                        'self_similarity',
+                                                        message.kind,
+                                                        data=mean)
 
                 if mean > self._freeze_at:
-                    def freeze(mod):
-                        for p in mod.parameters():
-                            p.requires_grad = False
-
-                    print(f'Freezing {name}')
-                    module.apply(freeze)
+                    freeze_module(module)
                     self._ignore_modules.add(name)
                     if name in self._previous_acts:
                         self._previous_acts.pop(name)

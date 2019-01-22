@@ -114,6 +114,7 @@
 
 <span class="kn">from</span> <span class="nn">ikkuna.export.subscriber</span> <span class="k">import</span> <span class="n">PlotSubscriber</span><span class="p">,</span> <span class="n">Subscription</span>
 <span class="kn">from</span> <span class="nn">ikkuna.export.messages</span> <span class="k">import</span> <span class="n">get_default_bus</span>
+<span class="kn">from</span> <span class="nn">ikkuna.utils</span> <span class="k">import</span> <span class="n">freeze_module</span>
 
 
 <span class="k">class</span> <span class="nc">ChunkedDict</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -285,7 +286,6 @@
                           <span class="s1">&#39;xlabel&#39;</span><span class="p">:</span> <span class="n">xlabel</span><span class="p">},</span>
                          <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_publication</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;self_similarity&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;DATA&#39;</span><span class="p">)</span></div>
-        <span class="c1"># TODO: Publish messages in compute()</span>
 
 <div class="viewcode-block" id="BatchedSVCCASubscriber._module_complete_previous"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.BatchedSVCCASubscriber._module_complete_previous">[docs]</a>    <span class="k">def</span> <span class="nf">_module_complete_previous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Check if activations for module are completely buffered from the previous step.&#39;&#39;&#39;</span>
@@ -346,6 +346,9 @@
         <span class="k">return</span> <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
 <div class="viewcode-block" id="BatchedSVCCASubscriber.compute"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.BatchedSVCCASubscriber.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;A :class:`~ikkuna.export.messages.NetworkMessage` with the identifier ``self_similarity``</span>
+<span class="sd">        will be published.&#39;&#39;&#39;</span>
+
         <span class="k">if</span> <span class="n">message</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;default&#39;</span> <span class="ow">and</span> <span class="n">message</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;batch_finished&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_do_forward_pass</span><span class="p">()</span>
 
@@ -362,14 +365,15 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_complete_current</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_complete_previous</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
                 <span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_similarity</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">global_step</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">message_bus</span><span class="o">.</span><span class="n">publish_module_message</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">global_step</span><span class="p">,</span>
+                                                        <span class="n">message</span><span class="o">.</span><span class="n">train_step</span><span class="p">,</span>
+                                                        <span class="n">message</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span>
+                                                        <span class="s1">&#39;self_similarity&#39;</span><span class="p">,</span>
+                                                        <span class="n">message</span><span class="o">.</span><span class="n">kind</span><span class="p">,</span>
+                                                        <span class="n">data</span><span class="o">=</span><span class="n">mean</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">mean</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_freeze_at</span><span class="p">:</span>
-                    <span class="k">def</span> <span class="nf">freeze</span><span class="p">(</span><span class="n">mod</span><span class="p">):</span>
-                        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">mod</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
-                            <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
-
-                    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Freezing </span><span class="si">{name}</span><span class="s1">&#39;</span><span class="p">)</span>
-                    <span class="n">module</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">freeze</span><span class="p">)</span>
+                    <span class="n">freeze_module</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_ignore_modules</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
