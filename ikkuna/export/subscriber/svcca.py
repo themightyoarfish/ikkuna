@@ -266,7 +266,7 @@ class BatchedSVCCASubscriber(PlotSubscriber):
 
                 if mean > self._freeze_at:
                     freeze_module(module)
-                    self._ignore_modules.add(name)
+                    self._ignore_modules.add(module)
                     if name in self._previous_acts:
                         self._previous_acts.pop(name)
                     if name in self._current_acts:
