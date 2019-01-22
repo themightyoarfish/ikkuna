@@ -228,13 +228,13 @@ class BatchedSVCCASubscriber(PlotSubscriber):
 
         previous_acts = previous_acts.detach().cpu().numpy()
         current_acts = current_acts.detach().cpu().numpy()
-        result_dict = svcca.cca_core.get_cca_similarity(previous_acts.T,
-                                                        current_acts.T,
-                                                        epsilon=1e-10,
-                                                        threshold=0.98,
-                                                        verbose=False,
-                                                        compute_dirns=False,
-                                                        rescale=True)
+        result_dict = svcca.cca_core.robust_cca_similarity(previous_acts.T,
+                                                           current_acts.T,
+                                                           epsilon=1e-8,
+                                                           threshold=0.98,
+                                                           verbose=False,
+                                                           compute_dirns=False,
+                                                           rescale=True)
         return result_dict['mean'][0]
 
     def compute(self, message):
@@ -261,7 +261,7 @@ class BatchedSVCCASubscriber(PlotSubscriber):
                                                         message.train_step,
                                                         message.epoch,
                                                         'self_similarity',
-                                                        message.kind,
+                                                        message.key,
                                                         data=mean)
 
                 if mean > self._freeze_at:
