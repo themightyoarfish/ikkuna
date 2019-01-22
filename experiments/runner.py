@@ -19,8 +19,7 @@ class Job(object):
         self.gpu_index = gpu_index
         env = os.environ.copy()
         env['CUDA_VISIBLE_DEVICES'] = f'{gpu_index}'
-        self._process = Popen(['python', self._scriptname, '-l', 'ERROR', 'with'] + self._updates,
-                              stdout=DEVNULL, env=env)
+        self._process = Popen(['python', self._scriptname, '-l', 'ERROR', 'with'] + self._updates, env=env)
 
     def poll(self):
         return self._process.poll()
