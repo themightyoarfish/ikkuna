@@ -38,7 +38,7 @@ def cfg():
 
 
 @ex.automain
-def run(batch_size, loss, optimizer, base_lr, n_epochs, dataset, model):
+def run(batch_size, loss, optimizer, base_lr, n_epochs, dataset, model, freeze_at):
     # load the dataset
     transforms = [ToTensor()]
     dataset_train_meta, dataset_test_meta = load_dataset(dataset, train_transforms=transforms,
@@ -56,7 +56,8 @@ def run(batch_size, loss, optimizer, base_lr, n_epochs, dataset, model):
                       exporter=exporter)
     trainer.set_model(model)
     trainer.optimize(name=optimizer, lr=base_lr)
-    trainer.add_subscriber(SVCCASubscriber(dataset_test_meta, 500, trainer.model.forward,
+    trainer.add_subscriber(SVCCASubscriber(dataset_test_meta, 500,
+                                           trainer.model.forward, freeze_at=freeze_at,
                                            subsample=trainer.batches_per_epoch, backend=backend))
     trainer.add_subscriber(RatioSubscriber(['weight_updates', 'weights'], backend=backend))
     trainer.add_subscriber(NormSubscriber('weight_gradients', backend=backend))
