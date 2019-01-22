@@ -44,6 +44,7 @@ setup(name='ikkuna',
               'MeanSubscriber = ikkuna.export.subscriber.mean:MeanSubscriber',
               'HessianEigenSubscriber = ikkuna.export.subscriber.hessian_eig:HessianEigenSubscriber',
               'MessageMeanSubscriber = ikkuna.export.subscriber.message_mean:MessageMeanSubscriber',
+              'LossSubscriber = ikkuna.export.subscriber.loss:LossSubscriber',
               'SVCCASubscriber = ikkuna.export.subscriber.svcca:SVCCASubscriber',
               'BatchedSVCCASubscriber = ikkuna.export.subscriber.svcca:BatchedSVCCASubscriber',
           ]
