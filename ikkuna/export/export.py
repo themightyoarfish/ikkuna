@@ -277,10 +277,10 @@ class Exporter(object):
         # save weights and biases to publish just before current step ends (in step()). this ensures
         # we can publish the proper updates
         if hasattr(module, 'weight'):
-            self._weight_cache[module] = torch.tensor(module.weight)
+            self._weight_cache[module] = module.weight.clone()
 
         if hasattr(module, 'bias') and module.bias is not None:   # bias can be present, but be None
-            self._bias_cache[module] = torch.tensor(module.bias)
+            self._bias_cache[module] = module.bias.clone()
 
         self._msg_bus.publish_module_message(self._global_step, self._train_step, self._epoch,
                                              'activations', self._modules[module], out_,
