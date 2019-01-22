@@ -58,7 +58,7 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
     bus = MessageBus('main')
     trainer = Trainer(dataset_train, batch_size=batch_size,
                       exporter=Exporter(depth=kwargs['depth'],
-                                        module_filter=[torch.nn.Conv2d, torch.nn.Linear],
+                                        module_filter=[torch.nn.Conv2d],
                                         message_bus=bus))
     trainer.set_model(model_str)
     trainer.optimize(name=optimizer, lr=kwargs.get('learning_rate', 0.01))

@@ -271,7 +271,7 @@ class BatchedSVCCASubscriber(PlotSubscriber):
 
 class SVCCASubscriber(BatchedSVCCASubscriber):
     '''Simplified :class:`BatchedSVCCASubscriber` subclass which does not use a
-    :class:`ChunkedDict` but instead regular dicts and thus assumes that the entire test data can be
+    ``ChunkedDict`` but instead regular dicts and thus assumes that the entire test data can be
     propagated through the model in one go and batching is unnecessary.'''
 
     def __init__(self, dataset_meta, n,  *args, **kwargs):

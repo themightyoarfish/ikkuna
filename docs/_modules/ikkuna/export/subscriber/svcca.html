@@ -117,17 +117,37 @@
 
 
 <span class="k">class</span> <span class="nc">ChunkedDict</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;A dictionary-like class that can be used to incrementally fill tensors of predetermined size</span>
+<span class="sd">    by accumulating data. The dictionary keeps track of what has already been received and kan thus</span>
+<span class="sd">    be asked if all data for some module was received.  This can be used e.g. for stitching together</span>
+<span class="sd">    an activation matrix of (n_neurons, n_datapoints) when the activations arrive in batches.&#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expected_n</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        expected_n  :   int</span>
+<span class="sd">                        The number of datapoints to expect for all modules</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_expected_n</span> <span class="o">=</span> <span class="n">expected_n</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_received_n</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Remove all entries.&#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_received_n</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Add data for a module. Creates new record if one is not already open for this module.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        module  :   torch.nn.Module or str</span>
+<span class="sd">                    Some unique key for this module</span>
+<span class="sd">        data    :   torch.Tensor</span>
+<span class="sd">                    Data tensor to append</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="n">module</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">module</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_expected_n</span><span class="p">,</span> <span class="o">*</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">device</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
 
@@ -137,21 +157,47 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_received_n</span><span class="p">[</span><span class="n">module</span><span class="p">]</span> <span class="o">+=</span> <span class="n">n</span>
 
     <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Get all known modules, completed or otherwise.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict_keys</span>
+<span class="sd">            View of the data dictionary&#39;s keys</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">bytesize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Compute occupied bytes of the data (without the keys)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            Bytes consumed by all the tensors</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
             <span class="n">size</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">module</span><span class="p">]</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">*</span> <span class="mi">4</span>
         <span class="k">return</span> <span class="n">size</span>
 
     <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Set the data for a module, overwriting any previous data.&#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="n">module</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">module</span><span class="p">]</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_received_n</span><span class="p">[</span><span class="n">module</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Get data for a module.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        torch.Tensor</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        KeyError</span>
+<span class="sd">            If the module&#39;s data is not yet complete</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">complete</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Data for </span><span class="si">{key}</span><span class="s1"> not yet complete.&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
@@ -160,29 +206,69 @@
         <span class="k">return</span> <span class="n">module</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
 
     <span class="k">def</span> <span class="nf">complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Check if expected number of datapoints have been received for a module.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_received_n</span><span class="p">[</span><span class="n">module</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expected_n</span>
 
     <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">):</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">module</span><span class="p">]</span>
+        <span class="sd">&#39;&#39;&#39;Remove and return data for module&#39;&#39;&#39;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">module</span><span class="p">]</span>
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">module</span><span class="p">]</span>
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_received_n</span><span class="p">[</span><span class="n">module</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">data</span>
 
 
 <div class="viewcode-block" id="BatchedSVCCASubscriber"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.BatchedSVCCASubscriber">[docs]</a><span class="k">class</span> <span class="nc">BatchedSVCCASubscriber</span><span class="p">(</span><span class="n">PlotSubscriber</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;A subscriber which at some interval halts training, propagates some dataset through the net,</span>
+<span class="sd">    records activations for all modules and stores them. At the next checkpoint, SVCCA similarity</span>
+<span class="sd">    is computed between every layer at time step t and the same layer at t-1.</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset_meta</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">forward_fn</span><span class="p">,</span>
+<span class="sd">    .. note::</span>
+<span class="sd">        It seems that despite the fact that SVCCA runs at least twice as fast on the GPU, this</span>
+<span class="sd">        subscriber is not faster than on the CPU. I&#39;m not sure why that is, since I&#39;m even caching</span>
+<span class="sd">        input data to avoid repeatedly copying to the GPU</span>
+
+<span class="sd">    .. warning::</span>
+<span class="sd">        Currently, this subscriber uses Numpy for SVCAA. For some reason, the activations produced</span>
+<span class="sd">        by networks lead to highly ill-conditioned covariance matrices and PyTorch&#39;s SVD handles</span>
+<span class="sd">        them differently than Numpy does. SVD does not converge in that case, and</span>
+<span class="sd">        ``robust_cca_similarity`` must be used, which defeats the whole idea of speeding up the</span>
+<span class="sd">        process.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="BatchedSVCCASubscriber.__init__"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.BatchedSVCCASubscriber.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset_meta</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">forward_fn</span><span class="p">,</span> <span class="n">freeze_at</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
                  <span class="n">message_bus</span><span class="o">=</span><span class="n">get_default_bus</span><span class="p">(),</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ylims</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;tb&#39;</span><span class="p">,</span> <span class="n">freeze_at</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">256</span><span class="p">):</span>
+                 <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;tb&#39;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dataset_meta    :   train.DatasetMeta</span>
+<span class="sd">                            Dataset to load data from for retrieving activations</span>
+<span class="sd">        n   :   int</span>
+<span class="sd">                Number of datapoints to randomly sample</span>
+<span class="sd">        freeze_at   :   float</span>
+<span class="sd">                        Similarity threshold after which a layer is frozen. Values &gt;= 1 will turn</span>
+<span class="sd">                        off freezing</span>
+<span class="sd">        batch_size  :   int</span>
+<span class="sd">                        Batch size to use for forward passes. Can be set to some value if the entire</span>
+<span class="sd">                        data at once would be too larger. Otherwise use :class:`SVCCASubscriber`</span>
+<span class="sd">        &#39;&#39;&#39;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_forward_fn</span> <span class="o">=</span> <span class="n">forward_fn</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span> <span class="o">=</span> <span class="n">ChunkedDict</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_current_acts</span> <span class="o">=</span> <span class="n">ChunkedDict</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-        <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dataset_meta</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
-        <span class="n">dataset</span> <span class="o">=</span> <span class="n">Subset</span><span class="p">(</span><span class="n">dataset_meta</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="n">indices</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_forward_fn</span>     <span class="o">=</span> <span class="n">forward_fn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span>  <span class="o">=</span> <span class="n">ChunkedDict</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_acts</span>   <span class="o">=</span> <span class="n">ChunkedDict</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="n">indices</span>              <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dataset_meta</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+        <span class="n">dataset</span>              <span class="o">=</span> <span class="n">Subset</span><span class="p">(</span><span class="n">dataset_meta</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="n">indices</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_loader</span>         <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                          <span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># cache tensors so we don&#39;t repeatedly deserialize and copy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_input_cache</span>    <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_freeze_at</span> <span class="o">=</span> <span class="n">freeze_at</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_freeze_at</span>      <span class="o">=</span> <span class="n">freeze_at</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ignore_modules</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
         <span class="n">title</span>        <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;self_similarity&#39;</span>
@@ -198,69 +284,83 @@
                           <span class="s1">&#39;ylims&#39;</span><span class="p">:</span> <span class="n">ylims</span><span class="p">,</span>
                           <span class="s1">&#39;xlabel&#39;</span><span class="p">:</span> <span class="n">xlabel</span><span class="p">},</span>
                          <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_add_publication</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;self_similarity&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;DATA&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_publication</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;self_similarity&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;DATA&#39;</span><span class="p">)</span></div>
         <span class="c1"># TODO: Publish messages in compute()</span>
 
-    <span class="k">def</span> <span class="nf">_module_complete_previous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">):</span>
-        <span class="k">return</span> <span class="ow">not</span> <span class="p">(</span><span class="n">module_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span><span class="o">.</span><span class="n">complete</span><span class="p">(</span><span class="n">module_name</span><span class="p">))</span>
+<div class="viewcode-block" id="BatchedSVCCASubscriber._module_complete_previous"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.BatchedSVCCASubscriber._module_complete_previous">[docs]</a>    <span class="k">def</span> <span class="nf">_module_complete_previous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Check if activations for module are completely buffered from the previous step.&#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="p">(</span><span class="n">module_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span>
+                    <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span><span class="o">.</span><span class="n">complete</span><span class="p">(</span><span class="n">module_name</span><span class="p">))</span></div>
 
-    <span class="k">def</span> <span class="nf">_module_complete_current</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">):</span>
-        <span class="k">return</span> <span class="ow">not</span> <span class="p">(</span><span class="n">module_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_acts</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_acts</span><span class="o">.</span><span class="n">complete</span><span class="p">(</span><span class="n">module_name</span><span class="p">))</span>
+<div class="viewcode-block" id="BatchedSVCCASubscriber._module_complete_current"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.BatchedSVCCASubscriber._module_complete_current">[docs]</a>    <span class="k">def</span> <span class="nf">_module_complete_current</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Check if activations for module are completely buffered from the current step.&#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="p">(</span><span class="n">module_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_acts</span>
+                    <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_acts</span><span class="o">.</span><span class="n">complete</span><span class="p">(</span><span class="n">module_name</span><span class="p">))</span></div>
 
-    <span class="k">def</span> <span class="nf">_record_activations_previous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<div class="viewcode-block" id="BatchedSVCCASubscriber._record_activations_previous"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.BatchedSVCCASubscriber._record_activations_previous">[docs]</a>    <span class="k">def</span> <span class="nf">_record_activations_previous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Record activations into the ``previous`` buffer&#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_record_activations_current</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_current_acts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<div class="viewcode-block" id="BatchedSVCCASubscriber._record_activations_current"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.BatchedSVCCASubscriber._record_activations_current">[docs]</a>    <span class="k">def</span> <span class="nf">_record_activations_current</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Record activations into the ``current`` buffer&#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_acts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_do_forward_pass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># cache inputs initially</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_cache</span><span class="p">:</span>
+            <span class="n">loader</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loader</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">loader</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_cache</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">loader</span><span class="p">):</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_cache</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_input_cache</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">X</span><span class="p">,</span> <span class="n">labels</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_forward_fn</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">should_train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;svcca_testing&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_compute_similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="c1"># now both current and previous acts are complete and we can compute</span>
+        <span class="c1"># print(f&#39;Computing similarity for {name}&#39;)</span>
+        <span class="n">previous_acts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">current_acts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_acts</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_acts</span>
+
+        <span class="k">if</span> <span class="n">previous_acts</span><span class="o">.</span><span class="n">ndimension</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">previous_acts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># channel dim</span>
+            <span class="n">previous_acts</span> <span class="o">=</span> <span class="n">previous_acts</span><span class="o">.</span><span class="n">permute</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">current_acts</span><span class="o">.</span><span class="n">ndimension</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">current_acts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># channel dim</span>
+            <span class="n">current_acts</span> <span class="o">=</span> <span class="n">current_acts</span><span class="o">.</span><span class="n">permute</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+
+        <span class="n">previous_acts</span> <span class="o">=</span> <span class="n">previous_acts</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">current_acts</span> <span class="o">=</span> <span class="n">current_acts</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">result_dict</span> <span class="o">=</span> <span class="n">svcca</span><span class="o">.</span><span class="n">cca_core</span><span class="o">.</span><span class="n">get_cca_similarity</span><span class="p">(</span><span class="n">previous_acts</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+                                                        <span class="n">current_acts</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+                                                        <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span>
+                                                        <span class="n">threshold</span><span class="o">=</span><span class="mf">0.98</span><span class="p">,</span>
+                                                        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                                        <span class="n">compute_dirns</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                                        <span class="n">rescale</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
 <div class="viewcode-block" id="BatchedSVCCASubscriber.compute"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.BatchedSVCCASubscriber.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">message</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;default&#39;</span> <span class="ow">and</span> <span class="n">message</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;batch_finished&#39;</span><span class="p">:</span>
-            <span class="n">loader</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loader</span><span class="p">)</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-                    <span class="n">X</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">loader</span><span class="p">)</span>
-                    <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_forward_fn</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">should_train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;svcca_testing&#39;</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
-                <span class="k">pass</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_do_forward_pass</span><span class="p">()</span>
 
         <span class="k">elif</span> <span class="n">message</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;svcca_testing&#39;</span><span class="p">:</span>
             <span class="n">module</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">key</span>
             <span class="k">if</span> <span class="n">module</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ignore_modules</span><span class="p">:</span>
                 <span class="k">return</span>
 
-            <span class="c1"># if name == &#39;/features/conv2d0&#39;:</span>
-            <span class="c1">#     __import__(&#39;ipdb&#39;).set_trace()</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_complete_previous</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_record_activations_previous</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
             <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_complete_current</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_record_activations_current</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_complete_current</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_complete_previous</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
-                <span class="c1"># now both current and previous acts are complete and we can compute</span>
-                <span class="c1"># print(f&#39;Computing similarity for {name}&#39;)</span>
-                <span class="n">previous_acts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-                <span class="n">current_acts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_acts</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-
-                <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_acts</span>
-
-                <span class="k">if</span> <span class="n">previous_acts</span><span class="o">.</span><span class="n">ndimension</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
-                    <span class="n">c</span> <span class="o">=</span> <span class="n">previous_acts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># channel dim</span>
-                    <span class="n">previous_acts</span> <span class="o">=</span> <span class="n">previous_acts</span><span class="o">.</span><span class="n">permute</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
-
-                <span class="k">if</span> <span class="n">current_acts</span><span class="o">.</span><span class="n">ndimension</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
-                    <span class="n">c</span> <span class="o">=</span> <span class="n">current_acts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># channel dim</span>
-                    <span class="n">current_acts</span> <span class="o">=</span> <span class="n">current_acts</span><span class="o">.</span><span class="n">permute</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
-
-                <span class="n">previous_acts</span> <span class="o">=</span> <span class="n">previous_acts</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-                <span class="n">current_acts</span> <span class="o">=</span> <span class="n">current_acts</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-                <span class="n">result_dict</span> <span class="o">=</span> <span class="n">svcca</span><span class="o">.</span><span class="n">cca_core</span><span class="o">.</span><span class="n">get_cca_similarity</span><span class="p">(</span><span class="n">previous_acts</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
-                                                                <span class="n">current_acts</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
-                                                                <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
-                                                                <span class="n">threshold</span><span class="o">=</span><span class="mf">0.98</span><span class="p">,</span>
-                                                                <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                                                                <span class="n">compute_dirns</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-                <span class="n">mean</span> <span class="o">=</span> <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_similarity</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">global_step</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">mean</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_freeze_at</span><span class="p">:</span>
@@ -278,6 +378,9 @@
 
 
 <div class="viewcode-block" id="SVCCASubscriber"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.SVCCASubscriber">[docs]</a><span class="k">class</span> <span class="nc">SVCCASubscriber</span><span class="p">(</span><span class="n">BatchedSVCCASubscriber</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Simplified :class:`BatchedSVCCASubscriber` subclass which does not use a</span>
+<span class="sd">    ``ChunkedDict`` but instead regular dicts and thus assumes that the entire test data can be</span>
+<span class="sd">    propagated through the model in one go and batching is unnecessary.&#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset_meta</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span>  <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">dataset_meta</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>

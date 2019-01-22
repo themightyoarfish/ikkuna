@@ -558,8 +558,70 @@ if the Subscriber is not interested in actual training artifacts, or
 
 <dl class="class">
 <dt id="ikkuna.export.subscriber.BatchedSVCCASubscriber">
-<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">BatchedSVCCASubscriber</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>n</em>, <em>forward_fn</em>, <em>message_bus=&lt;ikkuna.export.messages.MessageBus object&gt;</em>, <em>tag='default'</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em>, <em>freeze_at=10</em>, <em>batch_size=256</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/svcca.html#BatchedSVCCASubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.BatchedSVCCASubscriber" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">BatchedSVCCASubscriber</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>n</em>, <em>forward_fn</em>, <em>freeze_at=10</em>, <em>batch_size=256</em>, <em>message_bus=&lt;ikkuna.export.messages.MessageBus object&gt;</em>, <em>tag='default'</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/svcca.html#BatchedSVCCASubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.BatchedSVCCASubscriber" title="Permalink to this definition">¶</a></dt>
+<dd><p>A subscriber which at some interval halts training, propagates some dataset through the net,
+records activations for all modules and stores them. At the next checkpoint, SVCCA similarity
+is computed between every layer at time step t and the same layer at t-1.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">It seems that despite the fact that SVCCA runs at least twice as fast on the GPU, this
+subscriber is not faster than on the CPU. I’m not sure why that is, since I’m even caching
+input data to avoid repeatedly copying to the GPU</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Currently, this subscriber uses Numpy for SVCAA. For some reason, the activations produced
+by networks lead to highly ill-conditioned covariance matrices and PyTorch’s SVD handles
+them differently than Numpy does. SVD does not converge in that case, and
+<code class="docutils literal notranslate"><span class="pre">robust_cca_similarity</span></code> must be used, which defeats the whole idea of speeding up the
+process.</p>
+</div>
+<dl class="method">
+<dt id="ikkuna.export.subscriber.BatchedSVCCASubscriber.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>n</em>, <em>forward_fn</em>, <em>freeze_at=10</em>, <em>batch_size=256</em>, <em>message_bus=&lt;ikkuna.export.messages.MessageBus object&gt;</em>, <em>tag='default'</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/svcca.html#BatchedSVCCASubscriber.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.BatchedSVCCASubscriber.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dataset_meta</strong> (<a class="reference internal" href="train.html#train.DatasetMeta" title="train.DatasetMeta"><em>train.DatasetMeta</em></a>) – Dataset to load data from for retrieving activations</li>
+<li><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of datapoints to randomly sample</li>
+<li><strong>freeze_at</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Similarity threshold after which a layer is frozen. Values &gt;= 1 will turn
+off freezing</li>
+<li><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Batch size to use for forward passes. Can be set to some value if the entire
+data at once would be too larger. Otherwise use <a class="reference internal" href="#ikkuna.export.subscriber.SVCCASubscriber" title="ikkuna.export.subscriber.SVCCASubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">SVCCASubscriber</span></code></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.BatchedSVCCASubscriber._module_complete_previous">
+<code class="descname">_module_complete_previous</code><span class="sig-paren">(</span><em>module_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/svcca.html#BatchedSVCCASubscriber._module_complete_previous"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.BatchedSVCCASubscriber._module_complete_previous" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if activations for module are completely buffered from the previous step.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.BatchedSVCCASubscriber._module_complete_current">
+<code class="descname">_module_complete_current</code><span class="sig-paren">(</span><em>module_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/svcca.html#BatchedSVCCASubscriber._module_complete_current"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.BatchedSVCCASubscriber._module_complete_current" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if activations for module are completely buffered from the current step.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.BatchedSVCCASubscriber._record_activations_previous">
+<code class="descname">_record_activations_previous</code><span class="sig-paren">(</span><em>module_name</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/svcca.html#BatchedSVCCASubscriber._record_activations_previous"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.BatchedSVCCASubscriber._record_activations_previous" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record activations into the <code class="docutils literal notranslate"><span class="pre">previous</span></code> buffer</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ikkuna.export.subscriber.BatchedSVCCASubscriber._record_activations_current">
+<code class="descname">_record_activations_current</code><span class="sig-paren">(</span><em>module_name</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/svcca.html#BatchedSVCCASubscriber._record_activations_current"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.BatchedSVCCASubscriber._record_activations_current" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record activations into the <code class="docutils literal notranslate"><span class="pre">current</span></code> buffer</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="ikkuna.export.subscriber.BatchedSVCCASubscriber.compute">
 <code class="descname">compute</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/svcca.html#BatchedSVCCASubscriber.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.BatchedSVCCASubscriber.compute" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is where the magic happens. Subclasses should override this method so that they can
@@ -741,7 +803,10 @@ A <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.
 <dl class="class">
 <dt id="ikkuna.export.subscriber.SVCCASubscriber">
 <em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">SVCCASubscriber</code><span class="sig-paren">(</span><em>dataset_meta</em>, <em>n</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/svcca.html#SVCCASubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.SVCCASubscriber" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Simplified <a class="reference internal" href="#ikkuna.export.subscriber.BatchedSVCCASubscriber" title="ikkuna.export.subscriber.BatchedSVCCASubscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">BatchedSVCCASubscriber</span></code></a> subclass which does not use a
+<code class="docutils literal notranslate"><span class="pre">ChunkedDict</span></code> but instead regular dicts and thus assumes that the entire test data can be
+propagated through the model in one go and batching is unnecessary.</p>
+</dd></dl>
 
 <dl class="class">
 <dt id="ikkuna.export.subscriber.SpectralNormSubscriber">
