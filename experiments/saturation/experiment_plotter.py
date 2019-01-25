@@ -1,25 +1,24 @@
 import itertools
-import pymongo
 import numpy as np
-from experiments.sacred_utils import get_metric_for_ids
+from experiments.sacred_utils import get_metric_for_ids, get_client
 from experiments.utils import unify_limits
 import matplotlib
 matplotlib.rcParams['lines.linewidth'] = 0.8
 from colors import Color
 import os
 
-try:
-    pwd = os.environ['MONGOPWD']
-except KeyError:
-    print('You need to set the MONGOPWD variable to connect to the database.')
-    import sys
-    sys.exit(1)
 
-# obtain runs collection created by sacred
-db_client = pymongo.MongoClient(f'mongodb://rasmus:{pwd}@35.189.247.219/sacred')
-sacred_db = db_client.sacred
-runs      = sacred_db.runs
-metrics   = sacred_db.metrics
+batches_per_epoch = 50000 // 512
+
+
+def prune_labels(ax, location='best'):
+    new_handles_labels = dict()
+    for h, l in zip(*ax.get_legend_handles_labels()):
+        if l not in new_handles_labels:
+            new_handles_labels[l] = h
+    sorted_labels = sorted(new_handles_labels)
+    sorted_handles = [new_handles_labels[l] for l in sorted_labels]
+    ax.legend(sorted_handles, sorted_labels, loc=location)
 
 
 def get_layer_metric_map(metric_regex, ids):
@@ -50,17 +49,23 @@ def plot_accuracy(models, optimizers, learning_rates, **kwargs):
 
     pipeline = conditions + [
         # group into groups keyed by (model, optimizer, lr)
-        {'$group': {
-            '_id': {
-                'model': '$config.model',
-                'optimizer': '$config.optimizer',
-                'base_lr': '$config.base_lr',
+        {
+            '$group':
+            {
+                '_id':
+                {
+                    'optimizer': '$config.optimizer',
+                    'base_lr': '$config.base_lr',
+                },
+                '_freeze_points': {'$push': '$config.freeze_at'},
+                '_member_ids': {'$addToSet': '$_id'},
+                '_models': {'$addToSet': '$config.model'},
             },
-            # add field with all run ids belonging to this group
-            '_freeze_points': {'$addToSet': '$config.freeze_at'},
-            '_member_ids': {'$addToSet': '$_id'}
-        }},
+        },
+        {'$sort': {'_id.base_lr': 1}},
+        {'$addFields': {'_num_models': {'$size': '$_models'}}}
     ]
+    sacred_db = get_client().sacred
 
     groups = list(sacred_db.runs.aggregate(pipeline))
     if not groups:
@@ -76,50 +81,67 @@ def plot_accuracy(models, optimizers, learning_rates, **kwargs):
     figures = dict()
 
     for group in groups:
-        model     = group['_id']['model']
-        optimizer = group['_id']['optimizer']
-        base_lr   = group['_id']['base_lr']
-        ids       = group['_member_ids']
-        freeze_points       = group['_freeze_points']
+        models         = group['_models']
+        optimizer     = group['_id']['optimizer']
+        base_lr       = group['_id']['base_lr']
+        ids           = sorted(group['_member_ids'])
+        freeze_points = group['_freeze_points']
 
         # create figure for group
-        f       = plt.figure(figsize=kwargs.get('figsize', (9, 6)))
-        f.suptitle(f'{model}, {optimizer}, {base_lr}')
-        ax_acc   = f.add_subplot(121)
-        ax_similarity   = f.add_subplot(122)
+        f             = plt.figure(figsize=kwargs.get('figsize', (9, 6)))
+        f.suptitle(f'{optimizer}, {base_lr}')
+
+        axes = dict()
+        first = None
+        for i, model in enumerate(models):
+            if not first:
+                axes[model] = f.add_subplot(1, len(models), i + 1)
+                first = axes[model]
+            else:
+                axes[model] = f.add_subplot(1, len(models), i + 1, sharey=first)
+
+        first.set_ylabel('Accuracy')
+
+        colors = {
+            0.99: Color.RED.value,
+            0.995: Color.DARKBLUE.value,
+            10:  Color.SLATE.value
+        }
 
         accuracy_traces = get_metric_for_ids('test_accuracy', ids, per_module=False)
-        for i, trace in enumerate(accuracy_traces):
-            steps = trace['steps']
+        models = sacred_db.runs.aggregate([{'$match': {'_id': {'$in': ids}}},
+                                           {'$sort': {'_id': 1}},
+                                           {'$project' : {'model': '$config.model'}}])
+        models = map(lambda doc: doc['model'], models)
+        for i, (model, trace) in enumerate(zip(models, accuracy_traces)):
+            steps = np.array(trace['steps']) / batches_per_epoch
             values = trace['values']
-            ax_acc.plot(steps, values, label=f'Freeze at {freeze_points[i]}')
+            axes[model].plot(steps, values, label=f'Freeze at {freeze_points[i]}',
+                        c=colors[freeze_points[i]])
+            axes[model].set_title(f'{model}')
+            axes[model].set_xlabel('Epoch')
 
-        similarity_traces = get_layer_metric_map('self_similarity', ids)
-        colors = iter(itertools.cycle(plt.get_cmap('Set2').colors))
+        # similarity_traces = get_layer_metric_map('self_similarity', ids)
+        # colors = iter(itertools.cycle(plt.get_cmap('Set2').colors[:len(similarity_traces)]))
 
-        for layer, records in similarity_traces.items():
-            color = next(colors)
-            for steps, values in records:
-                ax_similarity.plot(steps, values, c=color, label=layer)
+        # for layer, records in similarity_traces.items():
+        #     layer = layer[len('self_similarity/.')-1:]
+        #     color = next(colors)
+        #     for steps, values in records:
+        #         steps = np.array(steps) / batches_per_epoch
+        #         ax_similarity.plot(steps, values, c=color, label=layer)
 
-        # set title and labels
-        ax_acc.set_title('Accuracy')
-        ax_acc.set_xlabel('Trains tep')
-        ax_acc.legend()
+        # ax_similarity.set_title('SVCCA coefficient')
+        # ax_similarity.set_xlabel('Epoch')
 
-        new_labels = []
-        new_handles = []
-        for h, l in zip(*ax_similarity.get_legend_handles_labels()):
-            if l not in new_labels:
-                new_labels.append(l)
-                new_handles.append(h)
-        ax_similarity.legend(new_handles, new_labels)
+        # prune_labels(ax_acc, location='lower right')
+        # prune_labels(ax_similarity, location='lower right')
 
-        m_str        = model.lower()
-        o_str        = optimizer.lower()
-        lr_str       = str(base_lr).replace('.', '')
-        key          = f'{m_str}_{o_str}_{lr_str}.pdf'
-        figures[key] = f
+        # m_str        = model.lower()
+        # o_str        = optimizer.lower()
+        # lr_str       = str(base_lr).replace('.', '')
+        # key          = f'{m_str}_{o_str}_{lr_str}.pdf'
+        # figures[key] = f
 
     if not save:
         plt.show()

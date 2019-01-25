@@ -67,15 +67,17 @@ def plot_moments(models, optimizers, learning_rates, **kwargs):
 
     pipeline = conditions + [
         # group into groups keyed by (model, optimizer, lr)
-        {'$group': {
-            '_id': {
-                'model': '$config.model',
-                'optimizer': '$config.optimizer',
-                'base_lr': '$config.base_lr',
-            },
-            # add field with all run ids belonging to this group
-            '_member_ids': {'$addToSet': '$_id'}
-        }},
+        {'$group':
+         {
+             '_id': {
+                 'model': '$config.model',
+                 'optimizer': '$config.optimizer',
+                 'base_lr': '$config.base_lr',
+             },
+             # add field with all run ids belonging to this group
+             '_member_ids': {'$addToSet': '$_id'}
+         }
+         },
         {'$sort': {'_id.base_lr': 1}}
     ]
 
