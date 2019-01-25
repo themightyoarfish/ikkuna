@@ -2,20 +2,22 @@ import pymongo
 
 import os
 
-try:
-    pwd = os.environ['MONGOPWD']
-except KeyError:
-    print('You need to set the MONGOPWD variable to connect to the database.')
-    import sys
-    sys.exit(1)
 
-db_client = pymongo.MongoClient(f'mongodb://rasmus:{pwd}@35.189.247.219/sacred')
-sacred_db = db_client.sacred
-runs      = sacred_db.runs
-metrics   = sacred_db.metrics
+def get_client():
+    # try:
+    #     pwd = os.environ['MONGOPWD']
+    # except KeyError:
+    #     print('You need to set the MONGOPWD variable to connect to the database.')
+    #     import sys
+    #     sys.exit(1)
+
+    db_client = pymongo.MongoClient('localhost:27017')
+    db_client.admin.command('ismaster')
+    return db_client
 
 
 def get_metric_for_ids(name, ids, per_module=True):
+    sacred_db = get_client().sacred
     if per_module:
         metric = sacred_db.metrics.aggregate([
             {'$match': {'name': {'$regex': name}}},
@@ -70,6 +72,8 @@ def delete_where(**kwargs):
                 ``config.n_epochs = 30``), you can pass a dict directly:
                     ``delete_where(**{'config.n_epochs': 30})``
     '''
+    runs = get_client().sacred.runs
+    metrics = get_client().sacred.metrics
     pipeline = [{'$match': {k: v}} for k, v in kwargs.items()] + [{'$project': {'_id': True}}]
     ids_to_delete = list(map(lambda d: d['_id'], runs.aggregate(pipeline)))
     if prompt_delete(ids_to_delete):
@@ -79,6 +83,9 @@ def delete_where(**kwargs):
 
 def delete_invalid():
     '''Delete all experiments and associated metrics for which the result was ``None``'''
+
+    runs = get_client().sacred.runs
+    metrics = get_client().sacred.metrics
 
     pipeline = [
         {'$match': {'result': None}},
