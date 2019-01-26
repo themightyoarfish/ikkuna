@@ -1,6 +1,16 @@
 import numpy as np
 
 
+def prune_labels(ax, location='best'):
+    new_handles_labels = dict()
+    for h, l in zip(*ax.get_legend_handles_labels()):
+        if l not in new_handles_labels:
+            new_handles_labels[l] = h
+    sorted_labels = sorted(new_handles_labels)
+    sorted_handles = [new_handles_labels[l] for l in sorted_labels]
+    ax.legend(sorted_handles, sorted_labels, loc=location)
+
+
 def unify_limits(axes, x=True, y=True):
     # Iterate over all limits in the plots to give all the same axis limits
     if x:
