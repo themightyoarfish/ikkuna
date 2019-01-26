@@ -1,7 +1,7 @@
 import itertools
 import numpy as np
 from experiments.sacred_utils import get_metric_for_ids, get_client
-from experiments.utils import unify_limits
+from experiments.utils import prune_labels
 import matplotlib
 matplotlib.rcParams['lines.linewidth'] = 0.8
 from colors import Color
@@ -9,16 +9,6 @@ import os
 
 
 batches_per_epoch = 50000 // 512
-
-
-def prune_labels(ax, location='best'):
-    new_handles_labels = dict()
-    for h, l in zip(*ax.get_legend_handles_labels()):
-        if l not in new_handles_labels:
-            new_handles_labels[l] = h
-    sorted_labels = sorted(new_handles_labels)
-    sorted_handles = [new_handles_labels[l] for l in sorted_labels]
-    ax.legend(sorted_handles, sorted_labels, loc=location)
 
 
 def get_layer_metric_map(metric_regex, ids):
@@ -34,7 +24,6 @@ def get_layer_metric_map(metric_regex, ids):
 def plot_accuracy(models, optimizers, learning_rates, **kwargs):
 
     conditions = [
-        # get only experiments which returned 0
         {'$match': {'config.identifier': 'experiments/saturation/experiment'}},
         {'$match': {'result': 0}},
         {'$match': {'config.n_epochs': 30}},
@@ -48,7 +37,6 @@ def plot_accuracy(models, optimizers, learning_rates, **kwargs):
     ]
 
     pipeline = conditions + [
-        # group into groups keyed by (model, optimizer, lr)
         {
             '$group':
             {
@@ -56,14 +44,31 @@ def plot_accuracy(models, optimizers, learning_rates, **kwargs):
                 {
                     'optimizer': '$config.optimizer',
                     'base_lr': '$config.base_lr',
+                    'model': '$config.model',
+                    'freeze_at': '$config.freeze_at',
                 },
-                '_freeze_points': {'$push': '$config.freeze_at'},
                 '_member_ids': {'$addToSet': '$_id'},
                 '_models': {'$addToSet': '$config.model'},
             },
         },
         {'$sort': {'_id.base_lr': 1}},
-        {'$addFields': {'_num_models': {'$size': '$_models'}}}
+        {'$unwind': '$_models'},
+        {
+            '$group':
+            {
+                '_id':
+                {
+                    'optimizer': '$_id.optimizer',
+                    'base_lr': '$_id.base_lr',
+                },
+                '_models': {'$addToSet': '$_models'},
+                '_groups':
+                {
+                    '$push': {'model': '$_id.model', 'freeze_at': '$_id.freeze_at', '_member_ids':
+                              '$_member_ids'},
+                },
+            }
+        }
     ]
     sacred_db = get_client().sacred
 
@@ -81,11 +86,10 @@ def plot_accuracy(models, optimizers, learning_rates, **kwargs):
     figures = dict()
 
     for group in groups:
-        models         = group['_models']
+        models        = group['_models']
         optimizer     = group['_id']['optimizer']
         base_lr       = group['_id']['base_lr']
-        ids           = sorted(group['_member_ids'])
-        freeze_points = group['_freeze_points']
+        subgroups     = group['_groups']
 
         # create figure for group
         f             = plt.figure(figsize=kwargs.get('figsize', (9, 6)))
@@ -107,17 +111,19 @@ def plot_accuracy(models, optimizers, learning_rates, **kwargs):
             0.995: Color.DARKBLUE.value,
             10:  Color.SLATE.value
         }
-
-        accuracy_traces = get_metric_for_ids('test_accuracy', ids, per_module=False)
-        models = sacred_db.runs.aggregate([{'$match': {'_id': {'$in': ids}}},
-                                           {'$sort': {'_id': 1}},
-                                           {'$project' : {'model': '$config.model'}}])
-        models = map(lambda doc: doc['model'], models)
-        for i, (model, trace) in enumerate(zip(models, accuracy_traces)):
-            steps = np.array(trace['steps']) / batches_per_epoch
-            values = trace['values']
-            axes[model].plot(steps, values, label=f'Freeze at {freeze_points[i]}',
-                        c=colors[freeze_points[i]])
+        for subgroup in subgroups:
+            model = subgroup['model']
+            freeze_at = subgroup['freeze_at']
+            ids = subgroup['_member_ids']
+            # get all accuracy traces for this model and freeze point
+            steps = None
+            values = []
+            for trace in get_metric_for_ids('test_accuracy', ids, per_module=False):
+                steps = steps or trace['steps']
+                values.append(trace['values'])
+            values = np.array(values).mean(axis=0)
+            steps = np.array(steps) / batches_per_epoch
+            axes[model].plot(steps, values, label=f'Freeze at {freeze_at}', c=colors[freeze_at])
             axes[model].set_title(f'{model}')
             axes[model].set_xlabel('Epoch')
 
