@@ -3,7 +3,7 @@ import numpy as np
 from experiments.sacred_utils import get_metric_for_ids, get_client
 from experiments.utils import prune_labels
 import matplotlib
-matplotlib.rcParams['lines.linewidth'] = 0.8
+matplotlib.rcParams['lines.linewidth'] = 1
 from colors import Color
 import os
 
@@ -51,7 +51,7 @@ def plot_accuracy(models, optimizers, learning_rates, **kwargs):
                 '_models': {'$addToSet': '$config.model'},
             },
         },
-        {'$sort': {'_id.base_lr': 1}},
+        {'$sort': {'_id.base_lr': -1}},
         {'$unwind': '$_models'},
         {
             '$group':
@@ -86,7 +86,7 @@ def plot_accuracy(models, optimizers, learning_rates, **kwargs):
     figures = dict()
 
     for group in groups:
-        models        = group['_models']
+        models        = sorted(group['_models'])
         optimizer     = group['_id']['optimizer']
         base_lr       = group['_id']['base_lr']
         subgroups     = group['_groups']
@@ -95,16 +95,23 @@ def plot_accuracy(models, optimizers, learning_rates, **kwargs):
         f             = plt.figure(figsize=kwargs.get('figsize', (9, 6)))
         f.suptitle(f'{optimizer}, {base_lr}')
 
-        axes = dict()
-        first = None
-        for i, model in enumerate(models):
-            if not first:
-                axes[model] = f.add_subplot(1, len(models), i + 1)
-                first = axes[model]
-            else:
-                axes[model] = f.add_subplot(1, len(models), i + 1, sharey=first)
+        axes_acc = dict()
+        axes_sim = dict()
 
-        first.set_ylabel('Accuracy')
+        first_acc = None
+        first_sim = None
+        for i, model in enumerate(models):
+            if not first_acc:
+                axes_acc[model] = f.add_subplot(2, len(models), i + 1)
+                axes_sim[model] = f.add_subplot(2, len(models), i + 1 + len(models))
+                first_acc = axes_acc[model]
+                first_sim = axes_sim[model]
+            else:
+                axes_acc[model] = f.add_subplot(2, len(models), i + 1, sharey=first_acc)
+                axes_sim[model] = f.add_subplot(2, len(models), i + 1 + len(models), sharey=first_sim)
+
+        first_acc.set_ylabel('Accuracy')
+        first_sim.set_ylabel('SVCCA coef')
 
         colors = {
             0.99: Color.RED.value,
@@ -112,22 +119,38 @@ def plot_accuracy(models, optimizers, learning_rates, **kwargs):
             10:  Color.SLATE.value
         }
         for subgroup in subgroups:
-            model = subgroup['model']
+            model     = subgroup['model']
             freeze_at = subgroup['freeze_at']
-            ids = subgroup['_member_ids']
-            # get all accuracy traces for this model and freeze point
-            steps = None
+            ids       = subgroup['_member_ids']
+
+            # get all accuracy traces for this model and freeze point into np array and mean over
+            # runs
+            steps  = None
             values = []
             for trace in get_metric_for_ids('test_accuracy', ids, per_module=False):
                 steps = steps or trace['steps']
                 values.append(trace['values'])
-            values = np.array(values).mean(axis=0)
-            steps = np.array(steps) / batches_per_epoch
-            axes[model].plot(steps, values, label=f'Freeze at {freeze_at}', c=colors[freeze_at])
-            axes[model].set_title(f'{model}')
-            axes[model].set_xlabel('Epoch')
 
-        # similarity_traces = get_layer_metric_map('self_similarity', ids)
+            values = np.array(values).mean(axis=0)
+            steps  = np.array(steps) / batches_per_epoch
+
+            # plot data and set labels + title
+            axes_acc[model].plot(steps, values, label=f'Freeze at {freeze_at}', c=colors[freeze_at])
+            axes_acc[model].set_title(f'{model}')
+            axes_acc[model].set_xlabel('Epoch')
+
+            similarity_traces = get_layer_metric_map('self_similarity', ids)
+            accuracy_steps = batches_per_epoch * np.arange(1, 30)
+            for layer in similarity_traces:
+                data = np.zeros([len(similarity_traces[layer]), len(accuracy_steps)])
+                for i, (steps, values) in enumerate(similarity_traces[layer]):
+                    data[i, :len(steps)] = values
+                    data[i, len(steps):] = values[-1]
+                axes_sim[model].plot(accuracy_steps, data.mean(axis=0), label=layer)
+
+                # create array of right size (n_runs, n_steps)
+                # put each trace in there by filling with last value
+                # mean over runs
         # colors = iter(itertools.cycle(plt.get_cmap('Set2').colors[:len(similarity_traces)]))
 
         # for layer, records in similarity_traces.items():
@@ -140,14 +163,14 @@ def plot_accuracy(models, optimizers, learning_rates, **kwargs):
         # ax_similarity.set_title('SVCCA coefficient')
         # ax_similarity.set_xlabel('Epoch')
 
-        # prune_labels(ax_acc, location='lower right')
-        # prune_labels(ax_similarity, location='lower right')
+        for ax in axes_acc.values():
+            prune_labels(ax, location='lower right')
 
-        # m_str        = model.lower()
-        # o_str        = optimizer.lower()
-        # lr_str       = str(base_lr).replace('.', '')
-        # key          = f'{m_str}_{o_str}_{lr_str}.pdf'
-        # figures[key] = f
+        m_str        = model.lower()
+        o_str        = optimizer.lower()
+        lr_str       = str(base_lr).replace('.', '')
+        key          = f'{m_str}_{o_str}_{lr_str}.pdf'
+        figures[key] = f
 
     if not save:
         plt.show()
