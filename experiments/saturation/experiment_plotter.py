@@ -1,19 +1,20 @@
+from collections import defaultdict
 import itertools
 import numpy as np
 from experiments.sacred_utils import get_metric_for_ids, get_client
 from experiments.utils import prune_labels
 import matplotlib
+import matplotlib.lines as mlines
 matplotlib.rcParams['lines.linewidth'] = 1
 from colors import Color
-import os
 
 
 batches_per_epoch = 50000 // 512
 
 
 def get_layer_metric_map(metric_regex, ids):
-    from collections import defaultdict
-
+    '''Get a mapping for layer -> runs for metric where the value for a layer is a list of tuples,
+    each tuple consisting of steps and values for each step'''
     name_metric_map = defaultdict(list)
     for trace in get_metric_for_ids(metric_regex, ids, per_module=True):
         name_metric_map[trace['name']].append((trace['steps'], trace['values']))
@@ -21,7 +22,7 @@ def get_layer_metric_map(metric_regex, ids):
     return name_metric_map
 
 
-def plot_accuracy(models, optimizers, learning_rates, **kwargs):
+def plot_accuracy_similarity(models, optimizers, learning_rates, **kwargs):
 
     conditions = [
         {'$match': {'config.identifier': 'experiments/saturation/experiment'}},
@@ -38,6 +39,8 @@ def plot_accuracy(models, optimizers, learning_rates, **kwargs):
 
     pipeline = conditions + [
         {
+            # the idea here is that we first form groups of all runs for a given set of hyper
+            # parameters, recording which ids are in this set and which models were seen ...
             '$group':
             {
                 '_id':
@@ -52,6 +55,11 @@ def plot_accuracy(models, optimizers, learning_rates, **kwargs):
             },
         },
         {'$sort': {'_id.base_lr': -1}},
+        # ... after sorting so we iterate over groups according to the varying parameter – the
+        # learning rate – we merge groups so that each group contains the runs for all models and we
+        # have in each group a _group property which contains the actual groups per-model and
+        # per-freeze-point. We also record the ids for each of theses subgroups by accessing the
+        # _member_ids from the original groups.
         {'$unwind': '$_models'},
         {
             '$group':
@@ -91,42 +99,64 @@ def plot_accuracy(models, optimizers, learning_rates, **kwargs):
         base_lr       = group['_id']['base_lr']
         subgroups     = group['_groups']
 
-        # create figure for group
-        f             = plt.figure(figsize=kwargs.get('figsize', (9, 6)))
+        ###########################################################################################
+        # Step 0: Create figure array so each model gets an accuracy, similarity and legend plot  #
+        ###########################################################################################
+        f             = plt.figure(figsize=kwargs.get('figsize', (9, 9)))
         f.suptitle(f'{optimizer}, {base_lr}')
 
-        axes_acc = dict()
-        axes_sim = dict()
+        axes_acc    = dict()
+        axes_sim    = dict()
+        axes_legend = dict()
 
-        first_acc = None
-        first_sim = None
+        first_acc   = None
+        first_sim   = None
+        # this creates a 3xn_models array. First row accuracy (one line per freeze_point), second
+        # row selfsimilarity (varying line style per freeze_point) and last row for larger legends
         for i, model in enumerate(models):
             if not first_acc:
-                axes_acc[model] = f.add_subplot(2, len(models), i + 1)
-                axes_sim[model] = f.add_subplot(2, len(models), i + 1 + len(models))
-                first_acc = axes_acc[model]
-                first_sim = axes_sim[model]
+                # first plot: don't share axes
+                axes_acc[model] = f.add_subplot(3, len(models), i+1)
+                axes_sim[model] = f.add_subplot(3, len(models), i+1+len(models))
+                first_acc       = axes_acc[model]
+                first_sim       = axes_sim[model]
             else:
-                axes_acc[model] = f.add_subplot(2, len(models), i + 1, sharey=first_acc)
-                axes_sim[model] = f.add_subplot(2, len(models), i + 1 + len(models), sharey=first_sim)
+                # first plot: share yaxis of first plot
+                axes_acc[model] = f.add_subplot(3, len(models), i+1, sharey=first_acc)
+                axes_sim[model] = f.add_subplot(3, len(models), i+1+len(models), sharey=first_sim)
+
+            axes_legend[model] = f.add_subplot(3, len(models), i+1+2*len(models))
 
         first_acc.set_ylabel('Accuracy')
         first_sim.set_ylabel('SVCCA coef')
 
+        # we have only 3 freeze points rn, so hardcode color and line style for disambiguation
         colors = {
             0.99: Color.RED.value,
             0.995: Color.DARKBLUE.value,
             10:  Color.SLATE.value
         }
+        linestyles = {
+            0.99: ':',
+            0.995: '-.',
+            10:  '-'
+        }
+
+        ###########################################################################################
+        #                                  Step 1: Plot the data                                  #
+        ###########################################################################################
         for subgroup in subgroups:
             model     = subgroup['model']
             freeze_at = subgroup['freeze_at']
             ids       = subgroup['_member_ids']
 
-            # get all accuracy traces for this model and freeze point into np array and mean over
-            # runs
+            ######################################################################
+            #  Step 1.1: Average accuracy traces for each freeze point and plot  #
+            ######################################################################
             steps  = None
             values = []
+            # get all accuracy traces for this model and freeze point into np array and mean over
+            # runs
             for trace in get_metric_for_ids('test_accuracy', ids, per_module=False):
                 steps = steps or trace['steps']
                 values.append(trace['values'])
@@ -139,32 +169,47 @@ def plot_accuracy(models, optimizers, learning_rates, **kwargs):
             axes_acc[model].set_title(f'{model}')
             axes_acc[model].set_xlabel('Epoch')
 
+            ########################################################################################
+            #  Step 1.2: Extend frozen similarity traces w last value, average over runs and plot  #
+            ########################################################################################
             similarity_traces = get_layer_metric_map('self_similarity', ids)
-            accuracy_steps = batches_per_epoch * np.arange(1, 30)
+            # Number of epochs hardcoded
+            accuracy_steps    = np.arange(1, 30)
+            # inifinite color map iteration; each layer has one color
+            cmap              = plt.get_cmap('Set2')
+            color_cycler      = iter(itertools.cycle(cmap.colors[:len(similarity_traces)]))
             for layer in similarity_traces:
                 data = np.zeros([len(similarity_traces[layer]), len(accuracy_steps)])
                 for i, (steps, values) in enumerate(similarity_traces[layer]):
                     data[i, :len(steps)] = values
                     data[i, len(steps):] = values[-1]
-                axes_sim[model].plot(accuracy_steps, data.mean(axis=0), label=layer)
+                # sometimes there are correlation coefs > 1 which doesn't make sense. i have not
+                # yet investigated where those come from.
+                data[data > 1] = 1
+                axes_sim[model].plot(accuracy_steps, data.mean(axis=0), label=layer,
+                                     c=next(color_cycler), linestyle=linestyles[freeze_at])
 
-                # create array of right size (n_runs, n_steps)
-                # put each trace in there by filling with last value
-                # mean over runs
-        # colors = iter(itertools.cycle(plt.get_cmap('Set2').colors[:len(similarity_traces)]))
-
-        # for layer, records in similarity_traces.items():
-        #     layer = layer[len('self_similarity/.')-1:]
-        #     color = next(colors)
-        #     for steps, values in records:
-        #         steps = np.array(steps) / batches_per_epoch
-        #         ax_similarity.plot(steps, values, c=color, label=layer)
-
-        # ax_similarity.set_title('SVCCA coefficient')
-        # ax_similarity.set_xlabel('Epoch')
-
+        ###########################################################################################
+        #                                 Step 2: Create legends                                  #
+        ###########################################################################################
         for ax in axes_acc.values():
-            prune_labels(ax, location='lower right')
+            prune_labels(ax, loc='lower right')
+
+        # create a few dummy entries for labeling the different line styles in the similarity plot
+        legend_lines = [mlines.Line2D([], [], color='black', linestyle=style, markersize=15,
+                                      label=f'Freeze at {freeze_at}')
+                        for freeze_at, style in linestyles.items()]
+        for model, ax in axes_sim.items():
+            handles, labels = prune_labels(ax, loc='lower right')
+            axes_sim[model].get_legend().remove()
+            axes_legend[model].legend(handles, labels, loc='lower right')
+            axes_legend[model].spines['top'].set_visible(False)
+            axes_legend[model].spines['right'].set_visible(False)
+            axes_legend[model].spines['bottom'].set_visible(False)
+            axes_legend[model].spines['left'].set_visible(False)
+            axes_legend[model].xaxis.set_visible(False)
+            axes_legend[model].yaxis.set_visible(False)
+            axes_sim[model].legend(handles=legend_lines)
 
         m_str        = model.lower()
         o_str        = optimizer.lower()
@@ -180,9 +225,8 @@ def plot_accuracy(models, optimizers, learning_rates, **kwargs):
 
 
 def plots_for_thesis():
-    plot_accuracy(['VGG', 'AlexNetMini'], ['SGD'], [0.01, 0.1, 0.5], save=False)
+    plot_accuracy_similarity(['VGG', 'AlexNetMini'], ['SGD'], [0.01, 0.1, 0.5], save=False)
 
 
 if __name__ == '__main__':
     plots_for_thesis()
-    # plot_moments(['AdamModel'], ['Adam'], [0.001], start=0, end=-1, save=True)
