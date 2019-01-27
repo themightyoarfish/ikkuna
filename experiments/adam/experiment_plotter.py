@@ -183,7 +183,7 @@ def plot_moments(models, optimizers, learning_rates, **kwargs):
         ax_loss.plot(steps_loss[valid_idx_loss][::k_full],
                      median_pool_array(loss_trace[valid_idx_loss], k_full, k_full), label='loss',
                      c=np.array(Color.YELLOW).squeeze(),
-                    linewidth=1)
+                     linewidth=1)
 
         ax_acc.plot(test_accuracy_steps[valid_idx_test_acc],
                     test_accuracy_trace[valid_idx_test_acc], label='test-accuracy',

@@ -161,11 +161,12 @@ def plot_accuracy_similarity(models, optimizers, learning_rates, **kwargs):
                 steps = steps or trace['steps']
                 values.append(trace['values'])
 
+            nruns  = len(values)
             values = np.array(values).mean(axis=0)
             steps  = np.array(steps) / batches_per_epoch
 
             # plot data and set labels + title
-            axes_acc[model].plot(steps, values, label=f'Freeze at {freeze_at}', c=colors[freeze_at])
+            axes_acc[model].plot(steps, values, label=f'{freeze_at} ({nruns})', c=colors[freeze_at])
             axes_acc[model].set_title(f'{model}')
             axes_acc[model].set_xlabel('Epoch')
 
@@ -186,7 +187,8 @@ def plot_accuracy_similarity(models, optimizers, learning_rates, **kwargs):
                 # sometimes there are correlation coefs > 1 which doesn't make sense. i have not
                 # yet investigated where those come from.
                 data[data > 1] = 1
-                axes_sim[model].plot(accuracy_steps, data.mean(axis=0), label=layer,
+                label = layer.split('.')[1]
+                axes_sim[model].plot(accuracy_steps, data.mean(axis=0), label=label,
                                      c=next(color_cycler), linestyle=linestyles[freeze_at])
 
         ###########################################################################################
@@ -197,12 +199,12 @@ def plot_accuracy_similarity(models, optimizers, learning_rates, **kwargs):
 
         # create a few dummy entries for labeling the different line styles in the similarity plot
         legend_lines = [mlines.Line2D([], [], color='black', linestyle=style, markersize=15,
-                                      label=f'Freeze at {freeze_at}')
+                                      label=f'{freeze_at}')
                         for freeze_at, style in linestyles.items()]
         for model, ax in axes_sim.items():
             handles, labels = prune_labels(ax, loc='lower right')
             axes_sim[model].get_legend().remove()
-            axes_legend[model].legend(handles, labels, loc='lower right')
+            axes_legend[model].legend(handles, labels, loc='upper center')
             axes_legend[model].spines['top'].set_visible(False)
             axes_legend[model].spines['right'].set_visible(False)
             axes_legend[model].spines['bottom'].set_visible(False)
