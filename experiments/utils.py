@@ -1,18 +1,25 @@
 import numpy as np
 
 
-def prune_labels(ax, location='best'):
+def prune_labels(ax, loc='best'):
+    '''De-duplicate labels in a legend.
+
+    .. warning::
+        This function assumes that there is one contender with line style '-' and selects that one.
+        # wontfix
+    '''
     new_handles_labels = dict()
     for h, l in zip(*ax.get_legend_handles_labels()):
-        if l not in new_handles_labels:
+        if l not in new_handles_labels and h.get_linestyle() == '-':
             new_handles_labels[l] = h
     sorted_labels = sorted(new_handles_labels)
     sorted_handles = [new_handles_labels[l] for l in sorted_labels]
-    ax.legend(sorted_handles, sorted_labels, loc=location)
+    ax.legend(sorted_handles, sorted_labels, loc=loc)
+    return sorted_handles, sorted_labels
 
 
 def unify_limits(axes, x=True, y=True):
-    # Iterate over all limits in the plots to give all the same axis limits
+    '''Iterate over all limits in the plots to give all the same axis limits'''
     if x:
         xlims   = [ax.get_xlim() for ax in axes]
         lower_x = min(x[0] for x in xlims)
