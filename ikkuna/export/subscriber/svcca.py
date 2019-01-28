@@ -161,7 +161,7 @@ class BatchedSVCCASubscriber(PlotSubscriber):
         # cache tensors so we don't repeatedly deserialize and copy
         self._input_cache    = []
 
-        self._freeze_at      = freeze_at
+        self._freeze_at      = freeze_at if isinstance(freeze_at, float) else 10.
         self._ignore_modules = set()
 
         title        = f'self_similarity'
@@ -179,23 +179,23 @@ class BatchedSVCCASubscriber(PlotSubscriber):
                          backend=backend)
         self._add_publication(f'self_similarity', type='DATA')
 
-    def _module_complete_previous(self, module_name):
+    def _module_complete_previous(self, module):
         '''Check if activations for module are completely buffered from the previous step.'''
-        return not (module_name not in self._previous_acts
-                    or not self._previous_acts.complete(module_name))
+        return not (module not in self._previous_acts
+                    or not self._previous_acts.complete(module))
 
-    def _module_complete_current(self, module_name):
+    def _module_complete_current(self, module):
         '''Check if activations for module are completely buffered from the current step.'''
-        return not (module_name not in self._current_acts
-                    or not self._current_acts.complete(module_name))
+        return not (module not in self._current_acts
+                    or not self._current_acts.complete(module))
 
-    def _record_activations_previous(self, module_name, data):
+    def _record_activations_previous(self, module, data):
         '''Record activations into the ``previous`` buffer'''
-        self._previous_acts.append(module_name, data)
+        self._previous_acts.append(module, data)
 
-    def _record_activations_current(self, module_name, data):
+    def _record_activations_current(self, module, data):
         '''Record activations into the ``current`` buffer'''
-        self._current_acts.append(module_name, data)
+        self._current_acts.append(module, data)
 
     def _do_forward_pass(self):
         # cache inputs initially
@@ -237,6 +237,15 @@ class BatchedSVCCASubscriber(PlotSubscriber):
                                                            rescale=True)
         return result_dict['mean'][0]
 
+    def _freeze_module(self, module):
+        print(f'Freezing {module}')
+        freeze_module(module)
+        self._ignore_modules.add(module)
+        if module in self._previous_acts:
+            self._previous_acts.pop(module)
+        if module in self._current_acts:
+            self._current_acts.pop(module)
+
     def compute(self, message):
         '''A :class:`~ikkuna.export.messages.NetworkMessage` with the identifier ``self_similarity``
         will be published.'''
@@ -249,13 +258,13 @@ class BatchedSVCCASubscriber(PlotSubscriber):
             if module in self._ignore_modules:
                 return
 
-            if not self._module_complete_previous(name):
-                self._record_activations_previous(name, message.data)
-            elif not self._module_complete_current(name):
-                self._record_activations_current(name, message.data)
+            if not self._module_complete_previous(module):
+                self._record_activations_previous(module, message.data)
+            elif not self._module_complete_current(module):
+                self._record_activations_current(module, message.data)
 
-            if self._module_complete_current(name) and self._module_complete_previous(name):
-                mean = self._compute_similarity(name)
+            if self._module_complete_current(module) and self._module_complete_previous(module):
+                mean = self._compute_similarity(module)
                 self._backend.add_data(name, mean, message.global_step)
                 self.message_bus.publish_module_message(message.global_step,
                                                         message.train_step,
@@ -265,12 +274,7 @@ class BatchedSVCCASubscriber(PlotSubscriber):
                                                         data=mean)
 
                 if mean > self._freeze_at:
-                    freeze_module(module)
-                    self._ignore_modules.add(module)
-                    if name in self._previous_acts:
-                        self._previous_acts.pop(name)
-                    if name in self._current_acts:
-                        self._current_acts.pop(name)
+                    self._freeze_module(module)
 
 
 class SVCCASubscriber(BatchedSVCCASubscriber):
@@ -283,14 +287,14 @@ class SVCCASubscriber(BatchedSVCCASubscriber):
         self._previous_acts = dict()
         self._current_acts = dict()
 
-    def _module_complete_previous(self, module_name):
-        return module_name in self._previous_acts
+    def _module_complete_previous(self, module):
+        return module in self._previous_acts
 
-    def _module_complete_current(self, module_name):
-        return module_name in self._current_acts
+    def _module_complete_current(self, module):
+        return module in self._current_acts
 
-    def _record_activations_previous(self, module_name, data):
-        self._previous_acts[module_name] = data
+    def _record_activations_previous(self, module, data):
+        self._previous_acts[module] = data
 
-    def _record_activations_current(self, module_name, data):
-        self._current_acts[module_name] = data
+    def _record_activations_current(self, module, data):
+        self._current_acts[module] = data
