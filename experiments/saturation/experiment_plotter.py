@@ -22,6 +22,68 @@ def get_layer_metric_map(metric_regex, ids):
     return name_metric_map
 
 
+def plot_freeze_points(models, optimizers, learning_rates, freeze_points):
+    conditions = [
+        {'$match': {'config.identifier': 'experiments/saturation/experiment'}},
+        {'$match': {'result': 0}},
+        {'$match': {'config.n_epochs': 30}},
+        {'$match': {'config.batch_size': 512}},
+        # filter models
+        {'$match': {'config.model': {'$in': models}}},
+        # filter opts
+        {'$match': {'config.optimizer': {'$in': optimizers}}},
+        # filter lrs
+        {'$match': {'config.base_lr': {'$in': learning_rates}}},
+        {'$match': {'config.freeze_at': {'$in': freeze_points}}},
+    ]
+
+    pipeline = conditions + [
+        {'$lookup': {'from': 'metrics',
+                     'localField': '_id',
+                     'foreignField': 'run_id',
+                     'as': 'metrics'}},
+        {'$project': {'_id': True,
+                      'base_lr': '$config.base_lr',
+                      'model': '$config.model',
+                      'optimizer': '$config.optimizer',
+                      'freeze_at': '$config.freeze_at',
+                      'metrics': {
+                          '$filter':
+                                  {'input': {
+                                      '$map':
+                                      {
+                                          'input': '$metrics',
+                                          'in': {'name': '$$this.name',
+                                                 'n_steps': {'$size': '$$this.steps'}}
+                                      }
+                                  },
+                                      'cond':
+                                      {
+                                          '$eq':
+                                          [
+                                              {'$substr': ['$$this.name', 0, len('self_similarity')]},
+                                              'self_similarity'
+                                          ]
+                                      }
+                                  }
+                                  }
+                      }
+         },
+        {'$group':
+         {
+             '_id': {'base_lr': '$base_lr',
+                     'model': '$model',
+                     'optimizer': '$optimizer'},
+             'freeze_points': {'$push': {'value': '$freeze_at', 'metrics': '$metrics'}}
+         }
+         }
+    ]
+    sacred_db = get_client().sacred
+
+    groups = list(sacred_db.runs.aggregate(pipeline))
+    __import__('ipdb').set_trace()
+
+
 def plot_accuracy_similarity(models, optimizers, learning_rates, **kwargs):
 
     conditions = [
@@ -102,7 +164,7 @@ def plot_accuracy_similarity(models, optimizers, learning_rates, **kwargs):
         ###########################################################################################
         # Step 0: Create figure array so each model gets an accuracy, similarity and legend plot  #
         ###########################################################################################
-        f             = plt.figure(figsize=kwargs.get('figsize', (9, 9)))
+        f             = plt.figure(figsize=kwargs.get('figsize', (9, 12)))
         f.suptitle(f'{optimizer}, {base_lr}')
 
         axes_acc    = dict()
@@ -123,7 +185,7 @@ def plot_accuracy_similarity(models, optimizers, learning_rates, **kwargs):
             else:
                 # first plot: share yaxis of first plot
                 axes_acc[model] = f.add_subplot(3, len(models), i+1, sharey=first_acc)
-                axes_sim[model] = f.add_subplot(3, len(models), i+1+len(models), sharey=first_sim)
+                axes_sim[model] = f.add_subplot(3, len(models), i+1+len(models))
 
             axes_legend[model] = f.add_subplot(3, len(models), i+1+2*len(models))
 
@@ -134,12 +196,13 @@ def plot_accuracy_similarity(models, optimizers, learning_rates, **kwargs):
         colors = {
             0.99: Color.RED.value,
             0.995: Color.DARKBLUE.value,
-            10:  Color.SLATE.value
+            'never':  Color.SLATE.value,
+            'percentage': Color.YELLOW.value
         }
         linestyles = {
-            0.99: ':',
+            0.99: '--',
             0.995: '-.',
-            10:  '-'
+            'percentage': '-'
         }
 
         ###########################################################################################
@@ -179,23 +242,31 @@ def plot_accuracy_similarity(models, optimizers, learning_rates, **kwargs):
             # inifinite color map iteration; each layer has one color
             cmap              = plt.get_cmap('Set2')
             color_cycler      = iter(itertools.cycle(cmap.colors[:len(similarity_traces)]))
-            for layer in similarity_traces:
-                data = np.zeros([len(similarity_traces[layer]), len(accuracy_steps)])
-                for i, (steps, values) in enumerate(similarity_traces[layer]):
-                    data[i, :len(steps)] = values
-                    data[i, len(steps):] = values[-1]
-                # sometimes there are correlation coefs > 1 which doesn't make sense. i have not
-                # yet investigated where those come from.
-                data[data > 1] = 1
-                label = layer.split('.')[1]
-                axes_sim[model].plot(accuracy_steps, data.mean(axis=0), label=label,
-                                     c=next(color_cycler), linestyle=linestyles[freeze_at])
+            # do not plot the non-frozen runs in the similarity plots as it's not very informative
+            if freeze_at != 'never':
+                for layer in similarity_traces:
+                    data = np.zeros([len(similarity_traces[layer]), len(accuracy_steps)])
+                    for i, (steps, values) in enumerate(similarity_traces[layer]):
+                        # quick n dirty ways of getting percentage marker lines. they are drawn
+                        # multiple times and this should be done separately after this loop
+                        if freeze_at == 'percentage':
+                            axes_sim[model].axvline(x=len(steps), linewidth=0.5,
+                                                    linestyle=':', color='gray',
+                                                    zorder=0)
+                        data[i, :len(steps)] = values
+                        data[i, len(steps):] = values[-1]
+                    # sometimes there are correlation coefs > 1 which doesn't make sense. i have not
+                    # yet investigated where those come from.
+                    data[data > 1] = 1
+                    label = layer.split('.')[1]
+                    axes_sim[model].plot(accuracy_steps, data.mean(axis=0), label=label,
+                                        c=next(color_cycler), linestyle=linestyles[freeze_at])
 
         ###########################################################################################
         #                                 Step 2: Create legends                                  #
         ###########################################################################################
         for ax in axes_acc.values():
-            prune_labels(ax, loc='lower right')
+            prune_labels(ax, loc='best')
 
         # create a few dummy entries for labeling the different line styles in the similarity plot
         legend_lines = [mlines.Line2D([], [], color='black', linestyle=style, markersize=15,
@@ -213,7 +284,7 @@ def plot_accuracy_similarity(models, optimizers, learning_rates, **kwargs):
             axes_legend[model].yaxis.set_visible(False)
             axes_sim[model].legend(handles=legend_lines)
 
-        m_str        = model.lower()
+        m_str        = '_'.join(map(str.lower, models))
         o_str        = optimizer.lower()
         lr_str       = str(base_lr).replace('.', '')
         key          = f'{m_str}_{o_str}_{lr_str}.pdf'
@@ -227,7 +298,8 @@ def plot_accuracy_similarity(models, optimizers, learning_rates, **kwargs):
 
 
 def plots_for_thesis():
-    plot_accuracy_similarity(['VGG', 'AlexNetMini'], ['SGD'], [0.01, 0.1, 0.5], save=False)
+    # plot_accuracy_similarity(['VGG', 'AlexNetMini'], ['SGD'], [0.01, 0.1, 0.5], save=False)
+    plot_freeze_points(['VGG', 'AlexNetMini'], ['SGD'], [0.01, 0.1, 0.5], [0.99, 0.995, 'percentage'])
 
 
 if __name__ == '__main__':
