@@ -38,50 +38,70 @@ def plot_freeze_points(models, optimizers, learning_rates, freeze_points):
     ]
 
     pipeline = conditions + [
+        # perform a join; pull all the metrics for a run into the run document
         {'$lookup': {'from': 'metrics',
                      'localField': '_id',
                      'foreignField': 'run_id',
                      'as': 'metrics'}},
+        # now we only keep a few config fields and do some processing on the metrics
         {'$project': {'_id': True,
                       'base_lr': '$config.base_lr',
                       'model': '$config.model',
                       'optimizer': '$config.optimizer',
                       'freeze_at': '$config.freeze_at',
                       'metrics': {
-                          '$filter':
-                                  {'input': {
-                                      '$map':
-                                      {
-                                          'input': '$metrics',
-                                          'in': {'name': '$$this.name',
-                                                 'n_steps': {'$size': '$$this.steps'}}
-                                      }
-                                  },
-                                      'cond':
-                                      {
-                                          '$eq':
-                                          [
-                                              {'$substr': ['$$this.name', 0, len('self_similarity')]},
-                                              'self_similarity'
-                                          ]
-                                      }
+                          # we want to remove metrics which don't start with "self_similarity"
+                          # so use filter
+                          '$filter': {
+                              # for the input array, we first map the metric runs to (name, size)
+                              # pairs
+                              'input': {
+                                  '$map': {
+                                      'input': '$metrics',
+                                      'in': {'name': '$$this.name',
+                                             'n_steps': {'$size': '$$this.steps'}}
                                   }
-                                  }
+                              },
+                              # the filter condition is that the name start with "self_similarity"
+                              'cond': {
+                                  '$eq': [
+                                      {'$substr': ['$$this.name', 0, len('self_similarity')]},
+                                      'self_similarity'
+                                  ]
+                              }
+                          }
+                      }
                       }
          },
-        {'$group':
-         {
-             '_id': {'base_lr': '$base_lr',
-                     'model': '$model',
-                     'optimizer': '$optimizer'},
-             'freeze_points': {'$push': {'value': '$freeze_at', 'metrics': '$metrics'}}
-         }
-         }
+        {'$project': {'_id': True,
+                      'base_lr': '$base_lr',
+                      'model': '$model',
+                      'optimizer': '$optimizer',
+                      'freeze_at': '$freeze_at',
+                      'metrics': {
+                          '$map': {
+                              'input': '$metrics',
+                              'in': {'name': {'$substr': ['$$this.name', len('self_similarity')+1, -1]},
+                                     'n_steps': '$$this.n_steps'}
+                          }
+                      }
+                      }
+         },
+        # we then form group identified by (lr, model, optimizer)  which contain tuples of
+        # (freeze_point, recorded_metrics), where recorded_metrics is again an array of
+        # (freeze_point, layer_name) tuples
+        {'$group': {
+            '_id': {'base_lr': '$base_lr',
+                    'model': '$model',
+                    'optimizer': '$optimizer'},
+            'freeze_points': {'$push': {'value': '$freeze_at', 'metrics': '$metrics'}}
+        }
+        }
     ]
     sacred_db = get_client().sacred
 
     groups = list(sacred_db.runs.aggregate(pipeline))
-    __import__('ipdb').set_trace()
+
 
 
 def plot_accuracy_similarity(models, optimizers, learning_rates, **kwargs):
