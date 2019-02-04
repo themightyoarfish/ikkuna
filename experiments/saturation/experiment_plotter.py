@@ -22,7 +22,7 @@ def get_layer_metric_map(metric_regex, ids):
     return name_metric_map
 
 
-def plot_freeze_points(models, optimizers, learning_rates, freeze_points):
+def plot_freeze_points(models, optimizers, learning_rates, freeze_points, **kwargs):
     conditions = [
         {'$match': {'config.identifier': 'experiments/saturation/experiment'}},
         {'$match': {'result': 0}},
@@ -94,14 +94,163 @@ def plot_freeze_points(models, optimizers, learning_rates, freeze_points):
             '_id': {'base_lr': '$base_lr',
                     'model': '$model',
                     'optimizer': '$optimizer'},
+            '_models': {'$addToSet': '$model'},
             'freeze_points': {'$push': {'value': '$freeze_at', 'metrics': '$metrics'}}
         }
+        },
+        {'$sort': {'_id.base_lr': -1}},
+        # ... after sorting so we iterate over groups according to the varying parameter – the
+        # learning rate – we merge groups so that each group contains the runs for all models and we
+        # have in each group a _group property which contains the actual groups per-model and
+        # per-freeze-point. We also record the ids for each of theses subgroups by accessing the
+        # _member_ids from the original groups.
+        {'$unwind': '$_models'},
+        {
+            '$group':
+            {
+                '_id':
+                {
+                    'optimizer': '$_id.optimizer',
+                    'base_lr': '$_id.base_lr',
+                },
+                '_models': {'$addToSet': '$_models'},
+                '_groups':
+                {
+                    '$push': {'model': '$_id.model', 'freeze_points': '$freeze_points'},
+                },
+            }
         }
     ]
     sacred_db = get_client().sacred
-
     groups = list(sacred_db.runs.aggregate(pipeline))
 
+    if kwargs.get('save', False):
+        matplotlib.use('cairo')
+        save = True
+    else:
+        save = False
+
+    import matplotlib.pyplot as plt
+
+    figures = dict()
+
+    # we scatterlot dots for each point at which a layer is frozen. we separate the different
+    # conditions according to y-height
+    y_heights = {
+        'percentage': 1,
+        0.99: 2,
+        0.995: 3
+    }
+    # set up colors and markers to use
+    cmap          = plt.get_cmap('tab20')
+    color_iters   = None
+    layer_colors  = None
+
+    markers       = 'o v ^ s p P * x d +'.split()
+    marker_iters  = None
+    layer_markers = None
+
+    for group in groups:
+        models    = sorted(group['_models'])
+        optimizer = group['_id']['optimizer']
+        base_lr   = group['_id']['base_lr']
+        subgroups = group['_groups']
+
+        marker_iters = marker_iters or {model: iter(markers) for model in models}
+        if not layer_markers:
+            # there's some black fuckery going on here which makes dict comprehensions re-use
+            # iterators although there is one distinct iter object for each model.
+            # I wanted to do this:
+            #   layer_markers = layer_markers or {model: defaultdict(lambda: next(marker_iters[model])) for model in models}
+            # but for unknown reason, the iterator for the second model VGG does not start at the
+            # beginning of `markers` but where the one for AlexNetMini left off. That happens in
+            # spite of the fact that the iterators are distinct objects. I can only assume this has
+            # to do with the use of `lambda` because closures in Python are retarded sometimes.
+            # Lesson learned: Don't create lambdas in a loop. I would have thought that `model` is
+            # inadvertantly shared by all lambdas as the reference is not created for each lambda
+            # separately, but the observation that the values in layer_colors are different refutes
+            # this idea. in summary:
+            # ....................../´¯/)
+            # ....................,/¯../
+            # .................../..../
+            # ............./´¯/'...'/´¯¯`·¸
+            # ........../'/.../..../......./¨¯\
+            # ........('(...´...´.... ¯~/'...')
+            # .........\.................'...../
+            # ..........''...\.......... _.·´
+            # ............\..............(
+            # ..............\.............\...
+            #
+
+            layer_markers = {}
+            for model in models:
+                def fn():
+                    # creating a function seems to solve the closure problem
+                    return next(marker_iters[model])
+                layer_markers[model] = defaultdict(fn)
+
+        color_iters = color_iters or {model: iter(cmap.colors) for model in models}
+        if not layer_colors:
+            layer_colors = {}
+            for model in models:
+                def fn():
+                    return next(color_iters[model])
+                layer_colors[model] = defaultdict(fn)
+
+        f    = plt.figure(figsize=(10, 4))
+        f.suptitle(f'{optimizer}, {base_lr}')
+
+        axes = dict()
+
+        ################################
+        #  Create axes for each model  #
+        ################################
+        first = None
+        for i, model in enumerate(models):
+            if not first:
+                first = axes[model] = f.add_subplot(1, len(models), i+1)
+                axes[model].set_yticks(list(y_heights.values()))
+                axes[model].set_yticklabels(list(y_heights.keys()))
+            else:
+                axes[model] = f.add_subplot(1, len(models), i+1, sharey=first)
+                plt.setp(axes[model].get_yticklabels(), visible=False)
+            # make plots high enough for some empty space where the legend can go
+            axes[model].set_ylim((0, 8))
+            axes[model].set_title(f'{model}')
+            # line separators for easier distinction between conditions
+            axes[model].axhline(1.5, color='gray', linewidth=0.5)
+            axes[model].axhline(2.5, color='gray', linewidth=0.5)
+
+        for subgroup in subgroups:
+            model         = subgroup['model']
+            freeze_points = subgroup['freeze_points']
+
+            # freeze_points is a list of {float, metrics} dicts
+            for tup in freeze_points:
+                freeze_point = tup['value']
+                # metrics is a list of {name, convergence_point} dicts
+                metrics = map(lambda obj: (obj['name'], obj['n_steps']), tup['metrics'])
+                for layer, x in tup['metrics']:
+                    color  = layer_colors[model][layer]
+                    marker = layer_markers[model][layer]
+                    # offset marker a bit so they don't overlap
+                    yoff   = np.random.uniform(-0.3, 0.3)
+                    axes[model].scatter(x, y_heights[freeze_point] + yoff,
+                                        c=color, marker=marker, label=layer, alpha=0.8)
+
+            handles, labels = prune_labels(axes[model], loc='upper center', linestyle=None)
+
+        m_str        = '_'.join(map(str.lower, models))
+        o_str        = optimizer.lower()
+        lr_str       = str(base_lr).replace('.', '')
+        key          = f'convergence_{m_str}_{o_str}_{lr_str}.pdf'
+        figures[key] = f
+
+    if not save:
+        plt.show()
+    else:
+        for name, f in figures.items():
+            f.savefig(name)
 
 
 def plot_accuracy_similarity(models, optimizers, learning_rates, **kwargs):
@@ -184,7 +333,7 @@ def plot_accuracy_similarity(models, optimizers, learning_rates, **kwargs):
         ###########################################################################################
         # Step 0: Create figure array so each model gets an accuracy, similarity and legend plot  #
         ###########################################################################################
-        f             = plt.figure(figsize=kwargs.get('figsize', (9, 12)))
+        f             = plt.figure(figsize=kwargs.get('figsize', (9, 5)))
         f.suptitle(f'{optimizer}, {base_lr}')
 
         axes_acc    = dict()
@@ -260,8 +409,8 @@ def plot_accuracy_similarity(models, optimizers, learning_rates, **kwargs):
             # Number of epochs hardcoded
             accuracy_steps    = np.arange(1, 30)
             # inifinite color map iteration; each layer has one color
-            cmap              = plt.get_cmap('Set2')
-            color_cycler      = iter(itertools.cycle(cmap.colors[:len(similarity_traces)]))
+            cmap              = plt.get_cmap('tab20')
+            color_iter      = iter(cmap.colors[:len(similarity_traces)])
             # do not plot the non-frozen runs in the similarity plots as it's not very informative
             if freeze_at != 'never':
                 for layer in similarity_traces:
@@ -280,7 +429,7 @@ def plot_accuracy_similarity(models, optimizers, learning_rates, **kwargs):
                     data[data > 1] = 1
                     label = layer.split('.')[1]
                     axes_sim[model].plot(accuracy_steps, data.mean(axis=0), label=label,
-                                        c=next(color_cycler), linestyle=linestyles[freeze_at])
+                                         c=next(color_iter), linestyle=linestyles[freeze_at])
 
         ###########################################################################################
         #                                 Step 2: Create legends                                  #
@@ -307,7 +456,7 @@ def plot_accuracy_similarity(models, optimizers, learning_rates, **kwargs):
         m_str        = '_'.join(map(str.lower, models))
         o_str        = optimizer.lower()
         lr_str       = str(base_lr).replace('.', '')
-        key          = f'{m_str}_{o_str}_{lr_str}.pdf'
+        key          = f'acc_sim_{m_str}_{o_str}_{lr_str}.pdf'
         figures[key] = f
 
     if not save:
@@ -319,7 +468,9 @@ def plot_accuracy_similarity(models, optimizers, learning_rates, **kwargs):
 
 def plots_for_thesis():
     # plot_accuracy_similarity(['VGG', 'AlexNetMini'], ['SGD'], [0.01, 0.1, 0.5], save=False)
-    plot_freeze_points(['VGG', 'AlexNetMini'], ['SGD'], [0.01, 0.1, 0.5], [0.99, 0.995, 'percentage'])
+    plot_freeze_points(['VGG', 'AlexNetMini'], ['SGD'], [0.01, 0.1, 0.5],
+                       [0.99, 0.995, 'percentage'],
+                       save=True)
 
 
 if __name__ == '__main__':
