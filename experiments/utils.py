@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def prune_labels(ax, loc='best'):
+def prune_labels(ax, loc='best', linestyle='-'):
     '''De-duplicate labels in a legend.
 
     .. warning::
@@ -10,7 +10,7 @@ def prune_labels(ax, loc='best'):
     '''
     new_handles_labels = dict()
     for h, l in zip(*ax.get_legend_handles_labels()):
-        if l not in new_handles_labels and h.get_linestyle() == '-':
+        if l not in new_handles_labels and (h.get_linestyle() == linestyle or linestyle is None):
             new_handles_labels[l] = h
     sorted_labels = sorted(new_handles_labels)
     sorted_handles = [new_handles_labels[l] for l in sorted_labels]
