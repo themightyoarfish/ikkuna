@@ -197,7 +197,7 @@ def plot_freeze_points(models, optimizers, learning_rates, freeze_points, **kwar
                     return next(color_iters[model])
                 layer_colors[model] = defaultdict(fn)
 
-        f    = plt.figure(figsize=(10, 4))
+        f    = plt.figure(figsize=(10, 5))
         f.suptitle(f'{optimizer}, {base_lr}')
 
         axes = dict()
@@ -215,6 +215,7 @@ def plot_freeze_points(models, optimizers, learning_rates, freeze_points, **kwar
                 axes[model] = f.add_subplot(1, len(models), i+1, sharey=first)
                 plt.setp(axes[model].get_yticklabels(), visible=False)
             # make plots high enough for some empty space where the legend can go
+            axes[model].set_xlabel('Epoch')
             axes[model].set_ylim((0, 8))
             axes[model].set_title(f'{model}')
             # line separators for easier distinction between conditions
@@ -230,7 +231,7 @@ def plot_freeze_points(models, optimizers, learning_rates, freeze_points, **kwar
                 freeze_point = tup['value']
                 # metrics is a list of {name, convergence_point} dicts
                 metrics = map(lambda obj: (obj['name'], obj['n_steps']), tup['metrics'])
-                for layer, x in tup['metrics']:
+                for layer, x in metrics:
                     color  = layer_colors[model][layer]
                     marker = layer_markers[model][layer]
                     # offset marker a bit so they don't overlap
@@ -333,7 +334,7 @@ def plot_accuracy_similarity(models, optimizers, learning_rates, **kwargs):
         ###########################################################################################
         # Step 0: Create figure array so each model gets an accuracy, similarity and legend plot  #
         ###########################################################################################
-        f             = plt.figure(figsize=kwargs.get('figsize', (9, 5)))
+        f             = plt.figure(figsize=kwargs.get('figsize', (10, 10)))
         f.suptitle(f'{optimizer}, {base_lr}')
 
         axes_acc    = dict()
@@ -348,13 +349,13 @@ def plot_accuracy_similarity(models, optimizers, learning_rates, **kwargs):
             if not first_acc:
                 # first plot: don't share axes
                 axes_acc[model] = f.add_subplot(3, len(models), i+1)
-                axes_sim[model] = f.add_subplot(3, len(models), i+1+len(models))
+                axes_sim[model] = f.add_subplot(3, len(models), i+1+len(models), sharex=axes_acc[model])
                 first_acc       = axes_acc[model]
                 first_sim       = axes_sim[model]
             else:
                 # first plot: share yaxis of first plot
                 axes_acc[model] = f.add_subplot(3, len(models), i+1, sharey=first_acc)
-                axes_sim[model] = f.add_subplot(3, len(models), i+1+len(models))
+                axes_sim[model] = f.add_subplot(3, len(models), i+1+len(models), sharex=axes_acc[model])
 
             axes_legend[model] = f.add_subplot(3, len(models), i+1+2*len(models))
 
@@ -467,7 +468,7 @@ def plot_accuracy_similarity(models, optimizers, learning_rates, **kwargs):
 
 
 def plots_for_thesis():
-    # plot_accuracy_similarity(['VGG', 'AlexNetMini'], ['SGD'], [0.01, 0.1, 0.5], save=False)
+    plot_accuracy_similarity(['VGG', 'AlexNetMini'], ['SGD'], [0.01, 0.1, 0.5], save=True)
     plot_freeze_points(['VGG', 'AlexNetMini'], ['SGD'], [0.01, 0.1, 0.5],
                        [0.99, 0.995, 'percentage'],
                        save=True)
