@@ -56,9 +56,10 @@ def run(batch_size, loss, optimizer, base_lr, n_epochs, dataset, model, freeze_a
                       exporter=exporter)
     trainer.set_model(model)
     trainer.optimize(name=optimizer, lr=base_lr)
-    trainer.add_subscriber(SVCCASubscriber(dataset_test_meta, 500,
-                                           trainer.model.forward, freeze_at=freeze_at,
-                                           subsample=trainer.batches_per_epoch, backend=backend))
+    svcca = SVCCASubscriber(dataset_test_meta, 500,
+                            trainer.model.forward, freeze_at=freeze_at,
+                            subsample=trainer.batches_per_epoch, backend=backend)
+    trainer.add_subscriber(svcca)
     trainer.add_subscriber(RatioSubscriber(['weight_updates', 'weights'], backend=backend))
     trainer.add_subscriber(NormSubscriber('weight_gradients', backend=backend))
     trainer.add_subscriber(TrainAccuracySubscriber(backend=backend))
@@ -75,12 +76,21 @@ def run(batch_size, loss, optimizer, base_lr, n_epochs, dataset, model, freeze_a
 
     trainer.add_subscriber(SacredLoggingSubscriber(ex, logged_metrics))
 
+    if freeze_at == 'percentage':
+        modules   = exporter.modules
+        n_modules = len(modules)
+        step      = n_epochs // n_modules
+
     # do n epochs of training
     batches_per_epoch = trainer.batches_per_epoch
-    epochs            = n_epochs
-    for i in range(epochs):
+    for i in range(n_epochs):
         for b in range(batches_per_epoch):
             trainer.train_batch()
+
+        if freeze_at == 'percentage':
+            freeze_idx = i // step - 1
+            if freeze_idx >= 0:
+                svcca._freeze_module(modules[freeze_idx])
 
     # we return a result so we can use it for filtering aborted experiments in mongodb
     return 0
