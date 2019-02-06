@@ -8,4 +8,4 @@ tqdm>=4.24.0
 Cython>=0.28.5
 
 # git repos
-git+https://github.com/themightyoarfish/svcca-gpu#egg=svcca
+git+git://github.com/themightyoarfish/svcca-gpu.git
