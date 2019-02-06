@@ -26,7 +26,8 @@ author = 'Rasmus Diederichsen'
 suppress_warnings = ['epub.unknown_project_files']
 
 # The short X.Y version
-version = '0.0.2'
+import ikkuna
+version = ikkuna.__version__
 # The full version, including alpha/beta/rc tags
 release = '0'
 

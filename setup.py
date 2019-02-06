@@ -3,6 +3,7 @@
 from distutils.core import setup
 import setuptools
 import os
+import ikkuna
 
 with open('requirements.txt', mode='r') as f:
     requirements = f.read()
@@ -14,7 +15,7 @@ with open('README.md') as f:
     readme = f.read()
 
 setup(name='ikkuna',
-      version='0.0.2',
+      version=ikkuna.__version__,
       description='Ikkuna Neural Network Monitor',
       long_description=readme,
       author='Rasmus Diederichsen',
@@ -28,7 +29,7 @@ setup(name='ikkuna',
                    'License :: OSI Approved :: MIT License',
                    'Intended Audience :: Developers',
                    ],
-      keywords=['deep-learning pytorch neural-networks machine-learning'],
+      keywords='deep-learning pytorch neural-networks machine-learning'.split(),
       packages=setuptools.find_packages('.', include=['ikkuna.*']),
       install_requires=required_pkgs,
       dependency_links=required_repos,
