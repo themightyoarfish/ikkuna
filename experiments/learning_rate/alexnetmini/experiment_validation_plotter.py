@@ -3,10 +3,10 @@ import pymongo
 import matplotlib
 import numpy as np
 from itertools import product
-from experiments.sacred_utils import get_metric_for_ids
+from experiments.sacred_utils import get_metric_for_ids, get_client
 
 # obtain runs collection created by sacred
-db_client = pymongo.MongoClient('mongodb://rasmus:rasmus@35.189.247.219/sacred')
+db_client = get_client()
 sacred_db = db_client.sacred
 runs      = sacred_db.runs
 metrics   = sacred_db.metrics
@@ -21,6 +21,10 @@ def uniquify_list(seq):
 
 
 def accuracy_traces(save=False):
+    # there's a lot of filtering going on here since after these plots were made, many more
+    # experiments with overlapping parameters followed, and some fields for disambiguation were only
+    # added later
+
     # get set of all ids for which we have metrics logged
     ids_with_metrics = metrics.aggregate([{'$project': {'run_id': True, '_id': False}}])
     ids_with_metrics = map(lambda e: e['run_id'], ids_with_metrics)
@@ -29,7 +33,9 @@ def accuracy_traces(save=False):
     # this pipeline outputs documents groups for each combo of batch size and learning rate,
     # containing a list of schedules and a list of lists of ids belonging to each schedule
     pipeline = [
+        {'$match': {'experiment.name': 'experiments/learning_rate/alexnetmini/experiment_validation'}},
         # filter broken experiments
+        {'$match': {'result': {'$ne': None}}},
         {'$match': {'result': {'$ne': None}}},
         # filter experiments for which metrics have not been recorded
         {'$match': {'_id': {'$in': ids_with_metrics}}},
@@ -49,6 +55,7 @@ def accuracy_traces(save=False):
                     '_ids': {'$addToSet': '$_id'}
                     },
          },
+        {'$sort': {'_id.schedule': 1}},
         # transform into sets identified by key (batch_size, base_lr) with a list of schedules and a
         # list of lists of ids for each schedule
         {'$group': {'_id': {'batch_size': '$_id.batch_size',
@@ -58,8 +65,8 @@ def accuracy_traces(save=False):
     ]
     groups = list(sacred_db.runs.aggregate(pipeline))
 
-    batch_sizes  = sorted(sacred_db.runs.distinct('config.batch_size'))
-    lrs          = sorted(sacred_db.runs.distinct('config.base_lr'))
+    batch_sizes  = sorted(sacred_db.runs.distinct('config.batch_size', {'experiment.name': 'experiments/learning_rate/alexnetmini/experiment_validation'}))
+    lrs          = sorted(sacred_db.runs.distinct('config.base_lr', {'experiment.name': 'experiments/learning_rate/alexnetmini/experiment_validation'}))
     combinations = list(product(batch_sizes, lrs))
     n            = len(combinations)
     h            = int(n // sqrt(n))
@@ -89,7 +96,7 @@ def accuracy_traces(save=False):
         ax = ax_map[(batch_size, base_lr)]
         ax.set_title(f'b={batch_size} lr={base_lr}')
 
-        for schedule, ids in zip(schedules, idss):
+        for i, (schedule, ids) in enumerate(zip(schedules, idss)):
             accuracies      = get_metric_for_ids('test_accuracy', ids)
             stepss, valuess = zip(*[(element['steps'], element['values']) for element in accuracies])
             stepss_unique = uniquify_list(stepss)
@@ -100,9 +107,8 @@ def accuracy_traces(save=False):
             mean            = values.mean(axis=0)
             error           = [np.abs(values.min(axis=0) - mean), np.abs(values.max(axis=0) - mean)]
             color           = colors[schedule]
-            for run in accuracies:
-                ax.errorbar(steps, mean, yerr=error, label=schedule, color=color,
-                            errorevery=len(steps) // 20)
+            ax.errorbar(steps, mean, yerr=error, label=schedule, color=color,
+                        errorevery=len(steps) // 20, zorder=i, elinewidth=0.8, errorstart=2*i)
     if save:
         plt.savefig('accuracies.pdf')
     else:
@@ -160,4 +166,5 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--save', action='store_true')
     args = parser.parse_args()
-    accuracy_boxplots(lr=0.2, batch_size=128, save=args.save)
+    # accuracy_boxplots(lr=0.2, batch_size=128, save=args.save)
+    accuracy_traces(save=args.save)
