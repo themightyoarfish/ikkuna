@@ -1,21 +1,12 @@
-import pymongo
 import numpy as np
-from experiments.sacred_utils import get_metric_for_ids
+from experiments.sacred_utils import get_metric_for_ids, get_client
 from experiments.utils import unify_limits
 import matplotlib
 matplotlib.rcParams['lines.linewidth'] = 0.8
 from colors import Color
-import os
-
-try:
-    pwd = os.environ['MONGOPWD']
-except KeyError:
-    print('You need to set the MONGOPWD variable to connect to the database.')
-    import sys
-    sys.exit(1)
 
 # obtain runs collection created by sacred
-db_client = pymongo.MongoClient(f'mongodb://rasmus:{pwd}@35.189.247.219/sacred')
+db_client = get_client()
 sacred_db = db_client.sacred
 runs      = sacred_db.runs
 metrics   = sacred_db.metrics
@@ -190,8 +181,12 @@ def plot_moments(models, optimizers, learning_rates, **kwargs):
                     c=np.array(Color.RED).squeeze(),
                     linewidth=1)
 
+        loss_handles, loss_labels = ax_loss.get_legend_handles_labels()
+        acc_handles, acc_labels = ax_acc.get_legend_handles_labels()
+
         handles, labels = ax_mean.get_legend_handles_labels()
-        ax_legend.legend(handles, labels, loc='upper right')
+        ax_legend.legend(handles + loss_handles + acc_handles, labels + loss_labels + acc_labels,
+                         loc='upper right')
         ax_legend.spines['top'].set_visible(False)
         ax_legend.spines['right'].set_visible(False)
         ax_legend.spines['bottom'].set_visible(False)
