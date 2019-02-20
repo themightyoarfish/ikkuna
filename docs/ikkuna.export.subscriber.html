@@ -39,7 +39,7 @@
         </button>
         <a class="navbar-brand" href="index.html"><span><img src="_static/logo.png"></span>
           ikkuna</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.0.2</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.1.0</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -599,25 +599,25 @@ data at once would be too larger. Otherwise use <a class="reference internal" hr
 
 <dl class="method">
 <dt id="ikkuna.export.subscriber.BatchedSVCCASubscriber._module_complete_previous">
-<code class="descname">_module_complete_previous</code><span class="sig-paren">(</span><em>module_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/svcca.html#BatchedSVCCASubscriber._module_complete_previous"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.BatchedSVCCASubscriber._module_complete_previous" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_module_complete_previous</code><span class="sig-paren">(</span><em>module</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/svcca.html#BatchedSVCCASubscriber._module_complete_previous"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.BatchedSVCCASubscriber._module_complete_previous" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if activations for module are completely buffered from the previous step.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="ikkuna.export.subscriber.BatchedSVCCASubscriber._module_complete_current">
-<code class="descname">_module_complete_current</code><span class="sig-paren">(</span><em>module_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/svcca.html#BatchedSVCCASubscriber._module_complete_current"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.BatchedSVCCASubscriber._module_complete_current" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_module_complete_current</code><span class="sig-paren">(</span><em>module</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/svcca.html#BatchedSVCCASubscriber._module_complete_current"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.BatchedSVCCASubscriber._module_complete_current" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if activations for module are completely buffered from the current step.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="ikkuna.export.subscriber.BatchedSVCCASubscriber._record_activations_previous">
-<code class="descname">_record_activations_previous</code><span class="sig-paren">(</span><em>module_name</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/svcca.html#BatchedSVCCASubscriber._record_activations_previous"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.BatchedSVCCASubscriber._record_activations_previous" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_record_activations_previous</code><span class="sig-paren">(</span><em>module</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/svcca.html#BatchedSVCCASubscriber._record_activations_previous"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.BatchedSVCCASubscriber._record_activations_previous" title="Permalink to this definition">¶</a></dt>
 <dd><p>Record activations into the <code class="docutils literal notranslate"><span class="pre">previous</span></code> buffer</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="ikkuna.export.subscriber.BatchedSVCCASubscriber._record_activations_current">
-<code class="descname">_record_activations_current</code><span class="sig-paren">(</span><em>module_name</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/svcca.html#BatchedSVCCASubscriber._record_activations_current"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.BatchedSVCCASubscriber._record_activations_current" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_record_activations_current</code><span class="sig-paren">(</span><em>module</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/svcca.html#BatchedSVCCASubscriber._record_activations_current"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.BatchedSVCCASubscriber._record_activations_current" title="Permalink to this definition">¶</a></dt>
 <dd><p>Record activations into the <code class="docutils literal notranslate"><span class="pre">current</span></code> buffer</p>
 </dd></dl>
 
@@ -654,8 +654,8 @@ rather are all over the place. Investigation needed.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>forward_fn</strong> (<em>function</em>) – Function to obtain predictions. You probably want to pass the model’s
 <code class="docutils literal notranslate"><span class="pre">forward()</span></code> routine here</li>
-<li><strong>loss_fn</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (1.1.0a0+dfcafb1 ))"><em>torch.nn.Module</em></a>) – Loss function (such as <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.CrossEntropyLoss" title="(in PyTorch vmaster (1.1.0a0+dfcafb1 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.CrossEntropyLoss</span></code></a>)</li>
-<li><strong>data_loader</strong> (<a class="reference external" href="https://pytorch.org/docs/master/data.html#torch.utils.data.DataLoader" title="(in PyTorch vmaster (1.1.0a0+dfcafb1 ))"><em>torch.utils.data.DataLoader</em></a>) – Loader for the dataset to compute gradients over</li>
+<li><strong>loss_fn</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (1.1.0a0+237e543 ))"><em>torch.nn.Module</em></a>) – Loss function (such as <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.CrossEntropyLoss" title="(in PyTorch vmaster (1.1.0a0+237e543 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.CrossEntropyLoss</span></code></a>)</li>
+<li><strong>data_loader</strong> (<a class="reference external" href="https://pytorch.org/docs/master/data.html#torch.utils.data.DataLoader" title="(in PyTorch vmaster (1.1.0a0+237e543 ))"><em>torch.utils.data.DataLoader</em></a>) – Loader for the dataset to compute gradients over</li>
 <li><strong>batch_finished</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of samples to compute gradients for in one step of power iteration
 More should lead to a better estimate</li>
 <li><strong>frequency</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – How often to compute the eigenvalues (after every nth batch)</li>
@@ -710,6 +710,36 @@ computes histograms per epoch.  Histograms are non-normalized.</p>
 around it), this subscriber does <em>not</em> publish a
 <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleMessage" title="ikkuna.export.messages.ModuleMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleMessage</span></code></a></p>
 </div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ikkuna.export.subscriber.LossSubscriber">
+<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">LossSubscriber</code><span class="sig-paren">(</span><em>message_bus=&lt;ikkuna.export.messages.MessageBus object&gt;</em>, <em>tag='default'</em>, <em>subsample=1</em>, <em>ylims=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/loss.html#LossSubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.LossSubscriber" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Subscriber that plots the training loss at every time step.</p>
+<dl class="method">
+<dt id="ikkuna.export.subscriber.LossSubscriber.compute">
+<code class="descname">compute</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/loss.html#LossSubscriber.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.LossSubscriber.compute" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is where the magic happens. Subclasses should override this method so that they can
+compute their metric upon reception of their desired messages or do whatever else they want.
+If interested in plotting, they should then use their
+<a class="reference internal" href="#ikkuna.export.subscriber.PlotSubscriber.backend" title="ikkuna.export.subscriber.PlotSubscriber.backend"><code class="xref py py-attr docutils literal notranslate"><span class="pre">backend</span></code></a> property to plot the metric (if
+they display line plots) and their <code class="docutils literal notranslate"><span class="pre">message_bus</span></code> to publish a new message with the metric.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message_or_bundle</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><em>ikkuna.export.messages.Message</em></a><em> or </em><a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MessageBundle" title="ikkuna.export.messages.MessageBundle"><em>ikkuna.export.messages.MessageBundle</em></a>) – <p>If the subscriber uses a <a class="reference internal" href="#ikkuna.export.subscriber.SynchronizedSubscription" title="ikkuna.export.subscriber.SynchronizedSubscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">SynchronizedSubscription</span></code></a>, a bundle is
+received in each call, otherwise just a
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code></a>.</p>
+<p>Messages can either be <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.NetworkMessage" title="ikkuna.export.messages.NetworkMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">NetworkMessage</span></code></a>
+if the Subscriber is not interested in actual training artifacts, or
+<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleMessage" title="ikkuna.export.messages.ModuleMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleMessage</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -848,7 +878,7 @@ set).</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/data.html#torch.utils.data.DataLoader" title="(in PyTorch vmaster (1.1.0a0+dfcafb1 ))">torch.utils.data.DataLoader</a></td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/data.html#torch.utils.data.DataLoader" title="(in PyTorch vmaster (1.1.0a0+237e543 ))">torch.utils.data.DataLoader</a></td>
 </tr>
 </tbody>
 </table>
@@ -891,7 +921,7 @@ set).</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>dataset_meta</strong> (<a class="reference internal" href="train.html#train.DatasetMeta" title="train.DatasetMeta"><em>train.DatasetMeta</em></a>) – Test dataset</li>
-<li><strong>forward_fn</strong> (<em>function</em>) – Bound version of <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.forward" title="(in PyTorch vmaster (1.1.0a0+dfcafb1 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.forward()</span></code></a>. This could be obtained
+<li><strong>forward_fn</strong> (<em>function</em>) – Bound version of <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.forward" title="(in PyTorch vmaster (1.1.0a0+237e543 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.forward()</span></code></a>. This could be obtained
 from the <a class="reference internal" href="train.html#train.Trainer.model" title="train.Trainer.model"><code class="xref py py-attr docutils literal notranslate"><span class="pre">train.Trainer.model</span></code></a> property.</li>
 <li><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Batch size to use for pushing the test data through the model. This doesn’t
 have to be the training batch size, but must be selected so that the forward

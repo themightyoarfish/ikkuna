@@ -4,7 +4,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>ikkuna.export.subscriber.variance &#8212; ikkuna 0 documentation</title>
+    <title>ikkuna.export.subscriber.loss &#8212; ikkuna 0 documentation</title>
     <link rel="stylesheet" href="../../../../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
@@ -105,26 +105,21 @@
   <div class="row">
     <div class="col-md-12 content">
       
-  <h1>Source code for ikkuna.export.subscriber.variance</h1><div class="highlight"><pre>
+  <h1>Source code for ikkuna.export.subscriber.loss</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">ikkuna.export.subscriber</span> <span class="k">import</span> <span class="n">PlotSubscriber</span><span class="p">,</span> <span class="n">Subscription</span>
 <span class="kn">from</span> <span class="nn">ikkuna.export.messages</span> <span class="k">import</span> <span class="n">get_default_bus</span>
 
 
-<div class="viewcode-block" id="VarianceSubscriber"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.VarianceSubscriber">[docs]</a><span class="k">class</span> <span class="nc">VarianceSubscriber</span><span class="p">(</span><span class="n">PlotSubscriber</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;A :class:`~ikkuna.export.subscriber.Subscriber` which computes the</span>
-<span class="sd">    variance of quantity for the current batch.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="LossSubscriber"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.LossSubscriber">[docs]</a><span class="k">class</span> <span class="nc">LossSubscriber</span><span class="p">(</span><span class="n">PlotSubscriber</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;A Subscriber that plots the training loss at every time step.&#39;&#39;&#39;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">message_bus</span><span class="o">=</span><span class="n">get_default_bus</span><span class="p">(),</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ylims</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_bus</span><span class="o">=</span><span class="n">get_default_bus</span><span class="p">(),</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ylims</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;tb&#39;</span><span class="p">):</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;VarianceSubscriber only accepts 1 kind&#39;</span><span class="p">)</span>
-
-        <span class="n">title</span>        <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{kind}</span><span class="s1">_variance&#39;</span>
-        <span class="n">ylabel</span>       <span class="o">=</span> <span class="s1">&#39;σ^2&#39;</span>
+        <span class="n">title</span>        <span class="o">=</span> <span class="s1">&#39;Loss&#39;</span>
+        <span class="n">ylabel</span>       <span class="o">=</span> <span class="s1">&#39;loss&#39;</span>
         <span class="n">xlabel</span>       <span class="o">=</span> <span class="s1">&#39;Train step&#39;</span>
-        <span class="n">subscription</span> <span class="o">=</span> <span class="n">Subscription</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">[</span><span class="n">kind</span><span class="p">],</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="n">subsample</span><span class="p">)</span>
+        <span class="n">subscription</span> <span class="o">=</span> <span class="n">Subscription</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;loss&#39;</span><span class="p">],</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="n">subsample</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">([</span><span class="n">subscription</span><span class="p">],</span> <span class="n">message_bus</span><span class="p">,</span>
                          <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
                           <span class="s1">&#39;ylabel&#39;</span><span class="p">:</span> <span class="n">ylabel</span><span class="p">,</span>
@@ -132,22 +127,9 @@
                           <span class="s1">&#39;xlabel&#39;</span><span class="p">:</span> <span class="n">xlabel</span><span class="p">},</span>
                          <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_add_publication</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{kind}</span><span class="s1">_variance&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;DATA&#39;</span><span class="p">)</span>
-
-<div class="viewcode-block" id="VarianceSubscriber.compute"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.VarianceSubscriber.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;Compute the variance of a quantity. A :class:`~ikkuna.export.messages.ModuleMessage`</span>
-<span class="sd">        with the identifier ``{kind}_variance`` is published. &#39;&#39;&#39;</span>
-
-        <span class="n">module</span><span class="p">,</span> <span class="n">module_name</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">key</span>
-        <span class="n">data</span>                <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">data</span>
-        <span class="n">var</span>                 <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">var</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">global_step</span><span class="p">)</span>
-
-        <span class="n">kind</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{message.kind}</span><span class="s1">_variance&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">message_bus</span><span class="o">.</span><span class="n">publish_module_message</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">global_step</span><span class="p">,</span>
-                                                <span class="n">message</span><span class="o">.</span><span class="n">train_step</span><span class="p">,</span>
-                                                <span class="n">message</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span>
-                                                <span class="n">message</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span></div></div>
+<div class="viewcode-block" id="LossSubscriber.compute"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.LossSubscriber.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="s1">&#39;loss&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">global_step</span><span class="p">)</span></div></div>
 </pre></div>
 
     </div>

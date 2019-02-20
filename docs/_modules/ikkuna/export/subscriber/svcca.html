@@ -37,7 +37,7 @@
         </button>
         <a class="navbar-brand" href="../../../../index.html"><span><img src="../../../../_static/logo.png"></span>
           ikkuna</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.0.2</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.1.0</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -269,7 +269,7 @@
         <span class="c1"># cache tensors so we don&#39;t repeatedly deserialize and copy</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_input_cache</span>    <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_freeze_at</span>      <span class="o">=</span> <span class="n">freeze_at</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_freeze_at</span>      <span class="o">=</span> <span class="n">freeze_at</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">freeze_at</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="k">else</span> <span class="mf">10.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ignore_modules</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
         <span class="n">title</span>        <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;self_similarity&#39;</span>
@@ -287,23 +287,23 @@
                          <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_publication</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;self_similarity&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;DATA&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BatchedSVCCASubscriber._module_complete_previous"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.BatchedSVCCASubscriber._module_complete_previous">[docs]</a>    <span class="k">def</span> <span class="nf">_module_complete_previous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">):</span>
+<div class="viewcode-block" id="BatchedSVCCASubscriber._module_complete_previous"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.BatchedSVCCASubscriber._module_complete_previous">[docs]</a>    <span class="k">def</span> <span class="nf">_module_complete_previous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Check if activations for module are completely buffered from the previous step.&#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="ow">not</span> <span class="p">(</span><span class="n">module_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span>
-                    <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span><span class="o">.</span><span class="n">complete</span><span class="p">(</span><span class="n">module_name</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="ow">not</span> <span class="p">(</span><span class="n">module</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span>
+                    <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span><span class="o">.</span><span class="n">complete</span><span class="p">(</span><span class="n">module</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="BatchedSVCCASubscriber._module_complete_current"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.BatchedSVCCASubscriber._module_complete_current">[docs]</a>    <span class="k">def</span> <span class="nf">_module_complete_current</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">):</span>
+<div class="viewcode-block" id="BatchedSVCCASubscriber._module_complete_current"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.BatchedSVCCASubscriber._module_complete_current">[docs]</a>    <span class="k">def</span> <span class="nf">_module_complete_current</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Check if activations for module are completely buffered from the current step.&#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="ow">not</span> <span class="p">(</span><span class="n">module_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_acts</span>
-                    <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_acts</span><span class="o">.</span><span class="n">complete</span><span class="p">(</span><span class="n">module_name</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="ow">not</span> <span class="p">(</span><span class="n">module</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_acts</span>
+                    <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_acts</span><span class="o">.</span><span class="n">complete</span><span class="p">(</span><span class="n">module</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="BatchedSVCCASubscriber._record_activations_previous"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.BatchedSVCCASubscriber._record_activations_previous">[docs]</a>    <span class="k">def</span> <span class="nf">_record_activations_previous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="BatchedSVCCASubscriber._record_activations_previous"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.BatchedSVCCASubscriber._record_activations_previous">[docs]</a>    <span class="k">def</span> <span class="nf">_record_activations_previous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Record activations into the ``previous`` buffer&#39;&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BatchedSVCCASubscriber._record_activations_current"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.BatchedSVCCASubscriber._record_activations_current">[docs]</a>    <span class="k">def</span> <span class="nf">_record_activations_current</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="BatchedSVCCASubscriber._record_activations_current"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.BatchedSVCCASubscriber._record_activations_current">[docs]</a>    <span class="k">def</span> <span class="nf">_record_activations_current</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Record activations into the ``current`` buffer&#39;&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_current_acts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_acts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_do_forward_pass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># cache inputs initially</span>
@@ -336,14 +336,23 @@
 
         <span class="n">previous_acts</span> <span class="o">=</span> <span class="n">previous_acts</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
         <span class="n">current_acts</span> <span class="o">=</span> <span class="n">current_acts</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-        <span class="n">result_dict</span> <span class="o">=</span> <span class="n">svcca</span><span class="o">.</span><span class="n">cca_core</span><span class="o">.</span><span class="n">get_cca_similarity</span><span class="p">(</span><span class="n">previous_acts</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
-                                                        <span class="n">current_acts</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
-                                                        <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span>
-                                                        <span class="n">threshold</span><span class="o">=</span><span class="mf">0.98</span><span class="p">,</span>
-                                                        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                                                        <span class="n">compute_dirns</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                                                        <span class="n">rescale</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">result_dict</span> <span class="o">=</span> <span class="n">svcca</span><span class="o">.</span><span class="n">cca_core</span><span class="o">.</span><span class="n">robust_cca_similarity</span><span class="p">(</span><span class="n">previous_acts</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+                                                           <span class="n">current_acts</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+                                                           <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
+                                                           <span class="n">threshold</span><span class="o">=</span><span class="mf">0.98</span><span class="p">,</span>
+                                                           <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                                           <span class="n">compute_dirns</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                                           <span class="n">rescale</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_freeze_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Freezing </span><span class="si">{module}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">freeze_module</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ignore_modules</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">module</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">module</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_acts</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_current_acts</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
 
 <div class="viewcode-block" id="BatchedSVCCASubscriber.compute"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.BatchedSVCCASubscriber.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;A :class:`~ikkuna.export.messages.NetworkMessage` with the identifier ``self_similarity``</span>
@@ -357,28 +366,23 @@
             <span class="k">if</span> <span class="n">module</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ignore_modules</span><span class="p">:</span>
                 <span class="k">return</span>
 
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_complete_previous</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_record_activations_previous</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_complete_current</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_record_activations_current</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_complete_previous</span><span class="p">(</span><span class="n">module</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_record_activations_previous</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_complete_current</span><span class="p">(</span><span class="n">module</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_record_activations_current</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_complete_current</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_complete_previous</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
-                <span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_similarity</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_complete_current</span><span class="p">(</span><span class="n">module</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_complete_previous</span><span class="p">(</span><span class="n">module</span><span class="p">):</span>
+                <span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_similarity</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">global_step</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">message_bus</span><span class="o">.</span><span class="n">publish_module_message</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">global_step</span><span class="p">,</span>
                                                         <span class="n">message</span><span class="o">.</span><span class="n">train_step</span><span class="p">,</span>
                                                         <span class="n">message</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span>
                                                         <span class="s1">&#39;self_similarity&#39;</span><span class="p">,</span>
-                                                        <span class="n">message</span><span class="o">.</span><span class="n">kind</span><span class="p">,</span>
+                                                        <span class="n">message</span><span class="o">.</span><span class="n">key</span><span class="p">,</span>
                                                         <span class="n">data</span><span class="o">=</span><span class="n">mean</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">mean</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_freeze_at</span><span class="p">:</span>
-                    <span class="n">freeze_module</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_ignore_modules</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_acts</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_current_acts</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div></div>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_freeze_module</span><span class="p">(</span><span class="n">module</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="SVCCASubscriber"><a class="viewcode-back" href="../../../../ikkuna.export.subscriber.html#ikkuna.export.subscriber.SVCCASubscriber">[docs]</a><span class="k">class</span> <span class="nc">SVCCASubscriber</span><span class="p">(</span><span class="n">BatchedSVCCASubscriber</span><span class="p">):</span>
@@ -391,17 +395,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_current_acts</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_module_complete_previous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">module_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span>
+    <span class="k">def</span> <span class="nf">_module_complete_previous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">module</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span>
 
-    <span class="k">def</span> <span class="nf">_module_complete_current</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">module_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_acts</span>
+    <span class="k">def</span> <span class="nf">_module_complete_current</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">module</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_acts</span>
 
-    <span class="k">def</span> <span class="nf">_record_activations_previous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+    <span class="k">def</span> <span class="nf">_record_activations_previous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_previous_acts</span><span class="p">[</span><span class="n">module</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
 
-    <span class="k">def</span> <span class="nf">_record_activations_current</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_current_acts</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span></div>
+    <span class="k">def</span> <span class="nf">_record_activations_current</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_acts</span><span class="p">[</span><span class="n">module</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span></div>
 </pre></div>
 
     </div>
