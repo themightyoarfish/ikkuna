@@ -37,7 +37,7 @@
         </button>
         <a class="navbar-brand" href="../../../index.html"><span><img src="../../../_static/logo.png"></span>
           ikkuna</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.0.2</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.1.0</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -385,10 +385,10 @@
         <span class="c1"># save weights and biases to publish just before current step ends (in step()). this ensures</span>
         <span class="c1"># we can publish the proper updates</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s1">&#39;weight&#39;</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_weight_cache</span><span class="p">[</span><span class="n">module</span><span class="p">]</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">weight</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_weight_cache</span><span class="p">[</span><span class="n">module</span><span class="p">]</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s1">&#39;bias&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">module</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>   <span class="c1"># bias can be present, but be None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_bias_cache</span><span class="p">[</span><span class="n">module</span><span class="p">]</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">bias</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bias_cache</span><span class="p">[</span><span class="n">module</span><span class="p">]</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_msg_bus</span><span class="o">.</span><span class="n">publish_module_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_global_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">,</span>
                                              <span class="s1">&#39;activations&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modules</span><span class="p">[</span><span class="n">module</span><span class="p">],</span> <span class="n">out_</span><span class="p">,</span>
