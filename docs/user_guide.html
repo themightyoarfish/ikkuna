@@ -341,10 +341,10 @@ those that are. All messages have a <a class="reference internal" href="ikkuna.e
 attribute, which is the topic the message is about. For
 <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.NetworkMessage" title="ikkuna.export.messages.NetworkMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">NetworkMessage</span></code></a>s, the following kinds are
 available:</p>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;&#39;&#39;</span>
-
-
-<span class="s1">_META_KINDS = {</span>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span>    <span class="s1">&#39;activations&#39;</span><span class="p">,</span> <span class="s1">&#39;layer_gradients&#39;</span>
+<span class="p">}</span>
+<span class="sd">&#39;&#39;&#39;Message kinds which are tied to a specific module and always carry data. These topics is just</span>
+<span class="sd">what comes with the library, others can be added to a specific :class:`MessageBus`&#39;&#39;&#39;</span>
 </pre></div>
 </div>
 <p>Most of these topics do not come with any data attached, but for some, the
@@ -352,10 +352,10 @@ messages <a class="reference internal" href="ikkuna.export.html#ikkuna.export.me
 <code class="docutils literal notranslate"><span class="pre">None</span></code>, but contain <a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.1.0a0+2cdbb14 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a>s.</p>
 <p>For <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleMessage" title="ikkuna.export.messages.ModuleMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleMessage</span></code></a>s, the following
 kinds are available:</p>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span>    <span class="s1">&#39;input_labels&#39;</span><span class="p">,</span> <span class="s1">&#39;network_output&#39;</span>
-<span class="p">}</span>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span>
+<span class="k">class</span> <span class="nc">Message</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="s1">&#39;&#39;&#39;Base class for messages emitted from the :class:`~ikkuna.export.Exporter`.</span>
 
-<span class="n">_DATA_KINDS</span> <span class="o">=</span> <span class="p">{</span>
 </pre></div>
 </div>
 <p>These topics always come with data attached and it is an error to attempt

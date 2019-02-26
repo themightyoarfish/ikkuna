@@ -1,30 +1,22 @@
+'''
+
+'''
 import abc
 
-'''
-The following messages are available:
 
-.. data:: _META_KINDS
-
-    Message kinds which are not tied to any specific module. These topics is just what comes with
-    the library, others can be added to a specific :class:`MessageBus`
-
-.. data:: _DATA_KINDS
-
-    Message kinds which are tied to a specific module and always carry data. These topics is just
-    what comes with the library, others can be added to a specific :class:`MessageBus`
-
-'''
-
-
-_META_KINDS = {
+META_KINDS = {
     'batch_started', 'batch_finished', 'epoch_started', 'epoch_finished', 'input_data', 'loss',
     'input_labels', 'network_output'
 }
+'''Message kinds which are not tied to any specific module. These topics is just what comes with
+the library, others can be added to a specific :class:`MessageBus`'''
 
-_DATA_KINDS = {
+DATA_KINDS = {
     'weights', 'weight_gradients', 'weight_updates', 'biases', 'bias_gradients', 'bias_updates',
     'activations', 'layer_gradients'
 }
+'''Message kinds which are tied to a specific module and always carry data. These topics is just
+what comes with the library, others can be added to a specific :class:`MessageBus`'''
 
 
 class Message(abc.ABC):
@@ -333,8 +325,8 @@ class MessageBus(object):
         '''
         self._name = name
         self._subscribers = set()
-        self._meta_kinds = _META_KINDS
-        self._data_kinds = _DATA_KINDS
+        self._meta_kinds = META_KINDS
+        self._data_kinds = DATA_KINDS
 
     def register_meta_topic(self, kind):
         '''Register a topic so it can be subscribed.'''

@@ -467,7 +467,7 @@ Will trigger export of all new activation and weight/bias data.</p>
 to the tracked modules.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">Currently, only layers with one output are supported. It’s not clear to me how one layer</p>
+<p class="last">Currently, only layers with one output are supported.</p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -566,6 +566,20 @@ tracked modules.  Will trigger export of all new gradient data.</p>
 <h2><a class="toc-backref" href="#id3">Submodules</a><a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-ikkuna.export.messages">
 <span id="ikkuna-export-messages"></span><h3><a class="toc-backref" href="#id4">ikkuna.export.messages</a><a class="headerlink" href="#module-ikkuna.export.messages" title="Permalink to this headline">¶</a></h3>
+<dl class="data">
+<dt id="ikkuna.export.messages.META_KINDS">
+<code class="descclassname">ikkuna.export.messages.</code><code class="descname">META_KINDS</code><em class="property"> = {'batch_finished', 'batch_started', 'epoch_finished', 'epoch_started', 'input_data', 'input_labels', 'loss', 'network_output'}</em><a class="headerlink" href="#ikkuna.export.messages.META_KINDS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Message kinds which are not tied to any specific module. These topics is just what comes with
+the library, others can be added to a specific <a class="reference internal" href="#ikkuna.export.messages.MessageBus" title="ikkuna.export.messages.MessageBus"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageBus</span></code></a></p>
+</dd></dl>
+
+<dl class="data">
+<dt id="ikkuna.export.messages.DATA_KINDS">
+<code class="descclassname">ikkuna.export.messages.</code><code class="descname">DATA_KINDS</code><em class="property"> = {'activations', 'bias_gradients', 'bias_updates', 'biases', 'layer_gradients', 'weight_gradients', 'weight_updates', 'weights'}</em><a class="headerlink" href="#ikkuna.export.messages.DATA_KINDS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Message kinds which are tied to a specific module and always carry data. These topics is just
+what comes with the library, others can be added to a specific <a class="reference internal" href="#ikkuna.export.messages.MessageBus" title="ikkuna.export.messages.MessageBus"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageBus</span></code></a></p>
+</dd></dl>
+
 <dl class="class">
 <dt id="ikkuna.export.messages.Message">
 <em class="property">class </em><code class="descclassname">ikkuna.export.messages.</code><code class="descname">Message</code><span class="sig-paren">(</span><em>tag</em>, <em>global_step</em>, <em>train_step</em>, <em>epoch</em>, <em>kind</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/messages.html#Message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.messages.Message" title="Permalink to this definition">¶</a></dt>
