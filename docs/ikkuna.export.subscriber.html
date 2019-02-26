@@ -12,7 +12,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
@@ -631,72 +631,6 @@ will be published.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="ikkuna.export.subscriber.HessianEigenSubscriber">
-<em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">HessianEigenSubscriber</code><span class="sig-paren">(</span><em>forward_fn</em>, <em>loss_fn</em>, <em>data_loader</em>, <em>batch_size</em>, <em>frequency=1</em>, <em>num_eig=1</em>, <em>power_steps=20</em>, <em>tag='default'</em>, <em>message_bus=&lt;ikkuna.export.messages.MessageBus object&gt;</em>, <em>ylims=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/hessian_eig.html#HessianEigenSubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.HessianEigenSubscriber" title="Permalink to this definition">¶</a></dt>
-<dd><p>A subscriber to compute the top-k eigenvalues of the hessian of the loss w.r.t. the weights.
-This is done by using defalted power iteration from Noah Golmant’s <code class="docutils literal notranslate"><span class="pre">hessian_eigenthings</span></code>
-module, which has to be installed. This operation is _very_ expensive, since it involves
-differentiating twice over a subset of the training data. Since the weights must be fixed,
-gradients from training cannot be reused.</p>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">In my experiments, the power iteration from <code class="docutils literal notranslate"><span class="pre">hessian_eigenthings</span></code> does not really work;
-the estimates do not converge to a single value when increasing the number of steps, but
-rather are all over the place. Investigation needed.</p>
-</div>
-<dl class="method">
-<dt id="ikkuna.export.subscriber.HessianEigenSubscriber.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>forward_fn</em>, <em>loss_fn</em>, <em>data_loader</em>, <em>batch_size</em>, <em>frequency=1</em>, <em>num_eig=1</em>, <em>power_steps=20</em>, <em>tag='default'</em>, <em>message_bus=&lt;ikkuna.export.messages.MessageBus object&gt;</em>, <em>ylims=None</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/hessian_eig.html#HessianEigenSubscriber.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.HessianEigenSubscriber.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>forward_fn</strong> (<em>function</em>) – Function to obtain predictions. You probably want to pass the model’s
-<code class="docutils literal notranslate"><span class="pre">forward()</span></code> routine here</li>
-<li><strong>loss_fn</strong> (<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (1.1.0a0+237e543 ))"><em>torch.nn.Module</em></a>) – Loss function (such as <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.CrossEntropyLoss" title="(in PyTorch vmaster (1.1.0a0+237e543 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.CrossEntropyLoss</span></code></a>)</li>
-<li><strong>data_loader</strong> (<a class="reference external" href="https://pytorch.org/docs/master/data.html#torch.utils.data.DataLoader" title="(in PyTorch vmaster (1.1.0a0+237e543 ))"><em>torch.utils.data.DataLoader</em></a>) – Loader for the dataset to compute gradients over</li>
-<li><strong>batch_finished</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of samples to compute gradients for in one step of power iteration
-More should lead to a better estimate</li>
-<li><strong>frequency</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – How often to compute the eigenvalues (after every nth batch)</li>
-<li><strong>num_eig</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of top eigenvalues to compute</li>
-<li><strong>power_iter_steps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of steps in the power iteration for computing a singular value.
-The total number of batches read is then <code class="docutils literal notranslate"><span class="pre">power_iter_steps</span> <span class="pre">*</span> <span class="pre">num_eig</span></code>
-More steps should lead to a better estimate.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ikkuna.export.subscriber.HessianEigenSubscriber.compute">
-<code class="descname">compute</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/hessian_eig.html#HessianEigenSubscriber.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.HessianEigenSubscriber.compute" title="Permalink to this definition">¶</a></dt>
-<dd><p>This is where the magic happens. Subclasses should override this method so that they can
-compute their metric upon reception of their desired messages or do whatever else they want.
-If interested in plotting, they should then use their
-<a class="reference internal" href="#ikkuna.export.subscriber.PlotSubscriber.backend" title="ikkuna.export.subscriber.PlotSubscriber.backend"><code class="xref py py-attr docutils literal notranslate"><span class="pre">backend</span></code></a> property to plot the metric (if
-they display line plots) and their <code class="docutils literal notranslate"><span class="pre">message_bus</span></code> to publish a new message with the metric.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message_or_bundle</strong> (<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><em>ikkuna.export.messages.Message</em></a><em> or </em><a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.MessageBundle" title="ikkuna.export.messages.MessageBundle"><em>ikkuna.export.messages.MessageBundle</em></a>) – <p>If the subscriber uses a <a class="reference internal" href="#ikkuna.export.subscriber.SynchronizedSubscription" title="ikkuna.export.subscriber.SynchronizedSubscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">SynchronizedSubscription</span></code></a>, a bundle is
-received in each call, otherwise just a
-<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message" title="ikkuna.export.messages.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code></a>.</p>
-<p>Messages can either be <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.NetworkMessage" title="ikkuna.export.messages.NetworkMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">NetworkMessage</span></code></a>
-if the Subscriber is not interested in actual training artifacts, or
-<a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleMessage" title="ikkuna.export.messages.ModuleMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleMessage</span></code></a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
 <dt id="ikkuna.export.subscriber.HistogramSubscriber">
 <em class="property">class </em><code class="descclassname">ikkuna.export.subscriber.</code><code class="descname">HistogramSubscriber</code><span class="sig-paren">(</span><em>kind</em>, <em>message_bus=&lt;ikkuna.export.messages.MessageBus object&gt;</em>, <em>tag='default'</em>, <em>subsample=1</em>, <em>backend='tb'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ikkuna/export/subscriber/histogram.html#HistogramSubscriber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ikkuna.export.subscriber.HistogramSubscriber" title="Permalink to this definition">¶</a></dt>
 <dd><p>A <a class="reference internal" href="#ikkuna.export.subscriber.Subscriber" title="ikkuna.export.subscriber.Subscriber"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscriber</span></code></a> which subsamples training artifacts and
@@ -878,7 +812,7 @@ set).</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/data.html#torch.utils.data.DataLoader" title="(in PyTorch vmaster (1.1.0a0+237e543 ))">torch.utils.data.DataLoader</a></td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://pytorch.org/docs/master/data.html#torch.utils.data.DataLoader" title="(in PyTorch vmaster (1.1.0a0+2cdbb14 ))">torch.utils.data.DataLoader</a></td>
 </tr>
 </tbody>
 </table>
@@ -921,7 +855,7 @@ set).</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>dataset_meta</strong> (<a class="reference internal" href="train.html#train.DatasetMeta" title="train.DatasetMeta"><em>train.DatasetMeta</em></a>) – Test dataset</li>
-<li><strong>forward_fn</strong> (<em>function</em>) – Bound version of <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.forward" title="(in PyTorch vmaster (1.1.0a0+237e543 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.forward()</span></code></a>. This could be obtained
+<li><strong>forward_fn</strong> (<em>function</em>) – Bound version of <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.forward" title="(in PyTorch vmaster (1.1.0a0+2cdbb14 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.forward()</span></code></a>. This could be obtained
 from the <a class="reference internal" href="train.html#train.Trainer.model" title="train.Trainer.model"><code class="xref py py-attr docutils literal notranslate"><span class="pre">train.Trainer.model</span></code></a> property.</li>
 <li><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Batch size to use for pushing the test data through the model. This doesn’t
 have to be the training batch size, but must be selected so that the forward
@@ -994,7 +928,7 @@ with the identifier <code class="docutils literal notranslate"><span class="pre"
     </p>
     <p>
         &copy; Copyright 2018, Rasmus Diederichsen.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.<br/>
     </p>
   </div>
 </footer>

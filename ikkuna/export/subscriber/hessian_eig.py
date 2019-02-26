@@ -5,7 +5,12 @@ from hessian_eigenthings import compute_hessian_eigenthings
 
 
 class HessianEigenSubscriber(PlotSubscriber):
-    '''A subscriber to compute the top-k eigenvalues of the hessian of the loss w.r.t. the weights.
+    '''
+    .. note::
+        This subscriber is only installed if `hessian_eigenthings` can be imported at install-time.
+        See `https://github.com/noahgolmant/pytorch-hessian-eigenthings/`.
+
+    A subscriber to compute the top-k eigenvalues of the hessian of the loss w.r.t. the weights.
     This is done by using defalted power iteration from Noah Golmant's ``hessian_eigenthings``
     module, which has to be installed. This operation is _very_ expensive, since it involves
     differentiating twice over a subset of the training data. Since the weights must be fixed,

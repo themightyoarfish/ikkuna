@@ -1,14 +1,14 @@
 import abc
 
 '''
-.. meta_kinds:
+The following messages are available:
+
 .. data:: _META_KINDS
 
     Message kinds which are not tied to any specific module. These topics is just what comes with
     the library, others can be added to a specific :class:`MessageBus`
 
-.. data_kinds:
- data:: _DATA_KINDS
+.. data:: _DATA_KINDS
 
     Message kinds which are tied to a specific module and always carry data. These topics is just
     what comes with the library, others can be added to a specific :class:`MessageBus`

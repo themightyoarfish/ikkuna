@@ -27,7 +27,7 @@ from train import Trainer
 from ikkuna.utils import load_dataset, seed_everything
 from ikkuna.export.subscriber import (RatioSubscriber, HistogramSubscriber, SpectralNormSubscriber,
                                       TestAccuracySubscriber, TrainAccuracySubscriber,
-                                      NormSubscriber, HessianEigenSubscriber, MessageMeanSubscriber,
+                                      NormSubscriber, MessageMeanSubscriber,
                                       VarianceSubscriber, SVCCASubscriber)
 from ikkuna.export import Exporter
 from ikkuna.export.messages import MessageBus
@@ -72,6 +72,7 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
 
     if kwargs['hessian']:
         from torch.utils.data import DataLoader
+        from ikkuna.export.subscriber import HessianEigenSubscriber
         loader = DataLoader(dataset_train.dataset, batch_size=batch_size, shuffle=True)
         trainer.add_subscriber(HessianEigenSubscriber(trainer.model.forward, trainer.loss, loader,
                                                       batch_size,

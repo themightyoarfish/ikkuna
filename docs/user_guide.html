@@ -12,7 +12,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
@@ -331,8 +331,8 @@ registered subscribers. This central authority is the
 <a class="reference internal" href="ikkuna.export.html#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> class. Internally, it replaces some of the
 Model’s methods with wrappers so it can be transparently informed of anything
 interesting happening. It uses PyTorch hooks (see
-<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.register_forward_hook" title="(in PyTorch vmaster (1.1.0a0+237e543 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.register_forward_hook()</span></code></a> and related methods) on the
-<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (1.1.0a0+237e543 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a>s it is tracking and the <a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.1.0a0+237e543 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a>s
+<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.register_forward_hook" title="(in PyTorch vmaster (1.1.0a0+2cdbb14 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.register_forward_hook()</span></code></a> and related methods) on the
+<a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module" title="(in PyTorch vmaster (1.1.0a0+2cdbb14 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a>s it is tracking and the <a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.1.0a0+2cdbb14 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a>s
 inside.</p>
 <p>Messages published from the <a class="reference internal" href="ikkuna.export.html#ikkuna.export.Exporter" title="ikkuna.export.Exporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exporter</span></code></a> come in two types,
 the <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.NetworkMessage" title="ikkuna.export.messages.NetworkMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">NetworkMessage</span></code></a> for events which are not tied
@@ -349,7 +349,7 @@ available:</p>
 </div>
 <p>Most of these topics do not come with any data attached, but for some, the
 messages <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.Message.data" title="ikkuna.export.messages.Message.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code></a> attribute will not be
-<code class="docutils literal notranslate"><span class="pre">None</span></code>, but contain <a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.1.0a0+237e543 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a>s.</p>
+<code class="docutils literal notranslate"><span class="pre">None</span></code>, but contain <a class="reference external" href="https://pytorch.org/docs/master/tensors.html#torch.Tensor" title="(in PyTorch vmaster (1.1.0a0+2cdbb14 ))"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a>s.</p>
 <p>For <a class="reference internal" href="ikkuna.export.html#ikkuna.export.messages.ModuleMessage" title="ikkuna.export.messages.ModuleMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleMessage</span></code></a>s, the following
 kinds are available:</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span>    <span class="s1">&#39;input_labels&#39;</span><span class="p">,</span> <span class="s1">&#39;network_output&#39;</span>
@@ -508,7 +508,7 @@ shipped with the library.</p>
     </p>
     <p>
         &copy; Copyright 2018, Rasmus Diederichsen.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.<br/>
     </p>
   </div>
 </footer>
