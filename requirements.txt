@@ -6,6 +6,4 @@ sphinx-argparse>=0.2.2
 tensorboardX
 tqdm>=4.24.0
 Cython>=0.28.5
-
-# git repos
-git+git://github.com/themightyoarfish/svcca-gpu.git
+svcca @ git+ssh://git@github.com/themightyoarfish/svcca-gpu
