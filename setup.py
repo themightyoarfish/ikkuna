@@ -7,9 +7,6 @@ import ikkuna
 
 with open('requirements.txt', mode='r') as f:
     requirements = f.read()
-    required_pkgs, required_repos = requirements.split('# git repos')
-    required_pkgs = required_pkgs.split()
-    required_repos = required_repos.split()
 
 with open('README.md') as f:
     readme = f.read()
@@ -31,8 +28,7 @@ setup(name='ikkuna',
                    ],
       keywords='deep-learning pytorch neural-networks machine-learning'.split(),
       packages=setuptools.find_packages('.', include=['ikkuna.*']),
-      install_requires=required_pkgs,
-      dependency_links=required_repos,
+      install_requires=requirements,
       entry_points={
           'ikkuna.export.subscriber': [
               'HistogramSubscriber = ikkuna.export.subscriber.histogram:HistogramSubscriber',
