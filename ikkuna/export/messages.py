@@ -217,7 +217,7 @@ class MessageBundle(object):
         '''
         return all(self._received.values())
 
-    def _check_message(self, message):
+    def check_message(self, message):
         '''Check consistency of sequence number, step and epoch or set if not set yet. Check
         consistency of identifier and check for duplication.
 
@@ -285,9 +285,9 @@ class MessageBundle(object):
         Raises
         ------
         ValueError
-            see :meth:`~MessageBundle._check_message()`
+            see :meth:`~MessageBundle.check_message()`
         '''
-        self._check_message(message)
+        self.check_message(message)
         self._received[message.kind] = True
 
         if message.data is not None:
