@@ -1,13 +1,7 @@
-
 from ikkuna.export.subscriber import PlotSubscriber, Subscription
 from ikkuna.export.messages import get_default_bus
 
-try:
-    from hessian_eigenthings import compute_hessian_eigenthings
-except ImportError:
-    print('You need to install `https://github.com/noahgolmant/pytorch-hessian-eigenthings/`')
-    import sys
-    sys.exit(1)
+from hessian_eigenthings import compute_hessian_eigenthings
 
 
 class HessianEigenSubscriber(PlotSubscriber):
