@@ -291,7 +291,7 @@ class Exporter(object):
         to the tracked modules.
 
         .. warning::
-            Currently, only layers with one output are supported. It's not clear to me how one layer
+            Currently, only layers with one output are supported.
 
         Parameters
         ----------
