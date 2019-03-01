@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="-63.2 75.72934 161.2 70" width="161.2" height="70">
+  <defs>
+    <font-face font-family="Helvetica Neue" font-size="49" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica Neue" font-size="36" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue"/>
+      </font-face-src>
+    </font-face>
+  </defs>
+  <metadata> Produced by OmniGraffle 7.8.2 
+    <dc:date>2019-03-01 16:00:25 +0000</dc:date>
+  </metadata>
+  <g id="Canvas_1" fill-opacity="1" stroke-dasharray="none" stroke="none" stroke-opacity="1" fill="none">
+    <title>Canvas 1</title>
+    <g id="Canvas_1: Layer 1">
+      <title>Layer 1</title>
+      <g id="Graphic_43">
+        <text transform="translate(-58.2 81.54334)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="49" font-weight="400" fill="black" x=".1545" y="47">I</tspan>
+        </text>
+      </g>
+      <g id="Group_20">
+        <g id="Graphic_12">
+          <path d="M -13.13007 93.80411 L -4.496789 102.43739 L -13.13007 111.07067 L -21.76335 102.43739 Z" fill="#30537a"/>
+        </g>
+        <g id="Graphic_13">
+          <path d="M -4.2084553 102.70526 L 4.424825 111.33854 L -4.2084553 119.97182 L -12.841736 111.33854 Z" fill="#ee5679"/>
+        </g>
+        <g id="Graphic_15">
+          <path d="M -22.168762 102.62818 L -13.535481 111.26146 L -22.168762 119.89474 L -30.802042 111.26146 Z" fill="#d9d874"/>
+        </g>
+        <g id="Graphic_14">
+          <path d="M -13.150067 111.64687 L -4.5167867 120.28015 L -13.150067 128.91343 L -21.783348 120.28015 Z" fill="#9db0bf"/>
+        </g>
+      </g>
+      <g id="Graphic_47">
+        <path d="M -37.411106 113.22463 L -21.634071 129.00167 L -15.977217 129.00167 L -33.810194 111.16869 L -16.239836 93.59833 L -21.89669 93.59833 L -37.52299 109.22463 L -40.980126 109.22463 L -40.980126 93.59833 L -44.980126 93.59833 L -44.980126 128.85093 L -40.980126 128.85093 L -40.980126 113.22463 Z" fill="black"/>
+      </g>
+      <g id="Group_34">
+        <g id="Graphic_38">
+          <rect x="14.116982" y="98.26089" width="3.6830185" height="25.967197" fill="black"/>
+        </g>
+        <g id="Graphic_37">
+          <rect x="8.244565" y="109.77128" width="8.229548" height="2.9464148" fill="black"/>
+        </g>
+        <g id="Graphic_36">
+          <path d="M -5.121065 124.33912 L 9.335741 109.88231 L 11.41917 111.96574 L -.9542054 124.33912 Z" fill="black"/>
+        </g>
+        <g id="Graphic_35">
+          <path d="M -.7607595 98.26089 L 11.225725 110.24737 L 9.142295 112.3308 L -4.9276193 98.26089 Z" fill="black"/>
+        </g>
+      </g>
+      <g id="Graphic_40">
+        <text transform="translate(17 89.796)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="36" font-weight="400" fill="black" x=".344" y="34">UNA</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>
