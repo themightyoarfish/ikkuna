@@ -30,6 +30,7 @@ entry_points = {
               'MeanSubscriber = ikkuna.export.subscriber.mean:MeanSubscriber',
               'MessageMeanSubscriber = ikkuna.export.subscriber.message_mean:MessageMeanSubscriber',
               'LossSubscriber = ikkuna.export.subscriber.loss:LossSubscriber',
+              'CallbackSubscriber = ikkuna.export.subscriber.subscriber:CallbackSubscriber',
           ]
       }
 
