@@ -1,5 +1,5 @@
 <p align="center">
-<img src="./logo.png" alt="logo" width="100"/>
+<img src="https://github.com/Peltarion/ai_ikkuna/raw/master/logo/ikkuna_logo.svg" alt="logo" width="200"/>
 </p>
 
 # Ikkuna
