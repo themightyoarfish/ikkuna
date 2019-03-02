@@ -107,3 +107,4 @@ runs
 *.swo
 experiments/learning_rate/alexnetmini/playground/
 PlotPlayground.ipynb
+.DS_Store
