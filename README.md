@@ -2,9 +2,19 @@
 <img src="https://raw.githubusercontent.com/Peltarion/ai_ikkuna/master/logo/ikkuna_logo.svg?sanitize=true" alt="logo" width="200"/>
 </p>
 
-A tool for monitoring neural network training.
+A tool for monitoring neural network training. Users, testers and contributors
+welcome.
 
 ---
+
+1. [What the hell is this?](#what-the-hell-is-this)
+2. [Quickstart](#quickstart)
+3. [Examples](#examples)
+4. [API Reference](#documentation)
+
+---
+
+# What the hell is this?
 
 Ikkuna provides a framework for adding live training metrics to your PyTorch
 model with minimal configuration. It is a PubSub framework which allows
@@ -25,7 +35,7 @@ The following data is provided
 * Weight updates
 * Bias updates
 * Metadata such as current step in the training, current labels and current
-  perdictions
+  predictions
 
 Subscribers consume this data and distill it into metrics. Different backends can be
 used
@@ -124,6 +134,9 @@ Each subscriber also publishes its own result for others to consume, allowing
 you to easily implement more abstract metrics while using the provided building
 blocks.
 
+# Documentation
+The sphinx-generated html documentation is hosted [here](https://peltarion.github.io/ai_ikkuna/).
+
 # Working with this repository
 
 You should create a `conda` envorinment for instance from the provided `conda_env.yaml` file and
@@ -134,6 +147,3 @@ out how to optionally turn off parts of a doc build.
 You should also run `python setup.py develop` which will install the package
 with symlinks to this repository. Since all subscribers are `setuptools` plugins, they are
 not available unless `setup.py` is run.
-
-# Documentation
-The sphinx-generated html documentation is hosted [here](https://peltarion.github.io/ai_ikkuna/).
