@@ -18,11 +18,12 @@ welcome.
 
 Ikkuna provides a framework for adding live training metrics to your PyTorch
 model with minimal configuration. It is a PubSub framework which allows
-practitioners to quickly test metrics implemented against a simple API.
+researchers to quickly test metrics implemented against a simple API and users
+to use such metrics to keep tabs on their models' performance.
 
 For supervising your model, you can define a metric as a subscriber which will
-then be notified thorugh messages of incoming data required for computing the
-metric. The subscriber is completely model-agnosting and can be installed as a
+then be notified through messages of incoming data required for computing the
+metric. The subscriber is completely model-agnostic and can be installed as a
 plugin for others to use.
 
 The following data is provided
@@ -37,7 +38,7 @@ The following data is provided
 * Metadata such as current step in the training, current labels and current
   predictions
 
-Subscribers consume this data and distill it into metrics. Different backends can be
+Subscribers consume this data and distil it into metrics. Different backends can be
 used
 
 * Matplotlib (currently doesn't work)
@@ -54,6 +55,8 @@ pip install ikkuna
 or run the `setup.py` script after cloning this repository.
 
 # Examples
+
+![Ikkuna tracks test accuracy and weight spectral norm](./sphinx/source/_static/ikkuna_demo.gif)
 
 As an appetiser, consider the Problem of wanting to compute the norm of the
 gradients of each layer at every 10th time step as your model is training. But you don't want to add
