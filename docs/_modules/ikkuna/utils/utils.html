@@ -252,14 +252,10 @@
 <span class="sd">        A list of all optimizer names.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="kn">import</span> <span class="nn">torch</span>
-    <span class="kn">import</span> <span class="nn">experiments.optimizers</span>
     <span class="c1"># get all module properties which aren&#39;t magic</span>
     <span class="n">available_optimizers</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
                                <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="p">)</span>
                                <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;__&#39;</span><span class="p">))</span>
-    <span class="n">available_optimizers</span> <span class="o">=</span> <span class="n">available_optimizers</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">experiments</span><span class="o">.</span><span class="n">optimizers</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-                                                          <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">experiments</span><span class="o">.</span><span class="n">optimizers</span><span class="p">)</span>
-                                                          <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;__&#39;</span><span class="p">)))</span>
     <span class="c1"># remove everything which is a module and not a class (looking at you, lr_scheduler o_o)</span>
     <span class="n">available_optimizers</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">o</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="nb">type</span><span class="p">),</span> <span class="n">available_optimizers</span><span class="p">)</span>
     <span class="c1"># map them to their class name (w/o module)</span>
@@ -287,15 +283,11 @@
 
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="kn">import</span> <span class="nn">torch</span>
-    <span class="kn">import</span> <span class="nn">experiments.optimizers</span>
     <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">available_optimizers</span><span class="p">():</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Unknown optimizer </span><span class="si">{name}</span><span class="s1">&#39;</span><span class="p">)</span>
 
     <span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">]</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="p">,</span> <span class="n">name</span><span class="p">)(</span><span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">experiments</span><span class="o">.</span><span class="n">optimizers</span><span class="p">,</span> <span class="n">name</span><span class="p">)(</span><span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="p">,</span> <span class="n">name</span><span class="p">)(</span><span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -306,9 +298,6 @@
             <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Warning: Ignored args for </span><span class="si">{model_name}</span><span class="s1"> (</span><span class="si">{args}</span><span class="s1">)&#39;</span><span class="p">)</span>
             <span class="n">model</span> <span class="o">=</span> <span class="n">model_fn</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">model_name</span> <span class="o">==</span> <span class="s1">&#39;AdamModel&#39;</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">experiments.adam.adam_model</span> <span class="k">import</span> <span class="n">AdamModel</span>
-            <span class="n">model</span> <span class="o">=</span> <span class="n">AdamModel</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">Model</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_name</span><span class="p">)</span>
             <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -472,11 +461,7 @@
                                                           <span class="n">test_transforms</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;WhitenedCIFAR10&#39;</span><span class="p">:</span>
-                <span class="kn">from</span> <span class="nn">experiments.adam.cifar_dataset</span> <span class="k">import</span> <span class="n">WhitenedCIFAR10</span>
-                <span class="n">dataset_cls</span> <span class="o">=</span> <span class="n">WhitenedCIFAR10</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">dataset_cls</span>   <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">torchvision</span><span class="o">.</span><span class="n">datasets</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="n">dataset_cls</span>   <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">torchvision</span><span class="o">.</span><span class="n">datasets</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 
             <span class="kn">import</span> <span class="nn">os</span>
             <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s1">&#39;/home/share/&#39;</span><span class="p">):</span>
