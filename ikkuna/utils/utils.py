@@ -49,14 +49,10 @@ def available_optimizers():
         A list of all optimizer names.
     '''
     import torch
-    import experiments.optimizers
     # get all module properties which aren't magic
     available_optimizers = set(getattr(torch.optim, name)
                                for name in dir(torch.optim)
                                if not name.startswith('__'))
-    available_optimizers = available_optimizers.union(set(getattr(experiments.optimizers, name)
-                                                          for name in dir(experiments.optimizers)
-                                                          if not name.startswith('__')))
     # remove everything which is a module and not a class (looking at you, lr_scheduler o_o)
     available_optimizers = filter(lambda o: isinstance(o, type), available_optimizers)
     # map them to their class name (w/o module)
@@ -84,15 +80,11 @@ def create_optimizer(model, name, **kwargs):
 
     '''
     import torch
-    import experiments.optimizers
     if name not in available_optimizers():
         raise ValueError(f'Unknown optimizer {name}')
 
     params = [p for p in model.parameters() if p.requires_grad]
-    try:
-        return getattr(torch.optim, name)(params, **kwargs)
-    except AttributeError:
-        return getattr(experiments.optimizers, name)(params, **kwargs)
+    return getattr(torch.optim, name)(params, **kwargs)
 
 
 def get_model(model_name, *args, **kwargs):
@@ -103,9 +95,6 @@ def get_model(model_name, *args, **kwargs):
             if args:
                 print(f'Warning: Ignored args for {model_name} ({args})')
             model = model_fn(**kwargs)
-        elif model_name == 'AdamModel':
-            from experiments.adam.adam_model import AdamModel
-            model = AdamModel(*args, **kwargs)
         else:
             Model = getattr(models, model_name)
             model = Model(*args, **kwargs)
@@ -269,11 +258,7 @@ def load_dataset(name, train_transforms=None, test_transforms=None, **kwargs):
                                                           test_transforms)
     else:
         try:
-            if name == 'WhitenedCIFAR10':
-                from experiments.adam.cifar_dataset import WhitenedCIFAR10
-                dataset_cls = WhitenedCIFAR10
-            else:
-                dataset_cls   = getattr(torchvision.datasets, name)
+            dataset_cls   = getattr(torchvision.datasets, name)
 
             import os
             if os.path.exists('/home/share/'):
