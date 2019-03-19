@@ -139,7 +139,7 @@ class BatchedSVCCASubscriber(PlotSubscriber):
         '''
         Parameters
         ----------
-        dataset_meta    :   train.DatasetMeta
+        dataset_meta    :   ikkuna.utils.DatasetMeta
                             Dataset to load data from for retrieving activations
         n   :   int
                 Number of datapoints to randomly sample

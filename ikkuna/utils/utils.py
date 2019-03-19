@@ -1,3 +1,18 @@
+from typing import NamedTuple
+
+
+class DatasetMeta(NamedTuple):
+    '''Class encapsulating a dataset and makes information about it more easily accessible.'''
+    dataset: object
+    num_classes: int
+    shape: tuple
+
+    @property
+    def size(self):
+        '''int: Number of examples in the dataset'''
+        return self.shape[0]
+
+
 def seed_everything(seed=1234):
     '''Set the seed for :mod:`torch`, :mod:`random`, :mod:`numpy` and :mod:`torch.cuda`, as well as
     the ``PYTHONHASHSEED`` env var. It also configures CuDNN to use deterministic mode.
@@ -240,7 +255,7 @@ def load_dataset(name, train_transforms=None, test_transforms=None, **kwargs):
     Returns
     -------
     tuple
-        2 :class:`~train.DatasetMeta`\ s are returned, one for train and one test set
+        2 :class:`DatasetMeta`\ s are returned, one for train and one test set
     '''
     def identity(img):
         return img
@@ -314,7 +329,6 @@ def load_dataset(name, train_transforms=None, test_transforms=None, **kwargs):
             C = 1
         return (N, H, W, C)
 
-    from train import DatasetMeta
     meta_train = DatasetMeta(dataset=dataset_train, num_classes=num_classes(dataset_train),
                              shape=shape(dataset_train))
     meta_test  = DatasetMeta(dataset=dataset_test, num_classes=num_classes(dataset_test),

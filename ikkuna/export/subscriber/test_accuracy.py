@@ -12,7 +12,7 @@ class TestAccuracySubscriber(PlotSubscriber):
 
     Attributes
     ----------
-    _dataset_meta    :   train.DatasetMeta
+    _dataset_meta    :   ikkuna.utils.DatasetMeta
                          Dataset to compute accuracy over
     _data_loader    :   torch.utils.data.DataLoader
                         Loader on the dataset
@@ -27,7 +27,7 @@ class TestAccuracySubscriber(PlotSubscriber):
         '''
         Parameters
         ----------
-        dataset_meta    :   train.DatasetMeta
+        dataset_meta    :   ikkuna.utils.DatasetMeta
                             Test dataset
         forward_fn  :   function
                         Bound version of :meth:`torch.nn.Module.forward()`. This could be obtained

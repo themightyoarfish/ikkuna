@@ -206,19 +206,6 @@
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">DataLoader</span>
 <span class="kn">from</span> <span class="nn">ikkuna.utils</span> <span class="k">import</span> <span class="n">create_optimizer</span>
 <span class="kn">from</span> <span class="nn">ikkuna.export</span> <span class="k">import</span> <span class="n">Exporter</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">NamedTuple</span>
-
-
-<div class="viewcode-block" id="DatasetMeta"><a class="viewcode-back" href="../../train.html#train.DatasetMeta">[docs]</a><span class="k">class</span> <span class="nc">DatasetMeta</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Class encapsulating a dataset and makes information about it more easily accessible.&#39;&#39;&#39;</span>
-    <span class="n">dataset</span><span class="p">:</span> <span class="nb">object</span>
-    <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="n">shape</span><span class="p">:</span> <span class="nb">tuple</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;int: Number of examples in the dataset&#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="Trainer"><a class="viewcode-back" href="../../train.html#train.Trainer">[docs]</a><span class="k">class</span> <span class="nc">Trainer</span><span class="p">:</span>
@@ -250,7 +237,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        dataset_meta    :   train.DatasetMeta</span>
+<span class="sd">        dataset_meta    :   ikkuna.utils.DatasetMeta</span>
 <span class="sd">                            Train data, obtained via :func:`ikkuna.utils.load_dataset()`. Currently,</span>
 <span class="sd">                            only full batches are used; if the batch size does not evenly divide the</span>
 <span class="sd">                            number of examples, the last batch is dropped.</span>

@@ -343,7 +343,7 @@ set with <a class="reference internal" href="#train.Trainer.add_subscriber" titl
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>dataset_meta</strong> (<a class="reference internal" href="#train.DatasetMeta" title="train.DatasetMeta"><em>train.DatasetMeta</em></a>) – Train data, obtained via <a class="reference internal" href="ikkuna.utils.html#ikkuna.utils.load_dataset" title="ikkuna.utils.load_dataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">ikkuna.utils.load_dataset()</span></code></a>. Currently,
+<li><strong>dataset_meta</strong> (<a class="reference internal" href="ikkuna.utils.html#ikkuna.utils.DatasetMeta" title="ikkuna.utils.DatasetMeta"><em>ikkuna.utils.DatasetMeta</em></a>) – Train data, obtained via <a class="reference internal" href="ikkuna.utils.html#ikkuna.utils.load_dataset" title="ikkuna.utils.load_dataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">ikkuna.utils.load_dataset()</span></code></a>. Currently,
 only full batches are used; if the batch size does not evenly divide the
 number of examples, the last batch is dropped.</li>
 <li><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – </li>
@@ -536,81 +536,6 @@ string is passed.</p>
 <code class="descname">train_batch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/train/train.html#Trainer.train_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.Trainer.train_batch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run through 1 batch in the training set. The iterator will wrap around and
 restart at the beginning.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="train.DatasetMeta">
-<em class="property">class </em><code class="descclassname">train.</code><code class="descname">DatasetMeta</code><a class="reference internal" href="_modules/train/train.html#DatasetMeta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#train.DatasetMeta" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
-<p>Class encapsulating a dataset and makes information about it more easily accessible.</p>
-<dl class="attribute">
-<dt id="train.DatasetMeta.dataset">
-<code class="descname">dataset</code><a class="headerlink" href="#train.DatasetMeta.dataset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 0</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="train.DatasetMeta.num_classes">
-<code class="descname">num_classes</code><a class="headerlink" href="#train.DatasetMeta.num_classes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 1</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="train.DatasetMeta.shape">
-<code class="descname">shape</code><a class="headerlink" href="#train.DatasetMeta.shape" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 2</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="train.DatasetMeta.size">
-<code class="descname">size</code><a class="headerlink" href="#train.DatasetMeta.size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Number of examples in the dataset</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="train.DatasetMeta.__getnewargs__">
-<code class="descname">__getnewargs__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#train.DatasetMeta.__getnewargs__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return self as a plain tuple.  Used by copy and pickle.</p>
-</dd></dl>
-
-<dl class="staticmethod">
-<dt id="train.DatasetMeta.__new__">
-<em class="property">static </em><code class="descname">__new__</code><span class="sig-paren">(</span><em>_cls</em>, <em>dataset: object</em>, <em>num_classes: int</em>, <em>shape: tuple</em><span class="sig-paren">)</span><a class="headerlink" href="#train.DatasetMeta.__new__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create new instance of DatasetMeta(dataset, num_classes, shape)</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="train.DatasetMeta.__repr__">
-<code class="descname">__repr__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#train.DatasetMeta.__repr__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a nicely formatted representation string</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="train.DatasetMeta._asdict">
-<code class="descname">_asdict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#train.DatasetMeta._asdict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a new OrderedDict which maps field names to their values.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="train.DatasetMeta._make">
-<em class="property">classmethod </em><code class="descname">_make</code><span class="sig-paren">(</span><em>iterable</em>, <em>new=&lt;built-in method __new__ of type object&gt;</em>, <em>len=&lt;built-in function len&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#train.DatasetMeta._make" title="Permalink to this definition">¶</a></dt>
-<dd><p>Make a new DatasetMeta object from a sequence or iterable</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="train.DatasetMeta._replace">
-<code class="descname">_replace</code><span class="sig-paren">(</span><em>**kwds</em><span class="sig-paren">)</span><a class="headerlink" href="#train.DatasetMeta._replace" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a new DatasetMeta object replacing specified fields with new values</p>
 </dd></dl>
 
 </dd></dl>

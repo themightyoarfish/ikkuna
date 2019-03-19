@@ -667,7 +667,7 @@ process.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>dataset_meta</strong> (<a class="reference internal" href="train.html#train.DatasetMeta" title="train.DatasetMeta"><em>train.DatasetMeta</em></a>) – Dataset to load data from for retrieving activations</li>
+<li><strong>dataset_meta</strong> (<a class="reference internal" href="ikkuna.utils.html#ikkuna.utils.DatasetMeta" title="ikkuna.utils.DatasetMeta"><em>ikkuna.utils.DatasetMeta</em></a>) – Dataset to load data from for retrieving activations</li>
 <li><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of datapoints to randomly sample</li>
 <li><strong>freeze_at</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Similarity threshold after which a layer is frozen. Values &gt;= 1 will turn
 off freezing</li>
@@ -881,7 +881,7 @@ set).</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference internal" href="train.html#train.DatasetMeta" title="train.DatasetMeta">train.DatasetMeta</a></td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference internal" href="ikkuna.utils.html#ikkuna.utils.DatasetMeta" title="ikkuna.utils.DatasetMeta">ikkuna.utils.DatasetMeta</a></td>
 </tr>
 </tbody>
 </table>
@@ -937,7 +937,7 @@ set).</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>dataset_meta</strong> (<a class="reference internal" href="train.html#train.DatasetMeta" title="train.DatasetMeta"><em>train.DatasetMeta</em></a>) – Test dataset</li>
+<li><strong>dataset_meta</strong> (<a class="reference internal" href="ikkuna.utils.html#ikkuna.utils.DatasetMeta" title="ikkuna.utils.DatasetMeta"><em>ikkuna.utils.DatasetMeta</em></a>) – Test dataset</li>
 <li><strong>forward_fn</strong> (<em>function</em>) – Bound version of <a class="reference external" href="https://pytorch.org/docs/master/nn.html#torch.nn.Module.forward" title="(in PyTorch vmaster (1.1.0a0+195cba5 ))"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.forward()</span></code></a>. This could be obtained
 from the <a class="reference internal" href="train.html#train.Trainer.model" title="train.Trainer.model"><code class="xref py py-attr docutils literal notranslate"><span class="pre">train.Trainer.model</span></code></a> property.</li>
 <li><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Batch size to use for pushing the test data through the model. This doesn’t

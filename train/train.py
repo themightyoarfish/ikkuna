@@ -3,19 +3,6 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 from ikkuna.utils import create_optimizer
 from ikkuna.export import Exporter
-from typing import NamedTuple
-
-
-class DatasetMeta(NamedTuple):
-    '''Class encapsulating a dataset and makes information about it more easily accessible.'''
-    dataset: object
-    num_classes: int
-    shape: tuple
-
-    @property
-    def size(self):
-        '''int: Number of examples in the dataset'''
-        return self.shape[0]
 
 
 class Trainer:
@@ -47,7 +34,7 @@ class Trainer:
 
         Parameters
         ----------
-        dataset_meta    :   train.DatasetMeta
+        dataset_meta    :   ikkuna.utils.DatasetMeta
                             Train data, obtained via :func:`ikkuna.utils.load_dataset()`. Currently,
                             only full batches are used; if the batch size does not evenly divide the
                             number of examples, the last batch is dropped.

@@ -1,3 +1,3 @@
 from .train import *
 
-__all__ = ['Trainer', 'DatasetMeta']
+__all__ = ['Trainer']

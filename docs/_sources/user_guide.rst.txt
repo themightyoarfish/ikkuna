@@ -15,8 +15,8 @@ it from any kind of model. It also comes with a few metrics out of the box.
     Here we use the ``main.py`` script for demoing what ``ikkuna`` does.
     We let ``ikkuna`` plot training accuracy and the spectral norm of the layer
     weights without having to care about the specific model. The library
-    automatically discovers the model structure - it filters for conv layers
-    here - and adds the metric to it.
+    automatically discovers the model structure — it filters for conv layers
+    here — and adds the metric to it.
 
     Read below for how to use it for your own models.
 
