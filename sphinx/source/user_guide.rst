@@ -8,7 +8,29 @@ Introduction
 
 Ikkuna is a framework for supervising the training of your PyTorch models. It is
 stupidly easy to use. It allows you to code your chosen metric once and then use
-it from any kind of model. It also comes with a few metrics out of the box
+it from any kind of model. It also comes with a few metrics out of the box.
+
+.. figure:: _static/ikkuna_demo.gif
+
+    Here we use the ``main.py`` script for demoing what ``ikkuna`` does.
+    We let ``ikkuna`` plot training accuracy and the spectral norm of the layer
+    weights without having to care about the specific model. The library
+    automatically discovers the model structure — it filters for conv layers
+    here — and adds the metric to it.
+
+    Read below for how to use it for your own models.
+
+The metrics which are ready to use are
+
+* Training Accuracy
+* Validation Accuracy
+* Training loss
+* Variance of gradients, weight updates, etc.
+* p-Norm of gradients, weights, etc.
+* Ratio between weight updates and weights, or other quantities
+* Spectral norm of weights etc
+* Histograms
+* SVCCA layer saturation metric presented in `my master thesis <https://github.com/themightyoarfish/mthesis>`_.
 
 Installation
 ------------
@@ -16,12 +38,10 @@ Installation
 Prerequisites
 .............
 
-This package requires you to have PyTorch installed. Unfortunately, the PyPi
+This package requires you to have PyTorch 0.5 or newer installed. Unfortunately, the PyPI
 versions always lag behind, so you may have to compile PyTorch yourself. `Don't
 worry, it is a straightforward albeit somewhat time-consuming process
 <https://github.com/pytorch/pytorch#installation>`_.
-
-You will need version at least 0.5.
 
 .. warning::
 
@@ -29,7 +49,8 @@ You will need version at least 0.5.
     source, it will overwrite your PyTorch installation with an older version.
     So if you need it, install it `from source
     <https://github.com/pytorch/vision#installation>`_  as well or do it before
-    installing PyTorch.
+    installing PyTorch. The issue has been reported `here
+    <https://github.com/pytorch/vision/issues/590>`_.
 
 Installing the library
 ......................
@@ -46,6 +67,15 @@ Alternatively, run
 .. code-block:: shell
 
     pip install git+https://github.com/Peltarion/ai_ikkuna.git#egg=ikkuna
+
+or
+
+.. code-block:: shell
+
+    git clone git@github.com:themightyoarfish/ikkuna.git
+    cd ikkuna/
+    python setup.py install     # can use `pip install -e .` as well
+
 
 to get the bleeding-edge version.
 
@@ -65,7 +95,7 @@ this ConvNet
 
 .. code-block:: python
 
-    class AlexNetMini(torch.nn.Module):
+    class Net(torch.nn.Module):
         '''Reduced AlexNet (basically just a few conv layers with relu and
         max-pooling) which attempts to adapt to arbitrary input sizes, provided they are large enough to
         survive the strides and conv cutoffs.
@@ -77,18 +107,19 @@ this ConvNet
         classifier  :   torch.nn.Module
                         Classifier with relu and dropout
         H_out   :   int
-                    Output height of the classifier
+                    Output height of the feature detector part
         W_out   :   int
-                    Output width of the classifier
+                    Output width of the feature detector part
         '''
         def __init__(self, input_shape, num_classes=1000):
-            super(AlexNetMini, self).__init__()
+            super(Net, self).__init__()
 
             # if channel dim not present, add 1
             if len(input_shape) == 2:
                 input_shape.append(1)
             H, W, C = input_shape
 
+            # couple o' convs, poolings, and relus
             self.features = torch.nn.Sequential(
                 torch.nn.Conv2d(C, 64, kernel_size=5, stride=2, padding=1),
                 torch.nn.ReLU(inplace=True),
@@ -101,6 +132,8 @@ this ConvNet
             )
             self.H_out =  H // (2 * 2 * 2)
             self.W_out =  W // (2 * 2 * 2)
+
+            # linear classifier
             self.classifier = torch.nn.Sequential(
                 torch.nn.Dropout(),
                 torch.nn.Linear(192 * self.H_out * self.W_out, 2048),
