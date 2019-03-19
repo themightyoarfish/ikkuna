@@ -423,9 +423,9 @@ class TBBackend(Backend):
     def __init__(self, **kwargs):
         super().__init__(kwargs.pop('title'))
         self._hist_bins = kwargs.pop('bins', 50)
-        log_dir         = kwargs.pop('log_dir', 'runs' if not prefix else prefix)
-        index           = determine_run_index(log_dir)
-        log_dir         = f'{log_dir}/run{index}'
+        self.log_dir    = kwargs.pop('log_dir', 'runs' if not prefix else prefix)
+        index           = determine_run_index(self.log_dir)
+        log_dir         = f'{self.log_dir}/run{index}'
         self._writer    = SummaryWriter(log_dir)
         self._writer.add_text('run_conf', TBBackend.info)
 
