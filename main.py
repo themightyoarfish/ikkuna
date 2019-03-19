@@ -13,6 +13,7 @@ accepts the following arguments:
 #  stdlib imports  #
 ####################
 from argparse import ArgumentParser, ArgumentTypeError
+import warnings
 
 #######################
 #  3rd party imports  #
@@ -69,6 +70,7 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
 
     subsample = kwargs['subsample']
     backend   = kwargs['visualisation']
+    subscriber_added = False
 
     if kwargs['hessian']:
         from torch.utils.data import DataLoader
@@ -77,18 +79,22 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
         trainer.add_subscriber(HessianEigenSubscriber(trainer.model.forward, trainer.loss, loader,
                                                       batch_size,
                                                       frequency=trainer.batches_per_epoch,
-                                                      num_eig=1, power_steps=25))
+                                                      num_eig=1, power_steps=25,
+                                                      backend=backend))
         trainer.create_graph = True
+        subscriber_added = True
 
     if kwargs['spectral_norm']:
         for kind in kwargs['spectral_norm']:
             spectral_norm_subscriber = SpectralNormSubscriber(kind, backend=backend)
             trainer.add_subscriber(spectral_norm_subscriber)
+        subscriber_added = True
 
     if kwargs['variance']:
         for kind in kwargs['variance']:
             var_sub = VarianceSubscriber(kind, backend=backend)
             trainer.add_subscriber(var_sub)
+        subscriber_added = True
 
     if kwargs['test_accuracy']:
         test_accuracy_subscriber = TestAccuracySubscriber(dataset_test, trainer.model.forward,
@@ -96,11 +102,13 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
                                                           batch_size=batch_size,
                                                           backend=backend)
         trainer.add_subscriber(test_accuracy_subscriber)
+        subscriber_added = True
 
     if kwargs['train_accuracy']:
         train_accuracy_subscriber = TrainAccuracySubscriber(subsample=subsample,
                                                             backend=backend)
         trainer.add_subscriber(train_accuracy_subscriber)
+        subscriber_added = True
 
     if kwargs['ratio']:
         for kind1, kind2 in kwargs['ratio']:
@@ -113,22 +121,28 @@ def _main(dataset_str, model_str, batch_size, epochs, optimizer, **kwargs):
             # there can be multiple publications per type, but we know the RatioSubscriber only
             # publishes one
             trainer.add_subscriber(MessageMeanSubscriber(topics[0]))
+        subscriber_added = True
 
     if kwargs['histogram']:
         for kind in kwargs['histogram']:
             histogram_subscriber = HistogramSubscriber(kind, backend=backend)
             trainer.add_subscriber(histogram_subscriber)
+        subscriber_added = True
 
     if kwargs['norm']:
         for kind in kwargs['norm']:
             norm_subscriber = NormSubscriber(kind, backend=backend)
             trainer.add_subscriber(norm_subscriber)
+        subscriber_added = True
 
     if kwargs['svcca']:
         svcca_subscriber = SVCCASubscriber(dataset_test, 500, trainer.model.forward,
                                            subsample=trainer.batches_per_epoch, backend=backend)
         trainer.add_subscriber(svcca_subscriber)
+        subscriber_added = True
 
+    if not subscriber_added:
+        warnings.warn('No subscriber was added, the will be no visualisation.')
     batches_per_epoch = trainer.batches_per_epoch
     print(f'Batches per epoch: {batches_per_epoch}')
 
@@ -170,7 +184,7 @@ def get_parser():
 
     parser = ArgumentParser()
     parser.add_argument('-m', '--model', type=str, required=True, help='Model class to train')
-    data_choices = ['MNIST', 'FashionMNIST', 'CIFAR10', 'CIFAR100', 'ImageNetDogs']
+    data_choices = ['MNIST', 'FashionMNIST', 'CIFAR10', 'CIFAR100']
     parser.add_argument('-d', '--dataset', type=str, choices=data_choices, required=True,
                         help='Dataset to train on')
     parser.add_argument('-b', '--batch-size', type=int, default=128)
