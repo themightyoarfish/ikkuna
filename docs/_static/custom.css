@@ -1,0 +1,22 @@
+a{
+    color:#254167;
+}
+a:hover{
+    color:#9db0bf
+}
+a:visited{
+    color:#c9c9e8
+}
+.wy-side-nav-search{
+    background-color:#999999;
+}
+.wy-side-nav-search input[type=text]{
+    border-radius:0px;
+}
+ul > li {
+    margin-left: 1em;
+}
+
+ul.simple li {
+    list-style: square;
+}

@@ -217,6 +217,8 @@ def setup(app):
     .. _autodoc: http://www.sphinx-doc.org/en/stable/ext/autodoc.html
     '''
     app.connect('autodoc-skip-member', special_methods_callback)
+    app.add_stylesheet('custom.css')
+    app.add_stylesheet('pygments-solarized.css')
 
 
 def special_methods_callback(app, what, name, obj, skip, options):
