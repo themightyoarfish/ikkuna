@@ -138,7 +138,7 @@ you to easily implement more abstract metrics while using the provided building
 blocks.
 
 # Documentation
-The sphinx-generated html documentation is hosted [here](https://peltarion.github.io/ai_ikkuna/).
+The sphinx-generated html documentation is hosted [here](https://themightyoarfish.github.io/ikkuna/).
 
 # Working with this repository
 
